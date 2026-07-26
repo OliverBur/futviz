@@ -159,6 +159,7 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
                      for _, s2 in scatter_data]
             entity_map[name] = {
                 "sizes": sizes,
+                "league": liga,
                 "annotation": dict(x=r[x_col], y=r[y_col], text=name, showarrow=True,
                                     arrowhead=2, arrowcolor=INK["axis"], ax=0, ay=-32,
                                     font=dict(size=11, color=INK["primary"])),
@@ -243,6 +244,14 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
       : leagueOrder.map(function(lg) {{ return lg === val; }});
     for (var i = 0; i < extraTraces; i++) vis.push(true);
     Plotly.restyle('{div_id}', {{visible: vis}});
+
+    var searchInput = document.getElementById('{div_id}_search');
+    var searched = clubMap[searchInput.value];
+    if (searched && val !== '__all__' && searched.league !== val) {{
+      searchInput.value = '';
+      Plotly.restyle('{div_id}', {{'marker.size': baseSizes}}, traceIndices);
+      Plotly.relayout('{div_id}', {{annotations: baseAnnotations}});
+    }}
   }});
 }})();
 </script>
