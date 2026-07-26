@@ -190,7 +190,14 @@ vercel.json            # outputDirectory: web/dist
 - **Landing page** (`index.html`) con tarjetas agrupadas por sección (Equipos / Jugadores), cada una linkeando a `charts/<slug>.html`. Cada página de gráfico tiene un link "← Volver" al índice.
 - `web/build.py` es idempotente (borra y regenera `dist/` entero cada vez) — se corre con `python build.py` desde `web/`.
 - Verificado end-to-end con Playwright sobre el `dist/` generado (no solo con `kaleido`): el índice, una página matplotlib (radar) y una página Plotly con barra lateral (Goles vs. xG) — buscador de jugador, resaltado y línea de referencia funcionando igual que en el notebook.
-- **Deploy real a Vercel queda pendiente** (no se hizo en esta sesión, es una acción de infraestructura que requiere decisión/autorización del usuario): el repo todavía no es un repositorio git (`Is a git repository: false`). Próximo paso cuando el usuario quiera: `git init`, y luego `vercel --prod` (con `vercel.json` ya apuntando a `web/dist` como `outputDirectory`) o conectar el repo a Vercel vía dashboard.
+### Repo en GitHub y deploy a Vercel
+
+- El proyecto se llama **futviz** (nombre elegido por el usuario entre 3 opciones — corto, es el nombre que ya venía usando informalmente para la carpeta raíz `futviz_pl`, sirve como marca para todo lo que siga en ciencia de datos deportiva, no solo este EDA).
+- Se instaló **GitHub CLI** (`gh`, vía `winget`) porque no había ni `gh` ni `vercel` CLI ni Node/npm en la máquina. Login interactivo por dispositivo (`gh auth login --web`, código de un solo uso en el navegador) — cuenta `OliverBur`.
+- Se creó el repo **https://github.com/OliverBur/futviz** (público) con `gh repo create --source=. --push`, con el primer commit (código + notebooks + `web/`).
+- `.claude/settings.json` y `.claude/settings.local.json` se sacaron del `git add -A` inicial (quedaron staged por accidente) y se agregó `.claude/` al `.gitignore` — es config local de permisos de Claude Code, no algo del proyecto.
+- **Detalle importante para el deploy**: `web/dist/` (el sitio generado) inicialmente estaba en `.gitignore`. Se decidió sacarlo del gitignore y **commitear el HTML ya generado**, en vez de pedirle a Vercel que corra `python web/build.py` en su propio build — evita depender de que el entorno de build de Vercel tenga Python/matplotlib/plotly disponibles y configurados. Contrapartida: hay que acordarse de correr `python web/build.py` + commitear `web/dist/` de nuevo cada vez que cambie algún gráfico (no es automático).
+- **Deploy a Vercel en sí queda pendiente** (no se hizo en esta sesión — no se instaló Node/Vercel CLI porque el usuario eligió la vía de GitHub CLI en vez de esa opción). Próximo paso: conectar el repo desde el dashboard de Vercel (Add New Project → Import `OliverBur/futviz` → framework "Other", sin build command, root directory = raíz del repo — `vercel.json` ya apunta `outputDirectory` a `web/dist`).
 
 ## Próximos pasos
 
