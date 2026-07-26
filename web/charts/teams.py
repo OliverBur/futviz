@@ -116,7 +116,7 @@ def chart_radar_subplots(df, assets_dir):
     return ChartPage(
         slug="perfil-liga-radar", section=SECTION, title="Perfil de estilo por liga",
         subtitle="8 métricas de estilo por liga, escaladas contra el máximo de las 5.",
-        body_html=body,
+        body_html=body, kind="radar",
     ), norm, metric_cols, labels, angles, league_avg, radar_metrics
 
 
@@ -184,7 +184,7 @@ def chart_radar_overlay(norm, metric_cols, labels, angles, league_avg, radar_met
     return ChartPage(
         slug="perfil-liga-overlay", section=SECTION, title="Dónde se separa cada liga",
         subtitle="Las 5 formas del radar sobrepuestas, con la tabla de separación por eje.",
-        body_html=body,
+        body_html=body, kind="radar",
     )
 
 
@@ -261,7 +261,7 @@ def chart_gk_ranking(df, assets_dir):
     return ChartPage(
         slug="ranking-porterias", section=SECTION, title="Ranking de porterías",
         subtitle="Índice Save% − GA90 (estandarizado) — mejores y peores 12 del conjunto de las 5 ligas.",
-        body_html=body,
+        body_html=body, kind="bar",
     )
 
 
@@ -349,7 +349,7 @@ def chart_parity(df):
     return ChartPage(
         slug="paridad-competitiva", section=SECTION, title="Paridad competitiva",
         subtitle="Dispersión de puntos por partido dentro de cada liga.",
-        body_html=plot_html(fig, width=800, height=520),
+        body_html=plot_html(fig, width=800, height=520), kind="box",
     )
 
 
@@ -363,7 +363,7 @@ def chart_age(df):
     return ChartPage(
         slug="edad-plantilla", section=SECTION, title="Edad de plantilla",
         subtitle="Edad promedio por equipo, agrupados por liga.",
-        body_html=plot_html(fig, width=800, height=520),
+        body_html=plot_html(fig, width=800, height=520), kind="box",
     )
 
 
@@ -377,7 +377,7 @@ def chart_discipline(df):
     return ChartPage(
         slug="disciplina-amarillas", section=SECTION, title="Disciplina: tarjetas amarillas",
         subtitle="Amarillas por 90' de cada equipo, agrupados por liga.",
-        body_html=plot_html(fig, width=800, height=520),
+        body_html=plot_html(fig, width=800, height=520), kind="box",
     )
 
 

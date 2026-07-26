@@ -4,58 +4,84 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Portería vs. resultado del equipo · FutViz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+
+  :root {
+    --color-primary: #2D5661;
+    --color-bg: #EFEDF7;
+    --color-accent: #0EED95;
+    --color-text-body: #1A2E33;
+    --color-accent-soft: rgba(14, 237, 149, 0.125); /* = #0EED9520 */
+    --color-surface: #FFFFFF;
+    --color-muted: #57707A;
+    --color-border: #DEDBEA;
+  }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
-  body { margin: 0; font-family: "Segoe UI", Arial, sans-serif;
-    background: #fcfcfb; color: #0b0b0b; }
-  header { padding: 22px 32px; }
-  header a { color: #898781; text-decoration: none; font-size: 13px; }
-  header a:hover { color: #0b0b0b; }
-  main { padding: 0 32px 60px; }
-  .chart-scroll { max-width: 100%; overflow-x: auto; }
+  body { margin: 0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--color-bg); color: var(--color-text-body); }
+
+  header { display: flex; align-items: center; gap: 8px; padding: 18px 32px;
+    border-bottom: 1px solid var(--color-border); }
+  .crumb { color: var(--color-muted); text-decoration: none; font-size: 13px; font-weight: 500; }
+  .crumb:hover { color: var(--color-primary); }
+  .crumb.brand { display: inline-flex; align-items: center; gap: 8px;
+    color: var(--color-primary); font-weight: 700; }
+  .crumb.brand .mark { display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 6px; background: var(--color-primary);
+    color: var(--color-bg); font-size: 10px; font-weight: 800; }
+  .crumb-sep { color: var(--color-border); font-size: 13px; }
+  main { padding: 28px 32px 60px; }
+  .chart-scroll { max-width: 100%; overflow-x: auto; background: var(--color-surface);
+    border: 1px solid var(--color-border); border-radius: 14px; padding: 20px; }
   img.static-chart { max-width: 100%; min-width: 600px; height: auto; border-radius: 6px; display: block; }
   @media (max-width: 640px) {
-    header { padding: 16px; }
-    main { padding: 0 16px 40px; }
+    header { padding: 14px 16px; }
+    main { padding: 20px 16px 40px; }
+    .chart-scroll { padding: 12px; }
   }
 </style>
 </head>
 <body>
 <header>
-  <a href="../equipos.html">&larr; Volver a Equipos</a>
+  <a class="crumb brand" href="../index.html"><span class="mark" aria-hidden="true">FV</span>FutViz</a>
+  <span class="crumb-sep">/</span>
+  <a class="crumb" href="../equipos.html">Equipos</a>
 </header>
 <main><div class="chart-scroll">
 <style>
-  #chart_db3b2b81_layout { display:flex; flex-wrap: wrap; align-items:flex-start; gap:20px; max-width: 100%; }
-  #chart_db3b2b81_plotwrap { position: relative; flex: 1 1 280px; width: 100%; max-width: 760px;
+  #chart_67b7b3b0_layout { display:flex; flex-wrap: wrap; align-items:flex-start; gap:20px; max-width: 100%; }
+  #chart_67b7b3b0_plotwrap { position: relative; flex: 1 1 280px; width: 100%; max-width: 760px;
     aspect-ratio: 1.3103448275862069; min-width: 0; }
-  #chart_db3b2b81_plotwrap > div { position: absolute; inset: 0; }
-  #chart_db3b2b81_sidebar { font-family: "Segoe UI", Arial, sans-serif; padding-top: 54px;
+  #chart_67b7b3b0_plotwrap > div { position: absolute; inset: 0; }
+  #chart_67b7b3b0_sidebar { font-family: "Segoe UI", Arial, sans-serif; padding-top: 54px;
     flex: 1 1 190px; max-width: 260px; box-sizing: border-box; }
-  #chart_db3b2b81_sidebar .block { margin-bottom: 22px; }
-  #chart_db3b2b81_sidebar label { display: block; font-size: 11px; color: #898781;
+  #chart_67b7b3b0_sidebar .block { margin-bottom: 22px; }
+  #chart_67b7b3b0_sidebar label { display: block; font-size: 11px; color: #898781;
     text-transform: uppercase; letter-spacing: .03em; margin-bottom: 5px; }
-  #chart_db3b2b81_sidebar input, #chart_db3b2b81_sidebar select { width: 100%; box-sizing: border-box;
+  #chart_67b7b3b0_sidebar input, #chart_67b7b3b0_sidebar select { width: 100%; box-sizing: border-box;
     padding: 7px 9px; font-size: 13px; font-family: inherit; color: #0b0b0b;
     background: #fcfcfb; border: 1px solid #c3c2b7; border-radius: 6px; }
   @media (max-width: 520px) {
-    #chart_db3b2b81_sidebar { padding-top: 4px; max-width: 100%; }
-    #chart_db3b2b81_plotwrap { aspect-ratio: 0.85; }
+    #chart_67b7b3b0_sidebar { padding-top: 4px; max-width: 100%; }
+    #chart_67b7b3b0_plotwrap { aspect-ratio: 0.85; }
   }
 </style>
-<div id="chart_db3b2b81_layout">
-  <div id="chart_db3b2b81_plotwrap"><div style="height:100%; width:100%;">                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
-        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha256-jvTGqxNp8AGWEcvNLVuKr+8j5dGe9Yw51LQkmDH+IYA=" crossorigin="anonymous"></script>                <div id="chart_db3b2b81" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("chart_db3b2b81")) {                    Plotly.newPlot(                        "chart_db3b2b81",                        [{"customdata":["Augsburg","Bayern Munich","Dortmund","Frankfurt","Freiburg","Gladbach","Hamburger SV","Heidenheim","Hoffenheim","Köln","Leverkusen","Mainz 05","RB Leipzig","St Pauli","Stuttgart","Union Berlin","Werder Bremen","Wolfsburg"],"hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eBundesliga\u003cbr\u003eCS%%: %{x:.1f}%\u003cbr\u003ePuntos\u002fpartido: %{y:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#e34948","line":{"color":"#fcfcfb","width":1},"opacity":0.88,"size":[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11]},"mode":"markers","name":"Bundesliga","x":{"dtype":"f8","bdata":"ZmZmZmZmLUBmZmZmZqZBQM3MzMzMDEZAmpmZmZmZNECamZmZmZkxQJqZmZmZGUNAmpmZmZmZMUAzMzMzMzMHQJqZmZmZmTRAmpmZmZmZIUAAAAAAAIA3QJqZmZmZmSdAMzMzMzMzQEBmZmZmZmYtQDMzMzMzM0BAmpmZmZmZNECamZmZmZkxQJqZmZmZmRdA"},"y":{"dtype":"f8","bdata":"PDw8PDw89D\u002fx8PDw8PAEQC0tLS0tLQFAtbS0tLS09D8eHh4eHh72P+Lh4eHh4fE\u002f4uHh4eHh8T94eHh4eHjoP7W0tLS0tPw\u002fHh4eHh4e7j\u002fEw8PDw8P7P9PS0tLS0vI\u002fl5aWlpaW\u002fj94eHh4eHjoPy0tLS0tLf0\u002fWlpaWlpa8j8eHh4eHh7uP0tLS0tLS+s\u002f"},"type":"scatter"},{"customdata":["Atalanta","Bologna","Cagliari","Como","Cremonese","Fiorentina","Genoa","Hellas Verona","Inter","Juventus","Lazio","Lecce","Milan","Napoli","Parma","Pisa","Roma","Sassuolo","Torino","Udinese"],"hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eSerie A\u003cbr\u003eCS%%: %{x:.1f}%\u003cbr\u003ePuntos\u002fpartido: %{y:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#2a78d6","line":{"color":"#fcfcfb","width":1},"opacity":0.88,"size":[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11]},"mode":"markers","name":"Serie A","x":{"dtype":"f8","bdata":"mpmZmZkZQUCamZmZmZk\u002fQJqZmZmZGTVAAAAAAAAASUBmZmZmZuY8QM3MzMzMTDpAMzMzMzOzN0CamZmZmZkvQDMzMzMzs0dAzczMzMwMRUAAAAAAAMBDQM3MzMzMTDpAAAAAAADAQ0AAAAAAAMBDQJqZmZmZGUFAZmZmZmZmKkAzMzMzM7NHQJqZmZmZGTVAmpmZmZmZP0BmZmZmZuY8QA=="},"y":{"dtype":"f8","bdata":"eQ3lNZTX+D9DeQ3lNZT3P6+hvIbyGvI\u002fUV5DeQ3l\u002fT8bymsor6HsP\u002fMaymsor\u002fE\u002fNpTXUF5D8T\u002fzGsprKK\u002fhPw3lNZTXUAJA2FBeQ3kN\u002fT\u002fKayivobz2PwAAAAAAAPA\u002flNdQXkN5\u002fT8AAAAAAAAAQCivobyG8vI\u002fDeU1lNdQ3j\u002fKayivobz+PxvKayivofQ\u002fKK+hvIby8j\u002fYUF5DeQ31Pw=="},"type":"scatter"},{"customdata":["Angers","Auxerre","Brest","Le Havre","Lens","Lille","Lorient","Lyon","Marseille","Metz","Monaco","Nantes","Nice","Paris FC","PSG","Rennes","Strasbourg","Toulouse"],"hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eLigue 1\u003cbr\u003eCS%%: %{x:.1f}%\u003cbr\u003ePuntos\u002fpartido: %{y:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#2e413a","line":{"color":"#fcfcfb","width":1},"opacity":0.88,"size":[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11]},"mode":"markers","name":"Ligue 1","x":{"dtype":"f8","bdata":"ZmZmZmZmPUAAAAAAAIA6QAAAAAAAgDpAAAAAAACAN0BmZmZmZqZBQJqZmZmZGUNAmpmZmZmZNEDNzMzMzAxGQAAAAAAAgDpAmpmZmZmZNECamZmZmZk0QDMzMzMzMzVAmpmZmZmZMUAAAAAAAIA3QDMzMzMzc0pAZmZmZmZmPUAAAAAAAIA6QM3MzMzMTDtA"},"y":{"dtype":"f8","bdata":"8fDw8PDw8D8AAAAAAADwP1paWlpaWvI\u002feHh4eHh48D94eHh4eHgAQLW0tLS0tPw\u002fLS0tLS0t9T88PDw8PDz8P8TDw8PDw\u002fs\u002fAAAAAAAA4D9paWlpaWn5P0422WSTTeY\u002fHh4eHh4e7j+1tLS0tLT0P+Lh4eHh4QFAxMPDw8PD+z\u002fx8PDw8PD4P1VVVVVVVfU\u002f"},"type":"scatter"},{"customdata":["Alavés","Athletic Club","Atlético Madrid","Barcelona","Celta Vigo","Elche","Espanyol","Getafe","Girona","Levante","Mallorca","Osasuna","Oviedo","Rayo Vallecano","Real Betis","Real Madrid","Real Sociedad","Sevilla","Valencia","Villarreal"],"hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eLa Liga\u003cbr\u003eCS%%: %{x:.1f}%\u003cbr\u003ePuntos\u002fpartido: %{y:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#eda100","line":{"color":"#fcfcfb","width":1},"opacity":0.88,"size":[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11]},"mode":"markers","name":"La Liga","x":{"dtype":"f8","bdata":"ZmZmZmZmKkCamZmZmZkvQGZmZmZmZkJAAAAAAADAQ0DNzMzMzEw6QJqZmZmZGTVAzczMzMxMOkCamZmZmZk\u002fQJqZmZmZmS9AMzMzMzOzN0CamZmZmZkvQGZmZmZmZjJAzczMzMxMOkCamZmZmZk\u002fQM3MzMzMTDpAZmZmZmZmQkCamZmZmZkfQJqZmZmZmS9AMzMzMzOzN0CamZmZmRk1QA=="},"y":{"dtype":"f8","bdata":"r6G8hvIa8j8or6G8hvLyP9hQXkN5Df0\u002foryG8hrKA0DKayivobz2P6+hvIbyGvI\u002f5TWU11Be8z+U11BeQ3n1PzaU11BeQ\u002fE\u002f8xrKayiv8T\u002fzGsprKK\u002fxP\u002fMaymsor\u002fE\u002fvYbyGspr6D\u002fYUF5DeQ31PzaU11BeQ\u002fk\u002fr6G8hvIaAkDlNZTXUF7zP6+hvIbyGvI\u002fG8prKK+h9D8N5TWU11D+Pw=="},"type":"scatter"},{"customdata":["Arsenal","Aston Villa","Bournemouth","Brentford","Brighton","Burnley","Chelsea","Crystal Palace","Everton","Fulham","Leeds United","Liverpool","Manchester City","Manchester Utd","Newcastle","Nottingham","Sunderland","Tottenham","West Ham","Wolves"],"hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003ePremier League\u003cbr\u003eCS%%: %{x:.1f}%\u003cbr\u003ePuntos\u002fpartido: %{y:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#e87ba4","line":{"color":"#fcfcfb","width":1},"opacity":0.88,"size":[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11]},"mode":"markers","name":"Premier League","x":{"dtype":"f8","bdata":"AAAAAAAASUAzMzMzM7M3QGZmZmZm5jxAzczMzMxMOkDNzMzMzEw6QAAAAAAAACVAMzMzMzOzN0CamZmZmZk\u002fQGZmZmZm5jxAMzMzMzOzN0CamZmZmRk1QM3MzMzMTDpAzczMzMwMRUCamZmZmRk1QJqZmZmZGTVAMzMzMzOzN0BmZmZmZuY8QDMzMzMzszdAZmZmZmZmMkAAAAAAAAAlQA=="},"y":{"dtype":"f8","bdata":"UV5DeQ3lAUDlNZTXUF77PwAAAAAAAPg\u002fDeU1lNdQ9j8N5TWU11D2P2wor6G8huI\u002fUV5DeQ3l9T8or6G8hvLyPxvKayivofQ\u002fUV5DeQ3l9T+ivIbyGsrzPzaU11BeQ\u002fk\u002fvYbyGsprAEBRXkN5DeX9PxvKayivofQ\u002fbCivobyG8j\u002fKayivobz2PzaU11BeQ\u002fE\u002fvYbyGspr8D95DeU1lNfgPw=="},"type":"scatter"}],                        {"template":{"layout":{"font":{"color":"#0b0b0b","family":"Segoe UI, Arial, sans-serif","size":12},"hoverlabel":{"bgcolor":"#fcfcfb","bordercolor":"#c3c2b7","font":{"color":"#0b0b0b","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"color":"#52514e","size":11}},"margin":{"b":60,"l":70,"r":40,"t":90},"paper_bgcolor":"#fcfcfb","plot_bgcolor":"#fcfcfb","title":{"font":{"color":"#0b0b0b","family":"Segoe UI Semibold, Segoe UI, Arial","size":18},"subtitle":{"font":{"color":"#52514e","size":12.5}},"x":0.03,"xanchor":"left"},"xaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","size":11},"title":{"font":{"color":"#52514e","size":12}},"zerolinecolor":"#c3c2b7"},"yaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","size":11},"title":{"font":{"color":"#52514e","size":12}},"zerolinecolor":"#c3c2b7"}}},"title":{"subtitle":{"text":"Porterías a cero vs. puntos por partido"},"text":"¿Cuánto pesa la portería en el resultado?"},"xaxis":{"title":{"text":"Porterías a cero (%)"}},"yaxis":{"title":{"text":"Puntos por partido"}},"autosize":true},                        {"displaylogo": false, "responsive": true}                    )                };            </script>        </div></div>
-  <div id="chart_db3b2b81_sidebar">
+<div id="chart_67b7b3b0_layout">
+  <div id="chart_67b7b3b0_plotwrap"><div style="height:100%; width:100%;">                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha256-jvTGqxNp8AGWEcvNLVuKr+8j5dGe9Yw51LQkmDH+IYA=" crossorigin="anonymous"></script>                <div id="chart_67b7b3b0" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("chart_67b7b3b0")) {                    Plotly.newPlot(                        "chart_67b7b3b0",                        [{"customdata":["Augsburg","Bayern Munich","Dortmund","Frankfurt","Freiburg","Gladbach","Hamburger SV","Heidenheim","Hoffenheim","Köln","Leverkusen","Mainz 05","RB Leipzig","St Pauli","Stuttgart","Union Berlin","Werder Bremen","Wolfsburg"],"hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eBundesliga\u003cbr\u003eCS%%: %{x:.1f}%\u003cbr\u003ePuntos\u002fpartido: %{y:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#e34948","line":{"color":"#fcfcfb","width":1},"opacity":0.88,"size":[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11]},"mode":"markers","name":"Bundesliga","x":{"dtype":"f8","bdata":"ZmZmZmZmLUBmZmZmZqZBQM3MzMzMDEZAmpmZmZmZNECamZmZmZkxQJqZmZmZGUNAmpmZmZmZMUAzMzMzMzMHQJqZmZmZmTRAmpmZmZmZIUAAAAAAAIA3QJqZmZmZmSdAMzMzMzMzQEBmZmZmZmYtQDMzMzMzM0BAmpmZmZmZNECamZmZmZkxQJqZmZmZmRdA"},"y":{"dtype":"f8","bdata":"PDw8PDw89D\u002fx8PDw8PAEQC0tLS0tLQFAtbS0tLS09D8eHh4eHh72P+Lh4eHh4fE\u002f4uHh4eHh8T94eHh4eHjoP7W0tLS0tPw\u002fHh4eHh4e7j\u002fEw8PDw8P7P9PS0tLS0vI\u002fl5aWlpaW\u002fj94eHh4eHjoPy0tLS0tLf0\u002fWlpaWlpa8j8eHh4eHh7uP0tLS0tLS+s\u002f"},"type":"scatter"},{"customdata":["Atalanta","Bologna","Cagliari","Como","Cremonese","Fiorentina","Genoa","Hellas Verona","Inter","Juventus","Lazio","Lecce","Milan","Napoli","Parma","Pisa","Roma","Sassuolo","Torino","Udinese"],"hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eSerie A\u003cbr\u003eCS%%: %{x:.1f}%\u003cbr\u003ePuntos\u002fpartido: %{y:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#2a78d6","line":{"color":"#fcfcfb","width":1},"opacity":0.88,"size":[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11]},"mode":"markers","name":"Serie A","x":{"dtype":"f8","bdata":"mpmZmZkZQUCamZmZmZk\u002fQJqZmZmZGTVAAAAAAAAASUBmZmZmZuY8QM3MzMzMTDpAMzMzMzOzN0CamZmZmZkvQDMzMzMzs0dAzczMzMwMRUAAAAAAAMBDQM3MzMzMTDpAAAAAAADAQ0AAAAAAAMBDQJqZmZmZGUFAZmZmZmZmKkAzMzMzM7NHQJqZmZmZGTVAmpmZmZmZP0BmZmZmZuY8QA=="},"y":{"dtype":"f8","bdata":"eQ3lNZTX+D9DeQ3lNZT3P6+hvIbyGvI\u002fUV5DeQ3l\u002fT8bymsor6HsP\u002fMaymsor\u002fE\u002fNpTXUF5D8T\u002fzGsprKK\u002fhPw3lNZTXUAJA2FBeQ3kN\u002fT\u002fKayivobz2PwAAAAAAAPA\u002flNdQXkN5\u002fT8AAAAAAAAAQCivobyG8vI\u002fDeU1lNdQ3j\u002fKayivobz+PxvKayivofQ\u002fKK+hvIby8j\u002fYUF5DeQ31Pw=="},"type":"scatter"},{"customdata":["Angers","Auxerre","Brest","Le Havre","Lens","Lille","Lorient","Lyon","Marseille","Metz","Monaco","Nantes","Nice","Paris FC","PSG","Rennes","Strasbourg","Toulouse"],"hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eLigue 1\u003cbr\u003eCS%%: %{x:.1f}%\u003cbr\u003ePuntos\u002fpartido: %{y:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#2e413a","line":{"color":"#fcfcfb","width":1},"opacity":0.88,"size":[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11]},"mode":"markers","name":"Ligue 1","x":{"dtype":"f8","bdata":"ZmZmZmZmPUAAAAAAAIA6QAAAAAAAgDpAAAAAAACAN0BmZmZmZqZBQJqZmZmZGUNAmpmZmZmZNEDNzMzMzAxGQAAAAAAAgDpAmpmZmZmZNECamZmZmZk0QDMzMzMzMzVAmpmZmZmZMUAAAAAAAIA3QDMzMzMzc0pAZmZmZmZmPUAAAAAAAIA6QM3MzMzMTDtA"},"y":{"dtype":"f8","bdata":"8fDw8PDw8D8AAAAAAADwP1paWlpaWvI\u002feHh4eHh48D94eHh4eHgAQLW0tLS0tPw\u002fLS0tLS0t9T88PDw8PDz8P8TDw8PDw\u002fs\u002fAAAAAAAA4D9paWlpaWn5P0422WSTTeY\u002fHh4eHh4e7j+1tLS0tLT0P+Lh4eHh4QFAxMPDw8PD+z\u002fx8PDw8PD4P1VVVVVVVfU\u002f"},"type":"scatter"},{"customdata":["Alavés","Athletic Club","Atlético Madrid","Barcelona","Celta Vigo","Elche","Espanyol","Getafe","Girona","Levante","Mallorca","Osasuna","Oviedo","Rayo Vallecano","Real Betis","Real Madrid","Real Sociedad","Sevilla","Valencia","Villarreal"],"hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eLa Liga\u003cbr\u003eCS%%: %{x:.1f}%\u003cbr\u003ePuntos\u002fpartido: %{y:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#eda100","line":{"color":"#fcfcfb","width":1},"opacity":0.88,"size":[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11]},"mode":"markers","name":"La Liga","x":{"dtype":"f8","bdata":"ZmZmZmZmKkCamZmZmZkvQGZmZmZmZkJAAAAAAADAQ0DNzMzMzEw6QJqZmZmZGTVAzczMzMxMOkCamZmZmZk\u002fQJqZmZmZmS9AMzMzMzOzN0CamZmZmZkvQGZmZmZmZjJAzczMzMxMOkCamZmZmZk\u002fQM3MzMzMTDpAZmZmZmZmQkCamZmZmZkfQJqZmZmZmS9AMzMzMzOzN0CamZmZmRk1QA=="},"y":{"dtype":"f8","bdata":"r6G8hvIa8j8or6G8hvLyP9hQXkN5Df0\u002foryG8hrKA0DKayivobz2P6+hvIbyGvI\u002f5TWU11Be8z+U11BeQ3n1PzaU11BeQ\u002fE\u002f8xrKayiv8T\u002fzGsprKK\u002fxP\u002fMaymsor\u002fE\u002fvYbyGspr6D\u002fYUF5DeQ31PzaU11BeQ\u002fk\u002fr6G8hvIaAkDlNZTXUF7zP6+hvIbyGvI\u002fG8prKK+h9D8N5TWU11D+Pw=="},"type":"scatter"},{"customdata":["Arsenal","Aston Villa","Bournemouth","Brentford","Brighton","Burnley","Chelsea","Crystal Palace","Everton","Fulham","Leeds United","Liverpool","Manchester City","Manchester Utd","Newcastle","Nottingham","Sunderland","Tottenham","West Ham","Wolves"],"hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003ePremier League\u003cbr\u003eCS%%: %{x:.1f}%\u003cbr\u003ePuntos\u002fpartido: %{y:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#e87ba4","line":{"color":"#fcfcfb","width":1},"opacity":0.88,"size":[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11]},"mode":"markers","name":"Premier League","x":{"dtype":"f8","bdata":"AAAAAAAASUAzMzMzM7M3QGZmZmZm5jxAzczMzMxMOkDNzMzMzEw6QAAAAAAAACVAMzMzMzOzN0CamZmZmZk\u002fQGZmZmZm5jxAMzMzMzOzN0CamZmZmRk1QM3MzMzMTDpAzczMzMwMRUCamZmZmRk1QJqZmZmZGTVAMzMzMzOzN0BmZmZmZuY8QDMzMzMzszdAZmZmZmZmMkAAAAAAAAAlQA=="},"y":{"dtype":"f8","bdata":"UV5DeQ3lAUDlNZTXUF77PwAAAAAAAPg\u002fDeU1lNdQ9j8N5TWU11D2P2wor6G8huI\u002fUV5DeQ3l9T8or6G8hvLyPxvKayivofQ\u002fUV5DeQ3l9T+ivIbyGsrzPzaU11BeQ\u002fk\u002fvYbyGsprAEBRXkN5DeX9PxvKayivofQ\u002fbCivobyG8j\u002fKayivobz2PzaU11BeQ\u002fE\u002fvYbyGspr8D95DeU1lNfgPw=="},"type":"scatter"}],                        {"template":{"layout":{"font":{"color":"#0b0b0b","family":"Segoe UI, Arial, sans-serif","size":12},"hoverlabel":{"bgcolor":"#fcfcfb","bordercolor":"#c3c2b7","font":{"color":"#0b0b0b","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"color":"#52514e","size":11}},"margin":{"b":60,"l":70,"r":40,"t":90},"paper_bgcolor":"#fcfcfb","plot_bgcolor":"#fcfcfb","title":{"font":{"color":"#0b0b0b","family":"Segoe UI Semibold, Segoe UI, Arial","size":18},"subtitle":{"font":{"color":"#52514e","size":12.5}},"x":0.03,"xanchor":"left"},"xaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","size":11},"title":{"font":{"color":"#52514e","size":12}},"zerolinecolor":"#c3c2b7"},"yaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","size":11},"title":{"font":{"color":"#52514e","size":12}},"zerolinecolor":"#c3c2b7"}}},"title":{"subtitle":{"text":"Porterías a cero vs. puntos por partido"},"text":"¿Cuánto pesa la portería en el resultado?"},"xaxis":{"title":{"text":"Porterías a cero (%)"}},"yaxis":{"title":{"text":"Puntos por partido"}},"autosize":true},                        {"displaylogo": false, "responsive": true}                    )                };            </script>        </div></div>
+  <div id="chart_67b7b3b0_sidebar">
     <div class="block">
       <label>Buscar club</label>
-      <input list="chart_db3b2b81_clubs" id="chart_db3b2b81_search" placeholder="Escribe un club…" autocomplete="off">
-      <datalist id="chart_db3b2b81_clubs"><option value="Alavés"></option><option value="Angers"></option><option value="Arsenal"></option><option value="Aston Villa"></option><option value="Atalanta"></option><option value="Athletic Club"></option><option value="Atlético Madrid"></option><option value="Augsburg"></option><option value="Auxerre"></option><option value="Barcelona"></option><option value="Bayern Munich"></option><option value="Bologna"></option><option value="Bournemouth"></option><option value="Brentford"></option><option value="Brest"></option><option value="Brighton"></option><option value="Burnley"></option><option value="Cagliari"></option><option value="Celta Vigo"></option><option value="Chelsea"></option><option value="Como"></option><option value="Cremonese"></option><option value="Crystal Palace"></option><option value="Dortmund"></option><option value="Elche"></option><option value="Espanyol"></option><option value="Everton"></option><option value="Fiorentina"></option><option value="Frankfurt"></option><option value="Freiburg"></option><option value="Fulham"></option><option value="Genoa"></option><option value="Getafe"></option><option value="Girona"></option><option value="Gladbach"></option><option value="Hamburger SV"></option><option value="Heidenheim"></option><option value="Hellas Verona"></option><option value="Hoffenheim"></option><option value="Inter"></option><option value="Juventus"></option><option value="Köln"></option><option value="Lazio"></option><option value="Le Havre"></option><option value="Lecce"></option><option value="Leeds United"></option><option value="Lens"></option><option value="Levante"></option><option value="Leverkusen"></option><option value="Lille"></option><option value="Liverpool"></option><option value="Lorient"></option><option value="Lyon"></option><option value="Mainz 05"></option><option value="Mallorca"></option><option value="Manchester City"></option><option value="Manchester Utd"></option><option value="Marseille"></option><option value="Metz"></option><option value="Milan"></option><option value="Monaco"></option><option value="Nantes"></option><option value="Napoli"></option><option value="Newcastle"></option><option value="Nice"></option><option value="Nottingham"></option><option value="Osasuna"></option><option value="Oviedo"></option><option value="PSG"></option><option value="Paris FC"></option><option value="Parma"></option><option value="Pisa"></option><option value="RB Leipzig"></option><option value="Rayo Vallecano"></option><option value="Real Betis"></option><option value="Real Madrid"></option><option value="Real Sociedad"></option><option value="Rennes"></option><option value="Roma"></option><option value="Sassuolo"></option><option value="Sevilla"></option><option value="St Pauli"></option><option value="Strasbourg"></option><option value="Stuttgart"></option><option value="Sunderland"></option><option value="Torino"></option><option value="Tottenham"></option><option value="Toulouse"></option><option value="Udinese"></option><option value="Union Berlin"></option><option value="Valencia"></option><option value="Villarreal"></option><option value="Werder Bremen"></option><option value="West Ham"></option><option value="Wolfsburg"></option><option value="Wolves"></option></datalist>
+      <input list="chart_67b7b3b0_clubs" id="chart_67b7b3b0_search" placeholder="Escribe un club…" autocomplete="off">
+      <datalist id="chart_67b7b3b0_clubs"><option value="Alavés"></option><option value="Angers"></option><option value="Arsenal"></option><option value="Aston Villa"></option><option value="Atalanta"></option><option value="Athletic Club"></option><option value="Atlético Madrid"></option><option value="Augsburg"></option><option value="Auxerre"></option><option value="Barcelona"></option><option value="Bayern Munich"></option><option value="Bologna"></option><option value="Bournemouth"></option><option value="Brentford"></option><option value="Brest"></option><option value="Brighton"></option><option value="Burnley"></option><option value="Cagliari"></option><option value="Celta Vigo"></option><option value="Chelsea"></option><option value="Como"></option><option value="Cremonese"></option><option value="Crystal Palace"></option><option value="Dortmund"></option><option value="Elche"></option><option value="Espanyol"></option><option value="Everton"></option><option value="Fiorentina"></option><option value="Frankfurt"></option><option value="Freiburg"></option><option value="Fulham"></option><option value="Genoa"></option><option value="Getafe"></option><option value="Girona"></option><option value="Gladbach"></option><option value="Hamburger SV"></option><option value="Heidenheim"></option><option value="Hellas Verona"></option><option value="Hoffenheim"></option><option value="Inter"></option><option value="Juventus"></option><option value="Köln"></option><option value="Lazio"></option><option value="Le Havre"></option><option value="Lecce"></option><option value="Leeds United"></option><option value="Lens"></option><option value="Levante"></option><option value="Leverkusen"></option><option value="Lille"></option><option value="Liverpool"></option><option value="Lorient"></option><option value="Lyon"></option><option value="Mainz 05"></option><option value="Mallorca"></option><option value="Manchester City"></option><option value="Manchester Utd"></option><option value="Marseille"></option><option value="Metz"></option><option value="Milan"></option><option value="Monaco"></option><option value="Nantes"></option><option value="Napoli"></option><option value="Newcastle"></option><option value="Nice"></option><option value="Nottingham"></option><option value="Osasuna"></option><option value="Oviedo"></option><option value="PSG"></option><option value="Paris FC"></option><option value="Parma"></option><option value="Pisa"></option><option value="RB Leipzig"></option><option value="Rayo Vallecano"></option><option value="Real Betis"></option><option value="Real Madrid"></option><option value="Real Sociedad"></option><option value="Rennes"></option><option value="Roma"></option><option value="Sassuolo"></option><option value="Sevilla"></option><option value="St Pauli"></option><option value="Strasbourg"></option><option value="Stuttgart"></option><option value="Sunderland"></option><option value="Torino"></option><option value="Tottenham"></option><option value="Toulouse"></option><option value="Udinese"></option><option value="Union Berlin"></option><option value="Valencia"></option><option value="Villarreal"></option><option value="Werder Bremen"></option><option value="West Ham"></option><option value="Wolfsburg"></option><option value="Wolves"></option></datalist>
     </div>
     <div class="block">
       <label>Filtrar por liga</label>
-      <select id="chart_db3b2b81_league">
+      <select id="chart_67b7b3b0_league">
         <option value="__all__">Todas las ligas</option>
         <option value="Bundesliga">Bundesliga</option><option value="Serie A">Serie A</option><option value="Ligue 1">Ligue 1</option><option value="La Liga">La Liga</option><option value="Premier League">Premier League</option>
       </select>
@@ -72,43 +98,43 @@
   var extraTraces = 0;
 
   function updateLegendLayout() {
-    var w = document.getElementById('chart_db3b2b81').offsetWidth;
+    var w = document.getElementById('chart_67b7b3b0').offsetWidth;
     if (w < 420) {
-      Plotly.relayout('chart_db3b2b81', {'legend.orientation': 'h', 'legend.x': 0, 'legend.y': -0.46,
+      Plotly.relayout('chart_67b7b3b0', {'legend.orientation': 'h', 'legend.x': 0, 'legend.y': -0.46,
         'legend.yanchor': 'top', 'margin.r': 20, 'margin.t': 70, 'margin.b': 140});
     } else {
-      Plotly.relayout('chart_db3b2b81', {'legend.orientation': 'v', 'legend.x': 1.02, 'legend.y': 1,
+      Plotly.relayout('chart_67b7b3b0', {'legend.orientation': 'v', 'legend.x': 1.02, 'legend.y': 1,
         'legend.yanchor': 'top', 'margin.r': 40, 'margin.t': 90, 'margin.b': 60});
     }
   }
   window.addEventListener('resize', updateLegendLayout);
   updateLegendLayout();
 
-  document.getElementById('chart_db3b2b81_search').addEventListener('input', function(e) {
+  document.getElementById('chart_67b7b3b0_search').addEventListener('input', function(e) {
     var val = e.target.value;
     if (clubMap.hasOwnProperty(val)) {
-      Plotly.restyle('chart_db3b2b81', {'marker.size': clubMap[val].sizes}, traceIndices);
-      Plotly.relayout('chart_db3b2b81', {annotations: baseAnnotations.concat([clubMap[val].annotation])});
+      Plotly.restyle('chart_67b7b3b0', {'marker.size': clubMap[val].sizes}, traceIndices);
+      Plotly.relayout('chart_67b7b3b0', {annotations: baseAnnotations.concat([clubMap[val].annotation])});
     } else if (val === '') {
-      Plotly.restyle('chart_db3b2b81', {'marker.size': baseSizes}, traceIndices);
-      Plotly.relayout('chart_db3b2b81', {annotations: baseAnnotations});
+      Plotly.restyle('chart_67b7b3b0', {'marker.size': baseSizes}, traceIndices);
+      Plotly.relayout('chart_67b7b3b0', {annotations: baseAnnotations});
     }
   });
 
-  document.getElementById('chart_db3b2b81_league').addEventListener('change', function(e) {
+  document.getElementById('chart_67b7b3b0_league').addEventListener('change', function(e) {
     var val = e.target.value;
     var vis = (val === '__all__')
       ? leagueOrder.map(function() { return true; })
       : leagueOrder.map(function(lg) { return lg === val; });
     for (var i = 0; i < extraTraces; i++) vis.push(true);
-    Plotly.restyle('chart_db3b2b81', {visible: vis});
+    Plotly.restyle('chart_67b7b3b0', {visible: vis});
 
-    var searchInput = document.getElementById('chart_db3b2b81_search');
+    var searchInput = document.getElementById('chart_67b7b3b0_search');
     var searched = clubMap[searchInput.value];
     if (searched && val !== '__all__' && searched.league !== val) {
       searchInput.value = '';
-      Plotly.restyle('chart_db3b2b81', {'marker.size': baseSizes}, traceIndices);
-      Plotly.relayout('chart_db3b2b81', {annotations: baseAnnotations});
+      Plotly.restyle('chart_67b7b3b0', {'marker.size': baseSizes}, traceIndices);
+      Plotly.relayout('chart_67b7b3b0', {annotations: baseAnnotations});
     }
   });
 })();

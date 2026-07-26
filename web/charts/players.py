@@ -155,7 +155,7 @@ def chart_box_xg90(df):
     return ChartPage(
         slug="nivel-goleador-liga", section=SECTION, title="Nivel goleador esperado por liga",
         subtitle="xG por 90' de todos los jugadores, agrupados por liga.",
-        body_html=plot_html(figb1, width=800, height=520),
+        body_html=plot_html(figb1, width=800, height=520), kind="box",
     )
 
 
@@ -169,7 +169,7 @@ def chart_box_xa90(df):
     return ChartPage(
         slug="nivel-creacion-liga", section=SECTION, title="Nivel de creación esperado por liga",
         subtitle="xA por 90' de todos los jugadores, agrupados por liga.",
-        body_html=plot_html(figb2, width=800, height=520),
+        body_html=plot_html(figb2, width=800, height=520), kind="box",
     )
 
 
