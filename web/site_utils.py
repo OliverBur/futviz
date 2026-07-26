@@ -13,7 +13,13 @@ DATA_DIR = REPO_ROOT / "data"
 CODE_DIR = REPO_ROOT / "code"
 
 sys.path.insert(0, str(CODE_DIR))
-from viz_theme import INK  # noqa: E402
+
+# Un solo <link> de Google Fonts, con todos los pesos que usa cualquier
+# plantilla del sitio (landing, secciones, páginas de chart) — se inyecta
+# igual en las tres para que la tipografía no cambie de una capa a otra.
+FONT_LINKS = """<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">"""
 
 
 @dataclass
@@ -23,6 +29,33 @@ class ChartPage:
     title: str
     subtitle: str
     body_html: str
+    kind: str = "scatter"  # scatter | radar | bar | box — qué ícono mostrar en la grilla de sección
+
+
+# Ícono por tipo de gráfico, para que las cards de `equipos.html`/`jugadores.html`
+# se puedan distinguir de un vistazo sin abrirlas (antes eran solo texto).
+CHART_ICONS = {
+    "scatter": (
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+        'stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="16" r="2"/>'
+        '<circle cx="12" cy="9" r="2"/><circle cx="18" cy="14" r="2"/><circle cx="15" cy="6" r="2"/></svg>'
+    ),
+    "radar": (
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+        'stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4"/>'
+        '<circle cx="12" cy="12" r="8"/></svg>'
+    ),
+    "bar": (
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+        'stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="4" height="11"/>'
+        '<rect x="10" y="5" width="4" height="16"/><rect x="17" y="13" width="4" height="8"/></svg>'
+    ),
+    "box": (
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+        'stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4"/>'
+        '<rect x="6" y="7" width="12" height="10" rx="1"/><path d="M6 12h12"/></svg>'
+    ),
+}
 
 
 # Slug de archivo para la página de cada sección (dist/{slug}.html) y
@@ -31,6 +64,8 @@ SECTION_META = {
     "Equipos": {
         "slug": "equipos",
         "description": "Rendimiento, estilo de juego y disciplina a nivel de equipo.",
+        # Chip verde-menta — la card de Equipos "es" el acento principal de marca.
+        "chip_class": "mint",
         "icon": (
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
             'stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="4" height="11"/>'
@@ -40,6 +75,9 @@ SECTION_META = {
     "Jugadores": {
         "slug": "jugadores",
         "description": "Producción individual, eficiencia y perfiles ofensivos.",
+        # Chip azul petróleo — distingue la card de Jugadores de la de Equipos
+        # sin salirse de la paleta fija de 5 colores del proyecto.
+        "chip_class": "petrol",
         "icon": (
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
             'stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="15" r="2.4"/>'
@@ -55,26 +93,35 @@ PAGE_TEMPLATE = """<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title} · FutViz</title>
+{font_links}
 <style>
-  * {{ box-sizing: border-box; }}
-  html {{ -webkit-text-size-adjust: 100%; }}
-  body {{ margin: 0; font-family: "Segoe UI", Arial, sans-serif;
-    background: {surface}; color: {primary}; }}
-  header {{ padding: 22px 32px; }}
-  header a {{ color: {muted}; text-decoration: none; font-size: 13px; }}
-  header a:hover {{ color: {primary}; }}
-  main {{ padding: 0 32px 60px; }}
-  .chart-scroll {{ max-width: 100%; overflow-x: auto; }}
+{brand_root}
+  header {{ display: flex; align-items: center; gap: 8px; padding: 18px 32px;
+    border-bottom: 1px solid var(--color-border); }}
+  .crumb {{ color: var(--color-muted); text-decoration: none; font-size: 13px; font-weight: 500; }}
+  .crumb:hover {{ color: var(--color-primary); }}
+  .crumb.brand {{ display: inline-flex; align-items: center; gap: 8px;
+    color: var(--color-primary); font-weight: 700; }}
+  .crumb.brand .mark {{ display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 6px; background: var(--color-primary);
+    color: var(--color-bg); font-size: 10px; font-weight: 800; }}
+  .crumb-sep {{ color: var(--color-border); font-size: 13px; }}
+  main {{ padding: 28px 32px 60px; }}
+  .chart-scroll {{ max-width: 100%; overflow-x: auto; background: var(--color-surface);
+    border: 1px solid var(--color-border); border-radius: 14px; padding: 20px; }}
   img.static-chart {{ max-width: 100%; min-width: 600px; height: auto; border-radius: 6px; display: block; }}
   @media (max-width: 640px) {{
-    header {{ padding: 16px; }}
-    main {{ padding: 0 16px 40px; }}
+    header {{ padding: 14px 16px; }}
+    main {{ padding: 20px 16px 40px; }}
+    .chart-scroll {{ padding: 12px; }}
   }}
 </style>
 </head>
 <body>
 <header>
-  <a href="../{section_slug}.html">&larr; Volver a {section_name}</a>
+  <a class="crumb brand" href="../index.html"><span class="mark" aria-hidden="true">FV</span>FutViz</a>
+  <span class="crumb-sep">/</span>
+  <a class="crumb" href="../{section_slug}.html">{section_name}</a>
 </header>
 <main><div class="chart-scroll">{body}</div></main>
 </body>
@@ -107,19 +154,27 @@ INDEX_TEMPLATE = """<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FutViz — EDA 5 grandes ligas</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+{font_links}
 <style>
 {brand_root}
   body {{ min-height: 100vh; display: flex; align-items: center; justify-content: center;
-    padding: 48px 20px; }}
+    padding: 48px 20px;
+    background:
+      radial-gradient(640px circle at 12% 18%, rgba(14, 237, 149, 0.09), transparent 60%),
+      radial-gradient(720px circle at 88% 82%, rgba(45, 86, 97, 0.07), transparent 60%),
+      var(--color-bg);
+  }}
 
   .hero {{ max-width: 900px; text-align: center; }}
+  .brandmark {{ display: inline-flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px; border-radius: 12px; margin-bottom: 20px;
+    background: var(--color-primary); color: var(--color-bg);
+    font-size: 16px; font-weight: 800; letter-spacing: -0.02em; }}
   h1 {{ font-size: 40px; font-weight: 800; letter-spacing: -0.02em;
     color: var(--color-primary); margin: 0 0 16px; }}
   .lead {{ color: var(--color-muted); font-size: 16px; line-height: 1.6;
     max-width: 60ch; margin: 0 auto; }}
+  .foot {{ color: var(--color-muted); font-size: 12.5px; margin: 56px 0 0; }}
 
   .cards {{ display: flex; flex-direction: column; align-items: center;
     gap: 20px; margin-top: 44px; }}
@@ -129,15 +184,22 @@ INDEX_TEMPLATE = """<!doctype html>
     background: var(--color-surface); border: 1.5px solid var(--color-primary);
     border-radius: 18px; padding: 30px 28px;
     transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background-color .18s ease; }}
+  a.hub-card.mint {{ border-color: rgba(14, 237, 149, 0.55); }}
   a.hub-card:hover, a.hub-card:focus-visible {{
     transform: translateY(-4px);
     box-shadow: 0 18px 34px rgba(45, 86, 97, 0.16);
     border-color: var(--color-accent);
     background: var(--color-accent-soft);
-    outline: none;
   }}
-  .hub-icon {{ color: var(--color-accent); width: 40px; height: 40px; margin-bottom: 18px; }}
-  .hub-icon svg {{ width: 100%; height: 100%; }}
+  a.hub-card:focus-visible {{
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+  }}
+  .hub-icon {{ display: flex; align-items: center; justify-content: center;
+    width: 56px; height: 56px; border-radius: 14px; margin-bottom: 20px; }}
+  .hub-icon svg {{ width: 26px; height: 26px; }}
+  .hub-icon.mint {{ background: var(--color-accent-soft); color: var(--color-primary); }}
+  .hub-icon.petrol {{ background: rgba(45, 86, 97, 0.10); color: var(--color-primary); }}
   .hub-title {{ font-size: 21px; font-weight: 700; color: var(--color-primary); margin-bottom: 8px; }}
   .hub-sub {{ font-size: 14px; color: var(--color-text-body); line-height: 1.5; margin-bottom: 18px; }}
   .hub-count {{ display: inline-block; font-size: 12px; font-weight: 700; text-transform: uppercase;
@@ -154,16 +216,18 @@ INDEX_TEMPLATE = """<!doctype html>
 </head>
 <body>
 <div class="hero">
+  <div class="brandmark" aria-hidden="true">FV</div>
   <h1>FutViz</h1>
   <p class="lead">Análisis de datos públicos de fbref y Understat de las 5 grandes ligas de la temporada 2025/2026</p>
   <div class="cards">{cards}</div>
+  <p class="foot">Datos: fbref (equipos) &amp; Understat (jugadores) · Temporada 2025/2026</p>
 </div>
 </body>
 </html>
 """
 
-HUB_CARD_TEMPLATE = """<a class="hub-card" href="{slug}.html">
-  <div class="hub-icon">{icon}</div>
+HUB_CARD_TEMPLATE = """<a class="hub-card {chip_class}" href="{slug}.html">
+  <div class="hub-icon {chip_class}">{icon}</div>
   <div class="hub-title">{name}</div>
   <div class="hub-sub">{description}</div>
   <div class="hub-count">{count} gráfica{plural}</div>
@@ -176,14 +240,19 @@ SECTION_PAGE_TEMPLATE = """<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{name} · FutViz</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+{font_links}
 <style>
 {brand_root}
-  header {{ padding: 32px 20px 24px; border-bottom: 1px solid var(--color-border); }}
-  header a {{ color: var(--color-muted); text-decoration: none; font-size: 13px; font-weight: 500; }}
-  header a:hover {{ color: var(--color-primary); }}
+  header {{ padding: 24px 20px 24px; border-bottom: 1px solid var(--color-border); }}
+  .crumb {{ color: var(--color-muted); text-decoration: none; font-size: 13px; font-weight: 500; }}
+  .crumb:hover {{ color: var(--color-primary); }}
+  .crumb.brand {{ display: inline-flex; align-items: center; gap: 8px;
+    color: var(--color-primary); font-weight: 700; }}
+  .crumb.brand .mark {{ display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 6px; background: var(--color-primary);
+    color: var(--color-bg); font-size: 10px; font-weight: 800; }}
+  .crumb-sep {{ color: var(--color-border); font-size: 13px; margin: 0 2px; }}
+  .crumb-current {{ color: var(--color-muted); font-size: 13px; font-weight: 600; }}
   h1 {{ font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
     color: var(--color-primary); margin: 14px 0 8px; }}
   .lead {{ color: var(--color-muted); font-size: 14px; line-height: 1.55; max-width: 640px; }}
@@ -191,7 +260,7 @@ SECTION_PAGE_TEMPLATE = """<!doctype html>
   main {{ padding: 28px 20px 64px; max-width: 1180px; margin: 0 auto; }}
   .grid {{ display: grid; grid-template-columns: 1fr; gap: 16px; }}
 
-  a.card {{ display: block; padding: 18px 20px; border-radius: 12px;
+  a.card {{ display: flex; gap: 14px; align-items: flex-start; padding: 18px 20px; border-radius: 12px;
     text-decoration: none; color: inherit; background: var(--color-surface);
     border: 1px solid var(--color-border); box-shadow: 0 1px 2px rgba(45, 86, 97, 0.05);
     transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background-color .18s ease; }}
@@ -201,6 +270,10 @@ SECTION_PAGE_TEMPLATE = """<!doctype html>
     border-color: var(--color-accent);
     background: var(--color-accent-soft);
   }}
+  .card-icon {{ flex: none; display: flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px; border-radius: 10px; background: var(--color-accent-soft);
+    color: var(--color-primary); }}
+  .card-icon svg {{ width: 18px; height: 18px; }}
   a.card .card-title {{ font-size: 15.5px; font-weight: 600; color: var(--color-primary);
     line-height: 1.35; margin-bottom: 6px; }}
   a.card .card-sub {{ font-size: 13px; font-weight: 400; color: var(--color-muted); line-height: 1.5; }}
@@ -219,7 +292,9 @@ SECTION_PAGE_TEMPLATE = """<!doctype html>
 </head>
 <body>
 <header>
-  <a href="index.html">&larr; Volver</a>
+  <a class="crumb brand" href="index.html"><span class="mark" aria-hidden="true">FV</span>FutViz</a>
+  <span class="crumb-sep">/</span>
+  <span class="crumb-current">{name}</span>
   <h1>{name}</h1>
   <div class="lead">{description}</div>
 </header>
@@ -229,8 +304,11 @@ SECTION_PAGE_TEMPLATE = """<!doctype html>
 """
 
 CARD_TEMPLATE = """<a class="card" href="charts/{slug}.html">
-  <div class="card-title">{title}</div>
-  <div class="card-sub">{subtitle}</div>
+  <div class="card-icon">{icon}</div>
+  <div>
+    <div class="card-title">{title}</div>
+    <div class="card-sub">{subtitle}</div>
+  </div>
 </a>
 """
 
@@ -238,10 +316,9 @@ CARD_TEMPLATE = """<a class="card" href="charts/{slug}.html">
 def write_chart_page(page: ChartPage, charts_dir: Path) -> Path:
     section_slug = SECTION_META.get(page.section, {}).get("slug", "index")
     html = PAGE_TEMPLATE.format(
-        title=page.title, subtitle=page.subtitle, body=page.body_html,
-        surface=INK["surface"], primary=INK["primary"],
-        secondary=INK["secondary"], muted=INK["muted"],
+        title=page.title, body=page.body_html,
         section_slug=section_slug, section_name=page.section,
+        font_links=FONT_LINKS, brand_root=BRAND_ROOT_CSS,
     )
     out_path = charts_dir / f"{page.slug}.html"
     out_path.write_text(html, encoding="utf-8")
@@ -259,11 +336,13 @@ def write_section_pages(pages: list[ChartPage], dist_dir: Path) -> list[Path]:
     for name, section_pages in sections.items():
         meta = SECTION_META[name]
         cards = "".join(
-            CARD_TEMPLATE.format(slug=p.slug, title=p.title, subtitle=p.subtitle)
+            CARD_TEMPLATE.format(slug=p.slug, title=p.title, subtitle=p.subtitle,
+                                  icon=CHART_ICONS[p.kind])
             for p in section_pages
         )
         html = SECTION_PAGE_TEMPLATE.format(
-            name=name, description=meta["description"], cards=cards, brand_root=BRAND_ROOT_CSS,
+            name=name, description=meta["description"], cards=cards,
+            brand_root=BRAND_ROOT_CSS, font_links=FONT_LINKS,
         )
         out_path = dist_dir / f"{meta['slug']}.html"
         out_path.write_text(html, encoding="utf-8")
@@ -279,13 +358,14 @@ def write_index(pages: list[ChartPage], dist_dir: Path) -> Path:
     cards = "".join(
         HUB_CARD_TEMPLATE.format(
             slug=meta["slug"], name=name, description=meta["description"], icon=meta["icon"],
+            chip_class=meta["chip_class"],
             count=counts.get(name, 0), plural="" if counts.get(name, 0) == 1 else "s",
         )
         for name, meta in SECTION_META.items()
         if name in counts
     )
 
-    html = INDEX_TEMPLATE.format(cards=cards, brand_root=BRAND_ROOT_CSS)
+    html = INDEX_TEMPLATE.format(cards=cards, brand_root=BRAND_ROOT_CSS, font_links=FONT_LINKS)
     out_path = dist_dir / "index.html"
     out_path.write_text(html, encoding="utf-8")
     return out_path

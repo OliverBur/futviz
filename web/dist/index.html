@@ -25,13 +25,23 @@
     background: var(--color-bg); color: var(--color-text-body); }
 
   body { min-height: 100vh; display: flex; align-items: center; justify-content: center;
-    padding: 48px 20px; }
+    padding: 48px 20px;
+    background:
+      radial-gradient(640px circle at 12% 18%, rgba(14, 237, 149, 0.09), transparent 60%),
+      radial-gradient(720px circle at 88% 82%, rgba(45, 86, 97, 0.07), transparent 60%),
+      var(--color-bg);
+  }
 
   .hero { max-width: 900px; text-align: center; }
+  .brandmark { display: inline-flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px; border-radius: 12px; margin-bottom: 20px;
+    background: var(--color-primary); color: var(--color-bg);
+    font-size: 16px; font-weight: 800; letter-spacing: -0.02em; }
   h1 { font-size: 40px; font-weight: 800; letter-spacing: -0.02em;
     color: var(--color-primary); margin: 0 0 16px; }
   .lead { color: var(--color-muted); font-size: 16px; line-height: 1.6;
     max-width: 60ch; margin: 0 auto; }
+  .foot { color: var(--color-muted); font-size: 12.5px; margin: 56px 0 0; }
 
   .cards { display: flex; flex-direction: column; align-items: center;
     gap: 20px; margin-top: 44px; }
@@ -41,15 +51,22 @@
     background: var(--color-surface); border: 1.5px solid var(--color-primary);
     border-radius: 18px; padding: 30px 28px;
     transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background-color .18s ease; }
+  a.hub-card.mint { border-color: rgba(14, 237, 149, 0.55); }
   a.hub-card:hover, a.hub-card:focus-visible {
     transform: translateY(-4px);
     box-shadow: 0 18px 34px rgba(45, 86, 97, 0.16);
     border-color: var(--color-accent);
     background: var(--color-accent-soft);
-    outline: none;
   }
-  .hub-icon { color: var(--color-accent); width: 40px; height: 40px; margin-bottom: 18px; }
-  .hub-icon svg { width: 100%; height: 100%; }
+  a.hub-card:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+  }
+  .hub-icon { display: flex; align-items: center; justify-content: center;
+    width: 56px; height: 56px; border-radius: 14px; margin-bottom: 20px; }
+  .hub-icon svg { width: 26px; height: 26px; }
+  .hub-icon.mint { background: var(--color-accent-soft); color: var(--color-primary); }
+  .hub-icon.petrol { background: rgba(45, 86, 97, 0.10); color: var(--color-primary); }
   .hub-title { font-size: 21px; font-weight: 700; color: var(--color-primary); margin-bottom: 8px; }
   .hub-sub { font-size: 14px; color: var(--color-text-body); line-height: 1.5; margin-bottom: 18px; }
   .hub-count { display: inline-block; font-size: 12px; font-weight: 700; text-transform: uppercase;
@@ -66,21 +83,23 @@
 </head>
 <body>
 <div class="hero">
+  <div class="brandmark" aria-hidden="true">FV</div>
   <h1>FutViz</h1>
   <p class="lead">Análisis de datos públicos de fbref y Understat de las 5 grandes ligas de la temporada 2025/2026</p>
-  <div class="cards"><a class="hub-card" href="equipos.html">
-  <div class="hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="4" height="11"/><rect x="10" y="5" width="4" height="16"/><rect x="17" y="13" width="4" height="8"/></svg></div>
+  <div class="cards"><a class="hub-card mint" href="equipos.html">
+  <div class="hub-icon mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="4" height="11"/><rect x="10" y="5" width="4" height="16"/><rect x="17" y="13" width="4" height="8"/></svg></div>
   <div class="hub-title">Equipos</div>
   <div class="hub-sub">Rendimiento, estilo de juego y disciplina a nivel de equipo.</div>
   <div class="hub-count">9 gráficas</div>
 </a>
-<a class="hub-card" href="jugadores.html">
-  <div class="hub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="15" r="2.4"/><circle cx="13" cy="7" r="2.4"/><circle cx="19" cy="17" r="2.4"/><path d="M8 13.5 11 9M15 8.5 17.5 15"/></svg></div>
+<a class="hub-card petrol" href="jugadores.html">
+  <div class="hub-icon petrol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="15" r="2.4"/><circle cx="13" cy="7" r="2.4"/><circle cx="19" cy="17" r="2.4"/><path d="M8 13.5 11 9M15 8.5 17.5 15"/></svg></div>
   <div class="hub-title">Jugadores</div>
   <div class="hub-sub">Producción individual, eficiencia y perfiles ofensivos.</div>
   <div class="hub-count">5 gráficas</div>
 </a>
 </div>
+  <p class="foot">Datos: fbref (equipos) &amp; Understat (jugadores) · Temporada 2025/2026</p>
 </div>
 </body>
 </html>

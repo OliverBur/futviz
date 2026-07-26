@@ -4,26 +4,52 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ranking de porterías · FutViz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+
+  :root {
+    --color-primary: #2D5661;
+    --color-bg: #EFEDF7;
+    --color-accent: #0EED95;
+    --color-text-body: #1A2E33;
+    --color-accent-soft: rgba(14, 237, 149, 0.125); /* = #0EED9520 */
+    --color-surface: #FFFFFF;
+    --color-muted: #57707A;
+    --color-border: #DEDBEA;
+  }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
-  body { margin: 0; font-family: "Segoe UI", Arial, sans-serif;
-    background: #fcfcfb; color: #0b0b0b; }
-  header { padding: 22px 32px; }
-  header a { color: #898781; text-decoration: none; font-size: 13px; }
-  header a:hover { color: #0b0b0b; }
-  main { padding: 0 32px 60px; }
-  .chart-scroll { max-width: 100%; overflow-x: auto; }
+  body { margin: 0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--color-bg); color: var(--color-text-body); }
+
+  header { display: flex; align-items: center; gap: 8px; padding: 18px 32px;
+    border-bottom: 1px solid var(--color-border); }
+  .crumb { color: var(--color-muted); text-decoration: none; font-size: 13px; font-weight: 500; }
+  .crumb:hover { color: var(--color-primary); }
+  .crumb.brand { display: inline-flex; align-items: center; gap: 8px;
+    color: var(--color-primary); font-weight: 700; }
+  .crumb.brand .mark { display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 6px; background: var(--color-primary);
+    color: var(--color-bg); font-size: 10px; font-weight: 800; }
+  .crumb-sep { color: var(--color-border); font-size: 13px; }
+  main { padding: 28px 32px 60px; }
+  .chart-scroll { max-width: 100%; overflow-x: auto; background: var(--color-surface);
+    border: 1px solid var(--color-border); border-radius: 14px; padding: 20px; }
   img.static-chart { max-width: 100%; min-width: 600px; height: auto; border-radius: 6px; display: block; }
   @media (max-width: 640px) {
-    header { padding: 16px; }
-    main { padding: 0 16px 40px; }
+    header { padding: 14px 16px; }
+    main { padding: 20px 16px 40px; }
+    .chart-scroll { padding: 12px; }
   }
 </style>
 </head>
 <body>
 <header>
-  <a href="../equipos.html">&larr; Volver a Equipos</a>
+  <a class="crumb brand" href="../index.html"><span class="mark" aria-hidden="true">FV</span>FutViz</a>
+  <span class="crumb-sep">/</span>
+  <a class="crumb" href="../equipos.html">Equipos</a>
 </header>
 <main><div class="chart-scroll"><img class="static-chart" src="assets/ranking-porterias.png" alt="Ranking de porterías"></div></main>
 </body>
