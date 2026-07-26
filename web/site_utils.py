@@ -33,6 +33,7 @@ PAGE_TEMPLATE = """<!doctype html>
 <title>{title} · top5ligas</title>
 <style>
   * {{ box-sizing: border-box; }}
+  html {{ -webkit-text-size-adjust: 100%; }}
   body {{ margin: 0; font-family: "Segoe UI", Arial, sans-serif;
     background: {surface}; color: {primary}; }}
   header {{ padding: 22px 32px 6px; }}
@@ -40,8 +41,15 @@ PAGE_TEMPLATE = """<!doctype html>
   header a:hover {{ color: {primary}; }}
   h1 {{ font-size: 22px; margin: 12px 0 4px; }}
   .subtitle {{ color: {secondary}; font-size: 14px; margin-bottom: 22px; max-width: 780px; }}
-  main {{ padding: 0 32px 60px; overflow-x: auto; }}
-  img.static-chart {{ max-width: 100%; height: auto; border-radius: 6px; }}
+  main {{ padding: 0 32px 60px; }}
+  .chart-scroll {{ max-width: 100%; overflow-x: auto; }}
+  img.static-chart {{ max-width: 100%; min-width: 600px; height: auto; border-radius: 6px; display: block; }}
+  @media (max-width: 640px) {{
+    header {{ padding: 16px 16px 4px; }}
+    h1 {{ font-size: 19px; }}
+    .subtitle {{ font-size: 13px; margin-bottom: 16px; }}
+    main {{ padding: 0 16px 40px; }}
+  }}
 </style>
 </head>
 <body>
@@ -50,7 +58,7 @@ PAGE_TEMPLATE = """<!doctype html>
   <h1>{title}</h1>
   <div class="subtitle">{subtitle}</div>
 </header>
-<main>{body}</main>
+<main><div class="chart-scroll">{body}</div></main>
 </body>
 </html>
 """
@@ -65,13 +73,14 @@ INDEX_TEMPLATE = """<!doctype html>
   * {{ box-sizing: border-box; }}
   body {{ margin: 0; font-family: "Segoe UI", Arial, sans-serif;
     background: {surface}; color: {primary}; }}
+  html {{ -webkit-text-size-adjust: 100%; }}
   header {{ padding: 40px 32px 10px; }}
   h1 {{ font-size: 28px; margin: 0 0 6px; }}
   .lead {{ color: {secondary}; font-size: 15px; max-width: 700px; }}
   main {{ padding: 10px 32px 60px; }}
   h2 {{ font-size: 15px; text-transform: uppercase; letter-spacing: .04em;
     color: {muted}; margin: 34px 0 14px; }}
-  .grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  .grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
     gap: 16px; }}
   a.card {{ display: block; padding: 16px 18px; border: 1px solid {axis};
     border-radius: 10px; text-decoration: none; color: inherit;
@@ -79,6 +88,13 @@ INDEX_TEMPLATE = """<!doctype html>
   a.card:hover {{ border-color: {primary}; }}
   a.card .card-title {{ font-size: 15px; font-weight: 600; margin-bottom: 6px; }}
   a.card .card-sub {{ font-size: 12.5px; color: {secondary}; line-height: 1.4; }}
+  @media (max-width: 640px) {{
+    header {{ padding: 26px 16px 6px; }}
+    h1 {{ font-size: 22px; }}
+    .lead {{ font-size: 13.5px; }}
+    main {{ padding: 6px 16px 40px; }}
+    h2 {{ margin: 26px 0 12px; }}
+  }}
 </style>
 </head>
 <body>

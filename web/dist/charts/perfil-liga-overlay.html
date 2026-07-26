@@ -6,6 +6,7 @@
 <title>Dónde se separa cada liga · top5ligas</title>
 <style>
   * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
   body { margin: 0; font-family: "Segoe UI", Arial, sans-serif;
     background: #fcfcfb; color: #0b0b0b; }
   header { padding: 22px 32px 6px; }
@@ -13,8 +14,15 @@
   header a:hover { color: #0b0b0b; }
   h1 { font-size: 22px; margin: 12px 0 4px; }
   .subtitle { color: #52514e; font-size: 14px; margin-bottom: 22px; max-width: 780px; }
-  main { padding: 0 32px 60px; overflow-x: auto; }
-  img.static-chart { max-width: 100%; height: auto; border-radius: 6px; }
+  main { padding: 0 32px 60px; }
+  .chart-scroll { max-width: 100%; overflow-x: auto; }
+  img.static-chart { max-width: 100%; min-width: 600px; height: auto; border-radius: 6px; display: block; }
+  @media (max-width: 640px) {
+    header { padding: 16px 16px 4px; }
+    h1 { font-size: 19px; }
+    .subtitle { font-size: 13px; margin-bottom: 16px; }
+    main { padding: 0 16px 40px; }
+  }
 </style>
 </head>
 <body>
@@ -23,6 +31,6 @@
   <h1>Dónde se separa cada liga</h1>
   <div class="subtitle">Las 5 formas del radar sobrepuestas, con la tabla de separación por eje.</div>
 </header>
-<main><img class="static-chart" src="assets/perfil-liga-overlay.png" alt="Dónde se separa cada liga"></main>
+<main><div class="chart-scroll"><img class="static-chart" src="assets/perfil-liga-overlay.png" alt="Dónde se separa cada liga"></div></main>
 </body>
 </html>
