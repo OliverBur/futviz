@@ -15,7 +15,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 
-from site_utils import write_chart_page, write_index  # noqa: E402
+from site_utils import write_chart_page, write_index, write_section_pages  # noqa: E402
 from viz_theme import apply_theme, apply_plotly_theme  # noqa: E402
 import teams as teams_charts  # noqa: E402
 import players as players_charts  # noqa: E402
@@ -44,6 +44,9 @@ def main():
     for page in pages:
         out = write_chart_page(page, CHARTS_DIR)
         print(f"  {page.slug} -> {out.relative_to(DIST_DIR)}")
+
+    for out in write_section_pages(pages, DIST_DIR):
+        print(f"  sección -> {out.relative_to(DIST_DIR)}")
 
     index_path = write_index(pages, DIST_DIR)
     print(f"Índice -> {index_path.relative_to(DIST_DIR)}")
