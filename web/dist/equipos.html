@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Equipos · FutViz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+  :root {
+    --color-primary: #2D5661;
+    --color-bg: #EFEDF7;
+    --color-accent: #0EED95;
+    --color-text-body: #1A2E33;
+    --color-accent-soft: rgba(14, 237, 149, 0.125); /* = #0EED9520 */
+    --color-surface: #FFFFFF;
+    --color-muted: #57707A;
+    --color-border: #DEDBEA;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--color-bg); color: var(--color-text-body); }
+
+  header { padding: 32px 20px 24px; border-bottom: 1px solid var(--color-border); }
+  header a { color: var(--color-muted); text-decoration: none; font-size: 13px; font-weight: 500; }
+  header a:hover { color: var(--color-primary); }
+  h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
+    color: var(--color-primary); margin: 14px 0 8px; }
+  .lead { color: var(--color-muted); font-size: 14px; line-height: 1.55; max-width: 640px; }
+
+  main { padding: 28px 20px 64px; max-width: 1180px; margin: 0 auto; }
+  .grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+
+  a.card { display: block; padding: 18px 20px; border-radius: 12px;
+    text-decoration: none; color: inherit; background: var(--color-surface);
+    border: 1px solid var(--color-border); box-shadow: 0 1px 2px rgba(45, 86, 97, 0.05);
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background-color .18s ease; }
+  a.card:hover, a.card:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(45, 86, 97, 0.14);
+    border-color: var(--color-accent);
+    background: var(--color-accent-soft);
+  }
+  a.card .card-title { font-size: 15.5px; font-weight: 600; color: var(--color-primary);
+    line-height: 1.35; margin-bottom: 6px; }
+  a.card .card-sub { font-size: 13px; font-weight: 400; color: var(--color-muted); line-height: 1.5; }
+
+  @media (min-width: 640px) {
+    header { padding: 44px 32px 28px; }
+    h1 { font-size: 28px; }
+    .lead { font-size: 15px; }
+    main { padding: 36px 32px 72px; }
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  }
+  @media (min-width: 960px) {
+    .grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html">&larr; Volver</a>
+  <h1>Equipos</h1>
+  <div class="lead">Rendimiento, estilo de juego y disciplina a nivel de equipo.</div>
+</header>
+<main><div class="grid"><a class="card" href="charts/perfil-liga-radar.html">
+  <div class="card-title">Perfil de estilo por liga</div>
+  <div class="card-sub">8 métricas de estilo por liga, escaladas contra el máximo de las 5.</div>
+</a>
+<a class="card" href="charts/perfil-liga-overlay.html">
+  <div class="card-title">Dónde se separa cada liga</div>
+  <div class="card-sub">Las 5 formas del radar sobrepuestas, con la tabla de separación por eje.</div>
+</a>
+<a class="card" href="charts/eficiencia-definicion.html">
+  <div class="card-title">Eficiencia de definición</div>
+  <div class="card-sub">Precisión (SoT%) vs. definición (G/SoT) — un punto por equipo.</div>
+</a>
+<a class="card" href="charts/ranking-porterias.html">
+  <div class="card-title">Ranking de porterías</div>
+  <div class="card-sub">Índice Save% − GA90 (estandarizado) — mejores y peores 12 del conjunto de las 5 ligas.</div>
+</a>
+<a class="card" href="charts/porteria-vs-resultado.html">
+  <div class="card-title">Portería vs. resultado del equipo</div>
+  <div class="card-sub">Porterías a cero (%) vs. puntos por partido — un punto por equipo.</div>
+</a>
+<a class="card" href="charts/exigencia-rendimiento.html">
+  <div class="card-title">Exigencia vs. rendimiento</div>
+  <div class="card-sub">Tiros a puerta enfrentados (SoTA) vs. tasa de atajadas (Save%) — un punto por equipo.</div>
+</a>
+<a class="card" href="charts/paridad-competitiva.html">
+  <div class="card-title">Paridad competitiva</div>
+  <div class="card-sub">Dispersión de puntos por partido dentro de cada liga.</div>
+</a>
+<a class="card" href="charts/edad-plantilla.html">
+  <div class="card-title">Edad de plantilla</div>
+  <div class="card-sub">Edad promedio por equipo, agrupados por liga.</div>
+</a>
+<a class="card" href="charts/disciplina-amarillas.html">
+  <div class="card-title">Disciplina: tarjetas amarillas</div>
+  <div class="card-sub">Amarillas por 90' de cada equipo, agrupados por liga.</div>
+</a>
+</div></main>
+</body>
+</html>

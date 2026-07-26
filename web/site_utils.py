@@ -25,55 +25,67 @@ class ChartPage:
     body_html: str
 
 
+# Slug de archivo para la página de cada sección (dist/{slug}.html) y
+# metadatos de la card correspondiente en la landing.
+SECTION_META = {
+    "Equipos": {
+        "slug": "equipos",
+        "description": "Rendimiento, estilo de juego y disciplina a nivel de equipo.",
+        "icon": (
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+            'stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="4" height="11"/>'
+            '<rect x="10" y="5" width="4" height="16"/><rect x="17" y="13" width="4" height="8"/></svg>'
+        ),
+    },
+    "Jugadores": {
+        "slug": "jugadores",
+        "description": "Producción individual, eficiencia y perfiles ofensivos.",
+        "icon": (
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+            'stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="15" r="2.4"/>'
+            '<circle cx="13" cy="7" r="2.4"/><circle cx="19" cy="17" r="2.4"/>'
+            '<path d="M8 13.5 11 9M15 8.5 17.5 15"/></svg>'
+        ),
+    },
+}
+
 PAGE_TEMPLATE = """<!doctype html>
 <html lang="es">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{title} · top5ligas</title>
+<title>{title} · FutViz</title>
 <style>
   * {{ box-sizing: border-box; }}
   html {{ -webkit-text-size-adjust: 100%; }}
   body {{ margin: 0; font-family: "Segoe UI", Arial, sans-serif;
     background: {surface}; color: {primary}; }}
-  header {{ padding: 22px 32px 6px; }}
+  header {{ padding: 22px 32px; }}
   header a {{ color: {muted}; text-decoration: none; font-size: 13px; }}
   header a:hover {{ color: {primary}; }}
-  h1 {{ font-size: 22px; margin: 12px 0 4px; }}
-  .subtitle {{ color: {secondary}; font-size: 14px; margin-bottom: 22px; max-width: 780px; }}
   main {{ padding: 0 32px 60px; }}
   .chart-scroll {{ max-width: 100%; overflow-x: auto; }}
   img.static-chart {{ max-width: 100%; min-width: 600px; height: auto; border-radius: 6px; display: block; }}
   @media (max-width: 640px) {{
-    header {{ padding: 16px 16px 4px; }}
-    h1 {{ font-size: 19px; }}
-    .subtitle {{ font-size: 13px; margin-bottom: 16px; }}
+    header {{ padding: 16px; }}
     main {{ padding: 0 16px 40px; }}
   }}
 </style>
 </head>
 <body>
 <header>
-  <a href="../index.html">&larr; Volver</a>
-  <h1>{title}</h1>
-  <div class="subtitle">{subtitle}</div>
+  <a href="../{section_slug}.html">&larr; Volver a {section_name}</a>
 </header>
 <main><div class="chart-scroll">{body}</div></main>
 </body>
 </html>
 """
 
-INDEX_TEMPLATE = """<!doctype html>
-<html lang="es">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>top5ligas — EDA 5 grandes ligas</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root {{
+# CSS compartido por la landing y las páginas de sección: mismo :root de
+# variables de marca para que el sitio se sienta consistente de punta a
+# punta, aunque el rediseño estructural fuerte solo aplique a la landing.
+BRAND_ROOT_CSS = """
+  :root {
     --color-primary: #2D5661;
     --color-bg: #EFEDF7;
     --color-accent: #0EED95;
@@ -82,30 +94,101 @@ INDEX_TEMPLATE = """<!doctype html>
     --color-surface: #FFFFFF;
     --color-muted: #57707A;
     --color-border: #DEDBEA;
-  }}
-  * {{ box-sizing: border-box; }}
-  html {{ -webkit-text-size-adjust: 100%; }}
-  body {{ margin: 0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    background: var(--color-bg); color: var(--color-text-body); }}
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--color-bg); color: var(--color-text-body); }
+"""
 
-  /* Header: separado del resto con un borde inferior sutil */
+INDEX_TEMPLATE = """<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FutViz — EDA 5 grandes ligas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+{brand_root}
+  body {{ min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 48px 20px; }}
+
+  .hero {{ max-width: 900px; text-align: center; }}
+  h1 {{ font-size: 40px; font-weight: 800; letter-spacing: -0.02em;
+    color: var(--color-primary); margin: 0 0 16px; }}
+  .lead {{ color: var(--color-muted); font-size: 16px; line-height: 1.6;
+    max-width: 60ch; margin: 0 auto; }}
+
+  .cards {{ display: flex; flex-direction: column; align-items: center;
+    gap: 20px; margin-top: 44px; }}
+
+  a.hub-card {{ display: block; width: 100%; max-width: 340px; text-align: left;
+    text-decoration: none; color: inherit; cursor: pointer;
+    background: var(--color-surface); border: 1.5px solid var(--color-primary);
+    border-radius: 18px; padding: 30px 28px;
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background-color .18s ease; }}
+  a.hub-card:hover, a.hub-card:focus-visible {{
+    transform: translateY(-4px);
+    box-shadow: 0 18px 34px rgba(45, 86, 97, 0.16);
+    border-color: var(--color-accent);
+    background: var(--color-accent-soft);
+    outline: none;
+  }}
+  .hub-icon {{ color: var(--color-accent); width: 40px; height: 40px; margin-bottom: 18px; }}
+  .hub-icon svg {{ width: 100%; height: 100%; }}
+  .hub-title {{ font-size: 21px; font-weight: 700; color: var(--color-primary); margin-bottom: 8px; }}
+  .hub-sub {{ font-size: 14px; color: var(--color-text-body); line-height: 1.5; margin-bottom: 18px; }}
+  .hub-count {{ display: inline-block; font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .05em; color: var(--color-primary); background: var(--color-accent-soft);
+    border: 1px solid rgba(14, 237, 149, 0.4); border-radius: 999px; padding: 5px 12px; }}
+
+  @media (min-width: 640px) {{
+    h1 {{ font-size: 52px; }}
+    .lead {{ font-size: 17px; }}
+    .cards {{ flex-direction: row; justify-content: center; align-items: stretch; gap: 24px; }}
+    a.hub-card {{ flex: 1 1 300px; }}
+  }}
+</style>
+</head>
+<body>
+<div class="hero">
+  <h1>FutViz</h1>
+  <p class="lead">Análisis de datos públicos de fbref y Understat de las 5 grandes ligas de la temporada 2025/2026</p>
+  <div class="cards">{cards}</div>
+</div>
+</body>
+</html>
+"""
+
+HUB_CARD_TEMPLATE = """<a class="hub-card" href="{slug}.html">
+  <div class="hub-icon">{icon}</div>
+  <div class="hub-title">{name}</div>
+  <div class="hub-sub">{description}</div>
+  <div class="hub-count">{count} gráfica{plural}</div>
+</a>
+"""
+
+SECTION_PAGE_TEMPLATE = """<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{name} · FutViz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+{brand_root}
   header {{ padding: 32px 20px 24px; border-bottom: 1px solid var(--color-border); }}
+  header a {{ color: var(--color-muted); text-decoration: none; font-size: 13px; font-weight: 500; }}
+  header a:hover {{ color: var(--color-primary); }}
   h1 {{ font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
-    color: var(--color-primary); margin: 0 0 8px; }}
+    color: var(--color-primary); margin: 14px 0 8px; }}
   .lead {{ color: var(--color-muted); font-size: 14px; line-height: 1.55; max-width: 640px; }}
 
   main {{ padding: 28px 20px 64px; max-width: 1180px; margin: 0 auto; }}
-  section + section {{ margin-top: 40px; }}
-
-  /* "Eyebrow": el nombre de sección como badge en verde menta. El verde se
-     usa de FONDO (no como texto) — como texto sobre este fondo claro no
-     llega al contraste mínimo AA (~1.3:1); el texto va en --color-primary,
-     que sobre el verde sí cumple AA cómodo. */
-  h2 {{ display: inline-block; font-size: 11.5px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: .07em; color: var(--color-primary); margin: 0 0 16px;
-    background: var(--color-accent-soft); border: 1px solid rgba(14, 237, 149, 0.4);
-    border-radius: 999px; padding: 6px 14px; }}
-
   .grid {{ display: grid; grid-template-columns: 1fr; gap: 16px; }}
 
   a.card {{ display: block; padding: 18px 20px; border-radius: 12px;
@@ -122,13 +205,11 @@ INDEX_TEMPLATE = """<!doctype html>
     line-height: 1.35; margin-bottom: 6px; }}
   a.card .card-sub {{ font-size: 13px; font-weight: 400; color: var(--color-muted); line-height: 1.5; }}
 
-  /* Mobile-first: base = 1 columna; a partir de 640px, 2; desde 960px, 3 */
   @media (min-width: 640px) {{
     header {{ padding: 44px 32px 28px; }}
     h1 {{ font-size: 28px; }}
     .lead {{ font-size: 15px; }}
     main {{ padding: 36px 32px 72px; }}
-    section + section {{ margin-top: 48px; }}
     .grid {{ grid-template-columns: repeat(2, 1fr); gap: 18px; }}
   }}
   @media (min-width: 960px) {{
@@ -138,19 +219,13 @@ INDEX_TEMPLATE = """<!doctype html>
 </head>
 <body>
 <header>
-  <h1>Top 5 ligas — EDA</h1>
-  <div class="lead">Exploración de datos de las 5 grandes ligas europeas, temporada 2025-26.
-    A nivel de equipo (fbref) y de jugador (Understat).</div>
+  <a href="index.html">&larr; Volver</a>
+  <h1>{name}</h1>
+  <div class="lead">{description}</div>
 </header>
-<main>{sections}</main>
+<main><div class="grid">{cards}</div></main>
 </body>
 </html>
-"""
-
-SECTION_TEMPLATE = """<section>
-<h2>{name}</h2>
-<div class="grid">{cards}</div>
-</section>
 """
 
 CARD_TEMPLATE = """<a class="card" href="charts/{slug}.html">
@@ -161,30 +236,56 @@ CARD_TEMPLATE = """<a class="card" href="charts/{slug}.html">
 
 
 def write_chart_page(page: ChartPage, charts_dir: Path) -> Path:
+    section_slug = SECTION_META.get(page.section, {}).get("slug", "index")
     html = PAGE_TEMPLATE.format(
         title=page.title, subtitle=page.subtitle, body=page.body_html,
         surface=INK["surface"], primary=INK["primary"],
         secondary=INK["secondary"], muted=INK["muted"],
+        section_slug=section_slug, section_name=page.section,
     )
     out_path = charts_dir / f"{page.slug}.html"
     out_path.write_text(html, encoding="utf-8")
     return out_path
 
 
-def write_index(pages: list[ChartPage], dist_dir: Path) -> Path:
-    sections = {}
+def write_section_pages(pages: list[ChartPage], dist_dir: Path) -> list[Path]:
+    """Una página por sección (Equipos, Jugadores) con la grilla de charts
+    que antes vivía toda junta en el índice."""
+    sections: dict[str, list[ChartPage]] = {}
     for page in pages:
         sections.setdefault(page.section, []).append(page)
 
-    sections_html = []
+    out_paths = []
     for name, section_pages in sections.items():
+        meta = SECTION_META[name]
         cards = "".join(
             CARD_TEMPLATE.format(slug=p.slug, title=p.title, subtitle=p.subtitle)
             for p in section_pages
         )
-        sections_html.append(SECTION_TEMPLATE.format(name=name, cards=cards))
+        html = SECTION_PAGE_TEMPLATE.format(
+            name=name, description=meta["description"], cards=cards, brand_root=BRAND_ROOT_CSS,
+        )
+        out_path = dist_dir / f"{meta['slug']}.html"
+        out_path.write_text(html, encoding="utf-8")
+        out_paths.append(out_path)
+    return out_paths
 
-    html = INDEX_TEMPLATE.format(sections="".join(sections_html))
+
+def write_index(pages: list[ChartPage], dist_dir: Path) -> Path:
+    counts: dict[str, int] = {}
+    for page in pages:
+        counts[page.section] = counts.get(page.section, 0) + 1
+
+    cards = "".join(
+        HUB_CARD_TEMPLATE.format(
+            slug=meta["slug"], name=name, description=meta["description"], icon=meta["icon"],
+            count=counts.get(name, 0), plural="" if counts.get(name, 0) == 1 else "s",
+        )
+        for name, meta in SECTION_META.items()
+        if name in counts
+    )
+
+    html = INDEX_TEMPLATE.format(cards=cards, brand_root=BRAND_ROOT_CSS)
     out_path = dist_dir / "index.html"
     out_path.write_text(html, encoding="utf-8")
     return out_path

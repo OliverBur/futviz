@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jugadores · FutViz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+  :root {
+    --color-primary: #2D5661;
+    --color-bg: #EFEDF7;
+    --color-accent: #0EED95;
+    --color-text-body: #1A2E33;
+    --color-accent-soft: rgba(14, 237, 149, 0.125); /* = #0EED9520 */
+    --color-surface: #FFFFFF;
+    --color-muted: #57707A;
+    --color-border: #DEDBEA;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--color-bg); color: var(--color-text-body); }
+
+  header { padding: 32px 20px 24px; border-bottom: 1px solid var(--color-border); }
+  header a { color: var(--color-muted); text-decoration: none; font-size: 13px; font-weight: 500; }
+  header a:hover { color: var(--color-primary); }
+  h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
+    color: var(--color-primary); margin: 14px 0 8px; }
+  .lead { color: var(--color-muted); font-size: 14px; line-height: 1.55; max-width: 640px; }
+
+  main { padding: 28px 20px 64px; max-width: 1180px; margin: 0 auto; }
+  .grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+
+  a.card { display: block; padding: 18px 20px; border-radius: 12px;
+    text-decoration: none; color: inherit; background: var(--color-surface);
+    border: 1px solid var(--color-border); box-shadow: 0 1px 2px rgba(45, 86, 97, 0.05);
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background-color .18s ease; }
+  a.card:hover, a.card:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(45, 86, 97, 0.14);
+    border-color: var(--color-accent);
+    background: var(--color-accent-soft);
+  }
+  a.card .card-title { font-size: 15.5px; font-weight: 600; color: var(--color-primary);
+    line-height: 1.35; margin-bottom: 6px; }
+  a.card .card-sub { font-size: 13px; font-weight: 400; color: var(--color-muted); line-height: 1.5; }
+
+  @media (min-width: 640px) {
+    header { padding: 44px 32px 28px; }
+    h1 { font-size: 28px; }
+    .lead { font-size: 15px; }
+    main { padding: 36px 32px 72px; }
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  }
+  @media (min-width: 960px) {
+    .grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html">&larr; Volver</a>
+  <h1>Jugadores</h1>
+  <div class="lead">Producción individual, eficiencia y perfiles ofensivos.</div>
+</header>
+<main><div class="grid"><a class="card" href="charts/goles-vs-xg.html">
+  <div class="card-title">Goles vs. xG</div>
+  <div class="card-sub">Sobre/bajo-rendimiento de definición — un punto por jugador.</div>
+</a>
+<a class="card" href="charts/asistencias-vs-xa.html">
+  <div class="card-title">Asistencias vs. xA</div>
+  <div class="card-sub">Sobre/bajo-rendimiento de creación — un punto por jugador.</div>
+</a>
+<a class="card" href="charts/perfil-ofensivo.html">
+  <div class="card-title">Perfil ofensivo: xG90 vs. xA90</div>
+  <div class="card-sub">Tasas por 90' — killer puro, creador puro o todocampo.</div>
+</a>
+<a class="card" href="charts/nivel-goleador-liga.html">
+  <div class="card-title">Nivel goleador esperado por liga</div>
+  <div class="card-sub">xG por 90' de todos los jugadores, agrupados por liga.</div>
+</a>
+<a class="card" href="charts/nivel-creacion-liga.html">
+  <div class="card-title">Nivel de creación esperado por liga</div>
+  <div class="card-sub">xA por 90' de todos los jugadores, agrupados por liga.</div>
+</a>
+</div></main>
+</body>
+</html>
