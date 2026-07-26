@@ -128,6 +128,11 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     son anotaciones fijas del gráfico (ej. etiquetas de cuadrante) que se
     preservan al buscar.
 
+    Responsivo: el gráfico no lleva ancho/alto fijo en px, sino que ocupa el
+    100% de su contenedor con relación de aspecto `width:height` fija (así
+    no se deforma) hasta un tope de `width`px; en pantallas angostas la
+    barra lateral pasa a apilarse debajo del gráfico en vez de achicarlo.
+
     Devuelve el HTML como string (no lo muestra) — ver `render_with_sidebar`
     para mostrarlo directo en un notebook."""
     import json
@@ -135,9 +140,11 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     import plotly.io as pio
 
     div_id = f"chart_{uuid.uuid4().hex[:8]}"
-    fig.update_layout(width=width, height=height)
+    fig.update_layout(autosize=True)
     plot_html = pio.to_html(fig, full_html=False, include_plotlyjs="cdn",
-                             div_id=div_id, config={"displaylogo": False})
+                             div_id=div_id, config={"displaylogo": False, "responsive": True},
+                             default_width="100%", default_height="100%")
+    aspect_ratio = width / height
 
     base_annotations = list(base_annotations or [])
     base_sizes = [[base_size] * len(sub) for _, sub in scatter_data]
@@ -162,16 +169,25 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
 
     html = f"""
 <style>
-  #{div_id}_sidebar {{ font-family: "Segoe UI", Arial, sans-serif; padding-top: 54px; min-width: 190px; }}
+  #{div_id}_layout {{ display:flex; flex-wrap: wrap; align-items:flex-start; gap:20px; max-width: 100%; }}
+  #{div_id}_plotwrap {{ position: relative; flex: 1 1 280px; width: 100%; max-width: {width}px;
+    aspect-ratio: {aspect_ratio}; min-width: 0; }}
+  #{div_id}_plotwrap > div {{ position: absolute; inset: 0; }}
+  #{div_id}_sidebar {{ font-family: "Segoe UI", Arial, sans-serif; padding-top: 54px;
+    flex: 1 1 190px; max-width: 260px; box-sizing: border-box; }}
   #{div_id}_sidebar .block {{ margin-bottom: 22px; }}
   #{div_id}_sidebar label {{ display: block; font-size: 11px; color: {INK["muted"]};
     text-transform: uppercase; letter-spacing: .03em; margin-bottom: 5px; }}
   #{div_id}_sidebar input, #{div_id}_sidebar select {{ width: 100%; box-sizing: border-box;
     padding: 7px 9px; font-size: 13px; font-family: inherit; color: {INK["primary"]};
     background: {INK["surface"]}; border: 1px solid {INK["axis"]}; border-radius: 6px; }}
+  @media (max-width: 520px) {{
+    #{div_id}_sidebar {{ padding-top: 4px; max-width: 100%; }}
+    #{div_id}_plotwrap {{ aspect-ratio: {max(aspect_ratio * 0.6, 0.85)}; }}
+  }}
 </style>
-<div style="display:flex; align-items:flex-start; gap:20px;">
-  <div>{plot_html}</div>
+<div id="{div_id}_layout">
+  <div id="{div_id}_plotwrap">{plot_html}</div>
   <div id="{div_id}_sidebar">
     <div class="block">
       <label>Buscar {search_label}</label>
@@ -195,6 +211,19 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
   var traceIndices = {json.dumps(trace_indices)};
   var leagueOrder = {json.dumps(league_order)};
   var extraTraces = {extra_traces};
+
+  function updateLegendLayout() {{
+    var w = document.getElementById('{div_id}').offsetWidth;
+    if (w < 420) {{
+      Plotly.relayout('{div_id}', {{'legend.orientation': 'h', 'legend.x': 0, 'legend.y': -0.46,
+        'legend.yanchor': 'top', 'margin.r': 20, 'margin.t': 70, 'margin.b': 140}});
+    }} else {{
+      Plotly.relayout('{div_id}', {{'legend.orientation': 'v', 'legend.x': 1.02, 'legend.y': 1,
+        'legend.yanchor': 'top', 'margin.r': 40, 'margin.t': 90, 'margin.b': 60}});
+    }}
+  }}
+  window.addEventListener('resize', updateLegendLayout);
+  updateLegendLayout();
 
   document.getElementById('{div_id}_search').addEventListener('input', function(e) {{
     var val = e.target.value;
@@ -233,15 +262,43 @@ def plot_html(fig, width=680, height=480):
     """Igual que la parte de gráfico de sidebar_chart_html pero sin barra
     lateral — para gráficos donde las 5 ligas ya están comparadas una al
     lado de la otra (ej. un box plot por liga) y no hace falta filtrar.
-    Devuelve el HTML como string; ver `render_plot` para mostrarlo directo
-    en un notebook."""
+    Responsivo con el mismo criterio (contenedor con relación de aspecto
+    fija en vez de tamaño en px). Devuelve el HTML como string; ver
+    `render_plot` para mostrarlo directo en un notebook."""
     import uuid
     import plotly.io as pio
 
     div_id = f"chart_{uuid.uuid4().hex[:8]}"
-    fig.update_layout(width=width, height=height)
-    return pio.to_html(fig, full_html=False, include_plotlyjs="cdn",
-                        div_id=div_id, config={"displaylogo": False})
+    fig.update_layout(autosize=True)
+    inner = pio.to_html(fig, full_html=False, include_plotlyjs="cdn",
+                         div_id=div_id, config={"displaylogo": False, "responsive": True},
+                         default_width="100%", default_height="100%")
+    aspect_ratio = width / height
+    return f"""
+<style>
+  #{div_id}_wrap {{ position: relative; width: 100%; max-width: {width}px;
+    aspect-ratio: {aspect_ratio}; }}
+  #{div_id}_wrap > div {{ position: absolute; inset: 0; }}
+  @media (max-width: 520px) {{
+    #{div_id}_wrap {{ aspect-ratio: {max(aspect_ratio * 0.85, 1.0)}; }}
+  }}
+</style>
+<div id="{div_id}_wrap">{inner}</div>
+<script>
+(function() {{
+  function updateLegendLayout() {{
+    var w = document.getElementById('{div_id}').offsetWidth;
+    if (w < 420) {{
+      Plotly.relayout('{div_id}', {{'margin.r': 20, 'margin.t': 70}});
+    }} else {{
+      Plotly.relayout('{div_id}', {{'margin.r': 40, 'margin.t': 90}});
+    }}
+  }}
+  window.addEventListener('resize', updateLegendLayout);
+  updateLegendLayout();
+}})();
+</script>
+"""
 
 
 def render_plot(fig, width=680, height=480):

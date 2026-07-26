@@ -8,13 +8,14 @@
   * { box-sizing: border-box; }
   body { margin: 0; font-family: "Segoe UI", Arial, sans-serif;
     background: #fcfcfb; color: #0b0b0b; }
+  html { -webkit-text-size-adjust: 100%; }
   header { padding: 40px 32px 10px; }
   h1 { font-size: 28px; margin: 0 0 6px; }
   .lead { color: #52514e; font-size: 15px; max-width: 700px; }
   main { padding: 10px 32px 60px; }
   h2 { font-size: 15px; text-transform: uppercase; letter-spacing: .04em;
     color: #898781; margin: 34px 0 14px; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
     gap: 16px; }
   a.card { display: block; padding: 16px 18px; border: 1px solid #c3c2b7;
     border-radius: 10px; text-decoration: none; color: inherit;
@@ -22,6 +23,13 @@
   a.card:hover { border-color: #0b0b0b; }
   a.card .card-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
   a.card .card-sub { font-size: 12.5px; color: #52514e; line-height: 1.4; }
+  @media (max-width: 640px) {
+    header { padding: 26px 16px 6px; }
+    h1 { font-size: 22px; }
+    .lead { font-size: 13.5px; }
+    main { padding: 6px 16px 40px; }
+    h2 { margin: 26px 0 12px; }
+  }
 </style>
 </head>
 <body>
