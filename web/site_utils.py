@@ -69,31 +69,70 @@ INDEX_TEMPLATE = """<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>top5ligas — EDA 5 grandes ligas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+  :root {{
+    --color-primary: #2D5661;
+    --color-bg: #EFEDF7;
+    --color-accent: #0EED95;
+    --color-text-body: #1A2E33;
+    --color-accent-soft: rgba(14, 237, 149, 0.125); /* = #0EED9520 */
+    --color-surface: #FFFFFF;
+    --color-muted: #57707A;
+    --color-border: #DEDBEA;
+  }}
   * {{ box-sizing: border-box; }}
-  body {{ margin: 0; font-family: "Segoe UI", Arial, sans-serif;
-    background: {surface}; color: {primary}; }}
   html {{ -webkit-text-size-adjust: 100%; }}
-  header {{ padding: 40px 32px 10px; }}
-  h1 {{ font-size: 28px; margin: 0 0 6px; }}
-  .lead {{ color: {secondary}; font-size: 15px; max-width: 700px; }}
-  main {{ padding: 10px 32px 60px; }}
-  h2 {{ font-size: 15px; text-transform: uppercase; letter-spacing: .04em;
-    color: {muted}; margin: 34px 0 14px; }}
-  .grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
-    gap: 16px; }}
-  a.card {{ display: block; padding: 16px 18px; border: 1px solid {axis};
-    border-radius: 10px; text-decoration: none; color: inherit;
-    background: {surface}; transition: border-color .15s; }}
-  a.card:hover {{ border-color: {primary}; }}
-  a.card .card-title {{ font-size: 15px; font-weight: 600; margin-bottom: 6px; }}
-  a.card .card-sub {{ font-size: 12.5px; color: {secondary}; line-height: 1.4; }}
-  @media (max-width: 640px) {{
-    header {{ padding: 26px 16px 6px; }}
-    h1 {{ font-size: 22px; }}
-    .lead {{ font-size: 13.5px; }}
-    main {{ padding: 6px 16px 40px; }}
-    h2 {{ margin: 26px 0 12px; }}
+  body {{ margin: 0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--color-bg); color: var(--color-text-body); }}
+
+  /* Header: separado del resto con un borde inferior sutil */
+  header {{ padding: 32px 20px 24px; border-bottom: 1px solid var(--color-border); }}
+  h1 {{ font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
+    color: var(--color-primary); margin: 0 0 8px; }}
+  .lead {{ color: var(--color-muted); font-size: 14px; line-height: 1.55; max-width: 640px; }}
+
+  main {{ padding: 28px 20px 64px; max-width: 1180px; margin: 0 auto; }}
+  section + section {{ margin-top: 40px; }}
+
+  /* "Eyebrow": el nombre de sección como badge en verde menta. El verde se
+     usa de FONDO (no como texto) — como texto sobre este fondo claro no
+     llega al contraste mínimo AA (~1.3:1); el texto va en --color-primary,
+     que sobre el verde sí cumple AA cómodo. */
+  h2 {{ display: inline-block; font-size: 11.5px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .07em; color: var(--color-primary); margin: 0 0 16px;
+    background: var(--color-accent-soft); border: 1px solid rgba(14, 237, 149, 0.4);
+    border-radius: 999px; padding: 6px 14px; }}
+
+  .grid {{ display: grid; grid-template-columns: 1fr; gap: 16px; }}
+
+  a.card {{ display: block; padding: 18px 20px; border-radius: 12px;
+    text-decoration: none; color: inherit; background: var(--color-surface);
+    border: 1px solid var(--color-border); box-shadow: 0 1px 2px rgba(45, 86, 97, 0.05);
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background-color .18s ease; }}
+  a.card:hover, a.card:focus-visible {{
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(45, 86, 97, 0.14);
+    border-color: var(--color-accent);
+    background: var(--color-accent-soft);
+  }}
+  a.card .card-title {{ font-size: 15.5px; font-weight: 600; color: var(--color-primary);
+    line-height: 1.35; margin-bottom: 6px; }}
+  a.card .card-sub {{ font-size: 13px; font-weight: 400; color: var(--color-muted); line-height: 1.5; }}
+
+  /* Mobile-first: base = 1 columna; a partir de 640px, 2; desde 960px, 3 */
+  @media (min-width: 640px) {{
+    header {{ padding: 44px 32px 28px; }}
+    h1 {{ font-size: 28px; }}
+    .lead {{ font-size: 15px; }}
+    main {{ padding: 36px 32px 72px; }}
+    section + section {{ margin-top: 48px; }}
+    .grid {{ grid-template-columns: repeat(2, 1fr); gap: 18px; }}
+  }}
+  @media (min-width: 960px) {{
+    .grid {{ grid-template-columns: repeat(3, 1fr); gap: 20px; }}
   }}
 </style>
 </head>
@@ -108,8 +147,10 @@ INDEX_TEMPLATE = """<!doctype html>
 </html>
 """
 
-SECTION_TEMPLATE = """<h2>{name}</h2>
+SECTION_TEMPLATE = """<section>
+<h2>{name}</h2>
 <div class="grid">{cards}</div>
+</section>
 """
 
 CARD_TEMPLATE = """<a class="card" href="charts/{slug}.html">
@@ -143,11 +184,7 @@ def write_index(pages: list[ChartPage], dist_dir: Path) -> Path:
         )
         sections_html.append(SECTION_TEMPLATE.format(name=name, cards=cards))
 
-    html = INDEX_TEMPLATE.format(
-        sections="".join(sections_html),
-        surface=INK["surface"], primary=INK["primary"],
-        secondary=INK["secondary"], muted=INK["muted"], axis=INK["axis"],
-    )
+    html = INDEX_TEMPLATE.format(sections="".join(sections_html))
     out_path = dist_dir / "index.html"
     out_path.write_text(html, encoding="utf-8")
     return out_path
