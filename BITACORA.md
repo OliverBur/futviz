@@ -211,6 +211,17 @@ A pedido del usuario, se hizo responsiva toda la página (`web/`), gráficos inc
 - Verificado con Playwright en 3 breakpoints (375px mobile, 768px tablet, 1440px desktop) sobre `web/dist` ya generado: índice, un scatter con barra lateral, un boxplot y el radar — sin overflow horizontal de página en ningún caso, controles y leyenda usables en mobile.
 - Como el cambio vive en `viz_theme.py`, aplica también a los notebooks (`eda_teams.ipynb`/`eda_players.ipynb`) — se re-ejecutaron ambos con `nbclient` para regenerar las salidas embebidas con el nuevo comportamiento responsivo.
 
+### Rediseño de la landing (estética dashboard de datos)
+
+El usuario pidió un rediseño visual del `index.html` con una paleta específica (azul petróleo `#2D5661`, fondo lavanda `#EFEDF7`, verde menta `#0EED95`, texto `#1A2E33`) y look de "dashboard de datos profesional" — sin tocar la lógica ni las páginas de gráficos individuales, solo `web/site_utils.py` (plantilla `INDEX_TEMPLATE`/`SECTION_TEMPLATE`/`CARD_TEMPLATE`).
+
+- **Hallazgo de accesibilidad antes de aplicar la paleta**: el verde menta como texto plano sobre el fondo claro da un contraste ~1.3:1 (WCAG exige 4.5:1 para texto normal) — prácticamente ilegible. Se resolvió usándolo solo como **fondo** (badge de sección tipo "eyebrow", fondo de hover de tarjeta) con el texto encima en `--color-primary` (que sí cumple AA cómodo). Se verificó con cálculo manual de luminancia relativa (fórmula WCAG) sobre los pares de color reales del rediseño: título sobre fondo 6.93:1, texto de lead 4.53:1, título de tarjeta sobre blanco 8.03:1, descripción de tarjeta 5.24:1 — todos por encima del mínimo.
+- Grid de tarjetas mobile-first (1 columna base, 2 desde 640px, 3 desde 960px vía `auto` con media queries `min-width`, no `max-width` como antes).
+- Tipografía Inter (Google Fonts) con fallback a `system-ui`/Segoe UI.
+- Hover de tarjeta: eleva (`translateY`), sombra, borde y fondo pasan a verde-soft, transición 180ms.
+- Las secciones "Equipos"/"Jugadores" (contenido existente, no se agregó texto nuevo) se restilizaron como badges eyebrow en vez de un `<h2>` plano.
+- Verificado que las páginas de gráfico individuales (`web/dist/charts/*.html`) no cambiaron de contenido/lógica al rebuildear — el único diff es el `uuid` aleatorio del div de Plotly, que cambia en cada corrida de `build.py` independientemente de cualquier edición.
+
 ## Próximos pasos
 
 - [x] ~~Revisar los gráficos abiertos en un kernel real de Jupyter~~ — hecho, varias rondas (colores, solapamiento, ajustes finos)
