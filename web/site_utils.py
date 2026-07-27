@@ -96,32 +96,30 @@ PAGE_TEMPLATE = """<!doctype html>
 {font_links}
 <style>
 {brand_root}
-  header {{ display: flex; align-items: center; gap: 8px; padding: 18px 32px;
-    border-bottom: 1px solid var(--color-border); }}
+  header {{ display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 14px 32px; border-bottom: 1px solid var(--color-border); }}
   .crumb {{ color: var(--color-muted); text-decoration: none; font-size: 13px; font-weight: 500; }}
   .crumb:hover {{ color: var(--color-primary); }}
-  .crumb.brand {{ display: inline-flex; align-items: center; gap: 8px;
-    color: var(--color-primary); font-weight: 700; }}
-  .crumb.brand .mark {{ display: inline-flex; align-items: center; justify-content: center;
-    width: 22px; height: 22px; border-radius: 6px; background: var(--color-primary);
-    color: var(--color-bg); font-size: 10px; font-weight: 800; }}
-  .crumb-sep {{ color: var(--color-border); font-size: 13px; }}
+  .site-logo-link {{ flex: none; line-height: 0; }}
+  .site-logo {{ height: 30px; width: auto; display: block; }}
   main {{ padding: 28px 32px 60px; }}
   .chart-scroll {{ max-width: 100%; overflow-x: auto; background: var(--color-surface);
     border: 1px solid var(--color-border); border-radius: 14px; padding: 20px; }}
   img.static-chart {{ max-width: 100%; min-width: 600px; height: auto; border-radius: 6px; display: block; }}
   @media (max-width: 640px) {{
-    header {{ padding: 14px 16px; }}
+    header {{ padding: 12px 16px; }}
     main {{ padding: 20px 16px 40px; }}
     .chart-scroll {{ padding: 12px; }}
+    .site-logo {{ height: 24px; }}
   }}
 </style>
 </head>
 <body>
 <header>
-  <a class="crumb brand" href="../index.html"><span class="mark" aria-hidden="true">FV</span>FutViz</a>
-  <span class="crumb-sep">/</span>
-  <a class="crumb" href="../{section_slug}.html">{section_name}</a>
+  <a class="crumb" href="../{section_slug}.html">&larr; {section_name}</a>
+  <a class="site-logo-link" href="../index.html">
+    <img class="site-logo" src="../assets/logo.png" alt="FutViz — volver al inicio">
+  </a>
 </header>
 <main><div class="chart-scroll">{body}</div></main>
 </body>
@@ -166,12 +164,8 @@ INDEX_TEMPLATE = """<!doctype html>
   }}
 
   .hero {{ max-width: 900px; text-align: center; }}
-  .brandmark {{ display: inline-flex; align-items: center; justify-content: center;
-    width: 44px; height: 44px; border-radius: 12px; margin-bottom: 20px;
-    background: var(--color-primary); color: var(--color-bg);
-    font-size: 16px; font-weight: 800; letter-spacing: -0.02em; }}
-  h1 {{ font-size: 40px; font-weight: 800; letter-spacing: -0.02em;
-    color: var(--color-primary); margin: 0 0 16px; }}
+  h1 {{ margin: 0 0 20px; }}
+  .logo-large {{ display: block; width: min(380px, 75vw); height: auto; margin: 0 auto; }}
   .lead {{ color: var(--color-muted); font-size: 16px; line-height: 1.6;
     max-width: 60ch; margin: 0 auto; }}
   .foot {{ color: var(--color-muted); font-size: 12.5px; margin: 56px 0 0; }}
@@ -207,7 +201,6 @@ INDEX_TEMPLATE = """<!doctype html>
     border: 1px solid rgba(14, 237, 149, 0.4); border-radius: 999px; padding: 5px 12px; }}
 
   @media (min-width: 640px) {{
-    h1 {{ font-size: 52px; }}
     .lead {{ font-size: 17px; }}
     .cards {{ flex-direction: row; justify-content: center; align-items: stretch; gap: 24px; }}
     a.hub-card {{ flex: 1 1 300px; }}
@@ -216,8 +209,7 @@ INDEX_TEMPLATE = """<!doctype html>
 </head>
 <body>
 <div class="hero">
-  <div class="brandmark" aria-hidden="true">FV</div>
-  <h1>FutViz</h1>
+  <h1><img class="logo-large" src="assets/logo.png" alt="FutViz"></h1>
   <p class="lead">Análisis de datos públicos de fbref y Understat de las 5 grandes ligas de la temporada 2025/2026</p>
   <div class="cards">{cards}</div>
   <p class="foot">Datos: fbref (equipos) &amp; Understat (jugadores) · Temporada 2025/2026</p>
@@ -243,18 +235,13 @@ SECTION_PAGE_TEMPLATE = """<!doctype html>
 {font_links}
 <style>
 {brand_root}
-  header {{ padding: 24px 20px 24px; border-bottom: 1px solid var(--color-border); }}
-  .crumb {{ color: var(--color-muted); text-decoration: none; font-size: 13px; font-weight: 500; }}
-  .crumb:hover {{ color: var(--color-primary); }}
-  .crumb.brand {{ display: inline-flex; align-items: center; gap: 8px;
-    color: var(--color-primary); font-weight: 700; }}
-  .crumb.brand .mark {{ display: inline-flex; align-items: center; justify-content: center;
-    width: 22px; height: 22px; border-radius: 6px; background: var(--color-primary);
-    color: var(--color-bg); font-size: 10px; font-weight: 800; }}
-  .crumb-sep {{ color: var(--color-border); font-size: 13px; margin: 0 2px; }}
-  .crumb-current {{ color: var(--color-muted); font-size: 13px; font-weight: 600; }}
+  header {{ padding: 20px 20px 24px; border-bottom: 1px solid var(--color-border); }}
+  .topbar {{ display: flex; align-items: center; justify-content: space-between; gap: 12px; }}
+  .crumb-current {{ color: var(--color-muted); font-size: 13px; font-weight: 500; }}
+  .site-logo-link {{ flex: none; line-height: 0; }}
+  .site-logo {{ height: 30px; width: auto; display: block; }}
   h1 {{ font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
-    color: var(--color-primary); margin: 14px 0 8px; }}
+    color: var(--color-primary); margin: 16px 0 8px; }}
   .lead {{ color: var(--color-muted); font-size: 14px; line-height: 1.55; max-width: 640px; }}
 
   main {{ padding: 28px 20px 64px; max-width: 1180px; margin: 0 auto; }}
@@ -279,7 +266,7 @@ SECTION_PAGE_TEMPLATE = """<!doctype html>
   a.card .card-sub {{ font-size: 13px; font-weight: 400; color: var(--color-muted); line-height: 1.5; }}
 
   @media (min-width: 640px) {{
-    header {{ padding: 44px 32px 28px; }}
+    header {{ padding: 20px 32px 28px; }}
     h1 {{ font-size: 28px; }}
     .lead {{ font-size: 15px; }}
     main {{ padding: 36px 32px 72px; }}
@@ -292,9 +279,12 @@ SECTION_PAGE_TEMPLATE = """<!doctype html>
 </head>
 <body>
 <header>
-  <a class="crumb brand" href="index.html"><span class="mark" aria-hidden="true">FV</span>FutViz</a>
-  <span class="crumb-sep">/</span>
-  <span class="crumb-current">{name}</span>
+  <div class="topbar">
+    <span class="crumb-current">FutViz / {name}</span>
+    <a class="site-logo-link" href="index.html">
+      <img class="site-logo" src="assets/logo.png" alt="FutViz — volver al inicio">
+    </a>
+  </div>
   <h1>{name}</h1>
   <div class="lead">{description}</div>
 </header>

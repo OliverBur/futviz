@@ -33,12 +33,8 @@
   }
 
   .hero { max-width: 900px; text-align: center; }
-  .brandmark { display: inline-flex; align-items: center; justify-content: center;
-    width: 44px; height: 44px; border-radius: 12px; margin-bottom: 20px;
-    background: var(--color-primary); color: var(--color-bg);
-    font-size: 16px; font-weight: 800; letter-spacing: -0.02em; }
-  h1 { font-size: 40px; font-weight: 800; letter-spacing: -0.02em;
-    color: var(--color-primary); margin: 0 0 16px; }
+  h1 { margin: 0 0 20px; }
+  .logo-large { display: block; width: min(380px, 75vw); height: auto; margin: 0 auto; }
   .lead { color: var(--color-muted); font-size: 16px; line-height: 1.6;
     max-width: 60ch; margin: 0 auto; }
   .foot { color: var(--color-muted); font-size: 12.5px; margin: 56px 0 0; }
@@ -74,7 +70,6 @@
     border: 1px solid rgba(14, 237, 149, 0.4); border-radius: 999px; padding: 5px 12px; }
 
   @media (min-width: 640px) {
-    h1 { font-size: 52px; }
     .lead { font-size: 17px; }
     .cards { flex-direction: row; justify-content: center; align-items: stretch; gap: 24px; }
     a.hub-card { flex: 1 1 300px; }
@@ -83,8 +78,7 @@
 </head>
 <body>
 <div class="hero">
-  <div class="brandmark" aria-hidden="true">FV</div>
-  <h1>FutViz</h1>
+  <h1><img class="logo-large" src="assets/logo.png" alt="FutViz"></h1>
   <p class="lead">Análisis de datos públicos de fbref y Understat de las 5 grandes ligas de la temporada 2025/2026</p>
   <div class="cards"><a class="hub-card mint" href="equipos.html">
   <div class="hub-icon mint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="4" height="11"/><rect x="10" y="5" width="4" height="16"/><rect x="17" y="13" width="4" height="8"/></svg></div>
