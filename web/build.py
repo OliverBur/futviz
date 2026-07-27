@@ -73,6 +73,55 @@ def build_logo():
     print(f"  logo -> {(SITE_ASSETS_DIR / 'logo.png').relative_to(DIST_DIR)}")
 
 
+def build_previews():
+    """Thumbnail de preview para cada card de la landing (`dist/assets/
+    preview-{slug}.png`). Si existe una fuente real en `img/preview-{slug}.png`
+    (no versionada, igual que el logo) se usa esa; si no, se genera un
+    placeholder simple con la paleta del sitio, para no dejar un ícono de
+    imagen rota mientras no hay un screenshot real todavía."""
+    from PIL import Image, ImageDraw, ImageFont
+
+    SITE_ASSETS_DIR.mkdir(parents=True, exist_ok=True)
+    labels = {"equipos": "Equipos", "jugadores": "Jugadores"}
+
+    for slug, label in labels.items():
+        dest = SITE_ASSETS_DIR / f"preview-{slug}.png"
+        src = IMG_DIR / f"preview-{slug}.png"
+        if src.exists():
+            shutil.copy(src, dest)
+            print(f"  preview {slug} -> {dest.relative_to(DIST_DIR)} (fuente real)")
+            continue
+
+        w, h = 960, 600
+        bg = (239, 237, 247)      # --color-bg
+        primary = (44, 76, 84)    # --color-primary
+        accent = (57, 153, 6)     # --color-brand-accent
+        img = Image.new("RGB", (w, h), bg)
+        draw = ImageDraw.Draw(img)
+        # Una franja de acento simple en la esquina (misma pareja de
+        # colores del logo, no una cancha ni un balón), sin cruzar el
+        # texto centrado.
+        draw.rectangle([0, 0, w, 10], fill=accent)
+        draw.rectangle([0, 0, 10, h], fill=primary)
+        try:
+            font_big = ImageFont.truetype("segoeui.ttf", 46)
+            font_small = ImageFont.truetype("segoeui.ttf", 24)
+        except OSError:
+            font_big = ImageFont.load_default(size=46)
+            font_small = ImageFont.load_default(size=24)
+
+        def centered(text, y, font, color):
+            bbox = draw.textbbox((0, 0), text, font=font)
+            tw = bbox[2] - bbox[0]
+            draw.text(((w - tw) / 2, y), text, font=font, fill=color)
+
+        centered(label, h / 2 - 46, font_big, primary)
+        centered("vista previa próximamente", h / 2 + 18, font_small, (87, 112, 122))
+
+        img.save(dest)
+        print(f"  preview {slug} -> {dest.relative_to(DIST_DIR)} (placeholder)")
+
+
 def main():
     if DIST_DIR.exists():
         shutil.rmtree(DIST_DIR)
@@ -80,6 +129,7 @@ def main():
     ASSETS_DIR.mkdir(parents=True)
 
     build_logo()
+    build_previews()
 
     apply_theme()
     apply_plotly_theme()

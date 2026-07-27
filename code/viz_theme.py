@@ -199,7 +199,7 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     background: var(--color-surface, {INK["surface"]}); border: 1px solid var(--color-border, {INK["axis"]});
     border-radius: 6px; transition: border-color .15s ease; }}
   #{div_id}_sidebar input:focus, #{div_id}_sidebar select:focus {{
-    outline: none; border-color: var(--color-accent, {INK["axis"]}); }}
+    outline: none; border-color: var(--color-interactive, {INK["axis"]}); }}
   @media (max-width: 520px) {{
     #{div_id}_sidebar {{ padding-top: 4px; max-width: 100%; }}
     #{div_id}_plotwrap {{ aspect-ratio: {max(aspect_ratio * 0.6, 0.85)}; }}
