@@ -35,9 +35,15 @@ INK = {
 def apply_theme():
     """Aplica el tema a matplotlib. Llamar una vez al inicio del notebook."""
     mpl.rcParams.update({
-        "figure.facecolor": INK["surface"],
-        "axes.facecolor": INK["surface"],
-        "savefig.facecolor": INK["surface"],
+        # Transparente (no INK["surface"]) para que el PNG final no traiga
+        # un rectángulo blanco/casi-blanco propio — en el sitio deja ver el
+        # fondo grisáceo de `.chart-scroll`, en el notebook cae sobre el
+        # blanco de Jupyter. INK["surface"] se sigue usando aparte para
+        # cosas como el borde de los marcadores (necesita ser un color
+        # opaco, no transparente).
+        "figure.facecolor": "none",
+        "axes.facecolor": "none",
+        "savefig.facecolor": "none",
         "axes.edgecolor": INK["axis"],
         "axes.labelcolor": INK["secondary"],
         "text.color": INK["primary"],
@@ -75,28 +81,37 @@ def apply_plotly_theme():
     import plotly.graph_objects as go
     import plotly.io as pio
 
+    # Misma familia tipográfica (Inter) que el resto del sitio (landing,
+    # secciones, chrome de las páginas de chart) — antes el gráfico en sí
+    # quedaba en Segoe UI/Arial, lo que lo delataba como un widget de
+    # Plotly insertado en vez de sentirse parte del diseño.
+    font_family = "Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+
     axis = dict(
         gridcolor=INK["grid"],
         zerolinecolor=INK["axis"],
         linecolor=INK["axis"],
-        tickfont=dict(color=INK["muted"], size=11),
-        title=dict(font=dict(color=INK["secondary"], size=12)),
+        tickfont=dict(family=font_family, color=INK["muted"], size=11),
+        title=dict(font=dict(family=font_family, color=INK["secondary"], size=12)),
     )
     pio.templates["futviz"] = go.layout.Template(
         layout=go.Layout(
-            paper_bgcolor=INK["surface"],
-            plot_bgcolor=INK["surface"],
-            font=dict(family="Segoe UI, Arial, sans-serif", color=INK["primary"], size=12),
+            # Transparente en vez del "surface" fijo: en el sitio deja ver
+            # el fondo grisáceo de la página (`.chart-scroll` ya no es una
+            # tarjeta blanca) y en el notebook cae sobre el blanco de Jupyter.
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            font=dict(family=font_family, color=INK["primary"], size=12),
             title=dict(
-                font=dict(size=18, color=INK["primary"], family="Segoe UI Semibold, Segoe UI, Arial"),
-                subtitle=dict(font=dict(size=12.5, color=INK["secondary"])),
+                font=dict(size=18, color=INK["primary"], family=font_family),
+                subtitle=dict(font=dict(family=font_family, size=12.5, color=INK["secondary"])),
                 x=0.03, xanchor="left",
             ),
             xaxis=axis,
             yaxis=axis,
-            legend=dict(bgcolor="rgba(0,0,0,0)", font=dict(color=INK["secondary"], size=11)),
+            legend=dict(bgcolor="rgba(0,0,0,0)", font=dict(family=font_family, color=INK["secondary"], size=11)),
             hoverlabel=dict(bgcolor=INK["surface"], bordercolor=INK["axis"],
-                             font=dict(color=INK["primary"], size=12)),
+                             font=dict(family=font_family, color=INK["primary"], size=12)),
             margin=dict(t=90, r=40, b=60, l=70),
         )
     )
@@ -142,7 +157,7 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     div_id = f"chart_{uuid.uuid4().hex[:8]}"
     fig.update_layout(autosize=True)
     plot_html = pio.to_html(fig, full_html=False, include_plotlyjs="cdn",
-                             div_id=div_id, config={"displaylogo": False, "responsive": True},
+                             div_id=div_id, config={"displaylogo": False, "responsive": True, "displayModeBar": False},
                              default_width="100%", default_height="100%")
     aspect_ratio = width / height
 
@@ -174,14 +189,17 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
   #{div_id}_plotwrap {{ position: relative; flex: 1 1 280px; width: 100%; max-width: {width}px;
     aspect-ratio: {aspect_ratio}; min-width: 0; }}
   #{div_id}_plotwrap > div {{ position: absolute; inset: 0; }}
-  #{div_id}_sidebar {{ font-family: "Segoe UI", Arial, sans-serif; padding-top: 54px;
-    flex: 1 1 190px; max-width: 260px; box-sizing: border-box; }}
+  #{div_id}_sidebar {{ font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    padding-top: 54px; flex: 1 1 190px; max-width: 260px; box-sizing: border-box; }}
   #{div_id}_sidebar .block {{ margin-bottom: 22px; }}
-  #{div_id}_sidebar label {{ display: block; font-size: 11px; color: {INK["muted"]};
+  #{div_id}_sidebar label {{ display: block; font-size: 11px; color: var(--color-muted, {INK["muted"]});
     text-transform: uppercase; letter-spacing: .03em; margin-bottom: 5px; }}
   #{div_id}_sidebar input, #{div_id}_sidebar select {{ width: 100%; box-sizing: border-box;
-    padding: 7px 9px; font-size: 13px; font-family: inherit; color: {INK["primary"]};
-    background: {INK["surface"]}; border: 1px solid {INK["axis"]}; border-radius: 6px; }}
+    padding: 7px 9px; font-size: 13px; font-family: inherit; color: var(--color-primary, {INK["primary"]});
+    background: var(--color-surface, {INK["surface"]}); border: 1px solid var(--color-border, {INK["axis"]});
+    border-radius: 6px; transition: border-color .15s ease; }}
+  #{div_id}_sidebar input:focus, #{div_id}_sidebar select:focus {{
+    outline: none; border-color: var(--color-accent, {INK["axis"]}); }}
   @media (max-width: 520px) {{
     #{div_id}_sidebar {{ padding-top: 4px; max-width: 100%; }}
     #{div_id}_plotwrap {{ aspect-ratio: {max(aspect_ratio * 0.6, 0.85)}; }}
@@ -280,7 +298,7 @@ def plot_html(fig, width=680, height=480):
     div_id = f"chart_{uuid.uuid4().hex[:8]}"
     fig.update_layout(autosize=True)
     inner = pio.to_html(fig, full_html=False, include_plotlyjs="cdn",
-                         div_id=div_id, config={"displaylogo": False, "responsive": True},
+                         div_id=div_id, config={"displaylogo": False, "responsive": True, "displayModeBar": False},
                          default_width="100%", default_height="100%")
     aspect_ratio = width / height
     return f"""
