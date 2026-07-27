@@ -24,18 +24,13 @@
   body { margin: 0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     background: var(--color-bg); color: var(--color-text-body); }
 
-  header { padding: 24px 20px 24px; border-bottom: 1px solid var(--color-border); }
-  .crumb { color: var(--color-muted); text-decoration: none; font-size: 13px; font-weight: 500; }
-  .crumb:hover { color: var(--color-primary); }
-  .crumb.brand { display: inline-flex; align-items: center; gap: 8px;
-    color: var(--color-primary); font-weight: 700; }
-  .crumb.brand .mark { display: inline-flex; align-items: center; justify-content: center;
-    width: 22px; height: 22px; border-radius: 6px; background: var(--color-primary);
-    color: var(--color-bg); font-size: 10px; font-weight: 800; }
-  .crumb-sep { color: var(--color-border); font-size: 13px; margin: 0 2px; }
-  .crumb-current { color: var(--color-muted); font-size: 13px; font-weight: 600; }
+  header { padding: 20px 20px 24px; border-bottom: 1px solid var(--color-border); }
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .crumb-current { color: var(--color-muted); font-size: 13px; font-weight: 500; }
+  .site-logo-link { flex: none; line-height: 0; }
+  .site-logo { height: 30px; width: auto; display: block; }
   h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
-    color: var(--color-primary); margin: 14px 0 8px; }
+    color: var(--color-primary); margin: 16px 0 8px; }
   .lead { color: var(--color-muted); font-size: 14px; line-height: 1.55; max-width: 640px; }
 
   main { padding: 28px 20px 64px; max-width: 1180px; margin: 0 auto; }
@@ -60,7 +55,7 @@
   a.card .card-sub { font-size: 13px; font-weight: 400; color: var(--color-muted); line-height: 1.5; }
 
   @media (min-width: 640px) {
-    header { padding: 44px 32px 28px; }
+    header { padding: 20px 32px 28px; }
     h1 { font-size: 28px; }
     .lead { font-size: 15px; }
     main { padding: 36px 32px 72px; }
@@ -73,9 +68,12 @@
 </head>
 <body>
 <header>
-  <a class="crumb brand" href="index.html"><span class="mark" aria-hidden="true">FV</span>FutViz</a>
-  <span class="crumb-sep">/</span>
-  <span class="crumb-current">Equipos</span>
+  <div class="topbar">
+    <span class="crumb-current">FutViz / Equipos</span>
+    <a class="site-logo-link" href="index.html">
+      <img class="site-logo" src="assets/logo.png" alt="FutViz — volver al inicio">
+    </a>
+  </div>
   <h1>Equipos</h1>
   <div class="lead">Rendimiento, estilo de juego y disciplina a nivel de equipo.</div>
 </header>
