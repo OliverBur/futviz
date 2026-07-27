@@ -103,7 +103,7 @@ PAGE_TEMPLATE = """<!doctype html>
   .site-logo-link {{ flex: none; line-height: 0; }}
   .site-logo {{ height: 30px; width: auto; display: block; }}
   main {{ padding: 28px 32px 60px; }}
-  .chart-scroll {{ max-width: 100%; overflow-x: auto; background: var(--color-surface);
+  .chart-scroll {{ max-width: 100%; overflow-x: auto; background: var(--color-bg);
     border: 1px solid var(--color-border); border-radius: 14px; padding: 20px; }}
   img.static-chart {{ max-width: 100%; min-width: 600px; height: auto; border-radius: 6px; display: block; }}
   @media (max-width: 640px) {{
