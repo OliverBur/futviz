@@ -6,28 +6,34 @@
 <title>Perfil de estilo por liga · FutViz</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sansita:wght@700;800&display=swap" rel="stylesheet">
 <style>
 
   :root {
-    --color-primary: #2D5661;
     --color-bg: #EFEDF7;
-    --color-accent: #0EED95;
-    --color-text-body: #1A2E33;
-    --color-accent-soft: rgba(14, 237, 149, 0.125); /* = #0EED9520 */
     --color-surface: #FFFFFF;
+    --color-primary: #2C4C54;
+    --color-brand-accent: #399906;
+    --color-brand-accent-soft: rgba(57, 153, 6, 0.12);
+    --color-interactive: #2E7A06;
+    --color-interactive-soft: rgba(46, 122, 6, 0.10);
+    --color-text-body: #1A2E33;
     --color-muted: #57707A;
     --color-border: #DEDBEA;
   }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
   body { margin: 0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    background: var(--color-bg); color: var(--color-text-body); }
+    background: var(--color-bg); color: var(--color-text-body);
+    animation: futviz-fade-in .2s ease-out; }
+  .wordmark { font-family: "Sansita", "Inter", system-ui, sans-serif; }
+  @keyframes futviz-fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { body { animation: none; } }
 
   header { display: flex; align-items: center; justify-content: space-between; gap: 12px;
     padding: 14px 32px; border-bottom: 1px solid var(--color-border); }
   .crumb { color: var(--color-muted); text-decoration: none; font-size: 13px; font-weight: 500; }
-  .crumb:hover { color: var(--color-primary); }
+  .crumb:hover { color: var(--color-interactive); }
   .site-logo-link { flex: none; line-height: 0; }
   .site-logo { height: 30px; width: auto; display: block; }
   main { padding: 28px 32px 60px; }

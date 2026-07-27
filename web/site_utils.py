@@ -17,9 +17,11 @@ sys.path.insert(0, str(CODE_DIR))
 # Un solo <link> de Google Fonts, con todos los pesos que usa cualquier
 # plantilla del sitio (landing, secciones, páginas de chart) — se inyecta
 # igual en las tres para que la tipografía no cambie de una capa a otra.
+# Sansita se usa SOLO donde aparece la palabra "FutViz" como texto (no hay
+# logo de imagen a mano) — el resto del sitio sigue en Inter.
 FONT_LINKS = """<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">"""
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sansita:wght@700;800&display=swap" rel="stylesheet">"""
 
 
 @dataclass
@@ -59,31 +61,19 @@ CHART_ICONS = {
 
 
 # Slug de archivo para la página de cada sección (dist/{slug}.html) y
-# metadatos de la card correspondiente en la landing.
+# metadatos de la card correspondiente en la landing. `preview` es el
+# thumbnail que se genera en `build.py` (`build_previews()`) — real si
+# existe `img/preview-{slug}.png`, si no un placeholder generado.
 SECTION_META = {
     "Equipos": {
         "slug": "equipos",
         "description": "Rendimiento, estilo de juego y disciplina a nivel de equipo.",
-        # Chip verde-menta — la card de Equipos "es" el acento principal de marca.
-        "chip_class": "mint",
-        "icon": (
-            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
-            'stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="4" height="11"/>'
-            '<rect x="10" y="5" width="4" height="16"/><rect x="17" y="13" width="4" height="8"/></svg>'
-        ),
+        "preview": "preview-equipos.png",
     },
     "Jugadores": {
         "slug": "jugadores",
         "description": "Producción individual, eficiencia y perfiles ofensivos.",
-        # Chip azul petróleo — distingue la card de Jugadores de la de Equipos
-        # sin salirse de la paleta fija de 5 colores del proyecto.
-        "chip_class": "petrol",
-        "icon": (
-            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
-            'stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="15" r="2.4"/>'
-            '<circle cx="13" cy="7" r="2.4"/><circle cx="19" cy="17" r="2.4"/>'
-            '<path d="M8 13.5 11 9M15 8.5 17.5 15"/></svg>'
-        ),
+        "preview": "preview-jugadores.png",
     },
 }
 
@@ -99,7 +89,7 @@ PAGE_TEMPLATE = """<!doctype html>
   header {{ display: flex; align-items: center; justify-content: space-between; gap: 12px;
     padding: 14px 32px; border-bottom: 1px solid var(--color-border); }}
   .crumb {{ color: var(--color-muted); text-decoration: none; font-size: 13px; font-weight: 500; }}
-  .crumb:hover {{ color: var(--color-primary); }}
+  .crumb:hover {{ color: var(--color-interactive); }}
   .site-logo-link {{ flex: none; line-height: 0; }}
   .site-logo {{ height: 30px; width: auto; display: block; }}
   main {{ padding: 28px 32px 60px; }}
@@ -126,24 +116,40 @@ PAGE_TEMPLATE = """<!doctype html>
 </html>
 """
 
-# CSS compartido por la landing y las páginas de sección: mismo :root de
-# variables de marca para que el sitio se sienta consistente de punta a
-# punta, aunque el rediseño estructural fuerte solo aplique a la landing.
+# CSS compartido por las tres capas del sitio (landing, secciones, páginas
+# de chart): mismo :root de variables de marca + fade-in de página, para
+# que todo el sitio se sienta consistente de punta a punta.
+#
+# Reglas de uso de color (documentadas acá porque no son obvias del nombre):
+# - --color-brand-accent (verde del logo): SOLO en elementos grandes —
+#   íconos, bordes de acento, títulos de sección, el dato destacado. Nunca
+#   como color de texto chico ni de botón — a ese tamaño no pasa contraste
+#   AA sobre el fondo claro del sitio.
+# - --color-interactive (verde oscurecido): hover, foco, bordes de card al
+#   interactuar — cualquier estado interactivo, más legible que el brand.
+# - --color-*-soft son SIEMPRE fondos de baja opacidad (chips, washes de
+#   hover), nunca texto — ahí el contraste no aplica.
 BRAND_ROOT_CSS = """
   :root {
-    --color-primary: #2D5661;
     --color-bg: #EFEDF7;
-    --color-accent: #0EED95;
-    --color-text-body: #1A2E33;
-    --color-accent-soft: rgba(14, 237, 149, 0.125); /* = #0EED9520 */
     --color-surface: #FFFFFF;
+    --color-primary: #2C4C54;
+    --color-brand-accent: #399906;
+    --color-brand-accent-soft: rgba(57, 153, 6, 0.12);
+    --color-interactive: #2E7A06;
+    --color-interactive-soft: rgba(46, 122, 6, 0.10);
+    --color-text-body: #1A2E33;
     --color-muted: #57707A;
     --color-border: #DEDBEA;
   }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
   body { margin: 0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    background: var(--color-bg); color: var(--color-text-body); }
+    background: var(--color-bg); color: var(--color-text-body);
+    animation: futviz-fade-in .2s ease-out; }
+  .wordmark { font-family: "Sansita", "Inter", system-ui, sans-serif; }
+  @keyframes futviz-fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { body { animation: none; } }
 """
 
 INDEX_TEMPLATE = """<!doctype html>
@@ -155,74 +161,91 @@ INDEX_TEMPLATE = """<!doctype html>
 {font_links}
 <style>
 {brand_root}
-  body {{ min-height: 100vh; display: flex; align-items: center; justify-content: center;
-    padding: 48px 20px;
+  body {{
     background:
-      radial-gradient(640px circle at 12% 18%, rgba(14, 237, 149, 0.09), transparent 60%),
-      radial-gradient(720px circle at 88% 82%, rgba(45, 86, 97, 0.07), transparent 60%),
+      radial-gradient(640px circle at 12% 10%, rgba(57, 153, 6, 0.07), transparent 60%),
+      radial-gradient(720px circle at 88% 14%, rgba(44, 76, 84, 0.06), transparent 60%),
       var(--color-bg);
   }}
 
-  .hero {{ max-width: 900px; text-align: center; }}
-  h1 {{ margin: 0 0 20px; }}
-  .logo-large {{ display: block; width: min(380px, 75vw); height: auto; margin: 0 auto; }}
+  /* Header: logo + descripción + dato destacado, con una textura de
+     puntos (misma pareja de colores del logo) muy tenue de fondo — no es
+     ningún motivo futbolero, es un patrón geométrico abstracto. */
+  .hero-header {{
+    text-align: center; padding: 56px 20px 40px; position: relative;
+    background-image:
+      radial-gradient(rgba(44, 76, 84, 0.07) 1.4px, transparent 1.6px),
+      radial-gradient(rgba(57, 153, 6, 0.06) 1.4px, transparent 1.6px);
+    background-size: 22px 22px, 22px 22px;
+    background-position: 0 0, 11px 11px;
+  }}
+  .logo-large {{ display: block; width: min(460px, 88vw); height: auto; margin: 0 auto 28px; }}
   .lead {{ color: var(--color-muted); font-size: 16px; line-height: 1.6;
     max-width: 60ch; margin: 0 auto; }}
-  .foot {{ color: var(--color-muted); font-size: 12.5px; margin: 56px 0 0; }}
 
-  .cards {{ display: flex; flex-direction: column; align-items: center;
-    gap: 20px; margin-top: 44px; }}
+  .hero-stat {{ margin-top: 30px; }}
+  .hero-stat-number {{ font-size: 40px; font-weight: 800; line-height: 1;
+    color: var(--color-brand-accent); }}
+  .hero-stat-text {{ font-size: 14px; color: var(--color-text-body); margin-top: 8px; }}
 
-  a.hub-card {{ display: block; width: 100%; max-width: 340px; text-align: left;
-    text-decoration: none; color: inherit; cursor: pointer;
-    background: var(--color-surface); border: 1.5px solid var(--color-primary);
-    border-radius: 18px; padding: 30px 28px;
-    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background-color .18s ease; }}
-  a.hub-card.mint {{ border-color: rgba(14, 237, 149, 0.55); }}
+  .hub-main {{ max-width: 900px; margin: 0 auto; padding: 44px 20px 56px; text-align: center; }}
+  .cards {{ display: flex; flex-direction: column; align-items: center; gap: 20px; }}
+  .foot {{ color: var(--color-muted); font-size: 12.5px; margin: 48px 0 0; }}
+
+  a.hub-card {{ display: block; width: 100%; max-width: 380px; text-align: left;
+    text-decoration: none; color: inherit; cursor: pointer; overflow: hidden;
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: 18px;
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }}
   a.hub-card:hover, a.hub-card:focus-visible {{
     transform: translateY(-4px);
-    box-shadow: 0 18px 34px rgba(45, 86, 97, 0.16);
-    border-color: var(--color-accent);
-    background: var(--color-accent-soft);
+    box-shadow: 0 18px 34px rgba(44, 76, 84, 0.16);
+    border-color: var(--color-interactive);
   }}
-  a.hub-card:focus-visible {{
-    outline: 2px solid var(--color-primary);
-    outline-offset: 3px;
-  }}
-  .hub-icon {{ display: flex; align-items: center; justify-content: center;
-    width: 56px; height: 56px; border-radius: 14px; margin-bottom: 20px; }}
-  .hub-icon svg {{ width: 26px; height: 26px; }}
-  .hub-icon.mint {{ background: var(--color-accent-soft); color: var(--color-primary); }}
-  .hub-icon.petrol {{ background: rgba(45, 86, 97, 0.10); color: var(--color-primary); }}
+  a.hub-card:focus-visible {{ outline: 2px solid var(--color-interactive); outline-offset: 3px; }}
+  .hub-thumb {{ display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover;
+    background: var(--color-bg); }}
+  .hub-body {{ padding: 22px 24px 26px; }}
   .hub-title {{ font-size: 21px; font-weight: 700; color: var(--color-primary); margin-bottom: 8px; }}
   .hub-sub {{ font-size: 14px; color: var(--color-text-body); line-height: 1.5; margin-bottom: 18px; }}
   .hub-count {{ display: inline-block; font-size: 12px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: .05em; color: var(--color-primary); background: var(--color-accent-soft);
-    border: 1px solid rgba(14, 237, 149, 0.4); border-radius: 999px; padding: 5px 12px; }}
+    letter-spacing: .05em; color: var(--color-primary); background: var(--color-brand-accent-soft);
+    border: 1px solid rgba(57, 153, 6, 0.35); border-radius: 999px; padding: 5px 12px; }}
 
   @media (min-width: 640px) {{
+    .hero-header {{ padding: 64px 20px 48px; }}
+    .logo-large {{ width: min(560px, 60vw); }}
     .lead {{ font-size: 17px; }}
+    .hero-stat-number {{ font-size: 48px; }}
     .cards {{ flex-direction: row; justify-content: center; align-items: stretch; gap: 24px; }}
-    a.hub-card {{ flex: 1 1 300px; }}
+    a.hub-card {{ flex: 1 1 320px; }}
   }}
 </style>
 </head>
 <body>
-<div class="hero">
-  <h1><img class="logo-large" src="assets/logo.png" alt="FutViz"></h1>
-  <p class="lead">Análisis de datos públicos de fbref y Understat de las 5 grandes ligas de la temporada 2025/2026</p>
+<header class="hero-header">
+  <img class="logo-large" src="assets/logo.png" alt="FutViz">
+  <p class="lead">Análisis de datos públicos de FBref y Understat de las 5 grandes ligas de la temporada 2025/2026</p>
+  <div class="hero-stat">
+    <div class="hero-stat-number">{hero_number}</div>
+    <div class="hero-stat-text">{hero_text}</div>
+  </div>
+</header>
+<main class="hub-main">
   <div class="cards">{cards}</div>
-  <p class="foot">Datos: fbref (equipos) &amp; Understat (jugadores) · Temporada 2025/2026</p>
-</div>
+  <p class="foot">Datos: FBref (equipos) &amp; Understat (jugadores) · Temporada 2025/2026</p>
+</main>
 </body>
 </html>
 """
 
-HUB_CARD_TEMPLATE = """<a class="hub-card {chip_class}" href="{slug}.html">
-  <div class="hub-icon {chip_class}">{icon}</div>
-  <div class="hub-title">{name}</div>
-  <div class="hub-sub">{description}</div>
-  <div class="hub-count">{count} gráfica{plural}</div>
+HUB_CARD_TEMPLATE = """<a class="hub-card" href="{slug}.html">
+  <img class="hub-thumb" src="assets/{preview}" alt="Vista previa — {name}">
+  <div class="hub-body">
+    <div class="hub-title">{name}</div>
+    <div class="hub-sub">{description}</div>
+    <div class="hub-count">{count} gráfica{plural}</div>
+  </div>
 </a>
 """
 
@@ -238,10 +261,13 @@ SECTION_PAGE_TEMPLATE = """<!doctype html>
   header {{ padding: 20px 20px 24px; border-bottom: 1px solid var(--color-border); }}
   .topbar {{ display: flex; align-items: center; justify-content: space-between; gap: 12px; }}
   .crumb-current {{ color: var(--color-muted); font-size: 13px; font-weight: 500; }}
+  .crumb-current .wordmark {{ font-weight: 700; }}
   .site-logo-link {{ flex: none; line-height: 0; }}
   .site-logo {{ height: 30px; width: auto; display: block; }}
-  h1 {{ font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
-    color: var(--color-primary); margin: 16px 0 8px; }}
+  h1 {{ position: relative; font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
+    color: var(--color-primary); margin: 16px 0 8px; padding-left: 14px; }}
+  h1::before {{ content: ""; position: absolute; left: 0; top: 3px; bottom: 3px;
+    width: 4px; border-radius: 2px; background: var(--color-brand-accent); }}
   .lead {{ color: var(--color-muted); font-size: 14px; line-height: 1.55; max-width: 640px; }}
 
   main {{ padding: 28px 20px 64px; max-width: 1180px; margin: 0 auto; }}
@@ -249,16 +275,17 @@ SECTION_PAGE_TEMPLATE = """<!doctype html>
 
   a.card {{ display: flex; gap: 14px; align-items: flex-start; padding: 18px 20px; border-radius: 12px;
     text-decoration: none; color: inherit; background: var(--color-surface);
-    border: 1px solid var(--color-border); box-shadow: 0 1px 2px rgba(45, 86, 97, 0.05);
+    border: 1px solid var(--color-border); box-shadow: 0 1px 2px rgba(44, 76, 84, 0.05);
     transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background-color .18s ease; }}
   a.card:hover, a.card:focus-visible {{
     transform: translateY(-2px);
-    box-shadow: 0 12px 28px rgba(45, 86, 97, 0.14);
-    border-color: var(--color-accent);
-    background: var(--color-accent-soft);
+    box-shadow: 0 12px 28px rgba(44, 76, 84, 0.14);
+    border-color: var(--color-interactive);
+    background: var(--color-interactive-soft);
   }}
+  a.card:focus-visible {{ outline: 2px solid var(--color-interactive); outline-offset: 2px; }}
   .card-icon {{ flex: none; display: flex; align-items: center; justify-content: center;
-    width: 36px; height: 36px; border-radius: 10px; background: var(--color-accent-soft);
+    width: 36px; height: 36px; border-radius: 10px; background: var(--color-brand-accent-soft);
     color: var(--color-primary); }}
   .card-icon svg {{ width: 18px; height: 18px; }}
   a.card .card-title {{ font-size: 15.5px; font-weight: 600; color: var(--color-primary);
@@ -280,7 +307,7 @@ SECTION_PAGE_TEMPLATE = """<!doctype html>
 <body>
 <header>
   <div class="topbar">
-    <span class="crumb-current">FutViz / {name}</span>
+    <span class="crumb-current"><span class="wordmark">FutViz</span> / {name}</span>
     <a class="site-logo-link" href="index.html">
       <img class="site-logo" src="assets/logo.png" alt="FutViz — volver al inicio">
     </a>
@@ -347,15 +374,20 @@ def write_index(pages: list[ChartPage], dist_dir: Path) -> Path:
 
     cards = "".join(
         HUB_CARD_TEMPLATE.format(
-            slug=meta["slug"], name=name, description=meta["description"], icon=meta["icon"],
-            chip_class=meta["chip_class"],
+            slug=meta["slug"], name=name, description=meta["description"], preview=meta["preview"],
             count=counts.get(name, 0), plural="" if counts.get(name, 0) == 1 else "s",
         )
         for name, meta in SECTION_META.items()
         if name in counts
     )
 
-    html = INDEX_TEMPLATE.format(cards=cards, brand_root=BRAND_ROOT_CSS, font_links=FONT_LINKS)
+    # Placeholders literales para que el usuario los reemplace a mano más
+    # adelante (todavía no hay un dato final elegido) — no son campos de
+    # `.format()` sin resolver, son el texto que se pidió dejar en el HTML.
+    html = INDEX_TEMPLATE.format(
+        cards=cards, brand_root=BRAND_ROOT_CSS, font_links=FONT_LINKS,
+        hero_number="{{HERO_STAT_NUMBER}}", hero_text="{{HERO_STAT_TEXT}}",
+    )
     out_path = dist_dir / "index.html"
     out_path.write_text(html, encoding="utf-8")
     return out_path
