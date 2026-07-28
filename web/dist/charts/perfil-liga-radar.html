@@ -149,6 +149,7 @@
       document.documentElement.setAttribute('data-theme', next);
       try { localStorage.setItem('futviz-theme', next); } catch (e) {}
       syncPlotly();
+      document.dispatchEvent(new CustomEvent('futviz-theme-change', {detail: {theme: next}}));
     });
   }
 })();

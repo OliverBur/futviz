@@ -275,15 +275,33 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
   window.addEventListener('resize', updateLegendLayout);
   updateLegendLayout();
 
-  document.getElementById('{div_id}_search').addEventListener('input', function(e) {{
-    var val = e.target.value;
+  // La anotación de búsqueda trae color fijo de claro (horneado en Python
+  // al generar la página) — se recolorea acá según el tema actual antes de
+  // aplicarla, y de nuevo cada vez que cambia el tema (ver el listener de
+  // 'futviz-theme-change' más abajo), no solo al tipear.
+  function themedAnnotation(ann) {{
+    var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    var copy = Object.assign({{}}, ann);
+    copy.arrowcolor = dark ? '#3A4A4E' : {json.dumps(INK["axis"])};
+    copy.font = Object.assign({{}}, ann.font, {{color: dark ? '#D7E4E7' : {json.dumps(INK["primary"])}}});
+    return copy;
+  }}
+
+  function applySearch(val) {{
     if (clubMap.hasOwnProperty(val)) {{
       Plotly.restyle('{div_id}', {{'marker.size': clubMap[val].sizes}}, traceIndices);
-      Plotly.relayout('{div_id}', {{annotations: baseAnnotations.concat([clubMap[val].annotation])}});
+      Plotly.relayout('{div_id}', {{annotations: baseAnnotations.concat([themedAnnotation(clubMap[val].annotation)])}});
     }} else if (val === '') {{
       Plotly.restyle('{div_id}', {{'marker.size': baseSizes}}, traceIndices);
       Plotly.relayout('{div_id}', {{annotations: baseAnnotations}});
     }}
+  }}
+
+  document.getElementById('{div_id}_search').addEventListener('input', function(e) {{
+    applySearch(e.target.value);
+  }});
+  document.addEventListener('futviz-theme-change', function() {{
+    applySearch(document.getElementById('{div_id}_search').value);
   }});
 
   document.getElementById('{div_id}_league').addEventListener('change', function(e) {{

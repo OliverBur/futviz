@@ -57,6 +57,7 @@ THEME_TOGGLE_SCRIPT = """<script>
     var next = current === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
     try { localStorage.setItem('futviz-theme', next); } catch (e) {}
+    document.dispatchEvent(new CustomEvent('futviz-theme-change', {detail: {theme: next}}));
   });
 })();
 </script>"""
@@ -102,6 +103,7 @@ PLOTLY_THEME_SCRIPT = """<script>
       document.documentElement.setAttribute('data-theme', next);
       try { localStorage.setItem('futviz-theme', next); } catch (e) {}
       syncPlotly();
+      document.dispatchEvent(new CustomEvent('futviz-theme-change', {detail: {theme: next}}));
     });
   }
 })();
