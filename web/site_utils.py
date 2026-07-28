@@ -143,7 +143,7 @@ BRAND_ROOT_CSS = """
     --color-border: #DEDBEA;
   }
   * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
+  html { -webkit-text-size-adjust: 100%; background: var(--color-bg); }
   body { margin: 0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     background: var(--color-bg); color: var(--color-text-body);
     animation: futviz-fade-in .2s ease-out; }
@@ -161,32 +161,31 @@ INDEX_TEMPLATE = """<!doctype html>
 {font_links}
 <style>
 {brand_root}
+  /* Textura de puntos (misma pareja de colores del logo) en toda la
+     página, muy tenue — no es ningún motivo futbolero, es un patrón
+     geométrico abstracto — más los dos degradados suaves de siempre. */
   body {{
+    min-height: 100vh;
     background:
       radial-gradient(640px circle at 12% 10%, rgba(57, 153, 6, 0.07), transparent 60%),
       radial-gradient(720px circle at 88% 14%, rgba(44, 76, 84, 0.06), transparent 60%),
+      radial-gradient(rgba(44, 76, 84, 0.077) 1.4px, transparent 1.6px),
+      radial-gradient(rgba(57, 153, 6, 0.066) 1.4px, transparent 1.6px),
       var(--color-bg);
+    background-size: auto, auto, 22px 22px, 22px 22px, auto;
+    background-position: 0 0, 0 0, 0 0, 11px 11px, 0 0;
   }}
 
-  /* Header: logo + descripción + dato destacado, con una textura de
-     puntos (misma pareja de colores del logo) muy tenue de fondo — no es
-     ningún motivo futbolero, es un patrón geométrico abstracto. */
-  .hero-header {{
-    text-align: center; padding: 56px 20px 40px; position: relative;
-    background-image:
-      radial-gradient(rgba(44, 76, 84, 0.07) 1.4px, transparent 1.6px),
-      radial-gradient(rgba(57, 153, 6, 0.06) 1.4px, transparent 1.6px);
-    background-size: 22px 22px, 22px 22px;
-    background-position: 0 0, 11px 11px;
-  }}
+  .hero-header {{ text-align: center; padding: 56px 20px 40px; }}
   .logo-large {{ display: block; width: min(460px, 88vw); height: auto; margin: 0 auto 28px; }}
-  .lead {{ color: var(--color-muted); font-size: 16px; line-height: 1.6;
-    max-width: 60ch; margin: 0 auto; }}
 
-  .hero-stat {{ margin-top: 30px; }}
-  .hero-stat-number {{ font-size: 40px; font-weight: 800; line-height: 1;
-    color: var(--color-brand-accent); }}
-  .hero-stat-text {{ font-size: 14px; color: var(--color-text-body); margin-top: 8px; }}
+  /* Motivación: es una frase, no una cifra, así que va en tamaño de
+     subtítulo y en --color-text-body — el verde queda reservado a las
+     dos palabras clave (--color-interactive, no --color-brand-accent:
+     es texto chico, tiene que pasar AA). */
+  .motivation {{ color: var(--color-text-body); font-size: 14.5px; line-height: 1.6;
+    max-width: 56ch; margin: 0 auto; }}
+  .motivation .accent-word {{ color: var(--color-interactive); font-weight: 600; }}
 
   .hub-main {{ max-width: 900px; margin: 0 auto; padding: 44px 20px 56px; text-align: center; }}
   .cards {{ display: flex; flex-direction: column; align-items: center; gap: 20px; }}
@@ -215,8 +214,7 @@ INDEX_TEMPLATE = """<!doctype html>
   @media (min-width: 640px) {{
     .hero-header {{ padding: 64px 20px 48px; }}
     .logo-large {{ width: min(560px, 60vw); }}
-    .lead {{ font-size: 17px; }}
-    .hero-stat-number {{ font-size: 48px; }}
+    .motivation {{ font-size: 16px; }}
     .cards {{ flex-direction: row; justify-content: center; align-items: stretch; gap: 24px; }}
     a.hub-card {{ flex: 1 1 320px; }}
   }}
@@ -225,11 +223,9 @@ INDEX_TEMPLATE = """<!doctype html>
 <body>
 <header class="hero-header">
   <img class="logo-large" src="assets/logo.png" alt="FutViz">
-  <p class="lead">Análisis de datos públicos de FBref y Understat de las 5 grandes ligas de la temporada 2025/2026</p>
-  <div class="hero-stat">
-    <div class="hero-stat-number">{hero_number}</div>
-    <div class="hero-stat-text">{hero_text}</div>
-  </div>
+  <p class="motivation">Nació de juntar mi pasión por el <span class="accent-word">fútbol</span> con la
+    <span class="accent-word">ciencia de datos</span>: partir de información pública y simple, y sacarle
+    todo el jugo posible.</p>
 </header>
 <main class="hub-main">
   <div class="cards">{cards}</div>
@@ -381,13 +377,7 @@ def write_index(pages: list[ChartPage], dist_dir: Path) -> Path:
         if name in counts
     )
 
-    # Placeholders literales para que el usuario los reemplace a mano más
-    # adelante (todavía no hay un dato final elegido) — no son campos de
-    # `.format()` sin resolver, son el texto que se pidió dejar en el HTML.
-    html = INDEX_TEMPLATE.format(
-        cards=cards, brand_root=BRAND_ROOT_CSS, font_links=FONT_LINKS,
-        hero_number="{{HERO_STAT_NUMBER}}", hero_text="{{HERO_STAT_TEXT}}",
-    )
+    html = INDEX_TEMPLATE.format(cards=cards, brand_root=BRAND_ROOT_CSS, font_links=FONT_LINKS)
     out_path = dist_dir / "index.html"
     out_path.write_text(html, encoding="utf-8")
     return out_path
