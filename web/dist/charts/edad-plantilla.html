@@ -5,6 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Edad de plantilla · FutViz</title>
 <link rel="icon" type="image/png" href="../favicon.png">
+<script>
+(function() {
+  try {
+    var stored = localStorage.getItem('futviz-theme');
+    var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch (e) {}
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sansita:wght@700;800&display=swap" rel="stylesheet">
@@ -22,23 +31,64 @@
     --color-muted: #57707A;
     --color-border: #DEDBEA;
   }
+  /* Modo oscuro: mismos nombres de variable, valores nuevos — todo lo que
+     ya usa var(--color-x) se adapta solo, sin tocar cada regla. Verificado
+     que las 5 pasan AA sobre --color-bg/--color-surface oscuros (6.6:1 a
+     13.8:1). html[data-theme="dark"] pisa a :root por especificidad
+     (selector de atributo sobre elemento > pseudo-clase :root). */
+  html[data-theme="dark"] {
+    --color-bg: #12181A;
+    --color-surface: #1B2426;
+    --color-primary: #D7E4E7;
+    --color-brand-accent: #5CC22A;
+    --color-brand-accent-soft: rgba(92, 194, 42, 0.16);
+    --color-interactive: #6FDB3B;
+    --color-interactive-soft: rgba(111, 219, 59, 0.14);
+    --color-text-body: #C7D3D6;
+    --color-muted: #8CA0A5;
+    --color-border: #2C393C;
+  }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; background: var(--color-bg); }
   body { margin: 0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     background: var(--color-bg); color: var(--color-text-body);
-    animation: futviz-fade-in .2s ease-out; }
+    animation: futviz-fade-in .2s ease-out;
+    transition: background-color .15s ease, color .15s ease; }
   .wordmark { font-family: "Sansita", "Inter", system-ui, sans-serif; }
   @keyframes futviz-fade-in { from { opacity: 0; } to { opacity: 1; } }
   @media (prefers-reduced-motion: reduce) { body { animation: none; } }
+
+  .theme-toggle { flex: none; display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--color-border);
+    background: var(--color-surface); color: var(--color-primary); cursor: pointer; padding: 0;
+    transition: border-color .15s ease, background-color .15s ease, color .15s ease; }
+  .theme-toggle:hover { border-color: var(--color-interactive); }
+  .theme-toggle:focus-visible { outline: 2px solid var(--color-interactive); outline-offset: 2px; }
+  .theme-toggle svg { width: 18px; height: 18px; }
+  .theme-toggle .icon-sun { display: none; }
+  html[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
+  html[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
 
   header { display: flex; align-items: center; justify-content: space-between; gap: 12px;
     padding: 14px 32px; border-bottom: 1px solid var(--color-border); }
   .crumb { color: var(--color-muted); text-decoration: none; font-size: 13px; font-weight: 500; }
   .crumb:hover { color: var(--color-interactive); }
+  .header-right { display: flex; align-items: center; gap: 14px; }
   .site-logo-link { flex: none; line-height: 0; }
   .site-logo { height: 30px; width: auto; display: block; }
   main { padding: 28px 32px 60px; }
-  .chart-scroll { max-width: 100%; overflow-x: auto; background: var(--color-bg);
+  /* Fijo en claro a propósito (no var(--color-bg)): el gráfico de adentro
+     (Plotly o PNG de matplotlib) usa tinta pensada para fondo claro, así
+     que la tarjeta se queda "de papel" aunque el resto de la página
+     oscurezca — si no, el texto del gráfico se vuelve ilegible. */
+  .chart-scroll {
+    /* Re-declara las variables en claro para todo lo de adentro (incluida
+       la barra de filtros de Plotly, que lee estas mismas var(--color-x)
+       — si no, hereda los valores oscuros de :root aunque la tarjeta se
+       vea clara). */
+    --color-bg: #EFEDF7; --color-surface: #FFFFFF; --color-primary: #2C4C54;
+    --color-muted: #57707A; --color-border: #DEDBEA; --color-interactive: #2E7A06;
+    max-width: 100%; overflow-x: auto; background: var(--color-bg);
     border: 1px solid var(--color-border); border-radius: 14px; padding: 20px; }
   img.static-chart { max-width: 100%; min-width: 600px; height: auto; border-radius: 6px; display: block; }
   @media (max-width: 640px) {
@@ -52,29 +102,39 @@
 <body>
 <header>
   <a class="crumb" href="../equipos.html">&larr; Equipos</a>
-  <a class="site-logo-link" href="../index.html">
-    <img class="site-logo" src="../assets/logo.png" alt="FutViz — volver al inicio">
-  </a>
+  <div class="header-right">
+    <a class="site-logo-link" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" alt="FutViz — volver al inicio">
+    </a>
+    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Cambiar entre modo claro y oscuro">
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
+  </svg>
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/>
+  </svg>
+</button>
+  </div>
 </header>
 <main><div class="chart-scroll">
 <style>
-  #chart_05f24702_wrap { position: relative; width: 100%; max-width: 800px;
+  #chart_f219c0b3_wrap { position: relative; width: 100%; max-width: 800px;
     aspect-ratio: 1.5384615384615385; }
-  #chart_05f24702_wrap > div { position: absolute; inset: 0; }
+  #chart_f219c0b3_wrap > div { position: absolute; inset: 0; }
   @media (max-width: 520px) {
-    #chart_05f24702_wrap { aspect-ratio: 1.3076923076923077; }
+    #chart_f219c0b3_wrap { aspect-ratio: 1.3076923076923077; }
   }
 </style>
-<div id="chart_05f24702_wrap"><div style="height:100%; width:100%;">                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
-        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha256-jvTGqxNp8AGWEcvNLVuKr+8j5dGe9Yw51LQkmDH+IYA=" crossorigin="anonymous"></script>                <div id="chart_05f24702" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("chart_05f24702")) {                    Plotly.newPlot(                        "chart_05f24702",                        [{"boxpoints":"all","customdata":["Augsburg","Bayern Munich","Dortmund","Frankfurt","Freiburg","Gladbach","Hamburger SV","Heidenheim","Hoffenheim","Köln","Leverkusen","Mainz 05","RB Leipzig","St Pauli","Stuttgart","Union Berlin","Werder Bremen","Wolfsburg"],"fillcolor":"rgba(0,0,0,0)","hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eEdad: %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","jitter":0.5,"line":{"color":"#e34948"},"marker":{"color":"#e34948","opacity":0.7,"size":6},"name":"Bundesliga","pointpos":0,"showlegend":false,"x":["Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga"],"y":{"dtype":"f8","bdata":"ZmZmZmbmOUBmZmZmZmY7QDMzMzMzMzpAzczMzMzMOEAzMzMzM7M6QAAAAAAAADpAzczMzMzMOUCamZmZmZk6QDMzMzMzszpAAAAAAAAAOUDNzMzMzEw6QJqZmZmZmTxAAAAAAAAAOUAAAAAAAIA7QAAAAAAAgDlAMzMzMzMzO0CamZmZmRk5QGZmZmZmZjlA"},"type":"box"},{"boxpoints":"all","customdata":["Atalanta","Bologna","Cagliari","Como","Cremonese","Fiorentina","Genoa","Hellas Verona","Inter","Juventus","Lazio","Lecce","Milan","Napoli","Parma","Pisa","Roma","Sassuolo","Torino","Udinese"],"fillcolor":"rgba(0,0,0,0)","hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eEdad: %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","jitter":0.5,"line":{"color":"#2a78d6"},"marker":{"color":"#2a78d6","opacity":0.7,"size":6},"name":"Serie A","pointpos":0,"showlegend":false,"x":["Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A"],"y":{"dtype":"f8","bdata":"MzMzMzOzOkAAAAAAAIA6QM3MzMzMzDhAZmZmZmZmOUCamZmZmRk8QM3MzMzMzDpAZmZmZmbmOUDNzMzMzEw6QJqZmZmZmTxAAAAAAAAAOkDNzMzMzMw7QAAAAAAAgDlAMzMzMzMzO0BmZmZmZmY8QJqZmZmZGThAAAAAAAAAO0DNzMzMzEw6QJqZmZmZGTpAMzMzMzMzO0AAAAAAAIA6QA=="},"type":"box"},{"boxpoints":"all","customdata":["Angers","Auxerre","Brest","Le Havre","Lens","Lille","Lorient","Lyon","Marseille","Metz","Monaco","Nantes","Nice","Paris FC","PSG","Rennes","Strasbourg","Toulouse"],"fillcolor":"rgba(0,0,0,0)","hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eEdad: %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","jitter":0.5,"line":{"color":"#2e413a"},"marker":{"color":"#2e413a","opacity":0.7,"size":6},"name":"Ligue 1","pointpos":0,"showlegend":false,"x":["Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1"],"y":{"dtype":"f8","bdata":"AAAAAAAAOkBmZmZmZuY4QAAAAAAAgDpAmpmZmZmZOkAAAAAAAIA6QAAAAAAAgDpAzczMzMxMOUAzMzMzMzM6QAAAAAAAgDtAMzMzMzMzOkCamZmZmZk5QJqZmZmZGTpAmpmZmZmZOUDNzMzMzEw7QJqZmZmZmTdAmpmZmZkZOkAAAAAAAIA1QJqZmZmZGThA"},"type":"box"},{"boxpoints":"all","customdata":["Alavés","Athletic Club","Atlético Madrid","Barcelona","Celta Vigo","Elche","Espanyol","Getafe","Girona","Levante","Mallorca","Osasuna","Oviedo","Rayo Vallecano","Real Betis","Real Madrid","Real Sociedad","Sevilla","Valencia","Villarreal"],"fillcolor":"rgba(0,0,0,0)","hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eEdad: %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","jitter":0.5,"line":{"color":"#eda100"},"marker":{"color":"#eda100","opacity":0.7,"size":6},"name":"La Liga","pointpos":0,"showlegend":false,"x":["La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga"],"y":{"dtype":"f8","bdata":"zczMzMxMO0CamZmZmZk7QDMzMzMzMztAMzMzMzOzOEAAAAAAAAA6QM3MzMzMzDpAZmZmZmZmO0AAAAAAAIA8QM3MzMzMTDtAZmZmZmbmOUDNzMzMzMw7QDMzMzMzMzxAAAAAAAAAPEBmZmZmZuY8QM3MzMzMzDtAzczMzMxMOUDNzMzMzMw5QAAAAAAAADtAmpmZmZkZO0CamZmZmRk6QA=="},"type":"box"},{"boxpoints":"all","customdata":["Arsenal","Aston Villa","Bournemouth","Brentford","Brighton","Burnley","Chelsea","Crystal Palace","Everton","Fulham","Leeds United","Liverpool","Manchester City","Manchester Utd","Newcastle","Nottingham","Sunderland","Tottenham","West Ham","Wolves"],"fillcolor":"rgba(0,0,0,0)","hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eEdad: %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","jitter":0.5,"line":{"color":"#e87ba4"},"marker":{"color":"#e87ba4","opacity":0.7,"size":6},"name":"Premier League","pointpos":0,"showlegend":false,"x":["Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League"],"y":{"dtype":"f8","bdata":"AAAAAAAAOkAAAAAAAAA8QAAAAAAAADlAMzMzMzMzOUCamZmZmRk6QAAAAAAAADtAmpmZmZkZOEAzMzMzMzM6QM3MzMzMTDtAmpmZmZkZPEDNzMzMzMw6QJqZmZmZmTpAZmZmZmZmOUCamZmZmRk6QDMzMzMzszpAZmZmZmbmOUDNzMzMzEw5QM3MzMzMTDlAzczMzMxMOkDNzMzMzMw5QA=="},"type":"box"}],                        {"template":{"layout":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12},"hoverlabel":{"bgcolor":"#fcfcfb","bordercolor":"#c3c2b7","font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11}},"margin":{"b":60,"l":70,"r":40,"t":90},"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(0,0,0,0)","title":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":18},"subtitle":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12.5}},"x":0.03,"xanchor":"left"},"xaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"},"yaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"}}},"title":{"subtitle":{"text":"Edad promedio de cada equipo, agrupados por liga"},"text":"Edad de plantilla"},"yaxis":{"title":{"text":"Edad promedio"}},"xaxis":{"title":{}},"autosize":true},                        {"displaylogo": false, "responsive": true, "displayModeBar": false}                    )                };            </script>        </div></div>
+<div id="chart_f219c0b3_wrap"><div style="height:100%; width:100%;">                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha256-jvTGqxNp8AGWEcvNLVuKr+8j5dGe9Yw51LQkmDH+IYA=" crossorigin="anonymous"></script>                <div id="chart_f219c0b3" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("chart_f219c0b3")) {                    Plotly.newPlot(                        "chart_f219c0b3",                        [{"boxpoints":"all","customdata":["Augsburg","Bayern Munich","Dortmund","Frankfurt","Freiburg","Gladbach","Hamburger SV","Heidenheim","Hoffenheim","Köln","Leverkusen","Mainz 05","RB Leipzig","St Pauli","Stuttgart","Union Berlin","Werder Bremen","Wolfsburg"],"fillcolor":"rgba(0,0,0,0)","hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eEdad: %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","jitter":0.5,"line":{"color":"#e34948"},"marker":{"color":"#e34948","opacity":0.7,"size":6},"name":"Bundesliga","pointpos":0,"showlegend":false,"x":["Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga"],"y":{"dtype":"f8","bdata":"ZmZmZmbmOUBmZmZmZmY7QDMzMzMzMzpAzczMzMzMOEAzMzMzM7M6QAAAAAAAADpAzczMzMzMOUCamZmZmZk6QDMzMzMzszpAAAAAAAAAOUDNzMzMzEw6QJqZmZmZmTxAAAAAAAAAOUAAAAAAAIA7QAAAAAAAgDlAMzMzMzMzO0CamZmZmRk5QGZmZmZmZjlA"},"type":"box"},{"boxpoints":"all","customdata":["Atalanta","Bologna","Cagliari","Como","Cremonese","Fiorentina","Genoa","Hellas Verona","Inter","Juventus","Lazio","Lecce","Milan","Napoli","Parma","Pisa","Roma","Sassuolo","Torino","Udinese"],"fillcolor":"rgba(0,0,0,0)","hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eEdad: %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","jitter":0.5,"line":{"color":"#2a78d6"},"marker":{"color":"#2a78d6","opacity":0.7,"size":6},"name":"Serie A","pointpos":0,"showlegend":false,"x":["Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A"],"y":{"dtype":"f8","bdata":"MzMzMzOzOkAAAAAAAIA6QM3MzMzMzDhAZmZmZmZmOUCamZmZmRk8QM3MzMzMzDpAZmZmZmbmOUDNzMzMzEw6QJqZmZmZmTxAAAAAAAAAOkDNzMzMzMw7QAAAAAAAgDlAMzMzMzMzO0BmZmZmZmY8QJqZmZmZGThAAAAAAAAAO0DNzMzMzEw6QJqZmZmZGTpAMzMzMzMzO0AAAAAAAIA6QA=="},"type":"box"},{"boxpoints":"all","customdata":["Angers","Auxerre","Brest","Le Havre","Lens","Lille","Lorient","Lyon","Marseille","Metz","Monaco","Nantes","Nice","Paris FC","PSG","Rennes","Strasbourg","Toulouse"],"fillcolor":"rgba(0,0,0,0)","hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eEdad: %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","jitter":0.5,"line":{"color":"#2e413a"},"marker":{"color":"#2e413a","opacity":0.7,"size":6},"name":"Ligue 1","pointpos":0,"showlegend":false,"x":["Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1"],"y":{"dtype":"f8","bdata":"AAAAAAAAOkBmZmZmZuY4QAAAAAAAgDpAmpmZmZmZOkAAAAAAAIA6QAAAAAAAgDpAzczMzMxMOUAzMzMzMzM6QAAAAAAAgDtAMzMzMzMzOkCamZmZmZk5QJqZmZmZGTpAmpmZmZmZOUDNzMzMzEw7QJqZmZmZmTdAmpmZmZkZOkAAAAAAAIA1QJqZmZmZGThA"},"type":"box"},{"boxpoints":"all","customdata":["Alavés","Athletic Club","Atlético Madrid","Barcelona","Celta Vigo","Elche","Espanyol","Getafe","Girona","Levante","Mallorca","Osasuna","Oviedo","Rayo Vallecano","Real Betis","Real Madrid","Real Sociedad","Sevilla","Valencia","Villarreal"],"fillcolor":"rgba(0,0,0,0)","hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eEdad: %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","jitter":0.5,"line":{"color":"#eda100"},"marker":{"color":"#eda100","opacity":0.7,"size":6},"name":"La Liga","pointpos":0,"showlegend":false,"x":["La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga"],"y":{"dtype":"f8","bdata":"zczMzMxMO0CamZmZmZk7QDMzMzMzMztAMzMzMzOzOEAAAAAAAAA6QM3MzMzMzDpAZmZmZmZmO0AAAAAAAIA8QM3MzMzMTDtAZmZmZmbmOUDNzMzMzMw7QDMzMzMzMzxAAAAAAAAAPEBmZmZmZuY8QM3MzMzMzDtAzczMzMxMOUDNzMzMzMw5QAAAAAAAADtAmpmZmZkZO0CamZmZmRk6QA=="},"type":"box"},{"boxpoints":"all","customdata":["Arsenal","Aston Villa","Bournemouth","Brentford","Brighton","Burnley","Chelsea","Crystal Palace","Everton","Fulham","Leeds United","Liverpool","Manchester City","Manchester Utd","Newcastle","Nottingham","Sunderland","Tottenham","West Ham","Wolves"],"fillcolor":"rgba(0,0,0,0)","hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eEdad: %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","jitter":0.5,"line":{"color":"#e87ba4"},"marker":{"color":"#e87ba4","opacity":0.7,"size":6},"name":"Premier League","pointpos":0,"showlegend":false,"x":["Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League"],"y":{"dtype":"f8","bdata":"AAAAAAAAOkAAAAAAAAA8QAAAAAAAADlAMzMzMzMzOUCamZmZmRk6QAAAAAAAADtAmpmZmZkZOEAzMzMzMzM6QM3MzMzMTDtAmpmZmZkZPEDNzMzMzMw6QJqZmZmZmTpAZmZmZmZmOUCamZmZmRk6QDMzMzMzszpAZmZmZmbmOUDNzMzMzEw5QM3MzMzMTDlAzczMzMxMOkDNzMzMzMw5QA=="},"type":"box"}],                        {"template":{"layout":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12},"hoverlabel":{"bgcolor":"#fcfcfb","bordercolor":"#c3c2b7","font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11}},"margin":{"b":60,"l":70,"r":40,"t":90},"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(0,0,0,0)","title":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":18},"subtitle":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12.5}},"x":0.03,"xanchor":"left"},"xaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"},"yaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"}}},"title":{"subtitle":{"text":"Edad promedio de cada equipo, agrupados por liga"},"text":"Edad de plantilla"},"yaxis":{"title":{"text":"Edad promedio"}},"xaxis":{"title":{}},"autosize":true},                        {"displaylogo": false, "responsive": true, "displayModeBar": false}                    )                };            </script>        </div></div>
 <script>
 (function() {
   function updateLegendLayout() {
-    var w = document.getElementById('chart_05f24702').offsetWidth;
+    var w = document.getElementById('chart_f219c0b3').offsetWidth;
     if (w < 420) {
-      Plotly.relayout('chart_05f24702', {'margin.r': 20, 'margin.t': 70});
+      Plotly.relayout('chart_f219c0b3', {'margin.r': 20, 'margin.t': 70});
     } else {
-      Plotly.relayout('chart_05f24702', {'margin.r': 40, 'margin.t': 90});
+      Plotly.relayout('chart_f219c0b3', {'margin.r': 40, 'margin.t': 90});
     }
   }
   window.addEventListener('resize', updateLegendLayout);
@@ -82,5 +142,17 @@
 })();
 </script>
 </div></main>
+<script>
+(function() {
+  var btn = document.getElementById('theme-toggle');
+  if (!btn) return;
+  btn.addEventListener('click', function() {
+    var current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    var next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('futviz-theme', next); } catch (e) {}
+  });
+})();
+</script>
 </body>
 </html>
