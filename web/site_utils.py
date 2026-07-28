@@ -83,6 +83,7 @@ PAGE_TEMPLATE = """<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title} · FutViz</title>
+<link rel="icon" type="image/png" href="../favicon.png">
 {font_links}
 <style>
 {brand_root}
@@ -158,6 +159,7 @@ INDEX_TEMPLATE = """<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FutViz — EDA 5 grandes ligas</title>
+<link rel="icon" type="image/png" href="favicon.png">
 {font_links}
 <style>
 {brand_root}
@@ -251,6 +253,7 @@ SECTION_PAGE_TEMPLATE = """<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{name} · FutViz</title>
+<link rel="icon" type="image/png" href="favicon.png">
 {font_links}
 <style>
 {brand_root}

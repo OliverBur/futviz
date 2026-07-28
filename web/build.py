@@ -29,48 +29,78 @@ ASSETS_DIR = CHARTS_DIR / "assets"
 SITE_ASSETS_DIR = DIST_DIR / "assets"
 
 
-def build_logo():
-    """Recorta el margen y hace transparente el fondo plano del logo fuente
-    (`img/futviz.png`, no versionado) y lo copia a `dist/assets/logo.png`
-    para usarlo en la landing y el header de cada subpágina. Así el logo se
-    ve bien sin importar el color de fondo del sitio, sin tener que matchear
-    ningún color a mano. Si no existe el archivo fuente (ej. clon nuevo sin
-    el logo todavía), no rompe el build."""
-    src = IMG_DIR / "futviz.png"
-    if not src.exists():
-        print("  (sin img/futviz.png — se omite el logo)")
-        return
-
+def _trim_transparent(im, pad=30):
+    """Recorta el margen y hace transparente el fondo plano de un logo
+    fuente (blanco, celeste, gris, lo que sea — no es fijo entre versiones
+    del logo, ni perfectamente uniforme, así que se compara contra el pixel
+    de la esquina con tolerancia en vez de pedir diferencia exacta de cero).
+    Devuelve una imagen RGBA recortada al contenido + `pad` de margen."""
     import numpy as np
-    from PIL import Image
 
-    im = Image.open(src).convert("RGB")
-    arr = np.asarray(im).astype(int)
-    # El color de fondo puede cambiar entre versiones del logo (blanco,
-    # celeste, etc.) y no es perfectamente uniforme (leve ruido/gradiente),
-    # así que se compara contra el pixel de la esquina con tolerancia en
-    # vez de pedir una diferencia exacta de cero.
+    arr = np.asarray(im.convert("RGB")).astype(int)
     bg_color = arr[0, 0]
     diff = np.abs(arr - bg_color).sum(axis=2)
 
     # Alfa suave: 0 en el fondo, sube a 255 a medida que un pixel se aleja
-    # del color de fondo — evita un borde 100% duro/con dientes de sierra
-    # alrededor del texto e ícono.
+    # del color de fondo — evita un borde 100% duro/con dientes de sierra.
     alpha = np.clip((diff - 20) * 3, 0, 255).astype("uint8")
-    rgba = np.dstack([np.asarray(im), alpha])
+    rgba = np.dstack([arr.astype("uint8"), alpha])
+    from PIL import Image
     im = Image.fromarray(rgba, mode="RGBA")
 
     mask = diff > 30
     rows, cols = np.where(mask)
     if len(rows):
-        pad = 30
         bbox = (max(int(cols.min()) - pad, 0), max(int(rows.min()) - pad, 0),
                  min(int(cols.max()) + pad, im.width), min(int(rows.max()) + pad, im.height))
         im = im.crop(bbox)
+    return im
 
+
+def build_logo():
+    """Recorta y hace transparente el logo fuente (`img/futviz.png`, no
+    versionado) y lo copia a `dist/assets/logo.png` para usarlo en la
+    landing y el header de cada subpágina. Así el logo se ve bien sin
+    importar el color de fondo del sitio, sin tener que matchear ningún
+    color a mano. Si no existe el archivo fuente (ej. clon nuevo sin el
+    logo todavía), no rompe el build."""
+    src = IMG_DIR / "futviz.png"
+    if not src.exists():
+        print("  (sin img/futviz.png — se omite el logo)")
+        return
+
+    from PIL import Image
+
+    im = _trim_transparent(Image.open(src))
     SITE_ASSETS_DIR.mkdir(parents=True, exist_ok=True)
     im.save(SITE_ASSETS_DIR / "logo.png")
     print(f"  logo -> {(SITE_ASSETS_DIR / 'logo.png').relative_to(DIST_DIR)}")
+
+
+def build_favicon():
+    """Favicon a partir de `img/futviz-logo-only.png` (no versionado) —
+    solo el ícono, sin el wordmark, recortado a fondo transparente y
+    centrado en un lienzo cuadrado para que no se vea deformado en la
+    pestaña del navegador. Si no existe el archivo fuente, no rompe el
+    build (el sitio se queda sin favicon, no con uno roto)."""
+    src = IMG_DIR / "futviz-logo-only.png"
+    if not src.exists():
+        print("  (sin img/futviz-logo-only.png — se omite el favicon)")
+        return
+
+    from PIL import Image
+
+    im = _trim_transparent(Image.open(src), pad=16)
+
+    # Centrar en lienzo cuadrado (el ícono es más ancho que alto) antes de
+    # bajar la resolución, para que no quede estirado.
+    side = max(im.width, im.height)
+    canvas = Image.new("RGBA", (side, side), (0, 0, 0, 0))
+    canvas.paste(im, ((side - im.width) // 2, (side - im.height) // 2), im)
+    canvas = canvas.resize((256, 256), Image.LANCZOS)
+
+    canvas.save(DIST_DIR / "favicon.png")
+    print(f"  favicon -> {(DIST_DIR / 'favicon.png').relative_to(DIST_DIR)}")
 
 
 def build_previews():
@@ -129,6 +159,7 @@ def main():
     ASSETS_DIR.mkdir(parents=True)
 
     build_logo()
+    build_favicon()
     build_previews()
 
     apply_theme()
