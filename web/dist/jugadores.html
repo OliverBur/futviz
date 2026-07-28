@@ -30,7 +30,14 @@
   @keyframes futviz-fade-in { from { opacity: 0; } to { opacity: 1; } }
   @media (prefers-reduced-motion: reduce) { body { animation: none; } }
 
-  header { padding: 20px 20px 24px; border-bottom: 1px solid var(--color-border); }
+  /* Misma textura de puntos que la landing (opacidad ya subida ~10%),
+     pero acá solo en el header — no en toda la página. */
+  header { padding: 20px 20px 24px; border-bottom: 1px solid var(--color-border);
+    background-image:
+      radial-gradient(rgba(44, 76, 84, 0.077) 1.4px, transparent 1.6px),
+      radial-gradient(rgba(57, 153, 6, 0.066) 1.4px, transparent 1.6px);
+    background-size: 22px 22px, 22px 22px;
+    background-position: 0 0, 11px 11px; }
   .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
   .crumb-current { color: var(--color-muted); font-size: 13px; font-weight: 500; }
   .crumb-current .wordmark { font-weight: 700; }
