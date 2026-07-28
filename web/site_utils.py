@@ -23,6 +23,44 @@ FONT_LINKS = """<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sansita:wght@700;800&display=swap" rel="stylesheet">"""
 
+# Se corre lo antes posible en <head> (antes de pintar) para que la página
+# no "flashee" en claro y después salte a oscuro. Lee la preferencia
+# guardada; si no hay ninguna, usa la del sistema operativo/navegador.
+THEME_INIT_SCRIPT = """<script>
+(function() {
+  try {
+    var stored = localStorage.getItem('futviz-theme');
+    var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch (e) {}
+})();
+</script>"""
+
+# Botón sol/luna — el ícono que se muestra es el modo AL QUE SE CAMBIA al
+# hacer click (luna visible en modo claro = "click para oscuro"), convención
+# estándar. Mismo id en las tres plantillas, un solo botón por página.
+THEME_TOGGLE_HTML = """<button type="button" class="theme-toggle" id="theme-toggle" aria-label="Cambiar entre modo claro y oscuro">
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
+  </svg>
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/>
+  </svg>
+</button>"""
+
+THEME_TOGGLE_SCRIPT = """<script>
+(function() {
+  var btn = document.getElementById('theme-toggle');
+  if (!btn) return;
+  btn.addEventListener('click', function() {
+    var current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    var next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('futviz-theme', next); } catch (e) {}
+  });
+})();
+</script>"""
+
 
 @dataclass
 class ChartPage:
@@ -84,6 +122,7 @@ PAGE_TEMPLATE = """<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title} · FutViz</title>
 <link rel="icon" type="image/png" href="../favicon.png">
+{theme_init_script}
 {font_links}
 <style>
 {brand_root}
@@ -91,10 +130,22 @@ PAGE_TEMPLATE = """<!doctype html>
     padding: 14px 32px; border-bottom: 1px solid var(--color-border); }}
   .crumb {{ color: var(--color-muted); text-decoration: none; font-size: 13px; font-weight: 500; }}
   .crumb:hover {{ color: var(--color-interactive); }}
+  .header-right {{ display: flex; align-items: center; gap: 14px; }}
   .site-logo-link {{ flex: none; line-height: 0; }}
   .site-logo {{ height: 30px; width: auto; display: block; }}
   main {{ padding: 28px 32px 60px; }}
-  .chart-scroll {{ max-width: 100%; overflow-x: auto; background: var(--color-bg);
+  /* Fijo en claro a propósito (no var(--color-bg)): el gráfico de adentro
+     (Plotly o PNG de matplotlib) usa tinta pensada para fondo claro, así
+     que la tarjeta se queda "de papel" aunque el resto de la página
+     oscurezca — si no, el texto del gráfico se vuelve ilegible. */
+  .chart-scroll {{
+    /* Re-declara las variables en claro para todo lo de adentro (incluida
+       la barra de filtros de Plotly, que lee estas mismas var(--color-x)
+       — si no, hereda los valores oscuros de :root aunque la tarjeta se
+       vea clara). */
+    --color-bg: #EFEDF7; --color-surface: #FFFFFF; --color-primary: #2C4C54;
+    --color-muted: #57707A; --color-border: #DEDBEA; --color-interactive: #2E7A06;
+    max-width: 100%; overflow-x: auto; background: var(--color-bg);
     border: 1px solid var(--color-border); border-radius: 14px; padding: 20px; }}
   img.static-chart {{ max-width: 100%; min-width: 600px; height: auto; border-radius: 6px; display: block; }}
   @media (max-width: 640px) {{
@@ -108,11 +159,15 @@ PAGE_TEMPLATE = """<!doctype html>
 <body>
 <header>
   <a class="crumb" href="../{section_slug}.html">&larr; {section_name}</a>
-  <a class="site-logo-link" href="../index.html">
-    <img class="site-logo" src="../assets/logo.png" alt="FutViz — volver al inicio">
-  </a>
+  <div class="header-right">
+    <a class="site-logo-link" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" alt="FutViz — volver al inicio">
+    </a>
+    {theme_toggle}
+  </div>
 </header>
 <main><div class="chart-scroll">{body}</div></main>
+{theme_toggle_script}
 </body>
 </html>
 """
@@ -143,14 +198,43 @@ BRAND_ROOT_CSS = """
     --color-muted: #57707A;
     --color-border: #DEDBEA;
   }
+  /* Modo oscuro: mismos nombres de variable, valores nuevos — todo lo que
+     ya usa var(--color-x) se adapta solo, sin tocar cada regla. Verificado
+     que las 5 pasan AA sobre --color-bg/--color-surface oscuros (6.6:1 a
+     13.8:1). html[data-theme="dark"] pisa a :root por especificidad
+     (selector de atributo sobre elemento > pseudo-clase :root). */
+  html[data-theme="dark"] {
+    --color-bg: #12181A;
+    --color-surface: #1B2426;
+    --color-primary: #D7E4E7;
+    --color-brand-accent: #5CC22A;
+    --color-brand-accent-soft: rgba(92, 194, 42, 0.16);
+    --color-interactive: #6FDB3B;
+    --color-interactive-soft: rgba(111, 219, 59, 0.14);
+    --color-text-body: #C7D3D6;
+    --color-muted: #8CA0A5;
+    --color-border: #2C393C;
+  }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; background: var(--color-bg); }
   body { margin: 0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     background: var(--color-bg); color: var(--color-text-body);
-    animation: futviz-fade-in .2s ease-out; }
+    animation: futviz-fade-in .2s ease-out;
+    transition: background-color .15s ease, color .15s ease; }
   .wordmark { font-family: "Sansita", "Inter", system-ui, sans-serif; }
   @keyframes futviz-fade-in { from { opacity: 0; } to { opacity: 1; } }
   @media (prefers-reduced-motion: reduce) { body { animation: none; } }
+
+  .theme-toggle { flex: none; display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--color-border);
+    background: var(--color-surface); color: var(--color-primary); cursor: pointer; padding: 0;
+    transition: border-color .15s ease, background-color .15s ease, color .15s ease; }
+  .theme-toggle:hover { border-color: var(--color-interactive); }
+  .theme-toggle:focus-visible { outline: 2px solid var(--color-interactive); outline-offset: 2px; }
+  .theme-toggle svg { width: 18px; height: 18px; }
+  .theme-toggle .icon-sun { display: none; }
+  html[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
+  html[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
 """
 
 INDEX_TEMPLATE = """<!doctype html>
@@ -160,9 +244,15 @@ INDEX_TEMPLATE = """<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FutViz — EDA 5 grandes ligas</title>
 <link rel="icon" type="image/png" href="favicon.png">
+{theme_init_script}
 {font_links}
 <style>
 {brand_root}
+  /* La landing no tiene barra de nav — el toggle queda fijo arriba a la
+     derecha de toda la página, no dentro del header centrado. */
+  .theme-toggle--floating {{ position: fixed; top: 16px; right: 16px; z-index: 20;
+    box-shadow: 0 2px 10px rgba(18, 24, 26, 0.10); }}
+
   /* Textura de puntos (misma pareja de colores del logo) en toda la
      página, muy tenue — no es ningún motivo futbolero, es un patrón
      geométrico abstracto — más los dos degradados suaves de siempre. */
@@ -223,6 +313,7 @@ INDEX_TEMPLATE = """<!doctype html>
 </style>
 </head>
 <body>
+<div class="theme-toggle--floating">{theme_toggle}</div>
 <header class="hero-header">
   <img class="logo-large" src="assets/logo.png" alt="FutViz">
   <p class="motivation">Nació de juntar mi pasión por el <span class="accent-word">fútbol</span> con la
@@ -233,6 +324,7 @@ INDEX_TEMPLATE = """<!doctype html>
   <div class="cards">{cards}</div>
   <p class="foot">Datos: FBref (equipos) &amp; Understat (jugadores) · Temporada 2025/2026</p>
 </main>
+{theme_toggle_script}
 </body>
 </html>
 """
@@ -254,6 +346,7 @@ SECTION_PAGE_TEMPLATE = """<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{name} · FutViz</title>
 <link rel="icon" type="image/png" href="favicon.png">
+{theme_init_script}
 {font_links}
 <style>
 {brand_root}
@@ -268,6 +361,7 @@ SECTION_PAGE_TEMPLATE = """<!doctype html>
   .topbar {{ display: flex; align-items: center; justify-content: space-between; gap: 12px; }}
   .crumb-current {{ color: var(--color-muted); font-size: 13px; font-weight: 500; }}
   .crumb-current .wordmark {{ font-weight: 700; }}
+  .header-right {{ display: flex; align-items: center; gap: 14px; }}
   .site-logo-link {{ flex: none; line-height: 0; }}
   .site-logo {{ height: 30px; width: auto; display: block; }}
   h1 {{ position: relative; font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
@@ -314,14 +408,18 @@ SECTION_PAGE_TEMPLATE = """<!doctype html>
 <header>
   <div class="topbar">
     <span class="crumb-current"><span class="wordmark">FutViz</span> / {name}</span>
-    <a class="site-logo-link" href="index.html">
-      <img class="site-logo" src="assets/logo.png" alt="FutViz — volver al inicio">
-    </a>
+    <div class="header-right">
+      <a class="site-logo-link" href="index.html">
+        <img class="site-logo" src="assets/logo.png" alt="FutViz — volver al inicio">
+      </a>
+      {theme_toggle}
+    </div>
   </div>
   <h1>{name}</h1>
   <div class="lead">{description}</div>
 </header>
 <main><div class="grid">{cards}</div></main>
+{theme_toggle_script}
 </body>
 </html>
 """
@@ -342,6 +440,8 @@ def write_chart_page(page: ChartPage, charts_dir: Path) -> Path:
         title=page.title, body=page.body_html,
         section_slug=section_slug, section_name=page.section,
         font_links=FONT_LINKS, brand_root=BRAND_ROOT_CSS,
+        theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML,
+        theme_toggle_script=THEME_TOGGLE_SCRIPT,
     )
     out_path = charts_dir / f"{page.slug}.html"
     out_path.write_text(html, encoding="utf-8")
@@ -366,6 +466,8 @@ def write_section_pages(pages: list[ChartPage], dist_dir: Path) -> list[Path]:
         html = SECTION_PAGE_TEMPLATE.format(
             name=name, description=meta["description"], cards=cards,
             brand_root=BRAND_ROOT_CSS, font_links=FONT_LINKS,
+            theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML,
+            theme_toggle_script=THEME_TOGGLE_SCRIPT,
         )
         out_path = dist_dir / f"{meta['slug']}.html"
         out_path.write_text(html, encoding="utf-8")
@@ -387,7 +489,11 @@ def write_index(pages: list[ChartPage], dist_dir: Path) -> Path:
         if name in counts
     )
 
-    html = INDEX_TEMPLATE.format(cards=cards, brand_root=BRAND_ROOT_CSS, font_links=FONT_LINKS)
+    html = INDEX_TEMPLATE.format(
+        cards=cards, brand_root=BRAND_ROOT_CSS, font_links=FONT_LINKS,
+        theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML,
+        theme_toggle_script=THEME_TOGGLE_SCRIPT,
+    )
     out_path = dist_dir / "index.html"
     out_path.write_text(html, encoding="utf-8")
     return out_path
