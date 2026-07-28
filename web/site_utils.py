@@ -61,6 +61,52 @@ THEME_TOGGLE_SCRIPT = """<script>
 })();
 </script>"""
 
+# Solo para páginas de chart con un gráfico Plotly (kind != radar/bar — ver
+# write_chart_page). El fondo del gráfico ya es transparente (paper/plot
+# bgcolor, ver apply_plotly_theme() en viz_theme.py) así que sigue el tema
+# de la página solo; lo que hace falta recolorear a mano vía JS es el
+# TEXTO/LÍNEAS, que Plotly guarda como color fijo en el layout — no hay
+# variables CSS ahí adentro. Los colores replican los tokens INK del tema
+# claro y los --color-x oscuros del sitio (ver BRAND_ROOT_CSS).
+PLOTLY_THEME_SCRIPT = """<script>
+(function() {
+  var LIGHT = {primary:'#0b0b0b', secondary:'#52514e', muted:'#898781', grid:'#e1e0d9', axis:'#c3c2b7', surface:'#fcfcfb'};
+  var DARK = {primary:'#D7E4E7', secondary:'#C7D3D6', muted:'#8CA0A5', grid:'#2C393C', axis:'#3A4A4E', surface:'#1B2426'};
+
+  function patchFor(theme) {
+    var c = theme === 'dark' ? DARK : LIGHT;
+    return {
+      'font.color': c.primary, 'title.font.color': c.primary,
+      'xaxis.tickfont.color': c.muted, 'xaxis.title.font.color': c.secondary,
+      'xaxis.gridcolor': c.grid, 'xaxis.zerolinecolor': c.axis, 'xaxis.linecolor': c.axis,
+      'yaxis.tickfont.color': c.muted, 'yaxis.title.font.color': c.secondary,
+      'yaxis.gridcolor': c.grid, 'yaxis.zerolinecolor': c.axis, 'yaxis.linecolor': c.axis,
+      'legend.font.color': c.secondary,
+      'hoverlabel.bgcolor': c.surface, 'hoverlabel.font.color': c.primary
+    };
+  }
+
+  function syncPlotly() {
+    if (!window.Plotly) return;
+    var theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    var patch = patchFor(theme);
+    document.querySelectorAll('.js-plotly-plot').forEach(function(gd) { Plotly.relayout(gd, patch); });
+  }
+  syncPlotly();
+
+  var btn = document.getElementById('theme-toggle');
+  if (btn) {
+    btn.addEventListener('click', function() {
+      var current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      var next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('futviz-theme', next); } catch (e) {}
+      syncPlotly();
+    });
+  }
+})();
+</script>"""
+
 
 @dataclass
 class ChartPage:
@@ -134,20 +180,18 @@ PAGE_TEMPLATE = """<!doctype html>
   .site-logo-link {{ flex: none; line-height: 0; }}
   .site-logo {{ height: 30px; width: auto; display: block; }}
   main {{ padding: 28px 32px 60px; }}
-  /* Fijo en claro a propósito (no var(--color-bg)): el gráfico de adentro
-     (Plotly o PNG de matplotlib) usa tinta pensada para fondo claro, así
-     que la tarjeta se queda "de papel" aunque el resto de la página
-     oscurezca — si no, el texto del gráfico se vuelve ilegible. */
-  .chart-scroll {{
-    /* Re-declara las variables en claro para todo lo de adentro (incluida
-       la barra de filtros de Plotly, que lee estas mismas var(--color-x)
-       — si no, hereda los valores oscuros de :root aunque la tarjeta se
-       vea clara). */
-    --color-bg: #EFEDF7; --color-surface: #FFFFFF; --color-primary: #2C4C54;
-    --color-muted: #57707A; --color-border: #DEDBEA; --color-interactive: #2E7A06;
-    max-width: 100%; overflow-x: auto; background: var(--color-bg);
+  /* Tanto los gráficos Plotly (transparentes, texto recoloreado en JS —
+     ver PLOTLY_THEME_SCRIPT) como los PNG de matplotlib (dos versiones
+     pre-renderizadas, claro/oscuro — ver viz_theme.dark_ink()) siguen el
+     tema de la página, así que la tarjeta puede seguir var(--color-bg). */
+  .chart-scroll {{ max-width: 100%; overflow-x: auto; background: var(--color-bg);
     border: 1px solid var(--color-border); border-radius: 14px; padding: 20px; }}
   img.static-chart {{ max-width: 100%; min-width: 600px; height: auto; border-radius: 6px; display: block; }}
+  /* Mismo criterio que el sol/luna y los thumbnails de la landing: dos
+     <img>, se muestra una u otra según el tema. */
+  img.static-chart-dark {{ display: none; }}
+  html[data-theme="dark"] img.static-chart-light {{ display: none; }}
+  html[data-theme="dark"] img.static-chart-dark {{ display: block; }}
   @media (max-width: 640px) {{
     header {{ padding: 12px 16px; }}
     main {{ padding: 20px 16px 40px; }}
@@ -296,6 +340,12 @@ INDEX_TEMPLATE = """<!doctype html>
   a.hub-card:focus-visible {{ outline: 2px solid var(--color-interactive); outline-offset: 3px; }}
   .hub-thumb {{ display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover;
     background: var(--color-bg); }}
+  /* Igual criterio que el toggle sol/luna: dos <img>, se muestra una u
+     otra según el tema — el thumbnail oscuro es una captura real en
+     oscuro (ver build_previews() en build.py), no un filtro CSS. */
+  .hub-thumb-dark {{ display: none; }}
+  html[data-theme="dark"] .hub-thumb-light {{ display: none; }}
+  html[data-theme="dark"] .hub-thumb-dark {{ display: block; }}
   .hub-body {{ padding: 22px 24px 26px; }}
   .hub-title {{ font-size: 21px; font-weight: 700; color: var(--color-primary); margin-bottom: 8px; }}
   .hub-sub {{ font-size: 14px; color: var(--color-text-body); line-height: 1.5; margin-bottom: 18px; }}
@@ -330,7 +380,8 @@ INDEX_TEMPLATE = """<!doctype html>
 """
 
 HUB_CARD_TEMPLATE = """<a class="hub-card" href="{slug}.html">
-  <img class="hub-thumb" src="assets/{preview}" alt="Vista previa — {name}">
+  <img class="hub-thumb hub-thumb-light" src="assets/{preview}" alt="Vista previa — {name}">
+  <img class="hub-thumb hub-thumb-dark" src="assets/{preview_dark}" alt="Vista previa — {name}">
   <div class="hub-body">
     <div class="hub-title">{name}</div>
     <div class="hub-sub">{description}</div>
@@ -436,12 +487,17 @@ CARD_TEMPLATE = """<a class="card" href="charts/{slug}.html">
 
 def write_chart_page(page: ChartPage, charts_dir: Path) -> Path:
     section_slug = SECTION_META.get(page.section, {}).get("slug", "index")
+    # PLOTLY_THEME_SCRIPT sirve para todas las páginas de chart: hace todo
+    # lo que THEME_TOGGLE_SCRIPT (toggle + localStorage) y de paso
+    # recolorea los gráficos Plotly si hay alguno — en páginas solo con
+    # PNG de matplotlib el querySelectorAll no encuentra nada y no hace
+    # nada extra, es inofensivo.
     html = PAGE_TEMPLATE.format(
         title=page.title, body=page.body_html,
         section_slug=section_slug, section_name=page.section,
         font_links=FONT_LINKS, brand_root=BRAND_ROOT_CSS,
         theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML,
-        theme_toggle_script=THEME_TOGGLE_SCRIPT,
+        theme_toggle_script=PLOTLY_THEME_SCRIPT,
     )
     out_path = charts_dir / f"{page.slug}.html"
     out_path.write_text(html, encoding="utf-8")
@@ -483,6 +539,7 @@ def write_index(pages: list[ChartPage], dist_dir: Path) -> Path:
     cards = "".join(
         HUB_CARD_TEMPLATE.format(
             slug=meta["slug"], name=name, description=meta["description"], preview=meta["preview"],
+            preview_dark=meta["preview"].replace(".png", "-dark.png"),
             count=counts.get(name, 0), plural="" if counts.get(name, 0) == 1 else "s",
         )
         for name, meta in SECTION_META.items()
@@ -499,10 +556,15 @@ def write_index(pages: list[ChartPage], dist_dir: Path) -> Path:
     return out_path
 
 
-def matplotlib_chart_body(fig, slug: str, assets_dir: Path, alt_text: str) -> str:
+def matplotlib_chart_body(fig, slug: str, assets_dir: Path, alt_text: str, variant: str = "light") -> str:
     """Guarda `fig` (matplotlib) como PNG en `assets_dir` y devuelve el
     fragmento <img> que la referencia (ruta relativa a la página del
-    gráfico, que vive un nivel arriba de assets_dir)."""
+    gráfico, que vive un nivel arriba de assets_dir). `variant` controla la
+    clase CSS que decide si se muestra en claro u oscuro (ver
+    `.static-chart-light`/`.static-chart-dark` en PAGE_TEMPLATE) — la
+    imagen en sí ya viene renderizada con la tinta correcta (ver
+    `viz_theme.dark_ink()`), esto solo elige cuál mostrar."""
     assets_dir.mkdir(parents=True, exist_ok=True)
     fig.savefig(assets_dir / f"{slug}.png", bbox_inches="tight")
-    return f'<img class="static-chart" src="assets/{slug}.png" alt="{alt_text}">'
+    cls = "static-chart-light" if variant == "light" else "static-chart-dark"
+    return f'<img class="static-chart {cls}" src="assets/{slug}.png" alt="{alt_text}">'
