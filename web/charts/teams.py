@@ -10,7 +10,7 @@ import plotly.graph_objects as go
 from site_utils import DATA_DIR, ChartPage, matplotlib_chart_body
 from viz_theme import (
     LEAGUE_ORDER, SEQUENTIAL_BLUE, INK,
-    league_color, sidebar_chart_html, plot_html, league_box_figure,
+    league_color, sidebar_chart_html, plot_html, league_box_figure, dark_ink,
 )
 
 SECTION = "Equipos"
@@ -64,7 +64,7 @@ def load_data():
     return df[cols]
 
 
-def chart_radar_subplots(df, assets_dir):
+def chart_radar_subplots(df, assets_dir, slug_suffix="", variant="light"):
     radar_metrics = [
         ("sh_Standard_Sh/90", "Tiros"), ("ov_Per 90 Minutes_Gls", "Goles"),
         ("sh_Standard_G/Sh", "G/Sh"), ("gk_Performance_CS%", "CS%"),
@@ -111,7 +111,8 @@ def chart_radar_subplots(df, assets_dir):
               ha="right", va="bottom", fontsize=8.5, color=INK["muted"])
     plt.tight_layout(rect=[0, 0.03, 1, 0.83])
 
-    body = matplotlib_chart_body(fig, "perfil-liga-radar", assets_dir, "Perfil de estilo por liga")
+    body = matplotlib_chart_body(fig, f"perfil-liga-radar{slug_suffix}", assets_dir,
+                                  "Perfil de estilo por liga", variant=variant)
     plt.close(fig)
     return ChartPage(
         slug="perfil-liga-radar", section=SECTION, title="Perfil de estilo por liga",
@@ -120,7 +121,8 @@ def chart_radar_subplots(df, assets_dir):
     ), norm, metric_cols, labels, angles, league_avg, radar_metrics
 
 
-def chart_radar_overlay(norm, metric_cols, labels, angles, league_avg, radar_metrics, assets_dir):
+def chart_radar_overlay(norm, metric_cols, labels, angles, league_avg, radar_metrics, assets_dir,
+                         slug_suffix="", variant="light"):
     import matplotlib.pyplot as plt
     fig = plt.figure(figsize=(12.2, 7.8))
     gs = fig.add_gridspec(1, 2, width_ratios=[1, 0.46], wspace=0.20,
@@ -179,7 +181,8 @@ def chart_radar_overlay(norm, metric_cols, labels, angles, league_avg, radar_met
     fig.text(0.97, 0.02, "Datos: fbref  ·  temporada 2025-26", ha="right", va="bottom",
               fontsize=8.5, color=INK["muted"])
 
-    body = matplotlib_chart_body(fig, "perfil-liga-overlay", assets_dir, "Dónde se separa cada liga")
+    body = matplotlib_chart_body(fig, f"perfil-liga-overlay{slug_suffix}", assets_dir,
+                                  "Dónde se separa cada liga", variant=variant)
     plt.close(fig)
     return ChartPage(
         slug="perfil-liga-overlay", section=SECTION, title="Dónde se separa cada liga",
@@ -233,7 +236,7 @@ def chart_def_efficiency(df):
     )
 
 
-def chart_gk_ranking(df, assets_dir):
+def chart_gk_ranking(df, assets_dir, slug_suffix="", variant="light"):
     def zscore(s):
         return (s - s.mean()) / s.std()
 
@@ -256,7 +259,8 @@ def chart_gk_ranking(df, assets_dir):
                  x=0.02, ha="left", fontsize=13, fontweight="bold")
     plt.tight_layout(rect=[0, 0, 1, 0.93])
 
-    body = matplotlib_chart_body(fig, "ranking-porterias", assets_dir, "Ranking de porterías")
+    body = matplotlib_chart_body(fig, f"ranking-porterias{slug_suffix}", assets_dir,
+                                  "Ranking de porterías", variant=variant)
     plt.close(fig)
     return ChartPage(
         slug="ranking-porterias", section=SECTION, title="Ranking de porterías",
@@ -385,11 +389,33 @@ def build(assets_dir) -> list:
     df = load_data()
     pages = []
 
+    # Los 3 gráficos matplotlib se renderizan dos veces (clara y oscura,
+    # con dark_ink()) y se pegan los dos <img> en un solo ChartPage — el
+    # CSS decide cuál mostrar según el tema (ver PAGE_TEMPLATE). La
+    # segunda pasada reusa los datos ya calculados en la primera (norm,
+    # top12/bot12 vienen de las mismas funciones), no hace falta
+    # recalcular df.groupby/zscore aparte.
     radar1_page, norm, metric_cols, labels, angles, league_avg, radar_metrics = chart_radar_subplots(df, assets_dir)
+    with dark_ink():
+        radar1_dark, *_ = chart_radar_subplots(df, assets_dir, slug_suffix="-dark", variant="dark")
+    radar1_page.body_html += radar1_dark.body_html
     pages.append(radar1_page)
-    pages.append(chart_radar_overlay(norm, metric_cols, labels, angles, league_avg, radar_metrics, assets_dir))
+
+    radar2_page = chart_radar_overlay(norm, metric_cols, labels, angles, league_avg, radar_metrics, assets_dir)
+    with dark_ink():
+        radar2_dark = chart_radar_overlay(norm, metric_cols, labels, angles, league_avg, radar_metrics, assets_dir,
+                                           slug_suffix="-dark", variant="dark")
+    radar2_page.body_html += radar2_dark.body_html
+    pages.append(radar2_page)
+
     pages.append(chart_def_efficiency(df))
-    pages.append(chart_gk_ranking(df, assets_dir))
+
+    gk_rank_page = chart_gk_ranking(df, assets_dir)
+    with dark_ink():
+        gk_rank_dark = chart_gk_ranking(df, assets_dir, slug_suffix="-dark", variant="dark")
+    gk_rank_page.body_html += gk_rank_dark.body_html
+    pages.append(gk_rank_page)
+
     pages.append(chart_gk_vs_result(df))
     pages.append(chart_gk_demand(df))
     pages.append(chart_parity(df))

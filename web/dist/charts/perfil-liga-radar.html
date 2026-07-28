@@ -77,20 +77,18 @@
   .site-logo-link { flex: none; line-height: 0; }
   .site-logo { height: 30px; width: auto; display: block; }
   main { padding: 28px 32px 60px; }
-  /* Fijo en claro a propósito (no var(--color-bg)): el gráfico de adentro
-     (Plotly o PNG de matplotlib) usa tinta pensada para fondo claro, así
-     que la tarjeta se queda "de papel" aunque el resto de la página
-     oscurezca — si no, el texto del gráfico se vuelve ilegible. */
-  .chart-scroll {
-    /* Re-declara las variables en claro para todo lo de adentro (incluida
-       la barra de filtros de Plotly, que lee estas mismas var(--color-x)
-       — si no, hereda los valores oscuros de :root aunque la tarjeta se
-       vea clara). */
-    --color-bg: #EFEDF7; --color-surface: #FFFFFF; --color-primary: #2C4C54;
-    --color-muted: #57707A; --color-border: #DEDBEA; --color-interactive: #2E7A06;
-    max-width: 100%; overflow-x: auto; background: var(--color-bg);
+  /* Tanto los gráficos Plotly (transparentes, texto recoloreado en JS —
+     ver PLOTLY_THEME_SCRIPT) como los PNG de matplotlib (dos versiones
+     pre-renderizadas, claro/oscuro — ver viz_theme.dark_ink()) siguen el
+     tema de la página, así que la tarjeta puede seguir var(--color-bg). */
+  .chart-scroll { max-width: 100%; overflow-x: auto; background: var(--color-bg);
     border: 1px solid var(--color-border); border-radius: 14px; padding: 20px; }
   img.static-chart { max-width: 100%; min-width: 600px; height: auto; border-radius: 6px; display: block; }
+  /* Mismo criterio que el sol/luna y los thumbnails de la landing: dos
+     <img>, se muestra una u otra según el tema. */
+  img.static-chart-dark { display: none; }
+  html[data-theme="dark"] img.static-chart-light { display: none; }
+  html[data-theme="dark"] img.static-chart-dark { display: block; }
   @media (max-width: 640px) {
     header { padding: 12px 16px; }
     main { padding: 20px 16px 40px; }
@@ -116,17 +114,43 @@
 </button>
   </div>
 </header>
-<main><div class="chart-scroll"><img class="static-chart" src="assets/perfil-liga-radar.png" alt="Perfil de estilo por liga"></div></main>
+<main><div class="chart-scroll"><img class="static-chart static-chart-light" src="assets/perfil-liga-radar.png" alt="Perfil de estilo por liga"><img class="static-chart static-chart-dark" src="assets/perfil-liga-radar-dark.png" alt="Perfil de estilo por liga"></div></main>
 <script>
 (function() {
+  var LIGHT = {primary:'#0b0b0b', secondary:'#52514e', muted:'#898781', grid:'#e1e0d9', axis:'#c3c2b7', surface:'#fcfcfb'};
+  var DARK = {primary:'#D7E4E7', secondary:'#C7D3D6', muted:'#8CA0A5', grid:'#2C393C', axis:'#3A4A4E', surface:'#1B2426'};
+
+  function patchFor(theme) {
+    var c = theme === 'dark' ? DARK : LIGHT;
+    return {
+      'font.color': c.primary, 'title.font.color': c.primary,
+      'xaxis.tickfont.color': c.muted, 'xaxis.title.font.color': c.secondary,
+      'xaxis.gridcolor': c.grid, 'xaxis.zerolinecolor': c.axis, 'xaxis.linecolor': c.axis,
+      'yaxis.tickfont.color': c.muted, 'yaxis.title.font.color': c.secondary,
+      'yaxis.gridcolor': c.grid, 'yaxis.zerolinecolor': c.axis, 'yaxis.linecolor': c.axis,
+      'legend.font.color': c.secondary,
+      'hoverlabel.bgcolor': c.surface, 'hoverlabel.font.color': c.primary
+    };
+  }
+
+  function syncPlotly() {
+    if (!window.Plotly) return;
+    var theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    var patch = patchFor(theme);
+    document.querySelectorAll('.js-plotly-plot').forEach(function(gd) { Plotly.relayout(gd, patch); });
+  }
+  syncPlotly();
+
   var btn = document.getElementById('theme-toggle');
-  if (!btn) return;
-  btn.addEventListener('click', function() {
-    var current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-    var next = current === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
-    try { localStorage.setItem('futviz-theme', next); } catch (e) {}
-  });
+  if (btn) {
+    btn.addEventListener('click', function() {
+      var current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      var next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('futviz-theme', next); } catch (e) {}
+      syncPlotly();
+    });
+  }
 })();
 </script>
 </body>

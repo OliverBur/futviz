@@ -4,6 +4,8 @@ Un solo lugar para paleta y estilo matplotlib: se importa igual en todos
 los notebooks del proyecto para que cada gráfico se vea consistente.
 """
 
+import contextlib
+
 import matplotlib as mpl
 
 LEAGUE_ORDER = ["Bundesliga", "Serie A", "Ligue 1", "La Liga", "Premier League"]
@@ -30,6 +32,35 @@ INK = {
     "grid": "#e1e0d9",
     "axis": "#c3c2b7",
 }
+
+# Tinta para la variante oscura de los PNG de matplotlib (radar, ranking de
+# porterías) — mismos roles que INK, valores que matchean la paleta oscura
+# del sitio (ver BRAND_ROOT_CSS en web/site_utils.py). No reemplaza a INK:
+# se usa solo dentro de dark_ink() para renderizar una segunda vez.
+DARK_INK = {
+    "surface": "#1B2426",
+    "primary": "#D7E4E7",
+    "secondary": "#C7D3D6",
+    "muted": "#8CA0A5",
+    "grid": "#2C393C",
+    "axis": "#3A4A4E",
+}
+
+
+@contextlib.contextmanager
+def dark_ink():
+    """Cambia INK a la paleta oscura (mutación in-place del dict — todo lo
+    que hizo `from viz_theme import INK` ve el cambio sin re-importar) y
+    re-aplica el tema de matplotlib, para renderizar la misma figura una
+    segunda vez en oscuro. Restaura la paleta clara al salir."""
+    original = dict(INK)
+    INK.update(DARK_INK)
+    apply_theme()
+    try:
+        yield
+    finally:
+        INK.update(original)
+        apply_theme()
 
 
 def apply_theme():
