@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¿Existe el estilo de juego, o solo el nivel? · FutViz</title>
+<link rel="icon" type="image/png" href="../favicon.png">
+<meta name="description" content="Agrupé a los 96 equipos sin decirle al modelo qué buscar. Encontró seis grupos — y después descubrí qué estaba midiendo en realidad.">
+<script>
+(function() {
+  try {
+    var stored = localStorage.getItem('futviz-theme');
+    var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch (e) {}
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sansita:wght@700;800&display=swap" rel="stylesheet">
+<style>
+
+  :root {
+    --color-bg: #EFEDF7;
+    --color-surface: #FFFFFF;
+    --color-primary: #2C4C54;
+    --color-brand-accent: #399906;
+    --color-brand-accent-soft: rgba(57, 153, 6, 0.12);
+    --color-interactive: #2E7A06;
+    --color-interactive-soft: rgba(46, 122, 6, 0.10);
+    --color-text-body: #1A2E33;
+    --color-muted: #57707A;
+    --color-border: #DEDBEA;
+  }
+  /* Modo oscuro: mismos nombres de variable, valores nuevos — todo lo que
+     ya usa var(--color-x) se adapta solo, sin tocar cada regla. Verificado
+     que las 5 pasan AA sobre --color-bg/--color-surface oscuros (6.6:1 a
+     13.8:1). html[data-theme="dark"] pisa a :root por especificidad
+     (selector de atributo sobre elemento > pseudo-clase :root). */
+  html[data-theme="dark"] {
+    --color-bg: #12181A;
+    --color-surface: #1B2426;
+    --color-primary: #D7E4E7;
+    --color-brand-accent: #5CC22A;
+    --color-brand-accent-soft: rgba(92, 194, 42, 0.16);
+    --color-interactive: #6FDB3B;
+    --color-interactive-soft: rgba(111, 219, 59, 0.14);
+    --color-text-body: #C7D3D6;
+    --color-muted: #8CA0A5;
+    --color-border: #2C393C;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; background: var(--color-bg); }
+  body { margin: 0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--color-bg); color: var(--color-text-body);
+    animation: futviz-fade-in .2s ease-out;
+    transition: background-color .15s ease, color .15s ease; }
+  .wordmark { font-family: "Sansita", "Inter", system-ui, sans-serif; }
+  @keyframes futviz-fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { body { animation: none; } }
+
+  .theme-toggle { flex: none; display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--color-border);
+    background: var(--color-surface); color: var(--color-primary); cursor: pointer; padding: 0;
+    transition: border-color .15s ease, background-color .15s ease, color .15s ease; }
+  .theme-toggle:hover { border-color: var(--color-interactive); }
+  .theme-toggle:focus-visible { outline: 2px solid var(--color-interactive); outline-offset: 2px; }
+  .theme-toggle svg { width: 18px; height: 18px; }
+  .theme-toggle .icon-sun { display: none; }
+  html[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
+  html[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+
+  header { padding: 14px 20px; border-bottom: 1px solid var(--color-border);
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    position: sticky; top: 0; z-index: 20;
+    background: color-mix(in srgb, var(--color-bg) 88%, transparent);
+    backdrop-filter: blur(8px); }
+  .crumb { color: var(--color-muted); text-decoration: none; font-size: 13px; font-weight: 500; }
+  .crumb:hover { color: var(--color-interactive); }
+  .header-right { display: flex; align-items: center; gap: 14px; }
+  .site-logo-link { flex: none; line-height: 0; }
+  .site-logo { height: 26px; width: auto; display: block; }
+
+  /* Barra de progreso de lectura: en un artículo largo da idea de cuánto
+     falta, que es justo lo que una grilla de gráficos no necesita. */
+  #progress { position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--color-brand-accent); z-index: 30; transition: width .1s linear; }
+
+  main { padding: 0 20px 80px; }
+
+  /* Dos anchos: la prosa se lee en una columna angosta (~68 caracteres) y
+     los gráficos pueden respirar más. Ambos centrados sobre el mismo eje. */
+  .wrap { max-width: 720px; margin: 0 auto; }
+  .wrap-wide { max-width: 940px; margin: 0 auto; }
+
+  .hero { padding: 48px 0 28px; }
+  .kicker { display: inline-block; font-size: 12px; font-weight: 600; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--color-primary); background: var(--color-brand-accent-soft);
+    padding: 5px 11px; border-radius: 999px; margin-bottom: 18px; }
+  .hero h1 { font-size: 32px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em;
+    color: var(--color-primary); margin: 0 0 16px; }
+  .deck { font-size: 17px; line-height: 1.6; color: var(--color-muted); margin: 0; }
+  /* Rejilla de 2 columnas y no flex-wrap: con flex cada dato se dimensiona por
+     su contenido, así que se apilaban todos a la izquierda y la segunda columna
+     no coincidía entre filas (58px de diferencia), dejando medio ancho vacío.
+     Dos columnas porque el dato más largo mide ~300px: con cuatro se partiría
+     en dos líneas. */
+  .meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 32px; margin-top: 26px; padding-top: 20px;
+    border-top: 1px solid var(--color-border); }
+  .meta div { font-size: 12.5px; color: var(--color-muted); }
+  .meta b { display: block; font-size: 10.5px; font-weight: 600; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--color-primary); margin-bottom: 3px; }
+
+  article { font-size: 16.5px; line-height: 1.72; }
+  article h2 { font-size: 25px; line-height: 1.25; font-weight: 700; letter-spacing: -0.015em;
+    color: var(--color-primary); margin: 60px 0 6px; scroll-margin-top: 70px; }
+  article h2 .step { display: block; font-size: 12px; font-weight: 600; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--color-brand-accent); margin-bottom: 8px; }
+  article h3 { font-size: 18px; font-weight: 700; color: var(--color-primary); margin: 38px 0 4px; }
+  article p { margin: 16px 0; }
+  article ul { margin: 16px 0; padding-left: 22px; }
+  article li { margin: 9px 0; }
+  article strong { color: var(--color-primary); font-weight: 650; }
+  article a { color: var(--color-interactive); }
+  article code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .88em;
+    background: var(--color-brand-accent-soft); padding: 2px 6px; border-radius: 5px;
+    color: var(--color-primary); }
+
+  /* Bloque de gráfico: mismo tratamiento de tarjeta que las páginas de
+     chart (.chart-scroll) para que se sienta el mismo sitio. */
+  figure { margin: 34px auto; }
+  .chart-scroll { max-width: 100%; overflow-x: auto; background: var(--color-bg);
+    border: 1px solid var(--color-border); border-radius: 14px; padding: 18px; }
+  figcaption { font-size: 13px; line-height: 1.5; color: var(--color-muted); margin-top: 12px;
+    padding-left: 12px; border-left: 2px solid var(--color-border); }
+
+  .callout { margin: 34px 0; padding: 20px 22px; border-radius: 12px;
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-brand-accent); }
+  .callout.warn { border-left-color: #E0891C; }
+  .callout .callout-title { font-size: 12px; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--color-primary); margin-bottom: 8px; }
+  .callout p { margin: 8px 0 0; font-size: 15.5px; }
+  .callout p:first-of-type { margin-top: 0; }
+
+  /* Dato grande: para el número que sostiene el argumento. */
+  .stat { margin: 34px 0; padding: 26px 24px; border-radius: 14px; text-align: center;
+    background: var(--color-surface); border: 1px solid var(--color-border); }
+  .stat .stat-value { font-size: 46px; font-weight: 800; letter-spacing: -0.02em; line-height: 1;
+    color: var(--color-brand-accent); }
+  .stat .stat-label { font-size: 14px; color: var(--color-muted); margin-top: 12px; line-height: 1.5; }
+
+  .table-scroll { overflow-x: auto; margin: 30px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 520px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--color-border);
+    vertical-align: top; }
+  thead th { font-size: 11.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+    color: var(--color-primary); border-bottom-width: 2px; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tbody tr:hover { background: var(--color-interactive-soft); }
+
+  .article-end { margin: 56px 0 0; padding-top: 26px; border-top: 1px solid var(--color-border);
+    display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+  .article-end a { font-size: 14px; font-weight: 600; text-decoration: none;
+    color: var(--color-interactive); }
+  .article-end .note { font-size: 12.5px; color: var(--color-muted); }
+
+  @media (max-width: 640px) {
+    main { padding: 0 16px 56px; }
+    .hero { padding: 32px 0 22px; }
+    .hero h1 { font-size: 26px; }
+    .deck { font-size: 15.5px; }
+    /* en móvil dos columnas dejarían ~140px por dato: una sola y a lo alto */
+    .meta { grid-template-columns: 1fr; gap: 14px; }
+    article { font-size: 16px; }
+    article h2 { font-size: 21px; margin-top: 46px; }
+    .chart-scroll { padding: 12px; }
+    .stat .stat-value { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<header>
+  <a class="crumb" href="../machine-learning.html">&larr; Machine Learning</a>
+  <div class="header-right">
+    <a class="site-logo-link" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" alt="FutViz — volver al inicio">
+    </a>
+    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Cambiar entre modo claro y oscuro">
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
+  </svg>
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/>
+  </svg>
+</button>
+  </div>
+</header>
+<main>
+  <div class="wrap hero">
+    <span class="kicker">Machine Learning</span>
+    <h1>¿Existe el estilo de juego, o solo el nivel?</h1>
+    <p class="deck">Un ejercicio de aprendizaje no supervisado sobre las cinco grandes ligas: PCA, k-means y una prueba incómoda que cambió la conclusión del análisis.</p>
+    <div class="meta"><div><b>Datos</b>96 equipos · top 5 ligas · 2025-26</div><div><b>Métodos</b>PCA · K-means · test de nulo</div><div><b>Métricas</b>19 de estilo, sin datos avanzados</div><div><b>Lectura</b>~8 min</div></div>
+  </div>
+  <article><div class="wrap"><h2 id="pregunta"><span class="step">01 · La pregunta</span>¿Existen los estilos de juego?</h2></div><div class="wrap">
+<p>Todo el mundo habla de estilos: que un equipo es de posesión, que otro
+presiona alto, que aquel se repliega. Pero si nadie le dice a una computadora
+qué es un estilo y le doy solamente los números de los <strong>96 equipos de
+las cinco grandes ligas</strong>, ¿los encuentra sola?</p>
+<p>Eso es el <em>aprendizaje no supervisado</em>: no hay respuestas correctas
+con las que entrenar, solo datos y la pregunta de si tienen estructura. Le
+di 19 métricas de la temporada 2025-26 —posesión, tiros,
+faltas, centros, tackles, atajadas— y le pedí que agrupara.</p>
+<p>Funcionó. Y al revisar por qué funcionaba, apareció que estaba midiendo otra
+cosa. Ese desvío terminó siendo más interesante que el plan original, así que
+el recorrido está contado tal como pasó.</p></div><div class="wrap"><h2 id="pca"><span class="step">02 · El método</span>Comprimir 19 métricas en unos pocos ejes</h2></div><div class="wrap">
+<p>Las métricas se pisan entre sí: un equipo que tira mucho también suele
+rematar mucho a puerta. <strong>PCA</strong> resume esa redundancia en unos
+pocos ejes independientes que conservan casi toda la información — acá bastan
+<strong>7 componentes para el 80%</strong> de la variación.</p>
+<p>El gráfico de abajo es un <em>biplot</em>: los puntos son equipos y las
+flechas, las métricas originales. Flechas que apuntan al mismo lado son
+métricas que van juntas; flechas largas son las que más pesan en este plano.</p></div><figure class="wrap-wide"><div class="chart-scroll">
+<style>
+  #chart_bfe6ce67_wrap { position: relative; width: 100%; max-width: 880px;
+    aspect-ratio: 1.2941176470588236; }
+  #chart_bfe6ce67_wrap > div { position: absolute; inset: 0; }
+  @media (max-width: 520px) {
+    #chart_bfe6ce67_wrap { aspect-ratio: 1.1; }
+  }
+</style>
+<div id="chart_bfe6ce67_wrap"><div style="height:100%; width:100%;">                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha256-jvTGqxNp8AGWEcvNLVuKr+8j5dGe9Yw51LQkmDH+IYA=" crossorigin="anonymous"></script>                <div id="chart_bfe6ce67" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("chart_bfe6ce67")) {                    Plotly.newPlot(                        "chart_bfe6ce67",                        [{"customdata":[["Augsburg","Bundesliga"],["Bayern Munich","Bundesliga"],["Dortmund","Bundesliga"],["Frankfurt","Bundesliga"],["Freiburg","Bundesliga"],["Gladbach","Bundesliga"],["Hamburger SV","Bundesliga"],["Heidenheim","Bundesliga"],["Hoffenheim","Bundesliga"],["Köln","Bundesliga"],["Leverkusen","Bundesliga"],["Mainz 05","Bundesliga"],["RB Leipzig","Bundesliga"],["St Pauli","Bundesliga"],["Stuttgart","Bundesliga"],["Union Berlin","Bundesliga"],["Werder Bremen","Bundesliga"],["Wolfsburg","Bundesliga"],["Atalanta","Serie A"],["Bologna","Serie A"],["Cagliari","Serie A"],["Como","Serie A"],["Cremonese","Serie A"],["Fiorentina","Serie A"],["Genoa","Serie A"],["Hellas Verona","Serie A"],["Inter","Serie A"],["Juventus","Serie A"],["Lazio","Serie A"],["Lecce","Serie A"],["Milan","Serie A"],["Napoli","Serie A"],["Parma","Serie A"],["Pisa","Serie A"],["Roma","Serie A"],["Sassuolo","Serie A"],["Torino","Serie A"],["Udinese","Serie A"],["Angers","Ligue 1"],["Auxerre","Ligue 1"],["Brest","Ligue 1"],["Le Havre","Ligue 1"],["Lens","Ligue 1"],["Lille","Ligue 1"],["Lorient","Ligue 1"],["Lyon","Ligue 1"],["Marseille","Ligue 1"],["Metz","Ligue 1"],["Monaco","Ligue 1"],["Nantes","Ligue 1"],["Nice","Ligue 1"],["Paris FC","Ligue 1"],["PSG","Ligue 1"],["Rennes","Ligue 1"],["Strasbourg","Ligue 1"],["Toulouse","Ligue 1"],["Alavés","La Liga"],["Athletic Club","La Liga"],["Atlético Madrid","La Liga"],["Barcelona","La Liga"],["Celta Vigo","La Liga"],["Elche","La Liga"],["Espanyol","La Liga"],["Getafe","La Liga"],["Girona","La Liga"],["Levante","La Liga"],["Mallorca","La Liga"],["Osasuna","La Liga"],["Oviedo","La Liga"],["Rayo Vallecano","La Liga"],["Real Betis","La Liga"],["Real Madrid","La Liga"],["Real Sociedad","La Liga"],["Sevilla","La Liga"],["Valencia","La Liga"],["Villarreal","La Liga"],["Arsenal","Premier League"],["Aston Villa","Premier League"],["Bournemouth","Premier League"],["Brentford","Premier League"],["Brighton","Premier League"],["Burnley","Premier League"],["Chelsea","Premier League"],["Crystal Palace","Premier League"],["Everton","Premier League"],["Fulham","Premier League"],["Leeds United","Premier League"],["Liverpool","Premier League"],["Manchester City","Premier League"],["Manchester Utd","Premier League"],["Newcastle","Premier League"],["Nottingham","Premier League"],["Sunderland","Premier League"],["Tottenham","Premier League"],["West Ham","Premier League"],["Wolves","Premier League"]],"hovertemplate":"\u003cb\u003e%{customdata[0]}\u003c\u002fb\u003e\u003cbr\u003e%{customdata[1]}\u003cbr\u003ePC1: %{x:.2f}\u003cbr\u003ePC2: %{y:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#256abf","line":{"color":"#fcfcfb","width":1.5},"opacity":0.82,"size":9},"mode":"markers","showlegend":false,"x":{"dtype":"f8","bdata":"flkrvJVi8L9HrpYgQRglQKHTWRmVdw9A9Pw4Ztpn9z8F+1EaIhbdP6HXbvH5RPK\u002fAOoI2HzT9r\u002fX1u1vTe33v91RyEpzSfw\u002f2\u002fxM+UF6yD9Idp3yCrMKQD\u002fDfEivM\u002fa\u002fb8oTFfzfDEA7dlic5OwGwOy9vdvKYxBAC0v9+Wst8b9IXmN5GH\u002f+v8YVnjO2JfS\u002fpWnjmZXm8D8xqZKFpY7Qv2eE\u002fc8QyPy\u002fxfB27VVRCEAMXphmYn4EwB0Qs6dj6\u002fm\u002fdMPhwK72+b\u002feDLV90JwTwKbSCRt6oxVAv6SeqUHyCUAdK8Hpxjnpv4RQdkOWBAnAMvtI0ZKp+D\u002fa5nDuOloJQMd9YiWenwfAwAijustoFcCv9oQcR+X9P48pyqI5oNq\u002fQ4UTaxD1+r9DZ5n1navxvxNqr6i5mQbADl64j3XDC8Di\u002fwxvbiQBwHp6j88VvQHAusKNGY5xA0DV\u002fFJwpUzqP8DFmtCM59g\u002frm6Azt4T\u002fD8wtXa\u002f2Q4EQJWh4680awvA+A2wIu5E4D\u002fJ7aWxIBULwC2ojpyohwHA2JQGcvcVyL\u002f3EZUytS0ZQGMR\u002fHfrsPc\u002fp0hpl3V+\u002fz9j+G\u002fDvrnsv7htghtQAgPALh8eQ\u002fPm+b8j06+kLBr8P6uCzoOp8BpAqUlIw0TJ8D\u002fD029ILyjqvzJ2HlhXTADAk0twgRHeDMBrbb4Ddk38v3wuLCs9X\u002fq\u002fzHLag6Yy4L+odvhIWqz4v3lUmCMwHhHAJzRjigvc87\u002fL2KAESCbuPw2rmEJ7QRFAAwz+dFe6z7+0pMiEZVkBwFDzwSo3gu+\u002fGD6wFKep\u002fj\u002ft6v8ilBoRQIhuaL4sqfw\u002fsy8moLXj0z8nAaBYkxjiP6khT8zJReU\u002fTzn\u002f872DBcC\u002fCoasWtHNPw60Y9hXkvu\u002f49LqPjY\u002f4798NghbCifqv5Yi888a8em\u002fyatWhtO3BEAElNHGbK0SQCJjYYGGDwJAkNdUUG1O6T+HLjFUB6aAvwUs78m2KPe\u002fZ1QbTCZj5L+7SWG5WRL4v9\u002fRd145lRDA"},"y":{"dtype":"f8","bdata":"MpApl5Yx\u002fb\u002fzre+GH5gHwII\u002fu0oYGKU\u002fF94SdP4ODcC956FSPDT1v4iFYa6cZvG\u002fFCp5mq3KrD9NU14BG0AMwBJZqRovF\u002fa\u002fY7wjnZKCBMCwwuG646nWvycwCMwGBfi\u002fYhfPwvpxAcA9wozA3F4AwJfcUbZvr\u002fK\u002f+5yCYdFk+b+FYNxWFx\u002f8vzToV8Zs1AfAxgMUDi1F+T+gqXzAKesAQFzOtsrDA\u002fI\u002fq58rrdZvB0CAryzIxzL7P6g6hu3ouApAmb1kDzF9+T\u002fccXGZp87xv\u002fNhyNwnzu0\u002fRuLaTbsO+D\u002f4o42bxc4JQGivmAc+sABAocOdZzO6A0CEtZa5YFgAQLcaAiWR2ghAEHmVH0yq5b9KXq\u002fu+SQEQM\u002fRO2c4i+w\u002fPQkPIfdE6b+b3lKgnIrCv\u002fFjZTp9gdW\u002flyHOpasI8j+B8Iw5SJv7v01haX3wnfQ\u002fQCLkJb3C0L9uA42Os9\u002fyP4rH5LTYYfK\u002fArc7ml7p+T8O8FZQ1VfGv1k70wMHigDA2YaF5eohA8CRlxdE75jrP9E1mOuzwPS\u002fUlPgixYY8L9Y1jydZubhP8YRU3nJ9ue\u002fxdsMXvc\u002fs79JMGXytyLXvwm2QYsWW\u002fA\u002fiKeGrYsSqz8fe5IazdzUv3XdyhJCGc4\u002fgwS6La1W1j9PSjeRZ+bpP2sD8e5mUO8\u002fadAtikMMB0DMXpCm6OD1P3T1dz77X4C\u002f1BjVR8wa4D\u002fhciOBhKn5P9xrc7oK9O8\u002fGatCpLpE+D9O\u002f9rj0v25P7E9ExlVUQJA4SxftIGv7r8nUfvR2Cnhv6lh+OIZQtQ\u002fF3UBMn1z77\u002fZihfo2Yf6P7FRAIawxfE\u002f31Qd61N+678Jd9ygww\u002fyv\u002fB\u002f\u002fnTZhsC\u002fqRTlsgplBcBA3R1ba1i4P7Sc\u002f7WGCMq\u002fFAbfycaIyb9RQ8EKuCjMv37SHp08Bu2\u002fR3+v2ye+sr8otxWernrrP4DxfPT3K+2\u002flEVLQlLi2j+0RR+kf+\u002fAP618kteMO+s\u002fCS8qDxQo9L8JSDmd2kf+v+WlI4ktsuK\u002f"},"type":"scatter"}],                        {"template":{"layout":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12},"hoverlabel":{"bgcolor":"#fcfcfb","bordercolor":"#c3c2b7","font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11}},"margin":{"b":60,"l":70,"r":40,"t":90},"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(0,0,0,0)","title":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":18},"subtitle":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12.5}},"x":0.03,"xanchor":"left"},"xaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"},"yaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"}}},"shapes":[{"line":{"color":"#e1e0d9","width":1},"type":"line","x0":0,"x1":1,"xref":"x domain","y0":0,"y1":0,"yref":"y"},{"line":{"color":"#e1e0d9","width":1},"type":"line","x0":0,"x1":0,"xref":"x","y0":0,"y1":1,"yref":"y domain"}],"title":{"subtitle":{"text":"Cada flecha es una métrica: hacia dónde empuja y cuánto pesa"},"text":"El vocabulario de estilo"},"xaxis":{"title":{"text":"PC1 (38.2% de la varianza)"},"range":[-7.669675426079255,13.197124217560711]},"yaxis":{"title":{"text":"PC2 (12.7% de la varianza)"},"range":[-7.338184614950958,7.404345557613524]},"annotations":[{"arrowcolor":"#52514e","arrowhead":2,"arrowsize":1.1,"arrowwidth":1.2,"ax":0,"axref":"x","ay":0,"ayref":"y","opacity":0.85,"showarrow":true,"x":7.67674106494408,"xref":"x","y":1.5962778650703857,"yref":"y"},{"font":{"color":"#52514e","size":9.5},"showarrow":false,"text":"Posesión","x":8.068364202118335,"xanchor":"left","xref":"x","y":1.6777107726065528,"yanchor":"middle","yref":"y","yshift":0},{"arrowcolor":"#52514e","arrowhead":2,"arrowsize":1.1,"arrowwidth":1.2,"ax":0,"axref":"x","ay":0,"ayref":"y","opacity":0.85,"showarrow":true,"x":8.648844943125527,"xref":"x","y":-1.6243208011209513,"yref":"y"},{"font":{"color":"#52514e","size":9.5},"showarrow":false,"text":"Gls\u002f90","x":9.041971880587571,"xanchor":"left","xref":"x","y":-1.6981531181759741,"yanchor":"middle","yref":"y","yshift":0},{"arrowcolor":"#52514e","arrowhead":2,"arrowsize":1.1,"arrowwidth":1.2,"ax":0,"axref":"x","ay":0,"ayref":"y","opacity":0.85,"showarrow":true,"x":8.512205189150151,"xref":"x","y":-1.4520259141907705,"yref":"y"},{"font":{"color":"#52514e","size":9.5},"showarrow":false,"text":"Ast\u002f90","x":8.906509571644614,"xanchor":"left","xref":"x","y":-1.5192870020920257,"yanchor":"middle","yref":"y","yshift":-30},{"arrowcolor":"#52514e","arrowhead":2,"arrowsize":1.1,"arrowwidth":1.2,"ax":0,"axref":"x","ay":0,"ayref":"y","opacity":0.85,"showarrow":true,"x":7.670824363239484,"xref":"x","y":0.14037055908981128,"yref":"y"},{"font":{"color":"#52514e","size":9.5},"showarrow":false,"text":"Sh\u002f90","x":8.070757407328728,"xanchor":"left","xref":"x","y":0.14768904564861304,"yanchor":"middle","yref":"y","yshift":0},{"arrowcolor":"#52514e","arrowhead":2,"arrowsize":1.1,"arrowwidth":1.2,"ax":0,"axref":"x","ay":0,"ayref":"y","opacity":0.85,"showarrow":true,"x":8.199518526425697,"xref":"x","y":-0.8496723724230922,"yref":"y"},{"font":{"color":"#52514e","size":9.5},"showarrow":false,"text":"SoT\u002f90","x":8.597388054722417,"xanchor":"left","xref":"x","y":-0.8909014695869346,"yanchor":"middle","yref":"y","yshift":0},{"arrowcolor":"#52514e","arrowhead":2,"arrowsize":1.1,"arrowwidth":1.2,"ax":0,"axref":"x","ay":0,"ayref":"y","opacity":0.85,"showarrow":true,"x":5.404690911943239,"xref":"x","y":-2.1615282135579346,"yref":"y"},{"font":{"color":"#52514e","size":9.5},"showarrow":false,"text":"SoT%","x":5.77608983745408,"xanchor":"left","xref":"x","y":-2.310063859547012,"yanchor":"middle","yref":"y","yshift":0},{"arrowcolor":"#52514e","arrowhead":2,"arrowsize":1.1,"arrowwidth":1.2,"ax":0,"axref":"x","ay":0,"ayref":"y","opacity":0.85,"showarrow":true,"x":7.563311981596226,"xref":"x","y":-2.455444195838659,"yref":"y"},{"font":{"color":"#52514e","size":9.5},"showarrow":false,"text":"G\u002fSh","x":7.943764511110046,"xanchor":"left","xref":"x","y":-2.578958862119778,"yanchor":"middle","yref":"y","yshift":0},{"arrowcolor":"#52514e","arrowhead":2,"arrowsize":1.1,"arrowwidth":1.2,"ax":0,"axref":"x","ay":0,"ayref":"y","opacity":0.85,"showarrow":true,"x":6.466756735921129,"xref":"x","y":-1.95436587528564,"yref":"y"},{"font":{"color":"#52514e","size":9.5},"showarrow":false,"text":"G\u002fSoT","x":6.849652787925121,"xanchor":"left","xref":"x","y":-2.0700836931001687,"yanchor":"middle","yref":"y","yshift":0},{"arrowcolor":"#52514e","arrowhead":2,"arrowsize":1.1,"arrowwidth":1.2,"ax":0,"axref":"x","ay":0,"ayref":"y","opacity":0.85,"showarrow":true,"x":-3.6466237991537405,"xref":"x","y":0.5387506148961966,"yref":"y"},{"font":{"color":"#52514e","size":9.5},"showarrow":false,"text":"Amarillas","x":-4.0423285903796815,"xanchor":"right","xref":"x","y":0.5972118687386742,"yanchor":"middle","yref":"y","yshift":0},{"arrowcolor":"#52514e","arrowhead":2,"arrowsize":1.1,"arrowwidth":1.2,"ax":0,"axref":"x","ay":0,"ayref":"y","opacity":0.85,"showarrow":true,"x":-3.25294403355474,"xref":"x","y":2.0189010342006726,"yref":"y"},{"font":{"color":"#52514e","size":9.5},"showarrow":false,"text":"Rojas","x":-3.5928079493471987,"xanchor":"right","xref":"x","y":2.2298335322710665,"yanchor":"middle","yref":"y","yshift":0},{"arrowcolor":"#52514e","arrowhead":2,"arrowsize":1.1,"arrowwidth":1.2,"ax":0,"axref":"x","ay":0,"ayref":"y","opacity":0.85,"showarrow":true,"x":-4.169017838745401,"xref":"x","y":2.698664965945055,"yref":"y"},{"font":{"color":"#52514e","size":9.5},"showarrow":false,"text":"Faltas","x":-4.504806765552443,"xanchor":"right","xref":"x","y":2.9160259482619724,"yanchor":"middle","yref":"y","yshift":0},{"arrowcolor":"#52514e","arrowhead":2,"arrowsize":1.1,"arrowwidth":1.2,"ax":0,"axref":"x","ay":0,"ayref":"y","opacity":0.85,"showarrow":true,"x":-1.6524974032449788,"xref":"x","y":6.124380411769476,"yref":"y"},{"font":{"color":"#52514e","size":9.5},"showarrow":false,"text":"Faltas rec.","x":-1.7566999558670982,"xanchor":"right","xref":"x","y":6.510569261980139,"yanchor":"middle","yref":"y","yshift":0},{"arrowcolor":"#52514e","arrowhead":2,"arrowsize":1.1,"arrowwidth":1.2,"ax":0,"axref":"x","ay":0,"ayref":"y","opacity":0.85,"showarrow":true,"x":0.3683469962644859,"xref":"x","y":-1.5310586684587624,"yref":"y"},{"font":{"color":"#52514e","size":9.5},"showarrow":false,"text":"Fuera juego","x":0.4619106194503028,"xanchor":"center","xref":"x","y":-1.9199620605966332,"yanchor":"middle","yref":"y","yshift":0},{"arrowcolor":"#52514e","arrowhead":2,"arrowsize":1.1,"arrowwidth":1.2,"ax":0,"axref":"x","ay":0,"ayref":"y","opacity":0.85,"showarrow":true,"x":0.2821198909722717,"xref":"x","y":0.5859404664687308,"yref":"y"},{"font":{"color":"#52514e","size":9.5},"showarrow":false,"text":"Centros","x":0.45564634176501195,"xanchor":"left","xref":"x","y":0.9463410364950207,"yanchor":"middle","yref":"y","yshift":0},{"arrowcolor":"#52514e","arrowhead":2,"arrowsize":1.1,"arrowwidth":1.2,"ax":0,"axref":"x","ay":0,"ayref":"y","opacity":0.85,"showarrow":true,"x":-3.16168945912267,"xref":"x","y":-4.769304203759566,"yref":"y"},{"font":{"color":"#52514e","size":9.5},"showarrow":false,"text":"Intercep.","x":-3.382705095696098,"xanchor":"right","xref":"x","y":-5.102698997345252,"yanchor":"middle","yref":"y","yshift":0},{"arrowcolor":"#52514e","arrowhead":2,"arrowsize":1.1,"arrowwidth":1.2,"ax":0,"axref":"x","ay":0,"ayref":"y","opacity":0.85,"showarrow":true,"x":-3.267011434955748,"xref":"x","y":-2.515511318950719,"yref":"y"},{"font":{"color":"#52514e","size":9.5},"showarrow":false,"text":"Tackles","x":-3.583947277685991,"xanchor":"right","xref":"x","y":-2.7595434307574873,"yanchor":"middle","yref":"y","yshift":0},{"arrowcolor":"#52514e","arrowhead":2,"arrowsize":1.1,"arrowwidth":1.2,"ax":0,"axref":"x","ay":0,"ayref":"y","opacity":0.85,"showarrow":true,"x":-5.412737204161116,"xref":"x","y":-6.321458396153407,"yref":"y"},{"font":{"color":"#52514e","size":9.5},"showarrow":false,"text":"GA\u002f90","x":-5.672897012283716,"xanchor":"right","xref":"x","y":-6.625295316618336,"yanchor":"middle","yref":"y","yshift":0},{"arrowcolor":"#52514e","arrowhead":2,"arrowsize":1.1,"arrowwidth":1.2,"ax":0,"axref":"x","ay":0,"ayref":"y","opacity":0.85,"showarrow":true,"x":2.1200389323340243,"xref":"x","y":6.387619338815973,"yref":"y"},{"font":{"color":"#52514e","size":9.5},"showarrow":false,"text":"Save%","x":2.246039564165252,"xanchor":"left","xref":"x","y":6.7672557975210506,"yanchor":"middle","yref":"y","yshift":0},{"arrowcolor":"#52514e","arrowhead":2,"arrowsize":1.1,"arrowwidth":1.2,"ax":0,"axref":"x","ay":0,"ayref":"y","opacity":0.85,"showarrow":true,"x":-6.0135802162665595,"xref":"x","y":-3.6887780278455655,"yref":"y"},{"font":{"color":"#52514e","size":9.5},"showarrow":false,"text":"SoTA\u002f90","x":-6.354544017706815,"xanchor":"right","xref":"x","y":-3.897927940844375,"yanchor":"middle","yref":"y","yshift":0}],"autosize":true},                        {"displaylogo": false, "responsive": true, "displayModeBar": false}                    )                };            </script>        </div></div>
+<script>
+(function() {
+  function updateLegendLayout() {
+    var w = document.getElementById('chart_bfe6ce67').offsetWidth;
+    if (w < 420) {
+      Plotly.relayout('chart_bfe6ce67', {'margin.r': 20, 'margin.t': 70});
+    } else {
+      Plotly.relayout('chart_bfe6ce67', {'margin.r': 40, 'margin.t': 90});
+    }
+  }
+  window.addEventListener('resize', updateLegendLayout);
+  updateLegendLayout();
+})();
+</script>
+</div><figcaption>Las métricas ofensivas (derecha) apuntan casi todas en la misma dirección: esa redundancia es lo que hace que el primer eje pese tanto.</figcaption></figure><div class="wrap">
+<p>El primer eje se lleva el <strong>38%</strong> de la variación, y
+lo forman posesión, goles, asistencias y tiros tirando todos para el mismo
+lado. Lo bauticé <em>dominio ofensivo</em>. Guarda ese nombre: en la sección
+5 se cae.</p></div><div class="wrap"><h2 id="k"><span class="step">03 · Cuántos grupos</span>Elegir un número sin elegirlo a dedo</h2></div><div class="wrap">
+<p>K-means necesita que le diga cuántos grupos buscar. Para no inventarlo se
+miran dos señales. La <strong>inercia</strong> mide qué tan apretados quedan
+los grupos: cada grupo nuevo la baja, y el "codo" está donde deja de
+compensar. Acá cada grupo hasta el sexto baja la inercia entre
+5% y 12%; el séptimo solo
+<strong>4.5%</strong>, la mitad. Ahí está el codo.</p>
+<p>La <strong>silueta</strong> mide qué tan separados quedan, y su máximo está
+en k=2 (0.258). Pero k=2 solo parte a los equipos en "buenos"
+y "malos", que es casi ordenar la tabla. Entre las divisiones más finas, k=6 es
+la mejor. Me quedé con <strong>seis</strong>.</p></div><div class="wrap"><div class="callout"><div class="callout-title">Un atajo que no tomé</div>
+<p>La red de similitud que probé después también encontró 6 comunidades por
+su cuenta, y era tentador usarlo como confirmación. No lo es: ese número
+depende de cuántos vecinos se conecten en el grafo, y moviendo ese parámetro da
+9, 7, 6, 5 o 3. Daba 6 <em>porque</em> elegí 5 vecinos. Coincidencias así
+son fáciles de vender y no prueban nada.</p></div></div><figure class="wrap-wide"><div class="chart-scroll">
+<style>
+  #chart_158bd463_wrap { position: relative; width: 100%; max-width: 880px;
+    aspect-ratio: 1.4193548387096775; }
+  #chart_158bd463_wrap > div { position: absolute; inset: 0; }
+  @media (max-width: 520px) {
+    #chart_158bd463_wrap { aspect-ratio: 1.206451612903226; }
+  }
+</style>
+<div id="chart_158bd463_wrap"><div style="height:100%; width:100%;">                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha256-jvTGqxNp8AGWEcvNLVuKr+8j5dGe9Yw51LQkmDH+IYA=" crossorigin="anonymous"></script>                <div id="chart_158bd463" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("chart_158bd463")) {                    Plotly.newPlot(                        "chart_158bd463",                        [{"customdata":[["Dortmund","Bundesliga"],["Leverkusen","Bundesliga"],["Atalanta","Serie A"],["Como","Serie A"],["Inter","Serie A"],["Juventus","Serie A"],["Milan","Serie A"],["Napoli","Serie A"],["Roma","Serie A"],["Lyon","Ligue 1"],["Arsenal","Premier League"],["Aston Villa","Premier League"],["Liverpool","Premier League"],["Manchester City","Premier League"],["Newcastle","Premier League"]],"hovertemplate":"\u003cb\u003e%{customdata[0]}\u003c\u002fb\u003e\u003cbr\u003e%{customdata[1]}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#256abf","line":{"color":"#fcfcfb","width":1.5},"opacity":0.88,"size":10},"mode":"markers","name":"Grupo 0","x":{"dtype":"f8","bdata":"odNZGZV3D0BIdp3yCrMKQKVp45mV5vA\u002fxfB27VVRCECm0gkbeqMVQL+knqlB8glAMvtI0ZKp+D\u002fa5nDuOloJQK\u002f2hBxH5f0\u002frm6Azt4T\u002fD\u002ft6v8ilBoRQIhuaL4sqfw\u002fyatWhtO3BEAElNHGbK0SQJDXVFBtTuk\u002f"},"y":{"dtype":"f8","bdata":"gj+7ShgYpT+wwuG646nWv8YDFA4tRfk\u002fq58rrdZvB0DzYcjcJ87tP0bi2k27Dvg\u002focOdZzO6A0CEtZa5YFgAQEper+75JARAArc7ml7p+T\u002fZihfo2Yf6P7FRAIawxfE\u002fR3+v2ye+sr8otxWernrrP5RFS0JS4to\u002f"},"type":"scatter"},{"customdata":[["Frankfurt","Bundesliga"],["Hoffenheim","Bundesliga"],["Lens","Ligue 1"],["Lille","Ligue 1"],["Marseille","Ligue 1"],["Monaco","Ligue 1"],["Rennes","Ligue 1"],["Strasbourg","Ligue 1"],["Toulouse","Ligue 1"],["Atlético Madrid","La Liga"],["Real Betis","La Liga"],["Real Sociedad","La Liga"],["Villarreal","La Liga"],["Bournemouth","Premier League"],["Brighton","Premier League"],["Chelsea","Premier League"],["Manchester Utd","Premier League"],["Tottenham","Premier League"]],"hovertemplate":"\u003cb\u003e%{customdata[0]}\u003c\u002fb\u003e\u003cbr\u003e%{customdata[1]}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#d95926","line":{"color":"#fcfcfb","width":1.5},"opacity":0.88,"size":10},"mode":"markers","name":"Grupo 1","x":{"dtype":"f8","bdata":"9Pw4Ztpn9z\u002fdUchKc0n8P7rCjRmOcQNA1fxScKVM6j8wtXa\u002f2Q4EQPgNsCLuROA\u002fYxH8d+uw9z+nSGmXdX7\u002fP2P4b8O+uey\u002fI9OvpCwa\u002fD\u002fL2KAESCbuPwMM\u002fnRXus+\u002fGD6wFKep\u002fj+zLyagtePTP6khT8zJReU\u002fvwqGrFrRzT8iY2GBhg8CQGdUG0wmY+S\u002f"},"y":{"dtype":"f8","bdata":"F94SdP4ODcASWakaLxf2v0Ai5CW9wtC\u002fbgONjrPf8j8O8FZQ1VfGv9mGheXqIQPAxhFTecn257\u002fF2wxe9z+zv0kwZfK3Ite\u002fH3uSGs3c1L9O\u002f9rj0v25P+EsX7SBr+6\u002fF3UBMn1z77\u002ffVB3rU37rv\u002fB\u002f\u002fnTZhsC\u002fQN0dW2tYuD+A8Xz09yvtvwkvKg8UKPS\u002f"},"type":"scatter"},{"customdata":[["Augsburg","Bundesliga"],["Freiburg","Bundesliga"],["Gladbach","Bundesliga"],["Heidenheim","Bundesliga"],["Köln","Bundesliga"],["Mainz 05","Bundesliga"],["St Pauli","Bundesliga"],["Union Berlin","Bundesliga"],["Werder Bremen","Bundesliga"],["Wolfsburg","Bundesliga"],["Torino","Serie A"],["Udinese","Serie A"],["Angers","Ligue 1"],["Brest","Ligue 1"],["Lorient","Ligue 1"],["Metz","Ligue 1"],["Nice","Ligue 1"],["Paris FC","Ligue 1"],["Valencia","La Liga"],["Brentford","Premier League"],["Burnley","Premier League"],["Crystal Palace","Premier League"],["Everton","Premier League"],["Fulham","Premier League"],["Leeds United","Premier League"],["Nottingham","Premier League"],["West Ham","Premier League"]],"hovertemplate":"\u003cb\u003e%{customdata[0]}\u003c\u002fb\u003e\u003cbr\u003e%{customdata[1]}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#199e70","line":{"color":"#fcfcfb","width":1.5},"opacity":0.88,"size":10},"mode":"markers","name":"Grupo 2","x":{"dtype":"f8","bdata":"flkrvJVi8L8F+1EaIhbdP6HXbvH5RPK\u002f19btb03t97\u002fb\u002fEz5QXrIPz\u002fDfEivM\u002fa\u002fO3ZYnOTsBsALS\u002f35ay3xv0heY3kYf\u002f6\u002fxhWeM7Yl9L9DhRNrEPX6v0NnmfWdq\u002fG\u002fE2qvqLmZBsDi\u002fwxvbiQBwMDFmtCM59g\u002flaHjrzRrC8AtqI6cqIcBwNiUBnL3Fci\u002fUPPBKjeC778nAaBYkxjiP085\u002f\u002fO9gwXADrRj2FeS+7\u002fj0uo+Nj\u002fjv3w2CFsKJ+q\u002fliLzzxrx6b+HLjFUB6aAv7tJYblZEvi\u002f"},"y":{"dtype":"f8","bdata":"MpApl5Yx\u002fb+956FSPDT1v4iFYa6cZvG\u002fTVNeARtADMBjvCOdkoIEwCcwCMwGBfi\u002fPcKMwNxeAMD7nIJh0WT5v4Vg3FYXH\u002fy\u002fNOhXxmzUB8A9CQ8h90Tpv5veUqCcisK\u002f8WNlOn2B1b+B8Iw5SJv7v4rH5LTYYfK\u002fWTvTAweKAMDRNZjrs8D0v1JT4IsWGPC\u002fqWH44hlC1D8Jd9ygww\u002fyv6kU5bIKZQXAtJz\u002ftYYIyr8UBt\u002fJxojJv1FDwQq4KMy\u002fftIenTwG7b+0RR+kf+\u002fAPwlIOZ3aR\u002f6\u002f"},"type":"scatter"},{"customdata":[["Hellas Verona","Serie A"],["Pisa","Serie A"],["Auxerre","Ligue 1"],["Le Havre","Ligue 1"],["Nantes","Ligue 1"],["Alavés","La Liga"],["Athletic Club","La Liga"],["Espanyol","La Liga"],["Getafe","La Liga"],["Oviedo","La Liga"],["Rayo Vallecano","La Liga"],["Sevilla","La Liga"],["Wolves","Premier League"]],"hovertemplate":"\u003cb\u003e%{customdata[0]}\u003c\u002fb\u003e\u003cbr\u003e%{customdata[1]}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#eda100","line":{"color":"#fcfcfb","width":1.5},"opacity":0.88,"size":10},"mode":"markers","name":"Grupo 3","x":{"dtype":"f8","bdata":"3gy1fdCcE8DACKO6y2gVwA5euI91wwvAenqPzxW9AcDJ7aWxIBULwLhtghtQAgPALh8eQ\u002fPm+b8ydh5YV0wAwJNLcIER3gzAeVSYIzAeEcAnNGOKC9zzv7SkyIRlWQHA39F3XjmVEMA="},"y":{"dtype":"f8","bdata":"3HFxmafO8b8QeZUfTKrlv5chzqWrCPI\u002fTWFpffCd9D+RlxdE75jrPwm2QYsWW\u002fA\u002fiKeGrYsSqz9rA\u002fHuZlDvP2nQLYpDDAdA3Gtzugr07z8Zq0KkukT4PydR+9HYKeG\u002f5aUjiS2y4r8="},"type":"scatter"},{"customdata":[["Bayern Munich","Bundesliga"],["RB Leipzig","Bundesliga"],["Stuttgart","Bundesliga"],["PSG","Ligue 1"],["Barcelona","La Liga"],["Real Madrid","La Liga"]],"hovertemplate":"\u003cb\u003e%{customdata[0]}\u003c\u002fb\u003e\u003cbr\u003e%{customdata[1]}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#9085e9","line":{"color":"#fcfcfb","width":1.5},"opacity":0.88,"size":10},"mode":"markers","name":"Grupo 4","x":{"dtype":"f8","bdata":"R66WIEEYJUBvyhMV\u002fN8MQOy9vdvKYxBA9xGVMrUtGUCrgs6DqfAaQA2rmEJ7QRFA"},"y":{"dtype":"f8","bdata":"863vhh+YB8BiF8\u002fC+nEBwJfcUbZvr\u002fK\u002fWNY8nWbm4T913coSQhnOP7E9ExlVUQJA"},"type":"scatter"},{"customdata":[["Hamburger SV","Bundesliga"],["Bologna","Serie A"],["Cagliari","Serie A"],["Cremonese","Serie A"],["Fiorentina","Serie A"],["Genoa","Serie A"],["Lazio","Serie A"],["Lecce","Serie A"],["Parma","Serie A"],["Sassuolo","Serie A"],["Celta Vigo","La Liga"],["Elche","La Liga"],["Girona","La Liga"],["Levante","La Liga"],["Mallorca","La Liga"],["Osasuna","La Liga"],["Sunderland","Premier League"]],"hovertemplate":"\u003cb\u003e%{customdata[0]}\u003c\u002fb\u003e\u003cbr\u003e%{customdata[1]}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#e87ba4","line":{"color":"#fcfcfb","width":1.5},"opacity":0.88,"size":10},"mode":"markers","name":"Grupo 5","x":{"dtype":"f8","bdata":"AOoI2HzT9r8xqZKFpY7Qv2eE\u002fc8QyPy\u002fDF6YZmJ+BMAdELOnY+v5v3TD4cCu9vm\u002fHSvB6cY56b+EUHZDlgQJwMd9YiWenwfAjynKojmg2r+pSUjDRMnwP8PTb0gvKOq\u002fa22+A3ZN\u002fL98LiwrPV\u002f6v8xy2oOmMuC\u002fqHb4SFqs+L8FLO\u002fJtij3vw=="},"y":{"dtype":"f8","bdata":"FCp5mq3KrD+gqXzAKesAQFzOtsrDA\u002fI\u002fgK8syMcy+z+oOobt6LgKQJm9ZA8xffk\u002f+KONm8XOCUBor5gHPrAAQLcaAiWR2ghAz9E7ZziL7D+DBLotrVbWP09KN5Fn5uk\u002fzF6Qpujg9T909Xc++1+Av9QY1UfMGuA\u002f4XIjgYSp+T+tfJLXjDvrPw=="},"type":"scatter"}],                        {"template":{"layout":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12},"hoverlabel":{"bgcolor":"#fcfcfb","bordercolor":"#c3c2b7","font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11}},"margin":{"b":60,"l":70,"r":40,"t":90},"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(0,0,0,0)","title":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":18},"subtitle":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12.5}},"x":0.03,"xanchor":"left"},"xaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"},"yaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"}}},"shapes":[{"line":{"color":"#e1e0d9","width":1},"type":"line","x0":0,"x1":1,"xref":"x domain","y0":0,"y1":0,"yref":"y"},{"line":{"color":"#e1e0d9","width":1},"type":"line","x0":0,"x1":0,"xref":"x","y0":0,"y1":1,"yref":"y domain"}],"title":{"subtitle":{"text":"Pasa el mouse sobre un punto para ver el equipo"},"text":"Los seis grupos, en el plano principal"},"legend":{"orientation":"h","y":-0.17,"x":0},"xaxis":{"title":{"text":"PC1 (38.2%)"}},"yaxis":{"title":{"text":"PC2 (12.7%)"}},"autosize":true},                        {"displaylogo": false, "responsive": true, "displayModeBar": false}                    )                };            </script>        </div></div>
+<script>
+(function() {
+  function updateLegendLayout() {
+    var w = document.getElementById('chart_158bd463').offsetWidth;
+    if (w < 420) {
+      Plotly.relayout('chart_158bd463', {'margin.r': 20, 'margin.t': 70});
+    } else {
+      Plotly.relayout('chart_158bd463', {'margin.r': 40, 'margin.t': 90});
+    }
+  }
+  window.addEventListener('resize', updateLegendLayout);
+  updateLegendLayout();
+})();
+</script>
+</div><figcaption>Los seis grupos que encontró el modelo, sin que nadie le dijera qué buscar. Se ven ordenados de izquierda a derecha: eso, que parece un detalle, es la pista.</figcaption></figure><div class="wrap"><h2 id="nulo"><span class="step">04 · La prueba que casi nadie corre</span>¿Y si no hay grupos?</h2></div><div class="wrap">
+<p>Una silueta de 0.16 es baja. ¿Baja comparada con qué? La única forma de
+saberlo es correr el mismo procedimiento sobre <strong>datos falsos sin grupos
+por construcción</strong>: una nube con la misma forma general pero sin
+estructura interna. Si k-means saca la misma nota de una nube sin grupos que de
+los equipos reales, entonces no encontró grupos.</p></div><div class="wrap"><div class="table-scroll"><table><thead><tr><th>Grupos</th><th>Silueta real</th><th>Nube sin grupos</th><th>Diferencia (z)</th></tr></thead><tbody><tr><td>k=2</td><td class="num">0.258</td><td class="num">0.247</td><td>+0.5</td></tr><tr><td>k=4</td><td class="num">0.143</td><td class="num">0.162</td><td>-1.2</td></tr><tr><td>k=6</td><td class="num">0.161</td><td class="num">0.152</td><td>+0.8</td></tr><tr><td>k=8</td><td class="num">0.149</td><td class="num">0.144</td><td>+0.3</td></tr></tbody></table></div></div><div class="wrap"><div class="callout warn"><div class="callout-title">No hay tribus, hay un continuo</div>
+<p>La diferencia nunca supera 1.5 desviaciones: el resultado real es
+indistinguible del de una nube sin estructura. <strong>Los equipos europeos no
+se dividen en tribus con fronteras naturales.</strong></p>
+<p>Eso no tira el análisis, pero cambia qué significa: los seis grupos son una
+<em>segmentación</em> —como los rangos de edad o los tramos de un impuesto—,
+útil para describir y comparar, siempre que no se afirme que existe una línea
+real entre uno y otro.</p></div></div><div class="wrap"><h2 id="giro"><span class="step">05 · El giro</span>Los grupos no eran estilos</h2></div><div class="wrap">
+<p>Con los seis grupos armados, tocaba ponerles nombre. Y ahí apareció algo
+raro: ordenándolos por cualquiera de las columnas ofensivas, salían siempre en
+el mismo orden. Demasiado prolijo.</p>
+<p>Había una forma directa de comprobar la sospecha. Los <strong>puntos por
+partido</strong> se dejaron deliberadamente fuera del modelo, por ser resultado
+y no estilo. Si los grupos igual los predicen, es que reconstruyeron la tabla
+sin permiso.</p></div><figure class="wrap-wide"><div class="chart-scroll">
+<style>
+  #chart_a3ed4f8e_wrap { position: relative; width: 100%; max-width: 880px;
+    aspect-ratio: 1.5172413793103448; }
+  #chart_a3ed4f8e_wrap > div { position: absolute; inset: 0; }
+  @media (max-width: 520px) {
+    #chart_a3ed4f8e_wrap { aspect-ratio: 1.289655172413793; }
+  }
+</style>
+<div id="chart_a3ed4f8e_wrap"><div style="height:100%; width:100%;">                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha256-jvTGqxNp8AGWEcvNLVuKr+8j5dGe9Yw51LQkmDH+IYA=" crossorigin="anonymous"></script>                <div id="chart_a3ed4f8e" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("chart_a3ed4f8e")) {                    Plotly.newPlot(                        "chart_a3ed4f8e",                        [{"customdata":[["Dortmund","Bundesliga"],["Leverkusen","Bundesliga"],["Atalanta","Serie A"],["Como","Serie A"],["Inter","Serie A"],["Juventus","Serie A"],["Milan","Serie A"],["Napoli","Serie A"],["Roma","Serie A"],["Lyon","Ligue 1"],["Arsenal","Premier League"],["Aston Villa","Premier League"],["Liverpool","Premier League"],["Manchester City","Premier League"],["Newcastle","Premier League"]],"hovertemplate":"\u003cb\u003e%{customdata[0]}\u003c\u002fb\u003e\u003cbr\u003e%{customdata[1]}\u003cbr\u003e%{y:.2f} puntos por partido\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#256abf","line":{"color":"#fcfcfb","width":1.5},"opacity":0.88,"size":10},"mode":"markers","name":"Grupo 0","x":{"dtype":"f8","bdata":"odNZGZV3D0BIdp3yCrMKQKVp45mV5vA\u002fxfB27VVRCECm0gkbeqMVQL+knqlB8glAMvtI0ZKp+D\u002fa5nDuOloJQK\u002f2hBxH5f0\u002frm6Azt4T\u002fD\u002ft6v8ilBoRQIhuaL4sqfw\u002fyatWhtO3BEAElNHGbK0SQJDXVFBtTuk\u002f"},"y":{"dtype":"f8","bdata":"MzMzMzMzAUDXo3A9Ctf7P83MzMzMzPg\u002f7FG4HoXr\u002fT9SuB6F61ECQB+F61G4Hv0\u002fcT0K16Nw\u002fT8AAAAAAAAAQLgehetRuP4\u002fKVyPwvUo\u002fD\u002fsUbgehesBQFyPwvUoXPs\u002fSOF6FK5H+T9mZmZmZmYAQKRwPQrXo\u002fQ\u002f"},"type":"scatter"},{"customdata":[["Frankfurt","Bundesliga"],["Hoffenheim","Bundesliga"],["Lens","Ligue 1"],["Lille","Ligue 1"],["Marseille","Ligue 1"],["Monaco","Ligue 1"],["Rennes","Ligue 1"],["Strasbourg","Ligue 1"],["Toulouse","Ligue 1"],["Atlético Madrid","La Liga"],["Real Betis","La Liga"],["Real Sociedad","La Liga"],["Villarreal","La Liga"],["Bournemouth","Premier League"],["Brighton","Premier League"],["Chelsea","Premier League"],["Manchester Utd","Premier League"],["Tottenham","Premier League"]],"hovertemplate":"\u003cb\u003e%{customdata[0]}\u003c\u002fb\u003e\u003cbr\u003e%{customdata[1]}\u003cbr\u003e%{y:.2f} puntos por partido\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#d95926","line":{"color":"#fcfcfb","width":1.5},"opacity":0.88,"size":10},"mode":"markers","name":"Grupo 1","x":{"dtype":"f8","bdata":"9Pw4Ztpn9z\u002fdUchKc0n8P7rCjRmOcQNA1fxScKVM6j8wtXa\u002f2Q4EQPgNsCLuROA\u002fYxH8d+uw9z+nSGmXdX7\u002fP2P4b8O+uey\u002fI9OvpCwa\u002fD\u002fL2KAESCbuPwMM\u002fnRXus+\u002fGD6wFKep\u002fj+zLyagtePTP6khT8zJReU\u002fvwqGrFrRzT8iY2GBhg8CQGdUG0wmY+S\u002f"},"y":{"dtype":"f8","bdata":"pHA9Ctej9D+kcD0K16P8P3sUrkfhegBApHA9Ctej\u002fD\u002fXo3A9Ctf7P3E9CtejcPk\u002f16NwPQrX+z\u002f2KFyPwvX4P0jhehSuR\u002fU\u002fH4XrUbge\u002fT9I4XoUrkf5P1yPwvUoXPM\u002fPQrXo3A9\u002fj8AAAAAAAD4Pz0K16NwPfY\u002f7FG4HoXr9T\u002fsUbgehev9P0jhehSuR\u002fE\u002f"},"type":"scatter"},{"customdata":[["Augsburg","Bundesliga"],["Freiburg","Bundesliga"],["Gladbach","Bundesliga"],["Heidenheim","Bundesliga"],["Köln","Bundesliga"],["Mainz 05","Bundesliga"],["St Pauli","Bundesliga"],["Union Berlin","Bundesliga"],["Werder Bremen","Bundesliga"],["Wolfsburg","Bundesliga"],["Torino","Serie A"],["Udinese","Serie A"],["Angers","Ligue 1"],["Brest","Ligue 1"],["Lorient","Ligue 1"],["Metz","Ligue 1"],["Nice","Ligue 1"],["Paris FC","Ligue 1"],["Valencia","La Liga"],["Brentford","Premier League"],["Burnley","Premier League"],["Crystal Palace","Premier League"],["Everton","Premier League"],["Fulham","Premier League"],["Leeds United","Premier League"],["Nottingham","Premier League"],["West Ham","Premier League"]],"hovertemplate":"\u003cb\u003e%{customdata[0]}\u003c\u002fb\u003e\u003cbr\u003e%{customdata[1]}\u003cbr\u003e%{y:.2f} puntos por partido\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#199e70","line":{"color":"#fcfcfb","width":1.5},"opacity":0.88,"size":10},"mode":"markers","name":"Grupo 2","x":{"dtype":"f8","bdata":"flkrvJVi8L8F+1EaIhbdP6HXbvH5RPK\u002f19btb03t97\u002fb\u002fEz5QXrIPz\u002fDfEivM\u002fa\u002fO3ZYnOTsBsALS\u002f35ay3xv0heY3kYf\u002f6\u002fxhWeM7Yl9L9DhRNrEPX6v0NnmfWdq\u002fG\u002fE2qvqLmZBsDi\u002fwxvbiQBwMDFmtCM59g\u002flaHjrzRrC8AtqI6cqIcBwNiUBnL3Fci\u002fUPPBKjeC778nAaBYkxjiP085\u002f\u002fO9gwXADrRj2FeS+7\u002fj0uo+Nj\u002fjv3w2CFsKJ+q\u002fliLzzxrx6b+HLjFUB6aAv7tJYblZEvi\u002f"},"y":{"dtype":"f8","bdata":"KVyPwvUo9D8UrkfhehT2P+xRuB6F6\u002fE\u002fUrgehetR6D8UrkfhehTuP+F6FK5H4fI\u002fUrgehetR6D9mZmZmZmbyPxSuR+F6FO4\u002fMzMzMzMz6z\u002fhehSuR+HyPx+F61G4HvU\u002f9ihcj8L18D9mZmZmZmbyPx+F61G4HvU\u002fAAAAAAAA4D8UrkfhehTuP6RwPQrXo\u002fQ\u002fpHA9Ctej9D89CtejcD32P4\u002fC9Shcj+I\u002f4XoUrkfh8j+kcD0K16P0P+xRuB6F6\u002fU\u002f16NwPQrX8z+PwvUoXI\u002fyP3sUrkfhevA\u002f"},"type":"scatter"},{"customdata":[["Hellas Verona","Serie A"],["Pisa","Serie A"],["Auxerre","Ligue 1"],["Le Havre","Ligue 1"],["Nantes","Ligue 1"],["Alavés","La Liga"],["Athletic Club","La Liga"],["Espanyol","La Liga"],["Getafe","La Liga"],["Oviedo","La Liga"],["Rayo Vallecano","La Liga"],["Sevilla","La Liga"],["Wolves","Premier League"]],"hovertemplate":"\u003cb\u003e%{customdata[0]}\u003c\u002fb\u003e\u003cbr\u003e%{customdata[1]}\u003cbr\u003e%{y:.2f} puntos por partido\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#eda100","line":{"color":"#fcfcfb","width":1.5},"opacity":0.88,"size":10},"mode":"markers","name":"Grupo 3","x":{"dtype":"f8","bdata":"3gy1fdCcE8DACKO6y2gVwA5euI91wwvAenqPzxW9AcDJ7aWxIBULwLhtghtQAgPALh8eQ\u002fPm+b8ydh5YV0wAwJNLcIER3gzAeVSYIzAeEcAnNGOKC9zzv7SkyIRlWQHA39F3XjmVEMA="},"y":{"dtype":"f8","bdata":"mpmZmZmZ4T8UrkfhehTePwAAAAAAAPA\u002fexSuR+F68D9mZmZmZmbmPxSuR+F6FPI\u002f4XoUrkfh8j9cj8L1KFzzP3E9CtejcPU\u002fUrgehetR6D8fhetRuB71PxSuR+F6FPI\u002f9ihcj8L14D8="},"type":"scatter"},{"customdata":[["Bayern Munich","Bundesliga"],["RB Leipzig","Bundesliga"],["Stuttgart","Bundesliga"],["PSG","Ligue 1"],["Barcelona","La Liga"],["Real Madrid","La Liga"]],"hovertemplate":"\u003cb\u003e%{customdata[0]}\u003c\u002fb\u003e\u003cbr\u003e%{customdata[1]}\u003cbr\u003e%{y:.2f} puntos por partido\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#9085e9","line":{"color":"#fcfcfb","width":1.5},"opacity":0.88,"size":10},"mode":"markers","name":"Grupo 4","x":{"dtype":"f8","bdata":"R66WIEEYJUBvyhMV\u002fN8MQOy9vdvKYxBA9xGVMrUtGUCrgs6DqfAaQA2rmEJ7QRFA"},"y":{"dtype":"f8","bdata":"9ihcj8L1BECPwvUoXI\u002f+Px+F61G4Hv0\u002f7FG4HoXrAUDD9Shcj8IDQBSuR+F6FAJA"},"type":"scatter"},{"customdata":[["Hamburger SV","Bundesliga"],["Bologna","Serie A"],["Cagliari","Serie A"],["Cremonese","Serie A"],["Fiorentina","Serie A"],["Genoa","Serie A"],["Lazio","Serie A"],["Lecce","Serie A"],["Parma","Serie A"],["Sassuolo","Serie A"],["Celta Vigo","La Liga"],["Elche","La Liga"],["Girona","La Liga"],["Levante","La Liga"],["Mallorca","La Liga"],["Osasuna","La Liga"],["Sunderland","Premier League"]],"hovertemplate":"\u003cb\u003e%{customdata[0]}\u003c\u002fb\u003e\u003cbr\u003e%{customdata[1]}\u003cbr\u003e%{y:.2f} puntos por partido\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#e87ba4","line":{"color":"#fcfcfb","width":1.5},"opacity":0.88,"size":10},"mode":"markers","name":"Grupo 5","x":{"dtype":"f8","bdata":"AOoI2HzT9r8xqZKFpY7Qv2eE\u002fc8QyPy\u002fDF6YZmJ+BMAdELOnY+v5v3TD4cCu9vm\u002fHSvB6cY56b+EUHZDlgQJwMd9YiWenwfAjynKojmg2r+pSUjDRMnwP8PTb0gvKOq\u002fa22+A3ZN\u002fL98LiwrPV\u002f6v8xy2oOmMuC\u002fqHb4SFqs+L8FLO\u002fJtij3vw=="},"y":{"dtype":"f8","bdata":"7FG4HoXr8T+F61G4HoX3PxSuR+F6FPI\u002fexSuR+F67D\u002fD9Shcj8LxP0jhehSuR\u002fE\u002fuB6F61G49j8AAAAAAADwP+F6FK5H4fI\u002fpHA9Ctej9D+4HoXrUbj2PxSuR+F6FPI\u002fSOF6FK5H8T\u002fD9Shcj8LxP8P1KFyPwvE\u002fw\u002fUoXI\u002fC8T+4HoXrUbj2Pw=="},"type":"scatter"},{"hoverinfo":"skip","line":{"color":"#898781","dash":"dash","width":2},"mode":"lines","name":"r = 0.93","x":{"dtype":"f8","bdata":"wAijustoFcBHrpYgQRglQA=="},"y":{"dtype":"f8","bdata":"huykULdz4T+cs4h1QwYIQA=="},"type":"scatter"}],                        {"template":{"layout":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12},"hoverlabel":{"bgcolor":"#fcfcfb","bordercolor":"#c3c2b7","font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11}},"margin":{"b":60,"l":70,"r":40,"t":90},"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(0,0,0,0)","title":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":18},"subtitle":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12.5}},"x":0.03,"xanchor":"left"},"xaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"},"yaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"}}},"title":{"subtitle":{"text":"Los puntos por partido nunca entraron al modelo"},"text":"El primer componente es la tabla de posiciones"},"legend":{"orientation":"h","y":-0.17,"x":0},"xaxis":{"title":{"text":"PC1 — supuesto \"dominio ofensivo\" (38.2%)"}},"yaxis":{"title":{"text":"Puntos por partido (fuera del modelo)"}},"autosize":true},                        {"displaylogo": false, "responsive": true, "displayModeBar": false}                    )                };            </script>        </div></div>
+<script>
+(function() {
+  function updateLegendLayout() {
+    var w = document.getElementById('chart_a3ed4f8e').offsetWidth;
+    if (w < 420) {
+      Plotly.relayout('chart_a3ed4f8e', {'margin.r': 20, 'margin.t': 70});
+    } else {
+      Plotly.relayout('chart_a3ed4f8e', {'margin.r': 40, 'margin.t': 90});
+    }
+  }
+  window.addEventListener('resize', updateLegendLayout);
+  updateLegendLayout();
+})();
+</script>
+</div><figcaption>Cada punto es un equipo. El eje horizontal salió solo de métricas de juego; el vertical son los puntos que el modelo nunca vio.</figcaption></figure><div class="wrap"><div class="stat"><div class="stat-value">r = 0.93</div><div class="stat-label">Correlación entre el primer componente y los puntos por partido, una variable que se excluyó del modelo a propósito</div></div></div><div class="wrap">
+<p>El "dominio ofensivo" no era un estilo: <strong>era qué tan bueno es cada
+equipo</strong>. Los seis grupos explican el <strong>70%</strong> de la
+variación en puntos y, ordenados por su promedio, quedan como una tabla de
+posiciones.</p>
+<p>¿Cómo entró el resultado si lo había excluido? Por una grieta en mi propio
+criterio: saqué la <em>diferencia de gol</em> por ser resultado, pero dejé
+<em>goles marcados</em> y <em>goles recibidos</em>, que son exactamente
+sus dos ingredientes. Excluí la etiqueta y conservé la receta.</p>
+<p>Hubo una segunda causa, más técnica: al agrupar, los ejes conservaban su
+tamaño original, y el primero pesa unas ocho veces más que el último. Aunque
+las métricas hubieran sido perfectas, la balanza ya estaba inclinada.</p></div><div class="wrap"><h2 id="correccion"><span class="step">06 · La corrección</span>Quitar el nivel y volver a mirar</h2></div><div class="wrap">
+<p>Se rehízo todo con dos cambios. Primero, fuera las métricas de
+<em>eficacia</em>: goles, asistencias, conversión, precisión, goles recibidos y
+atajadas. Todas responden <em>qué tan bien le sale</em>, no <em>qué intenta</em>.
+Quedan 10 métricas de pura conducta: cuánta pelota tiene, cuánto
+tira, por dónde ataca, cuánto interrumpe y cuánto le llegan. Segundo, se
+igualó el peso de los ejes para que ninguno mande por tamaño.</p>
+<p>El peso del nivel cae del <strong>70%</strong> al
+<strong>50%</strong>. No baja a cero, y está bien que así sea: en
+el fútbol real los buenos equipos <em>de verdad</em> tienen más la pelota y
+tiran más. Eso es realidad, no contaminación.</p></div><figure class="wrap-wide"><div class="chart-scroll">
+<style>
+  #chart_84918eb7_wrap { position: relative; width: 100%; max-width: 880px;
+    aspect-ratio: 1.6923076923076923; }
+  #chart_84918eb7_wrap > div { position: absolute; inset: 0; }
+  @media (max-width: 520px) {
+    #chart_84918eb7_wrap { aspect-ratio: 1.4384615384615385; }
+  }
+</style>
+<div id="chart_84918eb7_wrap"><div style="height:100%; width:100%;">                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha256-jvTGqxNp8AGWEcvNLVuKr+8j5dGe9Yw51LQkmDH+IYA=" crossorigin="anonymous"></script>                <div id="chart_84918eb7" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("chart_84918eb7")) {                    Plotly.newPlot(                        "chart_84918eb7",                        [{"colorbar":{"outlinewidth":0,"thickness":14,"title":{"side":"right","text":"z-score"}},"colorscale":[[0.0,"#e34948"],[0.5,"#cfcecb"],[1.0,"#2a78d6"]],"hovertemplate":"%{x}\u003cbr\u003e%{y}\u003cbr\u003e%{z:+.2f} desviaciones vs. el promedio\u003cextra\u003e\u003c\u002fextra\u003e","x":["Vertical\u003cbr\u003ey áspero","Ataque\u003cbr\u003epor banda","Dominio\u003cbr\u003ecentral","Sin\u003cbr\u003eduelos","Replegados\u003cbr\u003ey expuestos","Trabado,\u003cbr\u003esin bandas"],"xgap":2,"y":["Posesión (%)","Tiros\u002f90","Centros\u002f90","Fuera de juego\u002f90","Faltas cometidas\u002f90","Faltas recibidas\u002f90","Amarillas\u002f90","Intercepciones\u002f90","Tackles ganados\u002f90","Tiros a puerta recibidos\u002f90"],"ygap":2,"z":{"dtype":"f8","bdata":"zzVwdZttx7+D2Ly4BBzgP5nrwCNOKvs\u002fh6QXnoPkuz8jUdiWz07kv0ebL7Xp\u002fNe\u002fnA31ZaKMxb9gu1u6M5zjPyggeGDh2f8\u002fwq6+uCrUzr9JOTzXymvhvx8cY6LBw9i\u002fJPFY+UbD3j9a\u002foJ6GIX0PxgeeTGOw+O\u002fSahsCk5m078gQetSJ4rGvz8Z9fv39eu\u002fcFeSfynO9D90bE0A+\u002f7Vv5Y1SUWOZqA\u002f8IyKJnjrvz+dMzT5KlHJvy53ufhWFum\u002fE98e7mZG5z+iJb0nR3vSPybxd1Vt6PS\u002fkYwvKWWC1L\u002fMOS+R6+ndv2Iq6RcUaOk\u002fAqGEqy6Fxz\u002fP6odAXNrcvziU5WzA\u002f9i\u002f1BuG0zpD5z8zK+324l7nvyd+5TIKp+k\u002fR3TVEpA88j\u002f3UKiYVzK6P4APWOUKfPK\u002fwg9j5UgV2b9cBgPhckPHv9+1MayhbMA\u002fvLpxAh9M3j9cIK1CVjLNv42SlXEmSuK\u002fsvo\u002fN1Fy679Fq7S73xzaP0RtzzbZ39w\u002f+sI0UHH34j\u002f6GyVyw+iqP9f7gxhGXdC\u002fzPag0dwl878kU2jPd4bLP58TzUFUjOI\u002fHQLgaLviyT\u002frB3v1OIPlv11fZQ9RWPi\u002fr9gzMQkAsD8Hlo3mbTzrP6KwqNBmRry\u002f","shape":"10, 6"},"zmid":0,"type":"heatmap"}],                        {"template":{"layout":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12},"hoverlabel":{"bgcolor":"#fcfcfb","bordercolor":"#c3c2b7","font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11}},"margin":{"b":60,"l":70,"r":40,"t":90},"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(0,0,0,0)","title":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":18},"subtitle":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12.5}},"x":0.03,"xanchor":"left"},"xaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"},"yaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"}}},"title":{"text":"Qué hace distinto a cada estilo"},"xaxis":{"tickfont":{"size":11},"side":"top","title":{},"showgrid":false,"tickangle":0},"yaxis":{"autorange":"reversed","title":{},"showgrid":false},"margin":{"l":190,"t":125},"autosize":true},                        {"displaylogo": false, "responsive": true, "displayModeBar": false}                    )                };            </script>        </div></div>
+<script>
+(function() {
+  function updateLegendLayout() {
+    var w = document.getElementById('chart_84918eb7').offsetWidth;
+    if (w < 420) {
+      Plotly.relayout('chart_84918eb7', {'margin.r': 20, 'margin.t': 70});
+    } else {
+      Plotly.relayout('chart_84918eb7', {'margin.r': 40, 'margin.t': 90});
+    }
+  }
+  window.addEventListener('resize', updateLegendLayout);
+  updateLegendLayout();
+})();
+</script>
+</div><figcaption><strong>Azul</strong> = por encima del promedio de los 96 equipos, <strong>rojo</strong> = por debajo. Ahora los grupos se distinguen por conducta: por dónde atacan, cuánto interrumpen y cuánto les llegan.</figcaption></figure><div class="wrap-wide"><div class="table-scroll"><table><thead><tr><th>Estilo</th><th>Qué lo define</th><th>Ejemplos</th></tr></thead><tbody><tr><td><strong>Dominio central</strong></td><td>Posesión y tiros por las nubes, pero pocos centros y las menos faltas: atacan por dentro y casi no interrumpen.</td><td>Bayern Munich, Barcelona, Real Madrid, PSG, Arsenal</td></tr><tr><td><strong>Ataque por banda</strong></td><td>Los más centros del estudio, con buena posesión y volumen de tiro. Control, pero llegando por fuera.</td><td>Inter, Dortmund, Lens, Juventus, Atlético Madrid</td></tr><tr><td><strong>Vertical y áspero</strong></td><td>Los más fuera de juego y las más amarillas: ataque de ruptura a la espalda, defensa a base de interrumpir.</td><td>Rennes, Monaco, Bournemouth, Chelsea, Getafe</td></tr><tr><td><strong>Trabado, sin bandas</strong></td><td>Faltas altas en los dos sentidos y los menos centros: partido cortado, poco juego por fuera.</td><td>Roma, Villarreal, Como, Real Betis, Lazio</td></tr><tr><td><strong>Sin duelos</strong></td><td>Los menos tackles e intercepciones de todos. Ni presionan ni cortan: dejan jugar y esperan.</td><td>Napoli, Milan, Stuttgart, Aston Villa, Liverpool</td></tr><tr><td><strong>Replegados y expuestos</strong></td><td>Los más tiros a puerta en contra, con la menor posesión y volumen de tiro. El bloque que aguanta.</td><td>Leverkusen, Sunderland, Brentford, Fulham, Frankfurt</td></tr></tbody></table></div></div><div class="wrap"><div class="callout"><div class="callout-title">La señal de que ahora sí mide estilo</div>
+<p>El grupo <em>Sin duelos</em> junta a
+<strong>Napoli, Milan, Stuttgart</strong> con equipos de mitad de tabla como
+Freiburg o Cremonese. Son niveles muy distintos que comparten una forma de no
+defender: son los que menos tackles e intercepciones hacen de las cinco ligas.</p>
+<p>En la primera versión eso era imposible — el nivel los mandaba a grupos
+separados antes de mirarles el estilo.</p></div></div><div class="wrap"><h2 id="conclusion"><span class="step">07 · Conclusión</span>Qué queda de todo esto</h2></div><div class="wrap">
+<p><strong>Con datos públicos, lo que más separa a los equipos europeos no es
+cómo juegan sino qué tan buenos son.</strong> No hizo falta creerlo: el primer
+eje correlaciona 0.93 con unos puntos que nunca entraron al modelo. Es
+la intuición de cualquiera que mire estas ligas —los mejores son muy mejores y
+eso tiñe todas las métricas— pero acá está medida.</p>
+<p><strong>Y no hay arquetipos naturales, hay un continuo.</strong> Los grupos
+son cortes útiles sobre una nube, no tribus. Cualquier análisis que prometa
+"los 6 tipos de equipo" debería poder mostrar esta prueba.</p>
+<p>Quitando la eficacia, sí aparece estilo: atacar por dentro o por banda,
+buscar la espalda o cortar con falta, presionar o dejar jugar. Para ir más
+lejos harían falta métricas de acción y ubicación —dónde recupera, con qué
+velocidad progresa— que los datos públicos no traen. Con ellas el estilo
+dejaría de tener que inferirse desde faltas y centros.</p></div></article>
+  <div class="wrap article-end">
+    <a href="../machine-learning.html">&larr; Volver a Machine Learning</a>
+    <span class="note">Datos: fbref · temporada 2025-26</span>
+  </div>
+</main>
+<script>
+(function() {
+  var LIGHT = {primary:'#0b0b0b', secondary:'#52514e', muted:'#898781', grid:'#e1e0d9', axis:'#c3c2b7', surface:'#fcfcfb'};
+  var DARK = {primary:'#D7E4E7', secondary:'#C7D3D6', muted:'#8CA0A5', grid:'#2C393C', axis:'#3A4A4E', surface:'#1B2426'};
+
+  function patchFor(theme) {
+    var c = theme === 'dark' ? DARK : LIGHT;
+    return {
+      'font.color': c.primary, 'title.font.color': c.primary,
+      'xaxis.tickfont.color': c.muted, 'xaxis.title.font.color': c.secondary,
+      'xaxis.gridcolor': c.grid, 'xaxis.zerolinecolor': c.axis, 'xaxis.linecolor': c.axis,
+      'yaxis.tickfont.color': c.muted, 'yaxis.title.font.color': c.secondary,
+      'yaxis.gridcolor': c.grid, 'yaxis.zerolinecolor': c.axis, 'yaxis.linecolor': c.axis,
+      'legend.font.color': c.secondary,
+      'hoverlabel.bgcolor': c.surface, 'hoverlabel.font.color': c.primary
+    };
+  }
+
+  function syncPlotly() {
+    if (!window.Plotly) return;
+    var theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    var patch = patchFor(theme);
+    document.querySelectorAll('.js-plotly-plot').forEach(function(gd) { Plotly.relayout(gd, patch); });
+  }
+  syncPlotly();
+
+  var btn = document.getElementById('theme-toggle');
+  if (btn) {
+    btn.addEventListener('click', function() {
+      var current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      var next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('futviz-theme', next); } catch (e) {}
+      syncPlotly();
+      document.dispatchEvent(new CustomEvent('futviz-theme-change', {detail: {theme: next}}));
+    });
+  }
+})();
+</script>
+<script>
+(function() {
+  var bar = document.getElementById('progress');
+  function update() {
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    bar.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + '%';
+  }
+  window.addEventListener('scroll', update, {passive: true});
+  window.addEventListener('resize', update);
+  update();
+})();
+
+// PLOTLY_THEME_SCRIPT recolorea ejes, leyenda y hover, pero no las
+// anotaciones: sus colores quedan horneados en el HTML al generarlo en
+// Python. En el biplot cada flecha de carga ES una anotación, así que sin
+// esto el gráfico queda con las etiquetas en tinta clara sobre fondo
+// oscuro. Se recorre `gd.layout.annotations` y se repinta cada una.
+(function() {
+  function syncAnnotations() {
+    if (!window.Plotly) return;
+    var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    var ink = dark ? '#C7D3D6' : '#52514e';
+    document.querySelectorAll('.js-plotly-plot').forEach(function(gd) {
+      var anns = (gd.layout && gd.layout.annotations) || [];
+      if (!anns.length) return;
+      var patch = {};
+      for (var i = 0; i < anns.length; i++) {
+        patch['annotations[' + i + '].font.color'] = ink;
+        if (anns[i].showarrow) patch['annotations[' + i + '].arrowcolor'] = ink;
+      }
+      Plotly.relayout(gd, patch);
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', syncAnnotations);
+  } else {
+    syncAnnotations();
+  }
+  document.addEventListener('futviz-theme-change', syncAnnotations);
+})();
+</script>
+</body>
+</html>

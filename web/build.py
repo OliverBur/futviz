@@ -15,10 +15,14 @@ import matplotlib
 
 matplotlib.use("Agg")
 
-from site_utils import write_chart_page, write_index, write_section_pages  # noqa: E402
+from site_utils import (  # noqa: E402
+    write_article_page, write_chart_page, write_index, write_section_pages,
+)
 from viz_theme import apply_theme, apply_plotly_theme  # noqa: E402
 import teams as teams_charts  # noqa: E402
 import players as players_charts  # noqa: E402
+import ml as ml_articles  # noqa: E402
+import ml_xg as ml_xg_articles  # noqa: E402
 
 WEB_DIR = Path(__file__).resolve().parent
 REPO_ROOT = WEB_DIR.parent
@@ -105,23 +109,28 @@ def build_favicon():
 
 # Qué gráfico real representa a cada sección en su thumbnail de la
 # landing — elegidos por el usuario, no cualquiera de los 9/5 de cada
-# sección sirve igual de bien como preview.
+# sección sirve igual de bien como preview. Es `(página, índice del
+# gráfico dentro de esa página)`: las páginas de chart tienen uno solo,
+# pero un análisis tiene varios y hay que decir cuál representa mejor.
 PREVIEW_SOURCE_CHART = {
-    "equipos": "perfil-liga-overlay",   # "Dónde se separa cada liga"
-    "jugadores": "perfil-ofensivo",     # "Perfil ofensivo: xG90 vs. xA90"
+    "equipos": ("charts/perfil-liga-overlay.html", 0),      # "Dónde se separa cada liga"
+    "jugadores": ("charts/perfil-ofensivo.html", 0),        # "Perfil ofensivo: xG90 vs. xA90"
+    "machine-learning": ("analisis/modelo-xg.html", 3),     # el mapa de valor del tiro
 }
 
 
-def _screenshot_chart_card(chart_slug, dark=False):
-    """Captura la tarjeta `.chart-scroll` (el gráfico ya renderizado, sin
-    el header/breadcrumb de la página) de `dist/charts/{chart_slug}.html`
-    con Playwright. `dark=True` clickea el toggle real de la página antes
-    de capturar (mismo flujo que un usuario, no duplica la lógica de
+def _screenshot_chart_card(source, dark=False):
+    """Captura una tarjeta `.chart-scroll` (el gráfico ya renderizado, sin
+    el header/breadcrumb) de una página ya generada en `dist/`, con
+    Playwright. `source` es `(ruta relativa a dist/, índice del gráfico)`.
+    `dark=True` clickea el toggle real de la página antes de capturar
+    (mismo flujo que un usuario, no duplica la lógica de
     PLOTLY_THEME_SCRIPT). Devuelve una imagen PIL o `None` si algo falla —
     un thumbnail roto es peor que caer al placeholder de texto."""
     import io
 
-    path = CHARTS_DIR / f"{chart_slug}.html"
+    rel_path, index = source
+    path = DIST_DIR / rel_path
     if not path.exists():
         return None
 
@@ -131,19 +140,31 @@ def _screenshot_chart_card(chart_slug, dark=False):
 
         with sync_playwright() as p:
             browser = p.chromium.launch()
-            page = browser.new_page(viewport={"width": 1100, "height": 800})
+            page = browser.new_page(viewport={"width": 1100, "height": 900})
             page.goto(path.resolve().as_uri())
-            page.wait_for_timeout(400)  # deja terminar de dibujar Plotly
+            page.wait_for_timeout(600)  # deja terminar de dibujar Plotly
             if dark:
                 page.click("#theme-toggle")
-                page.wait_for_timeout(300)
-            locator = page.locator(".chart-scroll")
+                page.wait_for_timeout(400)
+            locator = page.locator(".chart-scroll").nth(index)
             locator.wait_for(state="visible", timeout=5000)
+            locator.scroll_into_view_if_needed()
+            # Que el contenedor exista no significa que ya haya algo dibujado
+            # dentro: los gráficos que están más abajo en un análisis largo
+            # tardan varios segundos, y sin esperarlos el thumbnail sale en
+            # blanco. Qué esperar depende del tipo de gráfico — los de Plotly
+            # pintan un `.main-svg`, los de matplotlib son un `<img>` embebido.
+            # `:visible` importa en los de matplotlib: llevan dos <img>, una por
+            # tema, y la del tema inactivo está oculta por CSS — sin filtrar,
+            # la espera se queda mirando la que nunca se va a mostrar.
+            interior = ".main-svg" if locator.locator(".js-plotly-plot").count() else "img:visible"
+            locator.locator(interior).first.wait_for(state="visible", timeout=15000)
+            page.wait_for_timeout(400)
             png_bytes = locator.screenshot()
             browser.close()
         return Image.open(io.BytesIO(png_bytes)).convert("RGB")
     except Exception as e:
-        print(f"  (no se pudo capturar {chart_slug} para preview: {e})")
+        print(f"  (no se pudo capturar {rel_path} para preview: {e})")
         return None
 
 
@@ -202,13 +223,14 @@ def build_previews():
     (Plotly se recolorea en runtime, matplotlib tiene una segunda imagen
     pre-renderizada, ver viz_theme.dark_ink())."""
     SITE_ASSETS_DIR.mkdir(parents=True, exist_ok=True)
-    labels = {"equipos": "Equipos", "jugadores": "Jugadores"}
+    labels = {"equipos": "Equipos", "jugadores": "Jugadores",
+              "machine-learning": "Machine Learning"}
 
     for slug, label in labels.items():
         dest_light = SITE_ASSETS_DIR / f"preview-{slug}.png"
         dest_dark = SITE_ASSETS_DIR / f"preview-{slug}-dark.png"
         src = IMG_DIR / f"preview-{slug}.png"
-        chart_slug = PREVIEW_SOURCE_CHART[slug]
+        source = PREVIEW_SOURCE_CHART[slug]
 
         if src.exists():
             shutil.copy(src, dest_light)
@@ -216,15 +238,15 @@ def build_previews():
             print(f"  preview {slug} -> {dest_light.relative_to(DIST_DIR)} (fuente real)")
             continue
 
-        shot = _screenshot_chart_card(chart_slug)
+        shot = _screenshot_chart_card(source)
         if shot is not None:
             _fit_preview_canvas(shot).save(dest_light)
-            print(f"  preview {slug} -> {dest_light.relative_to(DIST_DIR)} (captura de {chart_slug})")
+            print(f"  preview {slug} -> {dest_light.relative_to(DIST_DIR)} (captura de {source[0]})")
         else:
             _placeholder_preview(label).save(dest_light)
             print(f"  preview {slug} -> {dest_light.relative_to(DIST_DIR)} (placeholder)")
 
-        shot_dark = _screenshot_chart_card(chart_slug, dark=True)
+        shot_dark = _screenshot_chart_card(source, dark=True)
         if shot_dark is not None:
             _fit_preview_canvas(shot_dark).save(dest_dark)
             print(f"  preview {slug} (oscuro) -> {dest_dark.relative_to(DIST_DIR)}")
@@ -253,6 +275,19 @@ def main():
     for page in pages:
         out = write_chart_page(page, CHARTS_DIR)
         print(f"  {page.slug} -> {out.relative_to(DIST_DIR)}")
+
+    # Los análisis son otro tipo de página (prosa + gráficos, no un gráfico
+    # suelto), pero entran a la misma lista: `write_section_pages` y
+    # `write_index` solo miran `.section` y arman el href con `.href_prefix`.
+    print("Generando análisis de machine learning...")
+    # `ml_xg` entrena seis modelos de xG al construirse (uno principal más uno
+    # por temporada para el xG fuera de muestra), así que es el paso más lento
+    # del build — alrededor de un minuto.
+    articles = ml_articles.build(ASSETS_DIR) + ml_xg_articles.build(ASSETS_DIR)
+    for page in articles:
+        out = write_article_page(page, DIST_DIR)
+        print(f"  {page.slug} -> {out.relative_to(DIST_DIR)}")
+    pages += articles
 
     # Después de escribir las páginas de chart: los previews de la landing
     # capturan una de esas páginas ya generadas (ver PREVIEW_SOURCE_CHART).

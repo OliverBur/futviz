@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
-from site_utils import DATA_DIR, ChartPage, matplotlib_chart_body
+from site_utils import SEASON_DIR, ChartPage, matplotlib_chart_body
 from viz_theme import (
     LEAGUE_ORDER, SEQUENTIAL_BLUE, INK,
     league_color, sidebar_chart_html, plot_html, league_box_figure, dark_ink,
@@ -41,7 +41,7 @@ def load_data():
 
     frames = {}
     for tag, fname in raw_files.items():
-        raw = pd.read_csv(DATA_DIR / fname, header=[0, 1])
+        raw = pd.read_csv(SEASON_DIR / fname, header=[0, 1])
         raw = flatten_columns(raw)
         assert len(raw) == len(liga_col), f"{fname}: filas inesperadas"
         raw["liga"] = liga_col

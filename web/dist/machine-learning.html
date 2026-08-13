@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Jugadores · FutViz</title>
+<title>Machine Learning · FutViz</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <script>
 (function() {
@@ -129,7 +129,7 @@
 <body>
 <header>
   <div class="topbar">
-    <span class="crumb-current"><span class="wordmark">FutViz</span> / Jugadores</span>
+    <span class="crumb-current"><span class="wordmark">FutViz</span> / Machine Learning</span>
     <div class="header-right">
       <a class="site-logo-link" href="index.html">
         <img class="site-logo" src="assets/logo.png" alt="FutViz — volver al inicio">
@@ -144,42 +144,28 @@
 </button>
     </div>
   </div>
-  <h1>Jugadores</h1>
-  <div class="lead">Producción individual, eficiencia y perfiles ofensivos.</div>
+  <h1>Machine Learning</h1>
+  <div class="lead">Aplicación de modelos de Machine Learning para buscar patrones que no estén a simple vista.</div>
 </header>
-<main><div class="grid"><a class="card" href="charts/goles-vs-xg.html">
-  <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="16" r="2"/><circle cx="12" cy="9" r="2"/><circle cx="18" cy="14" r="2"/><circle cx="15" cy="6" r="2"/></svg></div>
+<main><div class="grid"><a class="card" href="analisis/estilos-de-juego.html">
+  <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h9l5 5v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M14 3v5h5M8 13h8M8 17h5"/></svg></div>
   <div>
-    <div class="card-title">Goles vs. xG</div>
-    <div class="card-sub">Sobre/bajo-rendimiento de definición — un punto por jugador.</div>
+    <div class="card-title">¿Existe el estilo de juego, o solo el nivel?</div>
+    <div class="card-sub">Agrupé a los 96 equipos sin decirle al modelo qué buscar. Encontró seis grupos — y después descubrí qué estaba midiendo en realidad.</div>
   </div>
 </a>
-<a class="card" href="charts/asistencias-vs-xa.html">
-  <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="16" r="2"/><circle cx="12" cy="9" r="2"/><circle cx="18" cy="14" r="2"/><circle cx="15" cy="6" r="2"/></svg></div>
+<a class="card" href="analisis/modelo-xg.html">
+  <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h9l5 5v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M14 3v5h5M8 13h8M8 17h5"/></svg></div>
   <div>
-    <div class="card-title">Asistencias vs. xA</div>
-    <div class="card-sub">Sobre/bajo-rendimiento de creación — un punto por jugador.</div>
+    <div class="card-title">Cómo se construye un xG</div>
+    <div class="card-sub">Entrené un modelo de goles esperados con 221.922 tiros. Empata con el de Understat — y de paso encuentra que el suyo sobreestima un 17%.</div>
   </div>
 </a>
-<a class="card" href="charts/perfil-ofensivo.html">
-  <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="16" r="2"/><circle cx="12" cy="9" r="2"/><circle cx="18" cy="14" r="2"/><circle cx="15" cy="6" r="2"/></svg></div>
+<a class="card" href="analisis/definicion.html">
+  <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h9l5 5v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M14 3v5h5M8 13h8M8 17h5"/></svg></div>
   <div>
-    <div class="card-title">Perfil ofensivo: xG90 vs. xA90</div>
-    <div class="card-sub">Tasas por 90' — killer puro, creador puro o todocampo.</div>
-  </div>
-</a>
-<a class="card" href="charts/nivel-goleador-liga.html">
-  <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4"/><rect x="6" y="7" width="12" height="10" rx="1"/><path d="M6 12h12"/></svg></div>
-  <div>
-    <div class="card-title">Nivel goleador esperado por liga</div>
-    <div class="card-sub">xG por 90' de todos los jugadores, agrupados por liga.</div>
-  </div>
-</a>
-<a class="card" href="charts/nivel-creacion-liga.html">
-  <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4"/><rect x="6" y="7" width="12" height="10" rx="1"/><path d="M6 12h12"/></svg></div>
-  <div>
-    <div class="card-title">Nivel de creación esperado por liga</div>
-    <div class="card-sub">xA por 90' de todos los jugadores, agrupados por liga.</div>
+    <div class="card-title">¿Existen los definidores natos?</div>
+    <div class="card-sub">Medí si superar el xG es una habilidad o suerte. Existe — y es mucho más chica de lo que cuenta el folklore.</div>
   </div>
 </a>
 </div></main>
