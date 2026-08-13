@@ -6,7 +6,7 @@ import html
 import pandas as pd
 import plotly.graph_objects as go
 
-from site_utils import DATA_DIR, ChartPage
+from site_utils import SEASON_DIR, ChartPage
 from viz_theme import LEAGUE_ORDER, league_color, sidebar_chart_html, plot_html, league_box_figure
 
 SECTION = "Jugadores"
@@ -24,7 +24,7 @@ FILES = {
 def load_data():
     dfs = []
     for fname, liga in FILES.items():
-        d = pd.read_csv(DATA_DIR / fname, sep=";", encoding="utf-8")
+        d = pd.read_csv(SEASON_DIR / fname, sep=";", encoding="utf-8")
         d["liga"] = liga
         dfs.append(d)
     df = pd.concat(dfs, ignore_index=True)

@@ -12,6 +12,11 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = REPO_ROOT / "data"
 CODE_DIR = REPO_ROOT / "code"
 
+# Los CSV crudos viven en una carpeta por temporada (`data/2025-26/`, ...). El
+# sitio publica solo la temporada corriente: para cambiarla basta esta línea.
+SEASON = "2025-26"
+SEASON_DIR = DATA_DIR / SEASON
+
 sys.path.insert(0, str(CODE_DIR))
 
 # Un solo <link> de Google Fonts, con todos los pesos que usa cualquier
@@ -119,6 +124,31 @@ class ChartPage:
     body_html: str
     kind: str = "scatter"  # scatter | radar | bar | box — qué ícono mostrar en la grilla de sección
 
+    # Dónde vive el archivo respecto de dist/ — lo usa la card de la sección
+    # para armar el href (ver `write_section_pages`).
+    href_prefix: str = "charts/"
+
+
+@dataclass
+class ArticlePage:
+    """Análisis largo: prosa + gráficos intercalados, en vez de un solo
+    gráfico para explorar. Es otro tipo de contenido, no un ChartPage con
+    más texto — un chart page responde "¿cómo se ve X?" y se lee en
+    cualquier orden; un artículo sostiene un argumento y el orden importa.
+
+    `body_html` lo arma el módulo del análisis (ver `web/charts/ml.py`)
+    con los helpers de ahí; acá solo se envuelve en la plantilla."""
+
+    slug: str
+    section: str
+    title: str
+    subtitle: str      # bajada corta, la que se ve en la card de la sección
+    deck: str          # entradilla larga, arriba del artículo
+    body_html: str
+    meta: list         # pares (etiqueta, valor) para la barra de metadatos
+    kind: str = "article"
+    href_prefix: str = "analisis/"
+
 
 # Ícono por tipo de gráfico, para que las cards de `equipos.html`/`jugadores.html`
 # se puedan distinguir de un vistazo sin abrirlas (antes eran solo texto).
@@ -143,6 +173,14 @@ CHART_ICONS = {
         'stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4"/>'
         '<rect x="6" y="7" width="12" height="10" rx="1"/><path d="M6 12h12"/></svg>'
     ),
+    # Artículo: hoja con líneas de texto — distinto de los íconos de
+    # gráfico para que en la grilla se note que ahí hay una lectura, no
+    # un gráfico suelto.
+    "article": (
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+        'stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h9l5 5v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/>'
+        '<path d="M14 3v5h5M8 13h8M8 17h5"/></svg>'
+    ),
 }
 
 
@@ -160,6 +198,16 @@ SECTION_META = {
         "slug": "jugadores",
         "description": "Producción individual, eficiencia y perfiles ofensivos.",
         "preview": "preview-jugadores.png",
+    },
+    # `noun` es lo que se cuenta en la card de la landing: las otras dos
+    # secciones ofrecen gráficos sueltos para explorar, esta ofrece
+    # análisis para leer de principio a fin.
+    "Machine Learning": {
+        "slug": "machine-learning",
+        "description": "Aplicación de modelos de Machine Learning para buscar patrones "
+                        "que no estén a simple vista.",
+        "preview": "preview-machine-learning.png",
+        "noun": "análisis",
     },
 }
 
@@ -329,7 +377,10 @@ INDEX_TEMPLATE = """<!doctype html>
   .cards {{ display: flex; flex-direction: column; align-items: center; gap: 20px; }}
   .foot {{ color: var(--color-muted); font-size: 12.5px; margin: 48px 0 0; }}
 
-  a.hub-card {{ display: block; width: 100%; max-width: 380px; text-align: left;
+  /* Columna flex (no block) para que el chip de abajo se pueda empujar al
+     fondo de la tarjeta — ver .hub-count. */
+  a.hub-card {{ display: flex; flex-direction: column; width: 100%; max-width: 380px;
+    text-align: left;
     text-decoration: none; color: inherit; cursor: pointer; overflow: hidden;
     background: var(--color-surface); border: 1px solid var(--color-border);
     border-radius: 18px;
@@ -348,10 +399,15 @@ INDEX_TEMPLATE = """<!doctype html>
   .hub-thumb-dark {{ display: none; }}
   html[data-theme="dark"] .hub-thumb-light {{ display: none; }}
   html[data-theme="dark"] .hub-thumb-dark {{ display: block; }}
-  .hub-body {{ padding: 22px 24px 26px; }}
+  .hub-body {{ padding: 22px 24px 26px; display: flex; flex-direction: column; flex: 1; }}
   .hub-title {{ font-size: 21px; font-weight: 700; color: var(--color-primary); margin-bottom: 8px; }}
   .hub-sub {{ font-size: 14px; color: var(--color-text-body); line-height: 1.5; margin-bottom: 18px; }}
-  .hub-count {{ display: inline-block; font-size: 12px; font-weight: 700; text-transform: uppercase;
+  /* `margin-top: auto` pega el chip al fondo de la tarjeta: así los tres
+     quedan alineados entre sí aunque una descripción ocupe un renglón más
+     que las otras (antes el chip flotaba justo debajo del texto y se veía
+     desparejo). `align-self` evita que el flex lo estire a todo el ancho. */
+  .hub-count {{ display: inline-block; align-self: flex-start; margin-top: auto;
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
     letter-spacing: .05em; color: var(--color-primary); background: var(--color-brand-accent-soft);
     border: 1px solid rgba(57, 153, 6, 0.35); border-radius: 999px; padding: 5px 12px; }}
 
@@ -387,7 +443,7 @@ HUB_CARD_TEMPLATE = """<a class="hub-card" href="{slug}.html">
   <div class="hub-body">
     <div class="hub-title">{name}</div>
     <div class="hub-sub">{description}</div>
-    <div class="hub-count">{count} gráfica{plural}</div>
+    <div class="hub-count">{count} {noun}</div>
   </div>
 </a>
 """
@@ -421,7 +477,10 @@ SECTION_PAGE_TEMPLATE = """<!doctype html>
     color: var(--color-primary); margin: 16px 0 8px; padding-left: 14px; }}
   h1::before {{ content: ""; position: absolute; left: 0; top: 3px; bottom: 3px;
     width: 4px; border-radius: 2px; background: var(--color-brand-accent); }}
-  .lead {{ color: var(--color-muted); font-size: 14px; line-height: 1.55; max-width: 640px; }}
+  /* 760px y no 640: la bajada de cada sección es UNA frase, y a 640 la más
+     larga (Machine Learning) partía en dos renglones dejando dos palabras
+     sueltas abajo. En pantallas angostas sigue partiendo, que es lo correcto. */
+  .lead {{ color: var(--color-muted); font-size: 14px; line-height: 1.55; max-width: 760px; }}
 
   main {{ padding: 28px 20px 64px; max-width: 1180px; margin: 0 auto; }}
   .grid {{ display: grid; grid-template-columns: 1fr; gap: 16px; }}
@@ -477,7 +536,7 @@ SECTION_PAGE_TEMPLATE = """<!doctype html>
 </html>
 """
 
-CARD_TEMPLATE = """<a class="card" href="charts/{slug}.html">
+CARD_TEMPLATE = """<a class="card" href="{href}">
   <div class="card-icon">{icon}</div>
   <div>
     <div class="card-title">{title}</div>
@@ -485,6 +544,226 @@ CARD_TEMPLATE = """<a class="card" href="charts/{slug}.html">
   </div>
 </a>
 """
+
+
+ARTICLE_PAGE_TEMPLATE = """<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{title} · FutViz</title>
+<link rel="icon" type="image/png" href="../favicon.png">
+<meta name="description" content="{subtitle}">
+{theme_init_script}
+{font_links}
+<style>
+{brand_root}
+  header {{ padding: 14px 20px; border-bottom: 1px solid var(--color-border);
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    position: sticky; top: 0; z-index: 20;
+    background: color-mix(in srgb, var(--color-bg) 88%, transparent);
+    backdrop-filter: blur(8px); }}
+  .crumb {{ color: var(--color-muted); text-decoration: none; font-size: 13px; font-weight: 500; }}
+  .crumb:hover {{ color: var(--color-interactive); }}
+  .header-right {{ display: flex; align-items: center; gap: 14px; }}
+  .site-logo-link {{ flex: none; line-height: 0; }}
+  .site-logo {{ height: 26px; width: auto; display: block; }}
+
+  /* Barra de progreso de lectura: en un artículo largo da idea de cuánto
+     falta, que es justo lo que una grilla de gráficos no necesita. */
+  #progress {{ position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--color-brand-accent); z-index: 30; transition: width .1s linear; }}
+
+  main {{ padding: 0 20px 80px; }}
+
+  /* Dos anchos: la prosa se lee en una columna angosta (~68 caracteres) y
+     los gráficos pueden respirar más. Ambos centrados sobre el mismo eje. */
+  .wrap {{ max-width: 720px; margin: 0 auto; }}
+  .wrap-wide {{ max-width: 940px; margin: 0 auto; }}
+
+  .hero {{ padding: 48px 0 28px; }}
+  .kicker {{ display: inline-block; font-size: 12px; font-weight: 600; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--color-primary); background: var(--color-brand-accent-soft);
+    padding: 5px 11px; border-radius: 999px; margin-bottom: 18px; }}
+  .hero h1 {{ font-size: 32px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em;
+    color: var(--color-primary); margin: 0 0 16px; }}
+  .deck {{ font-size: 17px; line-height: 1.6; color: var(--color-muted); margin: 0; }}
+  /* Rejilla de 2 columnas y no flex-wrap: con flex cada dato se dimensiona por
+     su contenido, así que se apilaban todos a la izquierda y la segunda columna
+     no coincidía entre filas (58px de diferencia), dejando medio ancho vacío.
+     Dos columnas porque el dato más largo mide ~300px: con cuatro se partiría
+     en dos líneas. */
+  .meta {{ display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 32px; margin-top: 26px; padding-top: 20px;
+    border-top: 1px solid var(--color-border); }}
+  .meta div {{ font-size: 12.5px; color: var(--color-muted); }}
+  .meta b {{ display: block; font-size: 10.5px; font-weight: 600; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--color-primary); margin-bottom: 3px; }}
+
+  article {{ font-size: 16.5px; line-height: 1.72; }}
+  article h2 {{ font-size: 25px; line-height: 1.25; font-weight: 700; letter-spacing: -0.015em;
+    color: var(--color-primary); margin: 60px 0 6px; scroll-margin-top: 70px; }}
+  article h2 .step {{ display: block; font-size: 12px; font-weight: 600; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--color-brand-accent); margin-bottom: 8px; }}
+  article h3 {{ font-size: 18px; font-weight: 700; color: var(--color-primary); margin: 38px 0 4px; }}
+  article p {{ margin: 16px 0; }}
+  article ul {{ margin: 16px 0; padding-left: 22px; }}
+  article li {{ margin: 9px 0; }}
+  article strong {{ color: var(--color-primary); font-weight: 650; }}
+  article a {{ color: var(--color-interactive); }}
+  article code {{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .88em;
+    background: var(--color-brand-accent-soft); padding: 2px 6px; border-radius: 5px;
+    color: var(--color-primary); }}
+
+  /* Bloque de gráfico: mismo tratamiento de tarjeta que las páginas de
+     chart (.chart-scroll) para que se sienta el mismo sitio. */
+  figure {{ margin: 34px auto; }}
+  .chart-scroll {{ max-width: 100%; overflow-x: auto; background: var(--color-bg);
+    border: 1px solid var(--color-border); border-radius: 14px; padding: 18px; }}
+  figcaption {{ font-size: 13px; line-height: 1.5; color: var(--color-muted); margin-top: 12px;
+    padding-left: 12px; border-left: 2px solid var(--color-border); }}
+
+  .callout {{ margin: 34px 0; padding: 20px 22px; border-radius: 12px;
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-brand-accent); }}
+  .callout.warn {{ border-left-color: #E0891C; }}
+  .callout .callout-title {{ font-size: 12px; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--color-primary); margin-bottom: 8px; }}
+  .callout p {{ margin: 8px 0 0; font-size: 15.5px; }}
+  .callout p:first-of-type {{ margin-top: 0; }}
+
+  /* Dato grande: para el número que sostiene el argumento. */
+  .stat {{ margin: 34px 0; padding: 26px 24px; border-radius: 14px; text-align: center;
+    background: var(--color-surface); border: 1px solid var(--color-border); }}
+  .stat .stat-value {{ font-size: 46px; font-weight: 800; letter-spacing: -0.02em; line-height: 1;
+    color: var(--color-brand-accent); }}
+  .stat .stat-label {{ font-size: 14px; color: var(--color-muted); margin-top: 12px; line-height: 1.5; }}
+
+  .table-scroll {{ overflow-x: auto; margin: 30px 0; }}
+  table {{ border-collapse: collapse; width: 100%; font-size: 14px; min-width: 520px; }}
+  th, td {{ text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--color-border);
+    vertical-align: top; }}
+  thead th {{ font-size: 11.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+    color: var(--color-primary); border-bottom-width: 2px; }}
+  td.num {{ text-align: right; font-variant-numeric: tabular-nums; }}
+  tbody tr:hover {{ background: var(--color-interactive-soft); }}
+
+  .article-end {{ margin: 56px 0 0; padding-top: 26px; border-top: 1px solid var(--color-border);
+    display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }}
+  .article-end a {{ font-size: 14px; font-weight: 600; text-decoration: none;
+    color: var(--color-interactive); }}
+  .article-end .note {{ font-size: 12.5px; color: var(--color-muted); }}
+
+  @media (max-width: 640px) {{
+    main {{ padding: 0 16px 56px; }}
+    .hero {{ padding: 32px 0 22px; }}
+    .hero h1 {{ font-size: 26px; }}
+    .deck {{ font-size: 15.5px; }}
+    /* en móvil dos columnas dejarían ~140px por dato: una sola y a lo alto */
+    .meta {{ grid-template-columns: 1fr; gap: 14px; }}
+    article {{ font-size: 16px; }}
+    article h2 {{ font-size: 21px; margin-top: 46px; }}
+    .chart-scroll {{ padding: 12px; }}
+    .stat .stat-value {{ font-size: 36px; }}
+  }}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<header>
+  <a class="crumb" href="../{section_slug}.html">&larr; {section_name}</a>
+  <div class="header-right">
+    <a class="site-logo-link" href="../index.html">
+      <img class="site-logo" src="../assets/logo.png" alt="FutViz — volver al inicio">
+    </a>
+    {theme_toggle}
+  </div>
+</header>
+<main>
+  <div class="wrap hero">
+    <span class="kicker">{section_name}</span>
+    <h1>{title}</h1>
+    <p class="deck">{deck}</p>
+    <div class="meta">{meta}</div>
+  </div>
+  <article>{body}</article>
+  <div class="wrap article-end">
+    <a href="../{section_slug}.html">&larr; Volver a {section_name}</a>
+    <span class="note">Datos: fbref · temporada 2025-26</span>
+  </div>
+</main>
+{theme_toggle_script}
+<script>
+(function() {{
+  var bar = document.getElementById('progress');
+  function update() {{
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    bar.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + '%';
+  }}
+  window.addEventListener('scroll', update, {{passive: true}});
+  window.addEventListener('resize', update);
+  update();
+}})();
+
+// PLOTLY_THEME_SCRIPT recolorea ejes, leyenda y hover, pero no las
+// anotaciones: sus colores quedan horneados en el HTML al generarlo en
+// Python. En el biplot cada flecha de carga ES una anotación, así que sin
+// esto el gráfico queda con las etiquetas en tinta clara sobre fondo
+// oscuro. Se recorre `gd.layout.annotations` y se repinta cada una.
+(function() {{
+  function syncAnnotations() {{
+    if (!window.Plotly) return;
+    var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    var ink = dark ? '#C7D3D6' : '#52514e';
+    document.querySelectorAll('.js-plotly-plot').forEach(function(gd) {{
+      var anns = (gd.layout && gd.layout.annotations) || [];
+      if (!anns.length) return;
+      var patch = {{}};
+      for (var i = 0; i < anns.length; i++) {{
+        patch['annotations[' + i + '].font.color'] = ink;
+        if (anns[i].showarrow) patch['annotations[' + i + '].arrowcolor'] = ink;
+      }}
+      Plotly.relayout(gd, patch);
+    }});
+  }}
+  if (document.readyState === 'loading') {{
+    document.addEventListener('DOMContentLoaded', syncAnnotations);
+  }} else {{
+    syncAnnotations();
+  }}
+  document.addEventListener('futviz-theme-change', syncAnnotations);
+}})();
+</script>
+</body>
+</html>
+"""
+
+META_ITEM_TEMPLATE = "<div><b>{label}</b>{value}</div>"
+
+
+def write_article_page(page: "ArticlePage", dist_dir: Path) -> Path:
+    """Escribe un análisis largo en `dist/analisis/{slug}.html`."""
+    out_dir = dist_dir / page.href_prefix.strip("/")
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    meta_html = "".join(META_ITEM_TEMPLATE.format(label=label, value=value)
+                        for label, value in page.meta)
+    section_meta = SECTION_META.get(page.section, {})
+
+    html = ARTICLE_PAGE_TEMPLATE.format(
+        title=page.title, subtitle=page.subtitle, deck=page.deck, body=page.body_html,
+        meta=meta_html, section_name=page.section,
+        section_slug=section_meta.get("slug", "index"),
+        brand_root=BRAND_ROOT_CSS, font_links=FONT_LINKS,
+        theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML,
+        # Igual que en las páginas de chart: el toggle también recolorea los
+        # gráficos Plotly ya renderizados (ver PLOTLY_THEME_SCRIPT).
+        theme_toggle_script=PLOTLY_THEME_SCRIPT,
+    )
+    out_path = out_dir / f"{page.slug}.html"
+    out_path.write_text(html, encoding="utf-8")
+    return out_path
 
 
 def write_chart_page(page: ChartPage, charts_dir: Path) -> Path:
@@ -517,8 +796,8 @@ def write_section_pages(pages: list[ChartPage], dist_dir: Path) -> list[Path]:
     for name, section_pages in sections.items():
         meta = SECTION_META[name]
         cards = "".join(
-            CARD_TEMPLATE.format(slug=p.slug, title=p.title, subtitle=p.subtitle,
-                                  icon=CHART_ICONS[p.kind])
+            CARD_TEMPLATE.format(href=f"{p.href_prefix}{p.slug}.html", title=p.title,
+                                  subtitle=p.subtitle, icon=CHART_ICONS[p.kind])
             for p in section_pages
         )
         html = SECTION_PAGE_TEMPLATE.format(
@@ -538,11 +817,17 @@ def write_index(pages: list[ChartPage], dist_dir: Path) -> Path:
     for page in pages:
         counts[page.section] = counts.get(page.section, 0) + 1
 
+    def _noun(meta, n):
+        # "análisis" es invariable en plural, "gráfica" no — por eso el
+        # plural se resuelve acá y no concatenando una "s" en la plantilla.
+        singular = meta.get("noun", "gráfica")
+        return singular if n == 1 else ("análisis" if singular == "análisis" else f"{singular}s")
+
     cards = "".join(
         HUB_CARD_TEMPLATE.format(
             slug=meta["slug"], name=name, description=meta["description"], preview=meta["preview"],
             preview_dark=meta["preview"].replace(".png", "-dark.png"),
-            count=counts.get(name, 0), plural="" if counts.get(name, 0) == 1 else "s",
+            count=counts.get(name, 0), noun=_noun(meta, counts.get(name, 0)),
         )
         for name, meta in SECTION_META.items()
         if name in counts

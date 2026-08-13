@@ -104,7 +104,10 @@
   .cards { display: flex; flex-direction: column; align-items: center; gap: 20px; }
   .foot { color: var(--color-muted); font-size: 12.5px; margin: 48px 0 0; }
 
-  a.hub-card { display: block; width: 100%; max-width: 380px; text-align: left;
+  /* Columna flex (no block) para que el chip de abajo se pueda empujar al
+     fondo de la tarjeta — ver .hub-count. */
+  a.hub-card { display: flex; flex-direction: column; width: 100%; max-width: 380px;
+    text-align: left;
     text-decoration: none; color: inherit; cursor: pointer; overflow: hidden;
     background: var(--color-surface); border: 1px solid var(--color-border);
     border-radius: 18px;
@@ -123,10 +126,15 @@
   .hub-thumb-dark { display: none; }
   html[data-theme="dark"] .hub-thumb-light { display: none; }
   html[data-theme="dark"] .hub-thumb-dark { display: block; }
-  .hub-body { padding: 22px 24px 26px; }
+  .hub-body { padding: 22px 24px 26px; display: flex; flex-direction: column; flex: 1; }
   .hub-title { font-size: 21px; font-weight: 700; color: var(--color-primary); margin-bottom: 8px; }
   .hub-sub { font-size: 14px; color: var(--color-text-body); line-height: 1.5; margin-bottom: 18px; }
-  .hub-count { display: inline-block; font-size: 12px; font-weight: 700; text-transform: uppercase;
+  /* `margin-top: auto` pega el chip al fondo de la tarjeta: así los tres
+     quedan alineados entre sí aunque una descripción ocupe un renglón más
+     que las otras (antes el chip flotaba justo debajo del texto y se veía
+     desparejo). `align-self` evita que el flex lo estire a todo el ancho. */
+  .hub-count { display: inline-block; align-self: flex-start; margin-top: auto;
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
     letter-spacing: .05em; color: var(--color-primary); background: var(--color-brand-accent-soft);
     border: 1px solid rgba(57, 153, 6, 0.35); border-radius: 999px; padding: 5px 12px; }
 
@@ -171,6 +179,15 @@
     <div class="hub-title">Jugadores</div>
     <div class="hub-sub">Producción individual, eficiencia y perfiles ofensivos.</div>
     <div class="hub-count">5 gráficas</div>
+  </div>
+</a>
+<a class="hub-card" href="machine-learning.html">
+  <img class="hub-thumb hub-thumb-light" src="assets/preview-machine-learning.png" alt="Vista previa — Machine Learning">
+  <img class="hub-thumb hub-thumb-dark" src="assets/preview-machine-learning-dark.png" alt="Vista previa — Machine Learning">
+  <div class="hub-body">
+    <div class="hub-title">Machine Learning</div>
+    <div class="hub-sub">Aplicación de modelos de Machine Learning para buscar patrones que no estén a simple vista.</div>
+    <div class="hub-count">3 análisis</div>
   </div>
 </a>
 </div>
