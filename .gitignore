@@ -1,5 +1,17 @@
 __pycache__/
 *.pyc
+
+# HTML crudo que cachea fetch_fbref.py (~25 MB, se vuelve a bajar solo)
+data/.fbref_html/
+
+# Artefactos derivados (~47 MB, shots_all_seasons.csv solo pesa 42). Los
+# regenera `python code/consolidate_data.py` en segundos a partir de
+# data/<temporada>/, que sí se versiona. Vercel no los necesita: solo sirve
+# web/dist, no construye nada.
+data/processed/
+
+# Lock que deja seleniumbase al bajar chromedriver
+code/downloaded_files/
 .ipynb_checkpoints/
 .claude/
 BITACORA.md
