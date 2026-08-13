@@ -21,6 +21,25 @@ LEAGUE_COLORS = {
 # Rampa secuencial (magnitud, un solo equipo/métrica), claro -> oscuro
 SEQUENTIAL_BLUE = ["#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"]
 
+# Paleta categórica para CLUSTERS de estilo (ml_style_clusters.ipynb), en orden
+# fijo de slot — nunca ciclada, nunca reasignada por ranking. Es distinta de
+# LEAGUE_COLORS a propósito: en ese notebook el color significa "arquetipo de
+# estilo", no "liga", y mezclar ambos significados confundiría al lector.
+#
+# Validada con el validador de la skill de dataviz (puerto Python del
+# validate_palette.js, mismos umbrales y misma simulación Machado 2009) sobre
+# la superficie clara del proyecto (#fcfcfb), en modo `--pairs all` porque se
+# usa en scatter y en grafo (no solo en barras/leyenda, donde bastaría el
+# pairlist adyacente):
+#   - peor par bajo daltonismo (mín. protan/deutan): ΔE 8.3  (objetivo ≥ 8.0)
+#   - peor par en visión normal:                      ΔE 15.1 (piso duro ≥ 15.0)
+#   - banda de luminosidad y piso de croma: OK en los 6 slots
+# Amarillo y magenta quedan por debajo de 3:1 de contraste contra la superficie
+# clara: aplica la "regla de relieve" — en el notebook siempre van acompañados
+# de hover con el nombre del arquetipo y de las tablas de membresía, así que la
+# identidad nunca depende solo del color.
+CLUSTER_COLORS = ["#256abf", "#d95926", "#199e70", "#eda100", "#9085e9", "#e87ba4"]
+
 # Par divergente (sobre/bajo lo esperado): positivo vs negativo, gris en cero
 DIVERGING = {"pos": "#2a78d6", "neg": "#e34948", "mid": "#cfcecb"}
 
@@ -105,10 +124,19 @@ def league_color(liga):
     return LEAGUE_COLORS.get(liga, INK["muted"])
 
 
-def apply_plotly_theme():
+def apply_plotly_theme(opaque_surface=False):
     """Registra y activa un template de Plotly con la misma identidad visual
     (superficie, tinta, grid) que apply_theme() usa para matplotlib. Llamar
-    una vez al inicio de un notebook que use gráficos Plotly."""
+    una vez al inicio de un notebook que use gráficos Plotly.
+
+    `opaque_surface=True` pinta la superficie del gráfico con INK["surface"]
+    en vez de dejarla transparente. Es para los notebooks: ahí el `.ipynb` se
+    lee tal cual, sobre el fondo que ponga el visor (VS Code en tema oscuro,
+    Jupyter en claro), y un fondo transparente hace que el gráfico herede ese
+    fondo y se vea inconsistente de un visor a otro. Con superficie opaca el
+    gráfico siempre se ve claro, como está diseñado. El default sigue siendo
+    transparente porque el SITIO sí necesita transparencia: ahí el fondo lo
+    pone la página (`.chart-scroll`) y cambia con el toggle claro/oscuro."""
     import plotly.graph_objects as go
     import plotly.io as pio
 
@@ -125,13 +153,14 @@ def apply_plotly_theme():
         tickfont=dict(family=font_family, color=INK["muted"], size=11),
         title=dict(font=dict(family=font_family, color=INK["secondary"], size=12)),
     )
+    surface = INK["surface"] if opaque_surface else "rgba(0,0,0,0)"
     pio.templates["futviz"] = go.layout.Template(
         layout=go.Layout(
-            # Transparente en vez del "surface" fijo: en el sitio deja ver
-            # el fondo grisáceo de la página (`.chart-scroll` ya no es una
-            # tarjeta blanca) y en el notebook cae sobre el blanco de Jupyter.
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
+            # Transparente por default: en el sitio deja ver el fondo grisáceo
+            # de la página (`.chart-scroll` ya no es una tarjeta blanca). Ver
+            # el docstring para por qué los notebooks la piden opaca.
+            paper_bgcolor=surface,
+            plot_bgcolor=surface,
             font=dict(family=font_family, color=INK["primary"], size=12),
             title=dict(
                 font=dict(size=18, color=INK["primary"], family=font_family),
