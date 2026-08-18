@@ -12,10 +12,14 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = REPO_ROOT / "data"
 CODE_DIR = REPO_ROOT / "code"
 
-# Los CSV crudos viven en una carpeta por temporada (`data/2025-26/`, ...). El
-# sitio publica solo la temporada corriente: para cambiarla basta esta línea.
+# Los CSV crudos viven en una carpeta por temporada (`data/2025-26/`, ...) y
+# `data/processed/` tiene las 5 temporadas ya consolidadas y etiquetadas.
+# Los gráficos leen del consolidado (traen selector de temporada); `SEASON`
+# queda como la temporada que se muestra al abrir un gráfico y la que usan
+# los pocos gráficos que siguen siendo de un solo período.
 SEASON = "2025-26"
 SEASON_DIR = DATA_DIR / SEASON
+PROCESSED_DIR = DATA_DIR / "processed"
 
 sys.path.insert(0, str(CODE_DIR))
 
@@ -79,24 +83,42 @@ PLOTLY_THEME_SCRIPT = """<script>
   var LIGHT = {primary:'#0b0b0b', secondary:'#52514e', muted:'#898781', grid:'#e1e0d9', axis:'#c3c2b7', surface:'#fcfcfb'};
   var DARK = {primary:'#D7E4E7', secondary:'#C7D3D6', muted:'#8CA0A5', grid:'#2C393C', axis:'#3A4A4E', surface:'#1B2426'};
 
-  function patchFor(theme) {
+  // Los ejes se descubren leyendo el layout real de cada gráfico en vez de
+  // listar 'xaxis'/'yaxis' a mano: un gráfico con subplots tiene xaxis2,
+  // yaxis2..., y un radar no tiene ejes cartesianos sino `polar`. Con la
+  // lista fija, esos se quedaban con la tinta clara sobre fondo oscuro.
+  function patchFor(gd, theme) {
     var c = theme === 'dark' ? DARK : LIGHT;
-    return {
+    var patch = {
       'font.color': c.primary, 'title.font.color': c.primary,
-      'xaxis.tickfont.color': c.muted, 'xaxis.title.font.color': c.secondary,
-      'xaxis.gridcolor': c.grid, 'xaxis.zerolinecolor': c.axis, 'xaxis.linecolor': c.axis,
-      'yaxis.tickfont.color': c.muted, 'yaxis.title.font.color': c.secondary,
-      'yaxis.gridcolor': c.grid, 'yaxis.zerolinecolor': c.axis, 'yaxis.linecolor': c.axis,
       'legend.font.color': c.secondary,
       'hoverlabel.bgcolor': c.surface, 'hoverlabel.font.color': c.primary
     };
+    Object.keys(gd._fullLayout || {}).forEach(function(k) {
+      if (/^[xy]axis\\d*$/.test(k)) {
+        patch[k + '.tickfont.color'] = c.muted;
+        patch[k + '.title.font.color'] = c.secondary;
+        patch[k + '.gridcolor'] = c.grid;
+        patch[k + '.zerolinecolor'] = c.axis;
+        patch[k + '.linecolor'] = c.axis;
+      } else if (/^polar\\d*$/.test(k)) {
+        patch[k + '.angularaxis.tickfont.color'] = c.secondary;
+        patch[k + '.angularaxis.gridcolor'] = c.grid;
+        patch[k + '.angularaxis.linecolor'] = c.axis;
+        patch[k + '.radialaxis.tickfont.color'] = c.muted;
+        patch[k + '.radialaxis.gridcolor'] = c.grid;
+        patch[k + '.radialaxis.linecolor'] = c.axis;
+      }
+    });
+    return patch;
   }
 
   function syncPlotly() {
     if (!window.Plotly) return;
     var theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-    var patch = patchFor(theme);
-    document.querySelectorAll('.js-plotly-plot').forEach(function(gd) { Plotly.relayout(gd, patch); });
+    document.querySelectorAll('.js-plotly-plot').forEach(function(gd) {
+      Plotly.relayout(gd, patchFor(gd, theme));
+    });
   }
   syncPlotly();
 
@@ -172,6 +194,13 @@ CHART_ICONS = {
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
         'stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4"/>'
         '<rect x="6" y="7" width="12" height="10" rx="1"/><path d="M6 12h12"/></svg>'
+    ),
+    # Serie temporal: los gráficos que miran la evolución a lo largo de las
+    # temporadas, no una foto de una sola.
+    "line": (
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+        'stroke-linecap="round" stroke-linejoin="round"><path d="M3 20V4M3 20h18"/>'
+        '<path d="m6 15 4-5 4 3 5-7"/></svg>'
     ),
     # Artículo: hoja con líneas de texto — distinto de los íconos de
     # gráfico para que en la grilla se note que ahí hay una lectura, no
