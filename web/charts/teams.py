@@ -3,198 +3,366 @@
 de mostrar el gráfico en un notebook. Si un gráfico cambia en el notebook,
 el cambio se porta acá a mano (el notebook sigue siendo donde se prototipa)."""
 
-import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
-from site_utils import SEASON_DIR, ChartPage, matplotlib_chart_body
+import insights as ins
+from site_utils import PROCESSED_DIR, ChartPage
 from viz_theme import (
     LEAGUE_ORDER, SEQUENTIAL_BLUE, INK,
-    league_color, sidebar_chart_html, plot_html, league_box_figure, dark_ink,
+    league_color, sidebar_chart_html, select_chart_html,
+    league_box_season_html,
 )
 
 SECTION = "Equipos"
 
+# Métricas del radar de perfil de liga. El criterio de selección (eta² +
+# rango relativo + no redundancia) está documentado en la bitácora; acá solo
+# se listan en el orden en que se dibujan los ejes.
+RADAR_METRICS = [
+    ("sh_Standard_Sh/90", "Tiros"), ("ov_Per 90 Minutes_Gls", "Goles"),
+    ("sh_Standard_G/Sh", "G/Sh"), ("gk_Performance_CS%", "CS%"),
+    ("p90_TklW", "Tackles"), ("p90_Int", "Intercep."),
+    ("p90_Off", "Offsides"), ("p90_Fls", "Faltas"),
+]
+
 
 def load_data():
-    raw_files = {
-        "ov": "leagues_overall.csv",
-        "sh": "leagues_shoot.csv",
-        "pt": "leagues_playtime.csv",
-        "ms": "leagues_misc.csv",
-        "gk": "leagues_gk.csv",
+    """Las 5 temporadas ya consolidadas por `code/consolidate_data.py`.
+
+    Antes se leían los 5 CSV crudos de una temporada y se asignaba la liga por
+    bloques de filas *hardcodeados* (18/20/18/20/20). Eso no sobrevive a las 5
+    temporadas: Ligue 1 tuvo 20 equipos hasta 2022-23 y 18 desde 2023-24, así
+    que dos temporadas habrían quedado con la liga mal etiquetada en silencio.
+    El consolidado ya trae `temporada` y `liga` resueltas (detecta los bloques
+    por orden alfabético y verifica los tamaños)."""
+    df = pd.read_csv(PROCESSED_DIR / "teams_all_seasons.csv")
+
+    # Las derivadas se arman de una sola vez (un `df[nueva] = ...` por columna
+    # sobre un frame de 171 columnas lo fragmenta y pandas avisa).
+    derivadas = {
+        col.replace("ms_Performance_", "p90_"): df[col] / df["ms_90s"]
+        for col in ["ms_Performance_Fls", "ms_Performance_Off", "ms_Performance_Int",
+                    "ms_Performance_TklW", "ms_Performance_CrdY"]
     }
-    league_blocks = [
-        ("Bundesliga", 18), ("Serie A", 20), ("Ligue 1", 18),
-        ("La Liga", 20), ("Premier League", 20),
-    ]
-    liga_col = [liga for liga, n in league_blocks for _ in range(n)]
-
-    def flatten_columns(raw):
-        cols = []
-        for top, bot in raw.columns:
-            top = "" if str(top).startswith("Unnamed") else str(top).strip()
-            bot = str(bot).strip()
-            cols.append(f"{top}_{bot}" if top else bot)
-        raw.columns = cols
-        return raw
-
-    frames = {}
-    for tag, fname in raw_files.items():
-        raw = pd.read_csv(SEASON_DIR / fname, header=[0, 1])
-        raw = flatten_columns(raw)
-        assert len(raw) == len(liga_col), f"{fname}: filas inesperadas"
-        raw["liga"] = liga_col
-        stat_cols = [c for c in raw.columns if c not in ("Squad", "liga")]
-        raw = raw.rename(columns={c: f"{tag}_{c}" for c in stat_cols})
-        frames[tag] = raw
-
-    df = frames["ov"]
-    for tag in ["sh", "pt", "ms", "gk"]:
-        df = df.merge(frames[tag].drop(columns=["liga"]), on="Squad", how="left")
-
-    df = df.drop(columns=["ms_Performance_PKwon", "ms_Performance_PKcon"])
-
-    for col in ["ms_Performance_Fls", "ms_Performance_Off",
-                "ms_Performance_Int", "ms_Performance_TklW", "ms_Performance_CrdY"]:
-        df[col.replace("ms_Performance_", "p90_")] = df[col] / df["ms_90s"]
+    derivadas["gk_ppm"] = ((df["gk_Performance_W"] * 3 + df["gk_Performance_D"])
+                            / df["gk_Playing Time_MP"])
+    df = pd.concat([df, pd.DataFrame(derivadas)], axis=1)
 
     df["liga"] = pd.Categorical(df["liga"], categories=LEAGUE_ORDER, ordered=True)
-    cols = ["Squad", "liga"] + [c for c in df.columns if c not in ("Squad", "liga")]
+    cols = ["temporada", "Squad", "liga"] + [c for c in df.columns
+                                              if c not in ("temporada", "Squad", "liga")]
     return df[cols]
 
 
-def chart_radar_subplots(df, assets_dir, slug_suffix="", variant="light"):
-    radar_metrics = [
-        ("sh_Standard_Sh/90", "Tiros"), ("ov_Per 90 Minutes_Gls", "Goles"),
-        ("sh_Standard_G/Sh", "G/Sh"), ("gk_Performance_CS%", "CS%"),
-        ("p90_TklW", "Tackles"), ("p90_Int", "Intercep."),
-        ("p90_Off", "Offsides"), ("p90_Fls", "Faltas"),
-    ]
-    metric_cols = [c for c, _ in radar_metrics]
-    labels = [l for _, l in radar_metrics]
+def seasons_of(df):
+    """Temporadas disponibles, de la más vieja a la más nueva."""
+    return sorted(df["temporada"].unique())
 
-    league_avg = df.groupby("liga", observed=True)[metric_cols].mean()
-    norm = league_avg / league_avg.max()
 
-    n = len(labels)
-    angles = np.linspace(0, 2 * np.pi, n, endpoint=False).tolist()
-    angles += angles[:1]
+def season_scatter_data(df, seasons):
+    """`{temporada: [(liga, sub_df), ...]}` en el orden de `LEAGUE_ORDER`, que
+    es lo que espera `sidebar_chart_html` para el selector de temporada."""
+    return {s: [(liga, df[(df["temporada"] == s) & (df["liga"] == liga)])
+                for liga in LEAGUE_ORDER]
+            for s in seasons}
 
-    import matplotlib.pyplot as plt
-    fig, axes = plt.subplots(1, 5, figsize=(18, 4.8), subplot_kw=dict(polar=True))
-    for ax, liga in zip(axes, LEAGUE_ORDER):
-        values = norm.loc[liga, metric_cols].tolist()
-        values += values[:1]
+
+def radar_norm(df, seasons):
+    """Promedio por liga-temporada de cada métrica del radar, escalado.
+
+    Decisión de método: el divisor es el máximo sobre **las 25 liga-temporada**,
+    no sobre las 5 ligas de cada temporada por separado. Con un máximo por
+    temporada el punto de referencia se movería en cada una y las formas no
+    serían comparables entre temporadas — que es justo lo que se quiere mirar
+    acá. Dividir por una constante global no altera en nada la comparación
+    *entre ligas dentro de* una temporada (todas se dividen por lo mismo), así
+    que no se pierde lo que el gráfico ya hacía; solo se gana poder moverse
+    entre temporadas. Se mantiene `value/max` como normalización (y no min-max
+    ni z-score) por las razones documentadas en la bitácora: el 0 del eje es el
+    0 real de la métrica y la separación refleja la proporción real."""
+    metric_cols = [c for c, _ in RADAR_METRICS]
+    avg = (df[df["temporada"].isin(seasons)]
+           .groupby(["temporada", "liga"], observed=True)[metric_cols].mean())
+    return avg / avg.max(), avg
+
+
+def _radar_closed(values):
+    """Un radar cierra la figura repitiendo el primer punto al final."""
+    return list(values) + [values[0]]
+
+
+def chart_radar_subplots(df, seasons, norm, avg):
+    """Un radar por liga, lado a lado. Migrado de matplotlib a Plotly para que
+    (a) tenga el selector de temporada como el resto de los gráficos y (b) el
+    hover pueda mostrar el valor real de la métrica además del escalado, que
+    era lo que a la imagen estática le faltaba para poder leerse sola."""
+    labels = [l for _, l in RADAR_METRICS]
+    metric_cols = [c for c, _ in RADAR_METRICS]
+    theta = _radar_closed(labels)
+
+    def r_for(season, liga):
+        return _radar_closed(norm.loc[(season, liga), metric_cols].tolist())
+
+    def raw_for(season, liga):
+        return _radar_closed(avg.loc[(season, liga), metric_cols].tolist())
+
+    default = seasons[-1]
+    fig = make_subplots(rows=1, cols=5, specs=[[{"type": "polar"}] * 5],
+                         subplot_titles=[l.upper() for l in LEAGUE_ORDER],
+                         horizontal_spacing=0.045)
+
+    for i, liga in enumerate(LEAGUE_ORDER, start=1):
         color = league_color(liga)
-        ax.plot(angles, values, color=color, linewidth=2.2, solid_capstyle="round",
-                 marker="o", markersize=3.5, markerfacecolor=color,
-                 markeredgecolor=INK["surface"], markeredgewidth=0.6, zorder=3)
-        ax.fill(angles, values, color=color, alpha=0.20, zorder=2)
-        ax.set_xticks(angles[:-1])
-        ax.set_xticklabels(labels, fontsize=8.5, color=INK["secondary"])
-        ax.tick_params(axis="x", pad=4)
-        ax.set_yticks([0.5])
-        ax.set_yticklabels([])
-        ax.set_ylim(0, 1)
-        ax.set_rlabel_position(0)
-        ax.grid(color=INK["grid"], linewidth=0.7)
-        ax.spines["polar"].set_color(INK["axis"])
-        ax.spines["polar"].set_linewidth(1.0)
-        ax.set_title(liga.upper(), color=color, fontsize=11, fontweight="bold", pad=13)
+        fig.add_trace(go.Scatterpolar(
+            r=r_for(default, liga), theta=theta, name=liga,
+            mode="lines+markers", fill="toself",
+            fillcolor=_rgba(color, 0.20),
+            line=dict(color=color, width=2.2),
+            marker=dict(color=color, size=5, line=dict(color=INK["surface"], width=0.6)),
+            customdata=raw_for(default, liga), showlegend=False,
+            hovertemplate="<b>%{theta}</b><br>valor: %{customdata:.2f}"
+                           "<br>escala: %{r:.2f}<extra>" + liga + "</extra>",
+        ), row=1, col=i)
 
-    fig.text(0.015, 0.99, "Perfil de estilo por liga", ha="left", va="top",
-              fontsize=19, fontweight="bold", color=INK["primary"])
-    fig.text(0.015, 0.92, "Promedio por equipo  ·  escala proporcional al máximo de las 5 ligas  ·  métricas por 90'",
-              ha="left", va="top", fontsize=10.5, style="italic", color=INK["secondary"])
-    fig.text(0.985, 0.02, "Datos: fbref  ·  temporada 2025-26",
-              ha="right", va="bottom", fontsize=8.5, color=INK["muted"])
-    plt.tight_layout(rect=[0, 0.03, 1, 0.83])
+    for ann, liga in zip(fig.layout.annotations, LEAGUE_ORDER):
+        ann.font.color = league_color(liga)
+        ann.font.size = 11.5
 
-    body = matplotlib_chart_body(fig, f"perfil-liga-radar{slug_suffix}", assets_dir,
-                                  "Perfil de estilo por liga", variant=variant)
-    plt.close(fig)
+    fig.update_polars(radialaxis=dict(range=[0, 1], showticklabels=False, ticks="",
+                                       gridcolor=INK["grid"], linecolor=INK["axis"]),
+                       angularaxis=dict(tickfont=dict(size=9.5, color=INK["secondary"]),
+                                         gridcolor=INK["grid"], linecolor=INK["axis"]),
+                       bgcolor="rgba(0,0,0,0)")
+    fig.update_layout(
+        title=dict(text="Perfil de estilo por liga",
+                   subtitle=dict(text=_radar_subtitle(default))),
+        margin=dict(t=110, b=40, l=40, r=40),
+    )
+
+    updates = {
+        s: {"restyle": {"r": [r_for(s, l) for l in LEAGUE_ORDER],
+                        "customdata": [raw_for(s, l) for l in LEAGUE_ORDER]},
+            "relayout": {"title.subtitle.text": _radar_subtitle(s)}}
+        for s in seasons
+    }
+    labels_por_col = dict(RADAR_METRICS)
+    body = select_chart_html(
+        fig,
+        [{"id": "season", "label": "Temporada", "options": seasons,
+          "default": default, "updates": updates}],
+        width=1080, height=420, min_width=760,
+        hint="Los ejes están escalados contra el máximo de las 25 liga-temporada, "
+              "así que las formas se pueden comparar entre temporadas.",
+        insights={
+            "que_mirar": ins.radar_que_mirar(),
+            "por_que": ins.radar_por_que(),
+            "dinamico": {s: dict(zip(("fija", "salta"),
+                                      ins.radar(avg, labels_por_col, s, seasons)))
+                          for s in seasons},
+        },
+    )
     return ChartPage(
         slug="perfil-liga-radar", section=SECTION, title="Perfil de estilo por liga",
-        subtitle="8 métricas de estilo por liga, escaladas contra el máximo de las 5.",
-        body_html=body, kind="radar",
-    ), norm, metric_cols, labels, angles, league_avg, radar_metrics
-
-
-def chart_radar_overlay(norm, metric_cols, labels, angles, league_avg, radar_metrics, assets_dir,
-                         slug_suffix="", variant="light"):
-    import matplotlib.pyplot as plt
-    fig = plt.figure(figsize=(12.2, 7.8))
-    gs = fig.add_gridspec(1, 2, width_ratios=[1, 0.46], wspace=0.20,
-                           left=0.045, right=0.97, top=0.85, bottom=0.11)
-    ax = fig.add_subplot(gs[0], polar=True)
-    tax = fig.add_subplot(gs[1])
-
-    for liga in LEAGUE_ORDER:
-        values = norm.loc[liga, metric_cols].tolist()
-        values += values[:1]
-        color = league_color(liga)
-        ax.plot(angles, values, color=color, linewidth=2.4, solid_capstyle="round", label=liga, zorder=3)
-        ax.fill(angles, values, color=color, alpha=0.06, zorder=2)
-
-    ax.set_xticks(angles[:-1])
-    ax.set_xticklabels(labels, fontsize=11, color=INK["secondary"])
-    ax.tick_params(axis="x", pad=8)
-    ax.set_yticks([0.25, 0.5, 0.75])
-    ax.set_yticklabels([])
-    ax.set_ylim(0, 1)
-    ax.set_rlabel_position(0)
-    ax.grid(color=INK["grid"], linewidth=0.7)
-    ax.spines["polar"].set_color(INK["axis"])
-    ax.spines["polar"].set_linewidth(1.0)
-    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.06), ncol=5, fontsize=9.5,
-              columnspacing=1.3, handletextpad=0.5, handlelength=1.3)
-
-    sep_pct = ((1 - league_avg.min() / league_avg.max()) * 100).reindex(metric_cols).sort_values(ascending=False)
-    col2label = dict(radar_metrics)
-
-    tax.set_xlim(0, 1); tax.set_ylim(0, 1); tax.axis("off")
-    tax.text(0.0, 0.965, "Separación por eje", transform=tax.transAxes, ha="left", va="top",
-              fontsize=13, fontweight="bold", color=INK["primary"])
-    tax.text(0.0, 0.905, "1 − (mín ÷ máx) de las 5 ligas  ·  más alto = más se separan", transform=tax.transAxes,
-              ha="left", va="top", fontsize=8.5, style="italic", color=INK["secondary"])
-    y0 = 0.80
-    tax.text(0.0, y0, "EJE", ha="left", va="center", fontsize=8.5, fontweight="bold", color=INK["muted"])
-    tax.text(1.0, y0, "SEPARACIÓN", ha="right", va="center", fontsize=8.5, fontweight="bold", color=INK["muted"])
-    tax.plot([0, 1], [y0 - 0.035, y0 - 0.035], color=INK["axis"], lw=1.0)
-
-    rows = list(sep_pct.items())
-    ys = np.linspace(y0 - 0.11, 0.05, len(rows))
-    bx0, bx1 = 0.30, 0.70
-    maxv = sep_pct.max()
-    for (col, val), y in zip(rows, ys):
-        tax.text(0.0, y, col2label.get(col, col), ha="left", va="center", fontsize=10.5, color=INK["primary"])
-        tax.plot([bx0, bx1], [y, y], color=INK["grid"], lw=3.2, solid_capstyle="round", zorder=1)
-        tax.plot([bx0, bx0 + (bx1 - bx0) * (val / maxv)], [y, y], color=SEQUENTIAL_BLUE[3], lw=3.2,
-                  solid_capstyle="round", zorder=2)
-        tax.text(1.0, y, f"{val:.0f}%", ha="right", va="center", fontsize=10.5, color=INK["secondary"])
-
-    fig.text(0.045, 0.975, "Dónde se separa cada liga", ha="left", va="top",
-              fontsize=18, fontweight="bold", color=INK["primary"])
-    fig.text(0.045, 0.925, "Las 5 ligas sobrepuestas, con el detalle de separación por eje a la derecha",
-              ha="left", va="top", fontsize=10.5, style="italic", color=INK["secondary"])
-    fig.text(0.97, 0.02, "Datos: fbref  ·  temporada 2025-26", ha="right", va="bottom",
-              fontsize=8.5, color=INK["muted"])
-
-    body = matplotlib_chart_body(fig, f"perfil-liga-overlay{slug_suffix}", assets_dir,
-                                  "Dónde se separa cada liga", variant=variant)
-    plt.close(fig)
-    return ChartPage(
-        slug="perfil-liga-overlay", section=SECTION, title="Dónde se separa cada liga",
-        subtitle="Las 5 formas del radar sobrepuestas, con la tabla de separación por eje.",
+        subtitle="8 métricas de estilo por liga, escaladas contra el máximo de las 5 ligas y 5 temporadas.",
         body_html=body, kind="radar",
     )
 
 
-def chart_def_efficiency(df):
+def _radar_subtitle(season):
+    return (f"Promedio por equipo · escala proporcional al máximo de las 25 liga-temporada "
+            f"· métricas por 90' · {season}")
+
+
+def _rgba(hex_color, alpha):
+    h = hex_color.lstrip("#")
+    r, g, b = (int(h[i:i + 2], 16) for i in (0, 2, 4))
+    return f"rgba({r},{g},{b},{alpha})"
+
+
+def chart_radar_overlay(df, seasons, norm, avg):
+    """Las 5 ligas sobrepuestas + la separación por eje. En Plotly son dos
+    subplots (polar + barras) en vez de dibujar la tabla a mano con `text()`
+    sobre unos ejes apagados, que era lo que hacía la versión de matplotlib.
+
+    El orden de las barras se fija con el promedio de las 5 temporadas y NO se
+    reordena al cambiar de temporada: si las filas saltaran de lugar en cada
+    cambio no se podría ver qué eje sube y cuál baja, que es justo lo que se
+    quiere mirar. Lo que cambia es el largo de la barra."""
+    labels = [l for _, l in RADAR_METRICS]
+    metric_cols = [c for c, _ in RADAR_METRICS]
+    col2label = dict(RADAR_METRICS)
+    theta = _radar_closed(labels)
+    default = seasons[-1]
+
+    def sep_for(season):
+        """1 − (mín ÷ máx) entre las 5 ligas de esa temporada, en %."""
+        sub = avg.loc[season]
+        return ((1 - sub.min() / sub.max()) * 100).reindex(metric_cols)
+
+    orden = (pd.concat([sep_for(s) for s in seasons], axis=1).mean(axis=1)
+             .sort_values(ascending=True).index.tolist())
+    bar_labels = [col2label[c] for c in orden]
+
+    fig = make_subplots(rows=1, cols=2, column_widths=[0.6, 0.4],
+                         specs=[[{"type": "polar"}, {"type": "xy"}]],
+                         horizontal_spacing=0.12,
+                         subplot_titles=["", "Separación por eje (%)"])
+
+    for liga in LEAGUE_ORDER:
+        color = league_color(liga)
+        fig.add_trace(go.Scatterpolar(
+            r=_radar_closed(norm.loc[(default, liga), metric_cols].tolist()),
+            theta=theta, name=liga, mode="lines", fill="toself",
+            fillcolor=_rgba(color, 0.06), line=dict(color=color, width=2.4),
+            customdata=_radar_closed(avg.loc[(default, liga), metric_cols].tolist()),
+            hovertemplate="<b>%{theta}</b><br>valor: %{customdata:.2f}"
+                           "<br>escala: %{r:.2f}<extra>" + liga + "</extra>",
+        ), row=1, col=1)
+
+    sep0 = sep_for(default)
+    fig.add_trace(go.Bar(
+        x=sep0.reindex(orden).tolist(), y=bar_labels, orientation="h",
+        marker=dict(color=SEQUENTIAL_BLUE[3]), showlegend=False,
+        hovertemplate="<b>%{y}</b><br>separación: %{x:.0f}%<extra></extra>",
+    ), row=1, col=2)
+
+    fig.update_polars(radialaxis=dict(range=[0, 1], showticklabels=False, ticks="",
+                                       gridcolor=INK["grid"], linecolor=INK["axis"]),
+                       angularaxis=dict(tickfont=dict(size=11, color=INK["secondary"]),
+                                         gridcolor=INK["grid"], linecolor=INK["axis"]),
+                       bgcolor="rgba(0,0,0,0)")
+    # Rango fijo: si el eje se reescalara con cada temporada, una barra igual
+    # de larga significaría separaciones distintas en cada una.
+    xmax = max(sep_for(s).max() for s in seasons) * 1.12
+    fig.update_xaxes(range=[0, xmax], ticksuffix="%", row=1, col=2)
+    fig.update_yaxes(tickfont=dict(size=10.5), row=1, col=2)
+    fig.update_layout(
+        title=dict(text="Dónde se separa cada liga",
+                   subtitle=dict(text=_overlay_subtitle(default))),
+        legend=dict(orientation="h", y=-0.12, x=0.5, xanchor="center"),
+        margin=dict(t=110, b=80, l=40, r=30),
+    )
+
+    updates = {
+        s: {"restyle": [
+                {"update": {"r": [_radar_closed(norm.loc[(s, l), metric_cols].tolist())
+                                   for l in LEAGUE_ORDER],
+                             "customdata": [_radar_closed(avg.loc[(s, l), metric_cols].tolist())
+                                             for l in LEAGUE_ORDER]},
+                 "traces": list(range(len(LEAGUE_ORDER)))},
+                {"update": {"x": [sep_for(s).reindex(orden).tolist()]},
+                 "traces": [len(LEAGUE_ORDER)]},
+            ],
+            "relayout": {"title.subtitle.text": _overlay_subtitle(s)}}
+        for s in seasons
+    }
+    body = select_chart_html(
+        fig,
+        [{"id": "season", "label": "Temporada", "options": seasons,
+          "default": default, "updates": updates}],
+        width=980, height=560, min_width=680,
+        hint="Las barras conservan siempre el mismo orden y la misma escala, "
+              "para que al cambiar de temporada se vea qué eje sube y cuál baja.",
+        insights={
+            "que_mirar": ins.overlay_que_mirar(),
+            "por_que": ins.overlay_por_que(),
+            "dinamico": {s: dict(zip(("fija", "salta"),
+                                      ins.overlay(avg, col2label, s, seasons)))
+                          for s in seasons},
+        },
+    )
+    return ChartPage(
+        slug="perfil-liga-overlay", section=SECTION, title="Dónde se separa cada liga",
+        subtitle="Las 5 formas del radar sobrepuestas, con la separación por eje al lado.",
+        body_html=body, kind="radar",
+    )
+
+
+def _overlay_subtitle(season):
+    return f"Las 5 ligas sobrepuestas · separación = 1 − (mín ÷ máx) entre ligas · {season}"
+
+
+def chart_style_evolution(df, seasons):
+    """Gráfico nuevo, imposible con una sola temporada: cómo se mueve cada
+    métrica de estilo a lo largo de las 5, una línea por liga.
+
+    Es el complemento del radar: el radar es la forma de una temporada, esto
+    es un eje del radar a través del tiempo. Va en valor real (no escalado)
+    porque acá la pregunta es de magnitud — cuántas faltas menos se pitan
+    ahora que en 2021-22 — y escalar lo escondería."""
+    metric_cols = [c for c, _ in RADAR_METRICS]
+    col2label = dict(RADAR_METRICS)
+    avg = (df.groupby(["temporada", "liga"], observed=True)[metric_cols]
+           .mean().reset_index())
+
+    default_metric = "p90_Fls"  # el eje con más diferencia real entre ligas
+
+    fig = go.Figure()
+    for liga in LEAGUE_ORDER:
+        sub = avg[avg["liga"] == liga].sort_values("temporada")
+        fig.add_trace(go.Scatter(
+            x=sub["temporada"], y=sub[default_metric], name=liga, mode="lines+markers",
+            line=dict(color=league_color(liga), width=2.6),
+            marker=dict(color=league_color(liga), size=8,
+                        line=dict(color=INK["surface"], width=1)),
+            hovertemplate="<b>%{x}</b><br>%{y:.2f}<extra>" + liga + "</extra>",
+        ))
+
+    fig.update_layout(
+        title=dict(text="Evolución del estilo por liga",
+                   subtitle=dict(text=_evolution_subtitle(col2label[default_metric]))),
+        xaxis_title="Temporada", yaxis_title=col2label[default_metric],
+        xaxis=dict(type="category"),
+    )
+
+    updates = {}
+    for col in metric_cols:
+        ys = [avg[avg["liga"] == liga].sort_values("temporada")[col].tolist()
+              for liga in LEAGUE_ORDER]
+        # Rango con un poco de aire: sin esto Plotly reescala a cada cambio y
+        # una caída chica puede verse como un desplome.
+        lo = min(min(y) for y in ys)
+        hi = max(max(y) for y in ys)
+        pad = (hi - lo) * 0.12 or 0.1
+        updates[col] = {
+            "restyle": {"y": ys},
+            "relayout": {"yaxis.title.text": col2label[col],
+                          "yaxis.range": [lo - pad, hi + pad],
+                          "title.subtitle.text": _evolution_subtitle(col2label[col])},
+        }
+
+    body = select_chart_html(
+        fig,
+        [{"id": "metric", "label": "Métrica", "options": metric_cols,
+          "labels": col2label, "default": default_metric, "updates": updates}],
+        width=820, height=540,
+        hint="Promedio por equipo de cada liga, temporada a temporada. "
+              "Las métricas son las mismas 8 ejes del radar.",
+        insights={
+            "que_mirar": ins.evolucion_que_mirar(),
+            "por_que": ins.evolucion_por_que(),
+            "dinamico": {c: dict(zip(("fija", "salta"),
+                                      ins.evolucion(avg, col2label, c, seasons)))
+                          for c in metric_cols},
+        },
+    )
+    return ChartPage(
+        slug="evolucion-estilo", section=SECTION, title="Evolución del estilo por liga",
+        subtitle="Cómo se movió cada métrica de estilo a lo largo de las 5 temporadas.",
+        body_html=body, kind="line",
+    )
+
+
+def _evolution_subtitle(label):
+    return f"{label} — promedio por equipo de cada liga, temporada a temporada"
+
+
+def chart_def_efficiency(df, seasons, season_data):
     x_col, y_col = "sh_Standard_SoT%", "sh_Standard_G/SoT"
     x_mean, y_mean = df[x_col].mean(), df[y_col].mean()
-    scatter_data = [(liga, df[df["liga"] == liga]) for liga in LEAGUE_ORDER]
+    scatter_data = season_data[seasons[-1]]
 
     fig = go.Figure()
     for liga, sub in scatter_data:
@@ -220,15 +388,25 @@ def chart_def_efficiency(df):
              showarrow=False, font=dict(size=10.5, color=INK["muted"]), xanchor="right", yanchor="top"),
     ]
 
+    subtitle = "Precisión (llegar a puerta) vs. definición (marcar una vez ahí) · {temporada}"
     fig.update_layout(
         title=dict(text="Eficiencia de definición",
-                   subtitle=dict(text="Precisión (llegar a puerta) vs. definición (marcar una vez ahí)")),
+                   subtitle=dict(text=subtitle.format(temporada=seasons[-1]))),
         xaxis_title="Precisión — % de tiros que van a puerta (SoT%)",
         yaxis_title="Definición — goles por tiro a puerta (G/SoT)",
         annotations=quadrant_annotations,
+        # Rango fijo sobre las 5 temporadas: sin esto cada cambio de temporada
+        # reescala los ejes y los puntos parecen moverse más de lo que se mueven.
+        xaxis=dict(range=_padded(df[x_col])), yaxis=dict(range=_padded(df[y_col])),
     )
     body = sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=quadrant_annotations,
-                               width=760, height=580)
+                               width=760, height=580, season_data=season_data,
+                               custom_cols=["Squad"], subtitle_template=subtitle,
+                               insights={
+                                   "que_mirar": ins.definicion_que_mirar(),
+                                   "por_que": ins.definicion_por_que(df),
+                                   "dinamico": _por_temporada_y_liga(ins.definicion, df, seasons),
+                               })
     return ChartPage(
         slug="eficiencia-definicion", section=SECTION, title="Eficiencia de definición",
         subtitle="Precisión (SoT%) vs. definición (G/SoT) — un punto por equipo.",
@@ -236,44 +414,27 @@ def chart_def_efficiency(df):
     )
 
 
-def chart_gk_ranking(df, assets_dir, slug_suffix="", variant="light"):
-    def zscore(s):
-        return (s - s.mean()) / s.std()
-
-    df = df.copy()
-    df["gk_score"] = zscore(df["gk_Performance_Save%"]) - zscore(df["gk_Performance_GA90"])
-    ranked = df.sort_values("gk_score", ascending=False)
-    top12 = ranked.head(12)
-    bot12 = ranked.tail(12).sort_values("gk_score")
-
-    import matplotlib.pyplot as plt
-    fig, axes = plt.subplots(1, 2, figsize=(12, 6), sharex=True)
-    for ax, sub, title in zip(axes, [top12, bot12], ["Mejores paredes", "Porterías más flojas"]):
-        colors = [league_color(l) for l in sub["liga"]]
-        ax.barh(sub["Squad"], sub["gk_score"], color=colors)
-        ax.invert_yaxis()
-        ax.set_title(title, fontsize=11)
-        ax.axvline(0, color=INK["axis"], linewidth=0.8)
-
-    fig.suptitle("Ranking de porterías (Save% − GA90, estandarizado)",
-                 x=0.02, ha="left", fontsize=13, fontweight="bold")
-    plt.tight_layout(rect=[0, 0, 1, 0.93])
-
-    body = matplotlib_chart_body(fig, f"ranking-porterias{slug_suffix}", assets_dir,
-                                  "Ranking de porterías", variant=variant)
-    plt.close(fig)
-    return ChartPage(
-        slug="ranking-porterias", section=SECTION, title="Ranking de porterías",
-        subtitle="Índice Save% − GA90 (estandarizado) — mejores y peores 12 del conjunto de las 5 ligas.",
-        body_html=body, kind="bar",
-    )
+def _por_temporada_y_liga(generador, df, seasons):
+    """La caja de los scatters depende de los dos controles, así que hay que
+    generar una entrada por cada combinación temporada x liga ("__all__" = sin
+    filtro). La clave tiene que coincidir con la que arma el JS."""
+    return {
+        f"{s}|{liga}": dict(zip(("fija", "salta"), generador(df, s, liga)))
+        for s in seasons
+        for liga in [ins.LIGA_TODAS] + list(LEAGUE_ORDER)
+    }
 
 
-def chart_gk_vs_result(df):
-    df = df.copy()
-    df["gk_ppm"] = (df["gk_Performance_W"] * 3 + df["gk_Performance_D"]) / df["gk_Playing Time_MP"]
+def _padded(serie, frac=0.06):
+    """Rango de un eje con aire, calculado sobre TODAS las temporadas."""
+    lo, hi = serie.min(), serie.max()
+    pad = (hi - lo) * frac
+    return [lo - pad, hi + pad]
+
+
+def chart_gk_vs_result(df, seasons, season_data):
     x_col3, y_col3 = "gk_Performance_CS%", "gk_ppm"
-    scatter_data3 = [(liga, df[df["liga"] == liga]) for liga in LEAGUE_ORDER]
+    scatter_data3 = season_data[seasons[-1]]
 
     fig = go.Figure()
     for liga, sub in scatter_data3:
@@ -285,12 +446,22 @@ def chart_gk_vs_result(df):
             hovertemplate=f"<b>%{{customdata}}</b><br>{liga}<br>CS%%: %{{x:.1f}}%<br>Puntos/partido: %{{y:.2f}}<extra></extra>",
         ))
 
+    subtitle3 = "Porterías a cero vs. puntos por partido · {temporada}"
     fig.update_layout(
         title=dict(text="¿Cuánto pesa la portería en el resultado?",
-                   subtitle=dict(text="Porterías a cero vs. puntos por partido")),
+                   subtitle=dict(text=subtitle3.format(temporada=seasons[-1]))),
         xaxis_title="Porterías a cero (%)", yaxis_title="Puntos por partido",
+        xaxis=dict(range=_padded(df[x_col3])), yaxis=dict(range=_padded(df[y_col3])),
     )
-    body = sidebar_chart_html(fig, scatter_data3, x_col3, y_col3, width=760, height=580)
+    body = sidebar_chart_html(fig, scatter_data3, x_col3, y_col3, width=760, height=580,
+                               season_data=season_data, custom_cols=["Squad"],
+                               subtitle_template=subtitle3,
+                               insights={
+                                   "que_mirar": ins.porteria_que_mirar(),
+                                   "por_que": ins.porteria_por_que(df),
+                                   "dinamico": _por_temporada_y_liga(
+                                       ins.porteria, df, seasons),
+                               })
     return ChartPage(
         slug="porteria-vs-resultado", section=SECTION, title="Portería vs. resultado del equipo",
         subtitle="Porterías a cero (%) vs. puntos por partido — un punto por equipo.",
@@ -298,10 +469,10 @@ def chart_gk_vs_result(df):
     )
 
 
-def chart_gk_demand(df):
+def chart_gk_demand(df, seasons, season_data):
     x_col4, y_col4 = "gk_Performance_SoTA", "gk_Performance_Save%"
     x_mean4, y_mean4 = df[x_col4].mean(), df[y_col4].mean()
-    scatter_data4 = [(liga, df[df["liga"] == liga]) for liga in LEAGUE_ORDER]
+    scatter_data4 = season_data[seasons[-1]]
 
     fig = go.Figure()
     for liga, sub in scatter_data4:
@@ -327,15 +498,24 @@ def chart_gk_demand(df):
              showarrow=False, font=dict(size=10.5, color=INK["muted"]), xanchor="right", yanchor="top"),
     ]
 
+    subtitle4 = "Tiros a puerta enfrentados vs. tasa de atajadas · {temporada}"
     fig.update_layout(
         title=dict(text="Exigencia vs. rendimiento",
-                   subtitle=dict(text="Tiros a puerta enfrentados vs. tasa de atajadas")),
+                   subtitle=dict(text=subtitle4.format(temporada=seasons[-1]))),
         xaxis_title="Tiros a puerta enfrentados en la temporada (SoTA)",
         yaxis_title="Tasa de atajadas (Save%)",
         annotations=quadrant_annotations4,
+        xaxis=dict(range=_padded(df[x_col4])), yaxis=dict(range=_padded(df[y_col4])),
     )
     body = sidebar_chart_html(fig, scatter_data4, x_col4, y_col4, base_annotations=quadrant_annotations4,
-                               width=760, height=580)
+                               width=760, height=580, season_data=season_data,
+                               custom_cols=["Squad"], subtitle_template=subtitle4,
+                               insights={
+                                   "que_mirar": ins.exigencia_que_mirar(),
+                                   "por_que": ins.exigencia_por_que(df),
+                                   "dinamico": _por_temporada_y_liga(
+                                       ins.exigencia, df, seasons),
+                               })
     return ChartPage(
         slug="exigencia-rendimiento", section=SECTION, title="Exigencia vs. rendimiento",
         subtitle="Tiros a puerta enfrentados (SoTA) vs. tasa de atajadas (Save%) — un punto por equipo.",
@@ -343,82 +523,93 @@ def chart_gk_demand(df):
     )
 
 
-def chart_parity(df):
-    fig = league_box_figure(df, "pt_Team Success_PPM", "Puntos por partido", hover_fmt=".2f", annotate_cv=True)
+def _box_page(df, seasons, *, y_col, y_axis_title, slug, title, subtitle, chart_title,
+               chart_subtitle, hover_fmt=".1f", annotate_cv=False, insights=None):
+    fig, controls = league_box_season_html(
+        df, y_col, y_axis_title, seasons, hover_fmt=hover_fmt, annotate_cv=annotate_cv,
+        subtitle_template=chart_subtitle,
+    )
     fig.update_layout(
-        title=dict(text="Paridad competitiva",
-                   subtitle=dict(text="Puntos por partido de cada equipo, agrupados por liga · % = coeficiente de variación")),
-        yaxis_title="Puntos por partido", xaxis_title=None,
+        title=dict(text=chart_title,
+                   subtitle=dict(text=chart_subtitle.format(temporada=seasons[-1]))),
+        yaxis_title=y_axis_title, xaxis_title=None,
     )
     return ChartPage(
-        slug="paridad-competitiva", section=SECTION, title="Paridad competitiva",
+        slug=slug, section=SECTION, title=title, subtitle=subtitle,
+        body_html=select_chart_html(fig, controls, width=800, height=520,
+                                     insights=insights),
+        kind="box",
+    )
+
+
+def chart_parity(df, seasons):
+    return _box_page(
+        df, seasons, y_col="pt_Team Success_PPM", y_axis_title="Puntos por partido",
+        slug="paridad-competitiva", title="Paridad competitiva",
         subtitle="Dispersión de puntos por partido dentro de cada liga.",
-        body_html=plot_html(fig, width=800, height=520), kind="box",
+        chart_title="Paridad competitiva",
+        chart_subtitle="Puntos por partido de cada equipo · % = coeficiente de variación · {temporada}",
+        hover_fmt=".2f", annotate_cv=True,
+        insights={
+            "que_mirar": ins.paridad_que_mirar(),
+            "por_que": ins.paridad_por_que(),
+            "dinamico": {s: dict(zip(("fija", "salta"), ins.paridad(df, s, seasons)))
+                          for s in seasons},
+        },
     )
 
 
-def chart_age(df):
-    fig = league_box_figure(df, "ov_Age", "Edad", hover_fmt=".1f")
-    fig.update_layout(
-        title=dict(text="Edad de plantilla",
-                   subtitle=dict(text="Edad promedio de cada equipo, agrupados por liga")),
-        yaxis_title="Edad promedio", xaxis_title=None,
-    )
-    return ChartPage(
-        slug="edad-plantilla", section=SECTION, title="Edad de plantilla",
+def chart_age(df, seasons):
+    return _box_page(
+        df, seasons, y_col="ov_Age", y_axis_title="Edad promedio",
+        slug="edad-plantilla", title="Edad de plantilla",
         subtitle="Edad promedio por equipo, agrupados por liga.",
-        body_html=plot_html(fig, width=800, height=520), kind="box",
+        chart_title="Edad de plantilla",
+        chart_subtitle="Edad promedio de cada equipo, agrupados por liga · {temporada}",
+        insights={
+            "que_mirar": ins.edad_que_mirar(),
+            "por_que": ins.edad_por_que(df),
+            "dinamico": {s: dict(zip(("fija", "salta"), ins.edad(df, s, seasons)))
+                          for s in seasons},
+        },
     )
 
 
-def chart_discipline(df):
-    fig = league_box_figure(df, "p90_CrdY", "Amarillas/90", hover_fmt=".2f")
-    fig.update_layout(
-        title=dict(text="Disciplina: tarjetas amarillas",
-                   subtitle=dict(text="Amarillas por 90 minutos de cada equipo, agrupados por liga")),
-        yaxis_title="Amarillas por 90", xaxis_title=None,
-    )
-    return ChartPage(
-        slug="disciplina-amarillas", section=SECTION, title="Disciplina: tarjetas amarillas",
+def chart_discipline(df, seasons):
+    return _box_page(
+        df, seasons, y_col="p90_CrdY", y_axis_title="Amarillas por 90",
+        slug="disciplina-amarillas", title="Disciplina: tarjetas amarillas",
         subtitle="Amarillas por 90' de cada equipo, agrupados por liga.",
-        body_html=plot_html(fig, width=800, height=520), kind="box",
+        chart_title="Disciplina: tarjetas amarillas",
+        chart_subtitle="Amarillas por 90 minutos de cada equipo · {temporada}",
+        hover_fmt=".2f",
+        insights={
+            "que_mirar": ins.disciplina_que_mirar(),
+            "por_que": ins.disciplina_por_que(),
+            "dinamico": {s: dict(zip(("fija", "salta"), ins.disciplina(df, s, seasons)))
+                          for s in seasons},
+        },
     )
 
 
 def build(assets_dir) -> list:
     df = load_data()
+    seasons = seasons_of(df)
+    season_data = season_scatter_data(df, seasons)
+    norm, avg = radar_norm(df, seasons)
     pages = []
 
-    # Los 3 gráficos matplotlib se renderizan dos veces (clara y oscura,
-    # con dark_ink()) y se pegan los dos <img> en un solo ChartPage — el
-    # CSS decide cuál mostrar según el tema (ver PAGE_TEMPLATE). La
-    # segunda pasada reusa los datos ya calculados en la primera (norm,
-    # top12/bot12 vienen de las mismas funciones), no hace falta
-    # recalcular df.groupby/zscore aparte.
-    radar1_page, norm, metric_cols, labels, angles, league_avg, radar_metrics = chart_radar_subplots(df, assets_dir)
-    with dark_ink():
-        radar1_dark, *_ = chart_radar_subplots(df, assets_dir, slug_suffix="-dark", variant="dark")
-    radar1_page.body_html += radar1_dark.body_html
-    pages.append(radar1_page)
+    # Ya no queda ningún gráfico de matplotlib en esta sección: los radares
+    # pasaron a Plotly y el ranking de porterías se quitó. Todo se dibuja en
+    # runtime, así que no hay PNG que pre-renderizar por tema.
+    pages.append(chart_radar_subplots(df, seasons, norm, avg))
+    pages.append(chart_radar_overlay(df, seasons, norm, avg))
+    pages.append(chart_style_evolution(df, seasons))
+    pages.append(chart_def_efficiency(df, seasons, season_data))
 
-    radar2_page = chart_radar_overlay(norm, metric_cols, labels, angles, league_avg, radar_metrics, assets_dir)
-    with dark_ink():
-        radar2_dark = chart_radar_overlay(norm, metric_cols, labels, angles, league_avg, radar_metrics, assets_dir,
-                                           slug_suffix="-dark", variant="dark")
-    radar2_page.body_html += radar2_dark.body_html
-    pages.append(radar2_page)
-
-    pages.append(chart_def_efficiency(df))
-
-    gk_rank_page = chart_gk_ranking(df, assets_dir)
-    with dark_ink():
-        gk_rank_dark = chart_gk_ranking(df, assets_dir, slug_suffix="-dark", variant="dark")
-    gk_rank_page.body_html += gk_rank_dark.body_html
-    pages.append(gk_rank_page)
-
-    pages.append(chart_gk_vs_result(df))
-    pages.append(chart_gk_demand(df))
-    pages.append(chart_parity(df))
-    pages.append(chart_age(df))
-    pages.append(chart_discipline(df))
+    pages.append(chart_gk_vs_result(df, seasons, season_data))
+    pages.append(chart_gk_demand(df, seasons, season_data))
+    pages.append(chart_parity(df, seasons))
+    pages.append(chart_age(df, seasons))
+    pages.append(chart_discipline(df, seasons))
     return pages

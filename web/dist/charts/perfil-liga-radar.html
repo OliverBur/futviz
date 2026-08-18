@@ -114,30 +114,160 @@
 </button>
   </div>
 </header>
-<main><div class="chart-scroll"><img class="static-chart static-chart-light" src="assets/perfil-liga-radar.png" alt="Perfil de estilo por liga"><img class="static-chart static-chart-dark" src="assets/perfil-liga-radar-dark.png" alt="Perfil de estilo por liga"></div></main>
+<main><div class="chart-scroll">
+<style>
+  #chart_66da2d89_layout { display:flex; flex-wrap: wrap; align-items:flex-start; gap:20px; max-width: 100%; }
+  #chart_66da2d89_plotwrap { position: relative; flex: 1 1 280px; width: 100%; max-width: 1080px;
+    aspect-ratio: 2.5714285714285716; min-width: 0; }
+  #chart_66da2d89_plotwrap > div { position: absolute; inset: 0; }
+  #chart_66da2d89_sidebar { font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    padding-top: 54px; flex: 1 1 190px; max-width: 260px; box-sizing: border-box; }
+  #chart_66da2d89_sidebar .block { margin-bottom: 22px; }
+  #chart_66da2d89_sidebar label { display: block; font-size: 11px; color: var(--color-muted, #898781);
+    text-transform: uppercase; letter-spacing: .03em; margin-bottom: 5px; }
+  #chart_66da2d89_sidebar .hint { font-size: 11.5px; line-height: 1.45; color: var(--color-muted, #898781);
+    text-transform: none; letter-spacing: 0; margin-top: -14px; }
+  #chart_66da2d89_sidebar input, #chart_66da2d89_sidebar select { width: 100%; box-sizing: border-box;
+    padding: 7px 9px; font-size: 13px; font-family: inherit; color: var(--color-primary, #0b0b0b);
+    background: var(--color-surface, #fcfcfb); border: 1px solid var(--color-border, #c3c2b7);
+    border-radius: 6px; transition: border-color .15s ease; }
+  #chart_66da2d89_sidebar input:focus, #chart_66da2d89_sidebar select:focus {
+    outline: none; border-color: var(--color-interactive, #c3c2b7); }
+  @media (max-width: 520px) {
+    #chart_66da2d89_sidebar { padding-top: 4px; max-width: 100%; }
+    #chart_66da2d89_plotwrap { aspect-ratio: 1.542857142857143; }
+  }
+  #chart_66da2d89_plotwrap { min-width: 760px; }
+  #chart_66da2d89_insight { font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    max-width: 1080px; margin: 18px 0 4px; display: flex; flex-direction: column; gap: 14px;
+    font-size: 13.5px; line-height: 1.58; color: var(--color-text-body, #52514e); }
+  #chart_66da2d89_insight h4 { margin: 0 0 5px; font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .05em;
+    color: var(--color-muted, #898781); }
+  #chart_66da2d89_insight p { margin: 0 0 7px; }
+  #chart_66da2d89_insight p:last-child { margin-bottom: 0; }
+  #chart_66da2d89_insight strong { color: var(--color-primary, #0b0b0b); font-weight: 600; }
+  #chart_66da2d89_insight code { font-size: 12.5px;
+    background: var(--color-bg, #e1e0d9); padding: 1px 4px; border-radius: 3px; }
+  #chart_66da2d89_insight .fv-dyn { border-left: 3px solid var(--color-interactive, #c3c2b7);
+    padding: 2px 0 2px 13px; }
+  #chart_66da2d89_insight .fv-estado { color: var(--color-interactive, #c3c2b7);
+    font-weight: 700; letter-spacing: .03em; }
+  #chart_66da2d89_insight .fv-salta { margin-top: 6px; }
+  #chart_66da2d89_insight details { border-top: 1px solid var(--color-border, #e1e0d9);
+    padding-top: 11px; }
+  #chart_66da2d89_insight summary { cursor: pointer; font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .05em;
+    color: var(--color-muted, #898781); list-style: none; }
+  #chart_66da2d89_insight summary::-webkit-details-marker { display: none; }
+  #chart_66da2d89_insight summary::after { content: " +"; }
+  #chart_66da2d89_insight details[open] summary::after { content: " −"; }
+  #chart_66da2d89_insight details[open] summary { margin-bottom: 9px; }
+  #chart_66da2d89_insight summary:hover { color: var(--color-interactive, #0b0b0b); }
+</style>
+<div id="chart_66da2d89_layout">
+  <div id="chart_66da2d89_plotwrap"><div style="height:100%; width:100%;">                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha256-jvTGqxNp8AGWEcvNLVuKr+8j5dGe9Yw51LQkmDH+IYA=" crossorigin="anonymous"></script>                <div id="chart_66da2d89" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("chart_66da2d89")) {                    Plotly.newPlot(                        "chart_66da2d89",                        [{"customdata":[13.247222222222222,1.5838888888888887,0.10722222222222223,21.072222222222223,9.387254901960784,8.730392156862745,1.7516339869281046,10.42483660130719,13.247222222222222],"fill":"toself","fillcolor":"rgba(227,73,72,0.2)","hovertemplate":"\u003cb\u003e%{theta}\u003c\u002fb\u003e\u003cbr\u003evalor: %{customdata:.2f}\u003cbr\u003eescala: %{r:.2f}\u003cextra\u003eBundesliga\u003c\u002fextra\u003e","line":{"color":"#e34948","width":2.2},"marker":{"color":"#e34948","line":{"color":"#fcfcfb","width":0.6},"size":5},"mode":"lines+markers","name":"Bundesliga","r":[0.9656582837241323,1.0,0.9601990049751246,0.6561489093016418,0.843736231458364,0.7960369487485102,0.7886503732614689,0.7828155139801861,0.9656582837241323],"showlegend":false,"theta":["Tiros","Goles","G\u002fSh","CS%","Tackles","Intercep.","Offsides","Faltas","Tiros"],"type":"scatterpolar","subplot":"polar"},{"customdata":[12.316500000000001,1.184,0.08549999999999999,32.114999999999995,9.075,7.661842105263157,1.556578947368421,12.667105263157895,12.316500000000001],"fill":"toself","fillcolor":"rgba(42,120,214,0.2)","hovertemplate":"\u003cb\u003e%{theta}\u003c\u002fb\u003e\u003cbr\u003evalor: %{customdata:.2f}\u003cbr\u003eescala: %{r:.2f}\u003cextra\u003eSerie A\u003c\u002fextra\u003e","line":{"color":"#2a78d6","width":2.2},"marker":{"color":"#2a78d6","line":{"color":"#fcfcfb","width":0.6},"size":5},"mode":"lines+markers","name":"Serie A","r":[0.8978131454258292,0.7475271834444055,0.7656716417910449,1.0,0.8156704361873991,0.6986065805156514,0.700829383886256,0.9511905938148404,0.8978131454258292],"showlegend":false,"theta":["Tiros","Goles","G\u002fSh","CS%","Tackles","Intercep.","Offsides","Faltas","Tiros"],"type":"scatterpolar","subplot":"polar2"},{"customdata":[12.43888888888889,1.3711111111111112,0.09777777777777778,28.344444444444445,10.110120816003167,8.864081996434939,1.6100217864923747,12.080213903743315,12.43888888888889],"fill":"toself","fillcolor":"rgba(46,65,58,0.2)","hovertemplate":"\u003cb\u003e%{theta}\u003c\u002fb\u003e\u003cbr\u003evalor: %{customdata:.2f}\u003cbr\u003eescala: %{r:.2f}\u003cextra\u003eLigue 1\u003c\u002fextra\u003e","line":{"color":"#2e413a","width":2.2},"marker":{"color":"#2e413a","line":{"color":"#fcfcfb","width":0.6},"size":5},"mode":"lines+markers","name":"Ligue 1","r":[0.9067347021423076,0.8656611715187655,0.8756218905472638,0.8825920736243017,0.908708171448662,0.8082267851338174,0.7248913256719224,0.9071201034329532,0.9067347021423076],"showlegend":false,"theta":["Tiros","Goles","G\u002fSh","CS%","Tackles","Intercep.","Offsides","Faltas","Tiros"],"type":"scatterpolar","subplot":"polar3"},{"customdata":[12.478,1.319,0.0925,23.69,9.93157894736842,8.085526315789474,1.8934210526315787,12.580263157894738,12.478],"fill":"toself","fillcolor":"rgba(237,161,0,0.2)","hovertemplate":"\u003cb\u003e%{theta}\u003c\u002fb\u003e\u003cbr\u003evalor: %{customdata:.2f}\u003cbr\u003eescala: %{r:.2f}\u003cextra\u003eLa Liga\u003c\u002fextra\u003e","line":{"color":"#eda100","width":2.2},"marker":{"color":"#eda100","line":{"color":"#fcfcfb","width":0.6},"size":5},"mode":"lines+markers","name":"La Liga","r":[0.9095857125501153,0.8327604349351105,0.8283582089552239,0.7376615288805856,0.8926606426478887,0.7372380967316982,0.8524881516587677,0.9446694990613576,0.9095857125501153],"showlegend":false,"theta":["Tiros","Goles","G\u002fSh","CS%","Tackles","Intercep.","Offsides","Faltas","Tiros"],"type":"scatterpolar","subplot":"polar4"},{"customdata":[12.495000000000001,1.3215,0.0965,25.525,9.860526315789475,7.981578947368421,1.5447368421052632,10.811842105263157,12.495000000000001],"fill":"toself","fillcolor":"rgba(232,123,164,0.2)","hovertemplate":"\u003cb\u003e%{theta}\u003c\u002fb\u003e\u003cbr\u003evalor: %{customdata:.2f}\u003cbr\u003eescala: %{r:.2f}\u003cextra\u003ePremier League\u003c\u002fextra\u003e","line":{"color":"#e87ba4","width":2.2},"marker":{"color":"#e87ba4","line":{"color":"#fcfcfb","width":0.6},"size":5},"mode":"lines+markers","name":"Premier League","r":[0.9108249301421456,0.8343388284812348,0.864179104477612,0.7947999377238052,0.886274358241028,0.7277601781569537,0.6954976303317536,0.8118762968086156,0.9108249301421456],"showlegend":false,"theta":["Tiros","Goles","G\u002fSh","CS%","Tackles","Intercep.","Offsides","Faltas","Tiros"],"type":"scatterpolar","subplot":"polar5"}],                        {"template":{"layout":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12},"hoverlabel":{"bgcolor":"#fcfcfb","bordercolor":"#c3c2b7","font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11}},"margin":{"b":60,"l":70,"r":40,"t":90},"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(0,0,0,0)","title":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":18},"subtitle":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12.5}},"x":0.03,"xanchor":"left"},"xaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"},"yaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"}}},"polar":{"domain":{"x":[0.0,0.164],"y":[0.0,1.0]},"radialaxis":{"range":[0,1],"showticklabels":false,"ticks":"","gridcolor":"#e1e0d9","linecolor":"#c3c2b7"},"angularaxis":{"tickfont":{"size":9.5,"color":"#52514e"},"gridcolor":"#e1e0d9","linecolor":"#c3c2b7"},"bgcolor":"rgba(0,0,0,0)"},"polar2":{"domain":{"x":[0.20900000000000002,0.373],"y":[0.0,1.0]},"radialaxis":{"range":[0,1],"showticklabels":false,"ticks":"","gridcolor":"#e1e0d9","linecolor":"#c3c2b7"},"angularaxis":{"tickfont":{"size":9.5,"color":"#52514e"},"gridcolor":"#e1e0d9","linecolor":"#c3c2b7"},"bgcolor":"rgba(0,0,0,0)"},"polar3":{"domain":{"x":[0.41800000000000004,0.5820000000000001],"y":[0.0,1.0]},"radialaxis":{"range":[0,1],"showticklabels":false,"ticks":"","gridcolor":"#e1e0d9","linecolor":"#c3c2b7"},"angularaxis":{"tickfont":{"size":9.5,"color":"#52514e"},"gridcolor":"#e1e0d9","linecolor":"#c3c2b7"},"bgcolor":"rgba(0,0,0,0)"},"polar4":{"domain":{"x":[0.627,0.791],"y":[0.0,1.0]},"radialaxis":{"range":[0,1],"showticklabels":false,"ticks":"","gridcolor":"#e1e0d9","linecolor":"#c3c2b7"},"angularaxis":{"tickfont":{"size":9.5,"color":"#52514e"},"gridcolor":"#e1e0d9","linecolor":"#c3c2b7"},"bgcolor":"rgba(0,0,0,0)"},"polar5":{"domain":{"x":[0.8360000000000001,1.0],"y":[0.0,1.0]},"radialaxis":{"range":[0,1],"showticklabels":false,"ticks":"","gridcolor":"#e1e0d9","linecolor":"#c3c2b7"},"angularaxis":{"tickfont":{"size":9.5,"color":"#52514e"},"gridcolor":"#e1e0d9","linecolor":"#c3c2b7"},"bgcolor":"rgba(0,0,0,0)"},"annotations":[{"font":{"size":11.5,"color":"#e34948"},"showarrow":false,"text":"BUNDESLIGA","x":0.082,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"},{"font":{"size":11.5,"color":"#2a78d6"},"showarrow":false,"text":"SERIE A","x":0.29100000000000004,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"},{"font":{"size":11.5,"color":"#2e413a"},"showarrow":false,"text":"LIGUE 1","x":0.5,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"},{"font":{"size":11.5,"color":"#eda100"},"showarrow":false,"text":"LA LIGA","x":0.7090000000000001,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"},{"font":{"size":11.5,"color":"#e87ba4"},"showarrow":false,"text":"PREMIER LEAGUE","x":0.918,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"}],"title":{"subtitle":{"text":"Promedio por equipo · escala proporcional al máximo de las 25 liga-temporada · métricas por 90' · 2025-26"},"text":"Perfil de estilo por liga"},"margin":{"t":110,"b":40,"l":40,"r":40},"autosize":true},                        {"displaylogo": false, "responsive": true, "displayModeBar": false}                    )                };            </script>        </div></div>
+  <div id="chart_66da2d89_sidebar">
+    <div class="block">
+      <label>Temporada</label>
+      <select id="chart_66da2d89_season"><option value="2021-22">2021-22</option><option value="2022-23">2022-23</option><option value="2023-24">2023-24</option><option value="2024-25">2024-25</option><option value="2025-26">2025-26</option></select>
+    </div>
+    <div class="block"><div class="hint">Los ejes están escalados contra el máximo de las 25 liga-temporada, así que las formas se pueden comparar entre temporadas.</div></div>
+  </div>
+</div>
+<div id="chart_66da2d89_insight">
+  <div>
+    <h4>Qué mirar aquí</h4>
+    <p>Cada eje es una métrica y cada forma la &quot;personalidad&quot; de una liga. Lo que importa no es el tamaño total de la figura sino <strong>dónde se abulta</strong>: un pico en Faltas y poco en Goles describe una liga trabada; lo contrario, una de ida y vuelta.</p>
+  </div>
+  <div class="fv-dyn">
+    <h4>En lo que estás viendo · <span class="fv-estado" id="chart_66da2d89_ins_estado">2025-26</span></h4>
+    <p id="chart_66da2d89_ins_fija">En 2025-26 las ligas se separan sobre todo en <strong>CS%</strong> (34% entre la primera y la última) y casi nada en <strong>Tiros</strong> (7%).</p>
+    <p class="fv-salta" id="chart_66da2d89_ins_salta">La desviación más marcada es la de <strong>Serie A</strong> en <strong>CS%</strong>: un 23% por encima del promedio de las 5 ligas.</p>
+  </div>
+  <details>
+    <summary>Por qué estas variables</summary>
+    <div><p>Las 8 métricas se eligieron por <strong>eta²</strong> (cuánta de la variación explica la liga, frente al ruido entre equipos de una misma liga), no por criterio propio. Quedaron fuera dos que parecían obvias: <strong>Posesión</strong>, porque suma 100% por partido y el promedio de cualquier liga es mecánicamente ~50% — es un eje muerto en cualquier normalización; y <strong>Centros</strong>, porque las 5 ligas hacen prácticamente los mismos (17-18 por 90&#x27;). También se descartaron Asistencias y goles recibidos por redundancia: correlacionan 0.98 con Goles y −0.84 con CS%, así que duplicaban un eje ya presente.</p><p>La escala es <code>valor / máximo</code> y no min-max ni z-score. Con min-max la peor liga queda anclada en 0 y la mejor en 1 <strong>aunque la diferencia real sea mínima</strong>: 170 tiros contra 180 se verían como polos opuestos. Con <code>valor / máximo</code> el 0 del eje es el 0 real de la métrica y la separación refleja la proporción de verdad. El divisor es el máximo de las <strong>25 liga-temporada</strong>, para que las formas se puedan comparar también entre temporadas.</p></div>
+  </details>
+</div>
+<script>
+(function() {
+  var specs = [{"id": "season", "default": "2025-26", "updates": {"2021-22": {"restyle": {"r": [[0.9347588385372372, 0.9537004559803579, 0.955223880597015, 0.6919577213832235, 0.839770891467176, 1.0, 0.8813462193724252, 0.8926305429789739, 0.9347588385372372], [0.9360102053213462, 0.8737986671343388, 0.8507462686567165, 0.753853339560953, 0.7887061242473199, 0.8762875603788972, 0.8003554502369669, 1.0, 0.9360102053213462], [0.8626776819341514, 0.8564363381269732, 0.9044776119402987, 0.7947999377238052, 0.891477997387359, 0.9919421617213474, 0.7251184834123223, 0.8783717024009485, 0.8626776819341514], [0.846640748390232, 0.7699403717993688, 0.8283582089552239, 0.9749338315428929, 0.8076284484157966, 0.8382559124270749, 0.9034360189573459, 0.9940717320422882, 0.846640748390232], [0.9250030372980196, 0.8618028761837953, 0.864179104477612, 0.8689086096839485, 0.8447635095964321, 0.8771273759488113, 0.7500000000000001, 0.7595099298488291, 0.9250030372980196]], "customdata": [[12.823333333333332, 1.5105555555555557, 0.10666666666666666, 22.22222222222222, 9.343137254901961, 10.967320261437909, 1.957516339869281, 11.887254901960784, 12.823333333333332], [12.8405, 1.384, 0.095, 24.21, 8.775, 9.610526315789475, 1.7776315789473685, 13.317105263157895, 12.8405], [11.8345, 1.3565, 0.101, 25.525, 9.91842105263158, 10.878947368421052, 1.6105263157894736, 11.697368421052632, 11.8345], [11.6145, 1.2195, 0.0925, 31.310000000000002, 8.985526315789475, 9.19342105263158, 2.006578947368421, 13.23815789473684, 11.6145], [12.689499999999999, 1.365, 0.0965, 27.905, 9.398684210526316, 9.619736842105263, 1.6657894736842107, 10.114473684210527, 12.689499999999999]]}, "relayout": {"title.subtitle.text": "Promedio por equipo \u00b7 escala proporcional al m\u00e1ximo de las 25 liga-temporada \u00b7 m\u00e9tricas por 90' \u00b7 2021-22"}}, "2022-23": {"restyle": {"r": [[0.9166160450330053, 0.9782532444756227, 1.0, 0.7121974847336828, 0.8654721691878396, 0.839243146603099, 0.8533903292754701, 0.8882134021477378, 0.9166160450330053], [0.9153079820191957, 0.7831988775868117, 0.801492537313433, 0.8562976802117392, 0.8321092053087633, 0.7680713255128285, 0.7322274881516588, 0.927872739847841, 0.9153079820191957], [0.8794071194265581, 0.8551736232900738, 0.8731343283582091, 0.7577456017437336, 0.9333436396101136, 0.9629085377328901, 0.7221563981042656, 0.932220136350163, 0.8794071194265581], [0.8868788725549751, 0.7677306208347949, 0.81044776119403, 0.8805853962322904, 0.8802428674123259, 0.7415571482341133, 0.9958530805687206, 0.972235945064717, 0.8868788725549751], [0.9121734904628842, 0.8627499123114697, 0.8910447761194031, 0.8480460843842443, 0.891241468335253, 0.8147410764694812, 0.7659952606635072, 0.8097025985574549, 0.9121734904628842]], "customdata": [[12.574444444444445, 1.5494444444444444, 0.11166666666666665, 22.87222222222222, 9.62908496732026, 9.204248366013072, 1.8954248366013071, 11.82843137254902, 12.574444444444445], [12.5565, 1.2405, 0.0895, 27.5, 9.257894736842106, 8.423684210526316, 1.6263157894736842, 12.35657894736842, 12.5565], [12.064, 1.3545, 0.0975, 24.335, 10.384210526315789, 10.560526315789474, 1.6039473684210528, 12.414473684210526, 12.064], [12.166500000000001, 1.216, 0.0905, 28.28, 9.79342105263158, 8.132894736842106, 2.211842105263158, 12.947368421052634, 12.166500000000001], [12.5135, 1.3664999999999998, 0.0995, 27.235000000000003, 9.91578947368421, 8.935526315789474, 1.7013157894736843, 10.782894736842106, 12.5135]]}, "relayout": {"title.subtitle.text": "Promedio por equipo \u00b7 escala proporcional al m\u00e1ximo de las 25 liga-temporada \u00b7 m\u00e9tricas por 90' \u00b7 2022-23"}}, "2023-24": {"restyle": {"r": [[1.0, 0.9901788846018942, 0.91044776119403, 0.6615115816423617, 0.8778087824937585, 0.784564958283671, 0.768786977666264, 0.8437965971225297, 1.0], [0.9178957599319645, 0.8040336723956507, 0.8059701492537314, 0.8647049665265454, 0.8115311777755448, 0.6705327457499528, 0.7079383886255924, 0.9047524948127655, 0.9178957599319645], [0.9177499696270197, 0.82953349701859, 0.8308457711442787, 0.8545677859082811, 0.9462476134527833, 0.8711263408820025, 0.712875197472354, 0.9364338562220659, 0.9177499696270197], [0.8824687158303972, 0.8116099614170468, 0.864179104477612, 0.9137474700295813, 0.8954989912731602, 0.7047252368107395, 1.0, 0.9715443138029838, 0.8824687158303972], [0.9957477827724456, 0.9943879340582253, 0.9402985074626868, 0.6434687840572941, 0.931333142667213, 0.7567938021454113, 0.8584123222748816, 0.8305503408754076, 0.9957477827724456]], "customdata": [[13.718333333333334, 1.5683333333333334, 0.10166666666666667, 21.244444444444444, 9.766339869281047, 8.604575163398692, 1.707516339869281, 11.236928104575163, 13.718333333333334], [12.592, 1.2734999999999999, 0.09, 27.77, 9.028947368421052, 7.353947368421052, 1.5723684210526314, 12.048684210526316, 12.592], [12.59, 1.3138888888888889, 0.09277777777777778, 27.444444444444443, 10.527777777777779, 9.553921568627452, 1.5833333333333333, 12.470588235294118, 12.59], [12.106, 1.2855, 0.0965, 29.345, 9.963157894736842, 7.728947368421052, 2.221052631578947, 12.938157894736841, 12.106], [13.66, 1.575, 0.10500000000000001, 20.665, 10.361842105263158, 8.3, 1.9065789473684212, 11.060526315789474, 13.66]]}, "relayout": {"title.subtitle.text": "Promedio por equipo \u00b7 escala proporcional al m\u00e1ximo de las 25 liga-temporada \u00b7 m\u00e9tricas por 90' \u00b7 2023-24"}}, "2024-25": {"restyle": {"r": [[0.9388085692301461, 0.9631708172571029, 0.9850746268656718, 0.778971404847164, 0.8363930092524601, 0.7808402860548272, 0.8158705820400831, 0.8029380444335953, 0.9388085692301461], [0.8737212975337141, 0.7778323395299895, 0.8194029850746269, 0.868597228709326, 0.8094024163065912, 0.6712525876670221, 0.6907582938388627, 0.9416065606165398, 0.8737212975337141], [0.8951119750536588, 0.9133637320238513, 0.9303482587064679, 0.7428166139048905, 1.0, 0.8253873659117997, 0.7261174612024905, 0.9107898997296114, 0.8951119750536588], [0.8544769772810108, 0.8046650298141004, 0.846268656716418, 0.7991592713685195, 0.896445107481584, 0.7320792296593689, 0.8613744075829385, 0.9326153542140104, 0.8544769772810108], [0.9368484995747782, 0.8990529638723256, 0.9223880597014927, 0.7294099330530905, 0.9449335631633057, 0.7238010476130732, 0.7553317535545025, 0.8297599051477127, 0.9368484995747782]], "customdata": [[12.878888888888888, 1.5255555555555556, 0.11, 25.016666666666666, 9.305555555555555, 8.563725490196079, 1.8120915032679739, 10.69281045751634, 12.878888888888888], [11.986, 1.232, 0.0915, 27.895, 9.005263157894737, 7.3618421052631575, 1.5342105263157895, 12.539473684210526, 11.986], [12.279444444444444, 1.4466666666666665, 0.10388888888888889, 23.855555555555554, 11.125816993464051, 9.052287581699346, 1.6127450980392157, 12.12908496732026, 12.279444444444444], [11.722, 1.2745, 0.0945, 25.665, 9.973684210526315, 8.028947368421052, 1.9131578947368422, 12.419736842105262, 11.722], [12.852, 1.424, 0.10300000000000001, 23.425, 10.513157894736842, 7.938157894736842, 1.6776315789473686, 11.05, 12.852]]}, "relayout": {"title.subtitle.text": "Promedio por equipo \u00b7 escala proporcional al m\u00e1ximo de las 25 liga-temporada \u00b7 m\u00e9tricas por 90' \u00b7 2024-25"}}, "2025-26": {"restyle": {"r": [[0.9656582837241323, 1.0, 0.9601990049751246, 0.6561489093016418, 0.843736231458364, 0.7960369487485102, 0.7886503732614689, 0.7828155139801861, 0.9656582837241323], [0.8978131454258292, 0.7475271834444055, 0.7656716417910449, 1.0, 0.8156704361873991, 0.6986065805156514, 0.700829383886256, 0.9511905938148404, 0.8978131454258292], [0.9067347021423076, 0.8656611715187655, 0.8756218905472638, 0.8825920736243017, 0.908708171448662, 0.8082267851338174, 0.7248913256719224, 0.9071201034329532, 0.9067347021423076], [0.9095857125501153, 0.8327604349351105, 0.8283582089552239, 0.7376615288805856, 0.8926606426478887, 0.7372380967316982, 0.8524881516587677, 0.9446694990613576, 0.9095857125501153], [0.9108249301421456, 0.8343388284812348, 0.864179104477612, 0.7947999377238052, 0.886274358241028, 0.7277601781569537, 0.6954976303317536, 0.8118762968086156, 0.9108249301421456]], "customdata": [[13.247222222222222, 1.5838888888888887, 0.10722222222222223, 21.072222222222223, 9.387254901960784, 8.730392156862745, 1.7516339869281046, 10.42483660130719, 13.247222222222222], [12.316500000000001, 1.184, 0.08549999999999999, 32.114999999999995, 9.075, 7.661842105263157, 1.556578947368421, 12.667105263157895, 12.316500000000001], [12.43888888888889, 1.3711111111111112, 0.09777777777777778, 28.344444444444445, 10.110120816003167, 8.864081996434939, 1.6100217864923747, 12.080213903743315, 12.43888888888889], [12.478, 1.319, 0.0925, 23.69, 9.93157894736842, 8.085526315789474, 1.8934210526315787, 12.580263157894738, 12.478], [12.495000000000001, 1.3215, 0.0965, 25.525, 9.860526315789475, 7.981578947368421, 1.5447368421052632, 10.811842105263157, 12.495000000000001]]}, "relayout": {"title.subtitle.text": "Promedio por equipo \u00b7 escala proporcional al m\u00e1ximo de las 25 liga-temporada \u00b7 m\u00e9tricas por 90' \u00b7 2025-26"}}}, "labels": {}}];
+  var insights = {"2021-22": {"fija": "En 2021-22 las ligas se separan sobre todo en <strong>CS%</strong> (29% entre la primera y la última) y casi nada en <strong>Tiros</strong> (10%).", "salta": "La desviación más marcada es la de <strong>La Liga</strong> en <strong>CS%</strong>: un 19% por encima del promedio de las 5 ligas."}, "2022-23": {"fija": "En 2022-23 las ligas se separan sobre todo en <strong>Offsides</strong> (27% entre la primera y la última) y casi nada en <strong>Tiros</strong> (4%).", "salta": "La desviación más marcada es la de <strong>La Liga</strong> en <strong>Offsides</strong>: un 22% por encima del promedio de las 5 ligas."}, "2023-24": {"fija": "En 2023-24 las ligas se separan sobre todo en <strong>CS%</strong> (30% entre la primera y la última) y casi nada en <strong>Tiros</strong> (12%).", "salta": "La desviación más marcada es la de <strong>La Liga</strong> en <strong>Offsides</strong>: un 24% por encima del promedio de las 5 ligas."}, "2024-25": {"fija": "En 2024-25 las ligas se separan sobre todo en <strong>Offsides</strong> (20% entre la primera y la última) y casi nada en <strong>Tiros</strong> (9%).", "salta": "La desviación más marcada es la de <strong>La Liga</strong> en <strong>Offsides</strong>: un 12% por encima del promedio de las 5 ligas."}, "2025-26": {"fija": "En 2025-26 las ligas se separan sobre todo en <strong>CS%</strong> (34% entre la primera y la última) y casi nada en <strong>Tiros</strong> (7%).", "salta": "La desviación más marcada es la de <strong>Serie A</strong> en <strong>CS%</strong>: un 23% por encima del promedio de las 5 ligas."}};
+  function setInsight(key, estado) {
+    var d = insights[key];
+    if (!d) return;
+    document.getElementById('chart_66da2d89_ins_estado').textContent = estado;
+    document.getElementById('chart_66da2d89_ins_fija').innerHTML = d.fija;
+    var s = document.getElementById('chart_66da2d89_ins_salta');
+    s.innerHTML = d.salta || '';
+    s.style.display = d.salta ? '' : 'none';
+  }
+  specs.forEach(function(spec) {
+    var el = document.getElementById('chart_66da2d89_' + spec.id);
+    el.value = spec.default;
+    el.addEventListener('change', function(e) {
+      var u = spec.updates[e.target.value];
+      if (spec.id === "season") {
+        setInsight(e.target.value, spec.labels[e.target.value] || e.target.value);
+      }
+      if (!u) return;
+      if (u.restyle) {
+        // dict = todas las trazas; lista = pasos con sus propios índices
+        var steps = Array.isArray(u.restyle) ? u.restyle : [{update: u.restyle}];
+        steps.forEach(function(s) {
+          if (s.traces) Plotly.restyle('chart_66da2d89', s.update, s.traces);
+          else Plotly.restyle('chart_66da2d89', s.update);
+        });
+      }
+      if (u.relayout) Plotly.relayout('chart_66da2d89', u.relayout);
+    });
+  });
+})();
+</script>
+</div></main>
 <script>
 (function() {
   var LIGHT = {primary:'#0b0b0b', secondary:'#52514e', muted:'#898781', grid:'#e1e0d9', axis:'#c3c2b7', surface:'#fcfcfb'};
   var DARK = {primary:'#D7E4E7', secondary:'#C7D3D6', muted:'#8CA0A5', grid:'#2C393C', axis:'#3A4A4E', surface:'#1B2426'};
 
-  function patchFor(theme) {
+  // Los ejes se descubren leyendo el layout real de cada gráfico en vez de
+  // listar 'xaxis'/'yaxis' a mano: un gráfico con subplots tiene xaxis2,
+  // yaxis2..., y un radar no tiene ejes cartesianos sino `polar`. Con la
+  // lista fija, esos se quedaban con la tinta clara sobre fondo oscuro.
+  function patchFor(gd, theme) {
     var c = theme === 'dark' ? DARK : LIGHT;
-    return {
+    var patch = {
       'font.color': c.primary, 'title.font.color': c.primary,
-      'xaxis.tickfont.color': c.muted, 'xaxis.title.font.color': c.secondary,
-      'xaxis.gridcolor': c.grid, 'xaxis.zerolinecolor': c.axis, 'xaxis.linecolor': c.axis,
-      'yaxis.tickfont.color': c.muted, 'yaxis.title.font.color': c.secondary,
-      'yaxis.gridcolor': c.grid, 'yaxis.zerolinecolor': c.axis, 'yaxis.linecolor': c.axis,
       'legend.font.color': c.secondary,
       'hoverlabel.bgcolor': c.surface, 'hoverlabel.font.color': c.primary
     };
+    Object.keys(gd._fullLayout || {}).forEach(function(k) {
+      if (/^[xy]axis\d*$/.test(k)) {
+        patch[k + '.tickfont.color'] = c.muted;
+        patch[k + '.title.font.color'] = c.secondary;
+        patch[k + '.gridcolor'] = c.grid;
+        patch[k + '.zerolinecolor'] = c.axis;
+        patch[k + '.linecolor'] = c.axis;
+      } else if (/^polar\d*$/.test(k)) {
+        patch[k + '.angularaxis.tickfont.color'] = c.secondary;
+        patch[k + '.angularaxis.gridcolor'] = c.grid;
+        patch[k + '.angularaxis.linecolor'] = c.axis;
+        patch[k + '.radialaxis.tickfont.color'] = c.muted;
+        patch[k + '.radialaxis.gridcolor'] = c.grid;
+        patch[k + '.radialaxis.linecolor'] = c.axis;
+      }
+    });
+    return patch;
   }
 
   function syncPlotly() {
     if (!window.Plotly) return;
     var theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-    var patch = patchFor(theme);
-    document.querySelectorAll('.js-plotly-plot').forEach(function(gd) { Plotly.relayout(gd, patch); });
+    document.querySelectorAll('.js-plotly-plot').forEach(function(gd) {
+      Plotly.relayout(gd, patchFor(gd, theme));
+    });
   }
   syncPlotly();
 
