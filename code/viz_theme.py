@@ -371,6 +371,95 @@ def _sidebar_css(div_id, width, aspect_ratio, mobile_aspect=None):
   }}"""
 
 
+def iso_lines(fig, niveles, x_range, y_range, combinar="suma", puntos=80,
+               color=None, ancho=1.4, etiqueta_en="inicio"):
+    """Curvas de nivel del indicador que combina los dos ejes del scatter.
+
+    Es el recurso que en la prensa de datos marca "de acá para arriba están los
+    mejores": cada curva une los puntos que valen lo mismo en el indicador
+    combinado, así que a un lado están los que llegan a ese nivel y al otro los
+    que no — sin tener que elegir cuál de los dos ejes importa más.
+
+    Solo tiene sentido cuando combinar los dos ejes significa algo:
+
+    - `combinar="suma"` (`x + y = k`, rectas) pide que los dos ejes estén en la
+      misma unidad. xG90 y xA90 lo están: los dos son "goles esperados por 90",
+      y sumarlos da la contribución ofensiva total.
+    - `combinar="producto"` (`x · y = k`, hipérbolas) pide que el producto sea
+      una magnitud real. SoT% × G/SoT es exactamente goles por tiro, así que
+      cada hipérbola es un nivel de eficiencia de remate.
+
+    Cruzar dos ejes que no cumplen ninguna de las dos cosas y dibujarles una
+    frontera igual es inventar un ranking: la curva estaría diciendo que un
+    punto de posesión vale lo mismo que un punto de porterías a cero.
+
+    `niveles` es una lista de `(valor, etiqueta)`. Las curvas se recortan a la
+    caja del gráfico, así que el rango de los ejes no cambia por dibujarlas.
+    `etiqueta_en` elige de qué punta cuelga el rótulo — `"inicio"` (arriba a la
+    izquierda) o `"fin"` (abajo a la derecha): las dos son zonas vacías por
+    definición, y cuál conviene depende de qué más haya escrito en el gráfico.
+
+    Devuelve las anotaciones de las etiquetas — hay que pasarlas a la figura
+    (`annotations=`) y al helper de la barra lateral (`base_annotations=`), o
+    desaparecen en cuanto alguien busca una entidad. Las trazas se agregan a
+    `fig`, y como el filtro de liga asume que las trazas extra van DESPUÉS de
+    las de liga, esto se llama con la figura ya armada y hay que contarlas en
+    `extra_traces`."""
+    import numpy as np
+    import plotly.graph_objects as go
+
+    color = color or INK["axis"]
+    (x_lo, x_hi), (y_lo, y_hi) = x_range, y_range
+    anotaciones = []
+
+    for k, etiqueta in niveles:
+        if combinar == "suma":
+            x1, x2 = max(x_lo, k - y_hi), min(x_hi, k - y_lo)
+            xs = np.array([x1, x2])
+            ys = k - xs
+        else:
+            # Con producto el dominio se limita a x > 0: la hipérbola no cruza
+            # el eje, y a la izquierda del cero no hay nada que dibujar.
+            x1 = max(x_lo, k / y_hi if y_hi > 0 else x_lo, 1e-9)
+            x2 = min(x_hi, k / y_lo if y_lo > 0 else x_hi)
+            if x2 <= x1:
+                continue
+            xs = np.linspace(x1, x2, puntos)
+            ys = k / xs
+        if xs[-1] <= xs[0]:
+            continue
+
+        fig.add_trace(go.Scatter(
+            x=xs, y=ys, mode="lines", showlegend=False, hoverinfo="skip",
+            line=dict(color=color, width=ancho, dash="dash")))
+
+        # La etiqueta cuelga de una de las dos puntas de la curva, corrida un
+        # poco hacia adentro para no pegarse al eje. Las dos puntas son zona
+        # vacía por definición —arriba a la izquierda y abajo a la derecha son
+        # los extremos que casi nadie ocupa—, que es de lo que habla la curva.
+        inicio = etiqueta_en == "inicio"
+        x_lab = (xs[0] + 0.02 * (x_hi - x_lo)) if inicio else (xs[-1] - 0.02 * (x_hi - x_lo))
+        y_lab = (k - x_lab) if combinar == "suma" else (k / x_lab)
+        anotaciones.append(dict(
+            x=x_lab, y=y_lab, text=etiqueta, showarrow=False,
+            xanchor="left" if inicio else "right",
+            yanchor="bottom" if inicio else "top",
+            font=dict(size=10.5, color=INK["muted"])))
+
+    return anotaciones
+
+
+def top_levels(serie, percentiles):
+    """`[(valor, "Top N%"), ...]` a partir de los percentiles de `serie`.
+
+    Los cortes salen de las 5 temporadas juntas y no de la que se está
+    mostrando: si se recalcularan con cada cambio del selector, "estar sobre la
+    línea del top 1%" significaría algo distinto en cada temporada y comparar
+    entre ellas dejaría de tener sentido. Es la misma razón por la que los ejes
+    tampoco se reescalan."""
+    return [(float(serie.quantile(1 - p / 100)), f"Top {p:g}%") for p in percentiles]
+
+
 def _control_options(c):
     """La lista plana de valores de un control, los declare como `options` o
     solo dentro de `groups`."""

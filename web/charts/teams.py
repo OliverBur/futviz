@@ -13,7 +13,7 @@ import insights as ins
 from site_utils import PROCESSED_DIR, ChartPage
 from viz_theme import (
     LEAGUE_ORDER, SEQUENTIAL_BLUE, INK, FUENTE_FBREF,
-    league_color, league_box_season_html,
+    league_color, league_box_season_html, iso_lines, top_levels,
 )
 from viz_theme import explorer_chart_html as _explorer_chart_html
 from viz_theme import sidebar_chart_html as _sidebar_chart_html
@@ -412,6 +412,12 @@ def _evolution_subtitle(label):
     return f"{label} — promedio por equipo de cada liga, temporada a temporada"
 
 
+# Percentiles de SoT% x G/SoT —que es exactamente goles por tiro— que dibujan
+# las curvas de "de acá para arriba están los mejores". Dos y no tres: este
+# gráfico ya lleva dos líneas de promedio y cuatro rótulos de cuadrante.
+DEF_PERCENTILES = [5, 25]
+
+
 def chart_def_efficiency(df, seasons, season_data):
     x_col, y_col = "sh_Standard_SoT%", "sh_Standard_G/SoT"
     x_mean, y_mean = df[x_col].mean(), df[y_col].mean()
@@ -441,24 +447,36 @@ def chart_def_efficiency(df, seasons, season_data):
              showarrow=False, font=dict(size=10.5, color=INK["muted"]), xanchor="right", yanchor="top"),
     ]
 
+    # Las curvas van DESPUÉS de las trazas de liga: el filtro de liga asume ese
+    # orden. El producto de los dos ejes es exactamente goles por tiro, así que
+    # cada hipérbola es un nivel de eficiencia total de remate — la forma de
+    # mostrar el indicador combinado sin fundir los dos ejes en uno.
+    x_range, y_range = _padded(df[x_col]), _padded(df[y_col])
+    niveles = top_levels(df[x_col] * df[y_col], DEF_PERCENTILES)
+    iso_annotations = iso_lines(fig, niveles, x_range, y_range, combinar="producto",
+                                 etiqueta_en="fin")
+    annotations = quadrant_annotations + iso_annotations
+
     subtitle = "Precisión (llegar a puerta) vs. definición (marcar una vez ahí) · {temporada}"
     fig.update_layout(
         title=dict(text="Eficiencia de definición",
                    subtitle=dict(text=subtitle.format(temporada=seasons[-1]))),
         xaxis_title="Precisión — % de tiros que van a puerta (SoT%)",
         yaxis_title="Definición — goles por tiro a puerta (G/SoT)",
-        annotations=quadrant_annotations,
+        annotations=annotations,
         # Rango fijo sobre las 5 temporadas: sin esto cada cambio de temporada
         # reescala los ejes y los puntos parecen moverse más de lo que se mueven.
-        xaxis=dict(range=_padded(df[x_col])), yaxis=dict(range=_padded(df[y_col])),
+        xaxis=dict(range=x_range), yaxis=dict(range=y_range),
     )
-    body = sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=quadrant_annotations,
+    body = sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=annotations,
+                               extra_traces=len(niveles),
                                width=760, height=580, season_data=season_data,
                                custom_cols=["Squad"], subtitle_template=subtitle,
                                insights={
                                    "que_mirar": ins.definicion_que_mirar(),
-                                   "por_que": ins.definicion_por_que(df),
-                                   "dinamico": _por_temporada_y_liga(ins.definicion, df, seasons),
+                                   "por_que": ins.definicion_por_que(df, DEF_PERCENTILES),
+                                   "dinamico": _por_temporada_y_liga(
+                                       partial(ins.definicion, cortes=niveles), df, seasons),
                                })
     return ChartPage(
         slug="eficiencia-definicion", section=SECTION, title="Eficiencia de definición",
