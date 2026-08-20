@@ -453,6 +453,9 @@ def chart_def_efficiency(df, seasons, season_data):
         xaxis=dict(range=_padded(df[x_col])), yaxis=dict(range=_padded(df[y_col])),
     )
     body = sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=quadrant_annotations,
+                               # El título de estos ejes es una frase entera y no
+                               # entra en la columna del top 5.
+                               top_labels=("Precisión (SoT%)", "Definición (G/SoT)"),
                                width=760, height=580, season_data=season_data,
                                custom_cols=["Squad"], subtitle_template=subtitle,
                                insights={
@@ -561,6 +564,7 @@ def chart_gk_demand(df, seasons, season_data):
         xaxis=dict(range=_padded(df[x_col4])), yaxis=dict(range=_padded(df[y_col4])),
     )
     body = sidebar_chart_html(fig, scatter_data4, x_col4, y_col4, base_annotations=quadrant_annotations4,
+                               top_labels=("Tiros enfrentados (SoTA)", "Atajadas (Save%)"),
                                width=760, height=580, season_data=season_data,
                                custom_cols=["Squad"], subtitle_template=subtitle4,
                                insights={
