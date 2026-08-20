@@ -116,73 +116,81 @@
 </header>
 <main><div class="chart-scroll">
 <style>
-  #chart_ae7ca04e_layout { display:flex; flex-wrap: wrap; align-items:flex-start; gap:20px; max-width: 100%; }
-  #chart_ae7ca04e_plotwrap { position: relative; flex: 1 1 280px; width: 100%; max-width: 800px;
+  #chart_8ee7b139_layout { display:flex; flex-wrap: wrap; align-items:flex-start; gap:20px; max-width: 100%; }
+  #chart_8ee7b139_plotwrap { position: relative; flex: 1 1 280px; width: 100%; max-width: 800px;
     aspect-ratio: 1.5384615384615385; min-width: 0; }
-  #chart_ae7ca04e_plotwrap > div { position: absolute; inset: 0; }
-  #chart_ae7ca04e_sidebar { font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  #chart_8ee7b139_plotwrap > div { position: absolute; inset: 0; }
+  #chart_8ee7b139_sidebar { font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     padding-top: 54px; flex: 1 1 190px; max-width: 260px; box-sizing: border-box; }
-  #chart_ae7ca04e_sidebar .block { margin-bottom: 22px; }
-  #chart_ae7ca04e_sidebar label { display: block; font-size: 11px; color: var(--color-muted, #898781);
+  #chart_8ee7b139_sidebar .block { margin-bottom: 22px; }
+  #chart_8ee7b139_sidebar label { display: block; font-size: 11px; color: var(--color-muted, #898781);
     text-transform: uppercase; letter-spacing: .03em; margin-bottom: 5px; }
-  #chart_ae7ca04e_sidebar .hint { font-size: 11.5px; line-height: 1.45; color: var(--color-muted, #898781);
+  #chart_8ee7b139_sidebar .hint { font-size: 11.5px; line-height: 1.45; color: var(--color-muted, #898781);
     text-transform: none; letter-spacing: 0; margin-top: -14px; }
-  #chart_ae7ca04e_sidebar input, #chart_ae7ca04e_sidebar select { width: 100%; box-sizing: border-box;
+  /* Casilla de filtro por punto (ej. "solo sub-21"). Necesita anular el
+     `width:100%` de los inputs de arriba, pensado para el buscador. */
+  #chart_8ee7b139_sidebar .toggle { display: flex; align-items: center; gap: 8px; }
+  #chart_8ee7b139_sidebar .toggle input { width: auto; flex: none; margin: 0; padding: 0;
+    accent-color: var(--color-interactive, #c3c2b7); cursor: pointer; }
+  #chart_8ee7b139_sidebar .toggle span { font-size: 13px; cursor: pointer;
+    color: var(--color-primary, #0b0b0b); }
+  #chart_8ee7b139_sidebar .toggle + .hint { margin-top: 7px; }
+  #chart_8ee7b139_sidebar input, #chart_8ee7b139_sidebar select { width: 100%; box-sizing: border-box;
     padding: 7px 9px; font-size: 13px; font-family: inherit; color: var(--color-primary, #0b0b0b);
     background: var(--color-surface, #fcfcfb); border: 1px solid var(--color-border, #c3c2b7);
     border-radius: 6px; transition: border-color .15s ease; }
-  #chart_ae7ca04e_sidebar input:focus, #chart_ae7ca04e_sidebar select:focus {
+  #chart_8ee7b139_sidebar input:focus, #chart_8ee7b139_sidebar select:focus {
     outline: none; border-color: var(--color-interactive, #c3c2b7); }
   @media (max-width: 520px) {
-    #chart_ae7ca04e_sidebar { padding-top: 4px; max-width: 100%; }
-    #chart_ae7ca04e_plotwrap { aspect-ratio: 0.9230769230769231; }
+    #chart_8ee7b139_sidebar { padding-top: 4px; max-width: 100%; }
+    #chart_8ee7b139_plotwrap { aspect-ratio: 0.9230769230769231; }
   }
-  #chart_ae7ca04e_insight { font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  #chart_8ee7b139_insight { font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     max-width: 800px; margin: 18px 0 4px; display: flex; flex-direction: column; gap: 14px;
     font-size: 13.5px; line-height: 1.58; color: var(--color-text-body, #52514e); }
-  #chart_ae7ca04e_insight h4 { margin: 0 0 5px; font-size: 11px; font-weight: 700;
+  #chart_8ee7b139_insight h4 { margin: 0 0 5px; font-size: 11px; font-weight: 700;
     text-transform: uppercase; letter-spacing: .05em;
     color: var(--color-muted, #898781); }
-  #chart_ae7ca04e_insight p { margin: 0 0 7px; }
-  #chart_ae7ca04e_insight p:last-child { margin-bottom: 0; }
-  #chart_ae7ca04e_insight strong { color: var(--color-primary, #0b0b0b); font-weight: 600; }
-  #chart_ae7ca04e_insight code { font-size: 12.5px;
+  #chart_8ee7b139_insight p { margin: 0 0 7px; }
+  #chart_8ee7b139_insight p:last-child { margin-bottom: 0; }
+  #chart_8ee7b139_insight strong { color: var(--color-primary, #0b0b0b); font-weight: 600; }
+  #chart_8ee7b139_insight code { font-size: 12.5px;
     background: var(--color-bg, #e1e0d9); padding: 1px 4px; border-radius: 3px; }
-  #chart_ae7ca04e_insight .fv-dyn { border-left: 3px solid var(--color-interactive, #c3c2b7);
+  #chart_8ee7b139_insight .fv-dyn { border-left: 3px solid var(--color-interactive, #c3c2b7);
     padding: 2px 0 2px 13px; }
-  #chart_ae7ca04e_insight .fv-estado { color: var(--color-interactive, #c3c2b7);
+  #chart_8ee7b139_insight .fv-estado { color: var(--color-interactive, #c3c2b7);
     font-weight: 700; letter-spacing: .03em; }
-  #chart_ae7ca04e_insight .fv-salta { margin-top: 6px; }
-  #chart_ae7ca04e_insight details { border-top: 1px solid var(--color-border, #e1e0d9);
+  #chart_8ee7b139_insight .fv-salta { margin-top: 6px; }
+  #chart_8ee7b139_insight details { border-top: 1px solid var(--color-border, #e1e0d9);
     padding-top: 11px; }
-  #chart_ae7ca04e_insight summary { cursor: pointer; font-size: 11px; font-weight: 700;
+  #chart_8ee7b139_insight summary { cursor: pointer; font-size: 11px; font-weight: 700;
     text-transform: uppercase; letter-spacing: .05em;
     color: var(--color-muted, #898781); list-style: none; }
-  #chart_ae7ca04e_insight summary::-webkit-details-marker { display: none; }
-  #chart_ae7ca04e_insight summary::after { content: " +"; }
-  #chart_ae7ca04e_insight details[open] summary::after { content: " −"; }
-  #chart_ae7ca04e_insight details[open] summary { margin-bottom: 9px; }
-  #chart_ae7ca04e_insight summary:hover { color: var(--color-interactive, #0b0b0b); }
+  #chart_8ee7b139_insight summary::-webkit-details-marker { display: none; }
+  #chart_8ee7b139_insight summary::after { content: " +"; }
+  #chart_8ee7b139_insight details[open] summary::after { content: " −"; }
+  #chart_8ee7b139_insight details[open] summary { margin-bottom: 9px; }
+  #chart_8ee7b139_insight summary:hover { color: var(--color-interactive, #0b0b0b); }
 </style>
-<div id="chart_ae7ca04e_layout">
-  <div id="chart_ae7ca04e_plotwrap"><div style="height:100%; width:100%;">                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
-        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha256-jvTGqxNp8AGWEcvNLVuKr+8j5dGe9Yw51LQkmDH+IYA=" crossorigin="anonymous"></script>                <div id="chart_ae7ca04e" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("chart_ae7ca04e")) {                    Plotly.newPlot(                        "chart_ae7ca04e",                        [{"boxpoints":"all","customdata":["Augsburg","Bayern Munich","Dortmund","Frankfurt","Freiburg","Gladbach","Hamburger SV","Heidenheim","Hoffenheim","Köln","Leverkusen","Mainz 05","RB Leipzig","St Pauli","Stuttgart","Union Berlin","Werder Bremen","Wolfsburg"],"fillcolor":"rgba(0,0,0,0)","hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eEdad promedio: %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","jitter":0.5,"line":{"color":"#e34948"},"marker":{"color":"#e34948","opacity":0.7,"size":6},"name":"Bundesliga","pointpos":0,"showlegend":false,"x":["Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga"],"y":{"dtype":"f8","bdata":"ZmZmZmbmOUBmZmZmZmY7QDMzMzMzMzpAzczMzMzMOEAzMzMzM7M6QAAAAAAAADpAzczMzMzMOUCamZmZmZk6QDMzMzMzszpAAAAAAAAAOUDNzMzMzEw6QJqZmZmZmTxAAAAAAAAAOUAAAAAAAIA7QAAAAAAAgDlAMzMzMzMzO0CamZmZmRk5QGZmZmZmZjlA"},"type":"box"},{"boxpoints":"all","customdata":["Atalanta","Bologna","Cagliari","Como","Cremonese","Fiorentina","Genoa","Hellas Verona","Inter","Juventus","Lazio","Lecce","Milan","Napoli","Parma","Pisa","Roma","Sassuolo","Torino","Udinese"],"fillcolor":"rgba(0,0,0,0)","hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eEdad promedio: %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","jitter":0.5,"line":{"color":"#2a78d6"},"marker":{"color":"#2a78d6","opacity":0.7,"size":6},"name":"Serie A","pointpos":0,"showlegend":false,"x":["Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A"],"y":{"dtype":"f8","bdata":"MzMzMzOzOkAAAAAAAIA6QM3MzMzMzDhAZmZmZmZmOUCamZmZmRk8QM3MzMzMzDpAZmZmZmbmOUDNzMzMzEw6QJqZmZmZmTxAAAAAAAAAOkDNzMzMzMw7QAAAAAAAgDlAMzMzMzMzO0BmZmZmZmY8QJqZmZmZGThAAAAAAAAAO0DNzMzMzEw6QJqZmZmZGTpAMzMzMzMzO0AAAAAAAIA6QA=="},"type":"box"},{"boxpoints":"all","customdata":["Angers","Auxerre","Brest","Le Havre","Lens","Lille","Lorient","Lyon","Marseille","Metz","Monaco","Nantes","Nice","Paris FC","PSG","Rennes","Strasbourg","Toulouse"],"fillcolor":"rgba(0,0,0,0)","hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eEdad promedio: %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","jitter":0.5,"line":{"color":"#2e413a"},"marker":{"color":"#2e413a","opacity":0.7,"size":6},"name":"Ligue 1","pointpos":0,"showlegend":false,"x":["Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1"],"y":{"dtype":"f8","bdata":"AAAAAAAAOkBmZmZmZuY4QAAAAAAAgDpAmpmZmZmZOkAAAAAAAIA6QAAAAAAAgDpAzczMzMxMOUAzMzMzMzM6QAAAAAAAgDtAMzMzMzMzOkCamZmZmZk5QJqZmZmZGTpAmpmZmZmZOUDNzMzMzEw7QJqZmZmZmTdAmpmZmZkZOkAAAAAAAIA1QJqZmZmZGThA"},"type":"box"},{"boxpoints":"all","customdata":["Alavés","Athletic Club","Atlético Madrid","Barcelona","Celta Vigo","Elche","Espanyol","Getafe","Girona","Levante","Mallorca","Osasuna","Oviedo","Rayo Vallecano","Real Betis","Real Madrid","Real Sociedad","Sevilla","Valencia","Villarreal"],"fillcolor":"rgba(0,0,0,0)","hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eEdad promedio: %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","jitter":0.5,"line":{"color":"#eda100"},"marker":{"color":"#eda100","opacity":0.7,"size":6},"name":"La Liga","pointpos":0,"showlegend":false,"x":["La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga"],"y":{"dtype":"f8","bdata":"zczMzMxMO0CamZmZmZk7QDMzMzMzMztAMzMzMzOzOEAAAAAAAAA6QM3MzMzMzDpAZmZmZmZmO0AAAAAAAIA8QM3MzMzMTDtAZmZmZmbmOUDNzMzMzMw7QDMzMzMzMzxAAAAAAAAAPEBmZmZmZuY8QM3MzMzMzDtAzczMzMxMOUDNzMzMzMw5QAAAAAAAADtAmpmZmZkZO0CamZmZmRk6QA=="},"type":"box"},{"boxpoints":"all","customdata":["Arsenal","Aston Villa","Bournemouth","Brentford","Brighton","Burnley","Chelsea","Crystal Palace","Everton","Fulham","Leeds United","Liverpool","Manchester City","Manchester Utd","Newcastle","Nottingham","Sunderland","Tottenham","West Ham","Wolves"],"fillcolor":"rgba(0,0,0,0)","hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eEdad promedio: %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","jitter":0.5,"line":{"color":"#e87ba4"},"marker":{"color":"#e87ba4","opacity":0.7,"size":6},"name":"Premier League","pointpos":0,"showlegend":false,"x":["Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League"],"y":{"dtype":"f8","bdata":"AAAAAAAAOkAAAAAAAAA8QAAAAAAAADlAMzMzMzMzOUCamZmZmRk6QAAAAAAAADtAmpmZmZkZOEAzMzMzMzM6QM3MzMzMTDtAmpmZmZkZPEDNzMzMzMw6QJqZmZmZmTpAZmZmZmZmOUCamZmZmRk6QDMzMzMzszpAZmZmZmbmOUDNzMzMzEw5QM3MzMzMTDlAzczMzMxMOkDNzMzMzMw5QA=="},"type":"box"}],                        {"template":{"layout":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12},"hoverlabel":{"bgcolor":"#fcfcfb","bordercolor":"#c3c2b7","font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11}},"margin":{"b":60,"l":70,"r":40,"t":90},"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(0,0,0,0)","title":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":18},"subtitle":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12.5}},"x":0.03,"xanchor":"left"},"xaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"},"yaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"}}},"yaxis":{"range":[20.599999999999998,30.4],"title":{"text":"Edad promedio"}},"title":{"subtitle":{"text":"Edad promedio de cada equipo, agrupados por liga · 2025-26"},"text":"Edad de plantilla"},"xaxis":{"title":{}},"autosize":true},                        {"displaylogo": false, "responsive": true, "displayModeBar": false}                    )                };            </script>        </div></div>
-  <div id="chart_ae7ca04e_sidebar">
+<div id="chart_8ee7b139_layout">
+  <div id="chart_8ee7b139_plotwrap"><div style="height:100%; width:100%;">                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha256-jvTGqxNp8AGWEcvNLVuKr+8j5dGe9Yw51LQkmDH+IYA=" crossorigin="anonymous"></script>                <div id="chart_8ee7b139" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("chart_8ee7b139")) {                    Plotly.newPlot(                        "chart_8ee7b139",                        [{"boxpoints":"all","customdata":["Augsburg","Bayern Munich","Dortmund","Frankfurt","Freiburg","Gladbach","Hamburger SV","Heidenheim","Hoffenheim","Köln","Leverkusen","Mainz 05","RB Leipzig","St Pauli","Stuttgart","Union Berlin","Werder Bremen","Wolfsburg"],"fillcolor":"rgba(0,0,0,0)","hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eEdad promedio: %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","jitter":0.5,"line":{"color":"#e34948"},"marker":{"color":"#e34948","opacity":0.7,"size":6},"name":"Bundesliga","pointpos":0,"showlegend":false,"x":["Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga","Bundesliga"],"y":{"dtype":"f8","bdata":"ZmZmZmbmOUBmZmZmZmY7QDMzMzMzMzpAzczMzMzMOEAzMzMzM7M6QAAAAAAAADpAzczMzMzMOUCamZmZmZk6QDMzMzMzszpAAAAAAAAAOUDNzMzMzEw6QJqZmZmZmTxAAAAAAAAAOUAAAAAAAIA7QAAAAAAAgDlAMzMzMzMzO0CamZmZmRk5QGZmZmZmZjlA"},"type":"box"},{"boxpoints":"all","customdata":["Atalanta","Bologna","Cagliari","Como","Cremonese","Fiorentina","Genoa","Hellas Verona","Inter","Juventus","Lazio","Lecce","Milan","Napoli","Parma","Pisa","Roma","Sassuolo","Torino","Udinese"],"fillcolor":"rgba(0,0,0,0)","hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eEdad promedio: %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","jitter":0.5,"line":{"color":"#2a78d6"},"marker":{"color":"#2a78d6","opacity":0.7,"size":6},"name":"Serie A","pointpos":0,"showlegend":false,"x":["Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A","Serie A"],"y":{"dtype":"f8","bdata":"MzMzMzOzOkAAAAAAAIA6QM3MzMzMzDhAZmZmZmZmOUCamZmZmRk8QM3MzMzMzDpAZmZmZmbmOUDNzMzMzEw6QJqZmZmZmTxAAAAAAAAAOkDNzMzMzMw7QAAAAAAAgDlAMzMzMzMzO0BmZmZmZmY8QJqZmZmZGThAAAAAAAAAO0DNzMzMzEw6QJqZmZmZGTpAMzMzMzMzO0AAAAAAAIA6QA=="},"type":"box"},{"boxpoints":"all","customdata":["Angers","Auxerre","Brest","Le Havre","Lens","Lille","Lorient","Lyon","Marseille","Metz","Monaco","Nantes","Nice","Paris FC","PSG","Rennes","Strasbourg","Toulouse"],"fillcolor":"rgba(0,0,0,0)","hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eEdad promedio: %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","jitter":0.5,"line":{"color":"#2e413a"},"marker":{"color":"#2e413a","opacity":0.7,"size":6},"name":"Ligue 1","pointpos":0,"showlegend":false,"x":["Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1","Ligue 1"],"y":{"dtype":"f8","bdata":"AAAAAAAAOkBmZmZmZuY4QAAAAAAAgDpAmpmZmZmZOkAAAAAAAIA6QAAAAAAAgDpAzczMzMxMOUAzMzMzMzM6QAAAAAAAgDtAMzMzMzMzOkCamZmZmZk5QJqZmZmZGTpAmpmZmZmZOUDNzMzMzEw7QJqZmZmZmTdAmpmZmZkZOkAAAAAAAIA1QJqZmZmZGThA"},"type":"box"},{"boxpoints":"all","customdata":["Alavés","Athletic Club","Atlético Madrid","Barcelona","Celta Vigo","Elche","Espanyol","Getafe","Girona","Levante","Mallorca","Osasuna","Oviedo","Rayo Vallecano","Real Betis","Real Madrid","Real Sociedad","Sevilla","Valencia","Villarreal"],"fillcolor":"rgba(0,0,0,0)","hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eEdad promedio: %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","jitter":0.5,"line":{"color":"#eda100"},"marker":{"color":"#eda100","opacity":0.7,"size":6},"name":"La Liga","pointpos":0,"showlegend":false,"x":["La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga","La Liga"],"y":{"dtype":"f8","bdata":"zczMzMxMO0CamZmZmZk7QDMzMzMzMztAMzMzMzOzOEAAAAAAAAA6QM3MzMzMzDpAZmZmZmZmO0AAAAAAAIA8QM3MzMzMTDtAZmZmZmbmOUDNzMzMzMw7QDMzMzMzMzxAAAAAAAAAPEBmZmZmZuY8QM3MzMzMzDtAzczMzMxMOUDNzMzMzMw5QAAAAAAAADtAmpmZmZkZO0CamZmZmRk6QA=="},"type":"box"},{"boxpoints":"all","customdata":["Arsenal","Aston Villa","Bournemouth","Brentford","Brighton","Burnley","Chelsea","Crystal Palace","Everton","Fulham","Leeds United","Liverpool","Manchester City","Manchester Utd","Newcastle","Nottingham","Sunderland","Tottenham","West Ham","Wolves"],"fillcolor":"rgba(0,0,0,0)","hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eEdad promedio: %{y:.1f}\u003cextra\u003e\u003c\u002fextra\u003e","jitter":0.5,"line":{"color":"#e87ba4"},"marker":{"color":"#e87ba4","opacity":0.7,"size":6},"name":"Premier League","pointpos":0,"showlegend":false,"x":["Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League","Premier League"],"y":{"dtype":"f8","bdata":"AAAAAAAAOkAAAAAAAAA8QAAAAAAAADlAMzMzMzMzOUCamZmZmRk6QAAAAAAAADtAmpmZmZkZOEAzMzMzMzM6QM3MzMzMTDtAmpmZmZkZPEDNzMzMzMw6QJqZmZmZmTpAZmZmZmZmOUCamZmZmRk6QDMzMzMzszpAZmZmZmbmOUDNzMzMzEw5QM3MzMzMTDlAzczMzMxMOkDNzMzMzMw5QA=="},"type":"box"}],                        {"template":{"layout":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12},"hoverlabel":{"bgcolor":"#fcfcfb","bordercolor":"#c3c2b7","font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11}},"margin":{"b":60,"l":70,"r":40,"t":90},"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(0,0,0,0)","title":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":18},"subtitle":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12.5}},"x":0.03,"xanchor":"left"},"xaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"},"yaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"}}},"yaxis":{"range":[20.599999999999998,30.4],"title":{"text":"Edad promedio"}},"title":{"subtitle":{"text":"Edad promedio de cada equipo, agrupados por liga · 2025-26"},"text":"Edad de plantilla"},"xaxis":{"title":{}},"autosize":true},                        {"displaylogo": false, "responsive": true, "displayModeBar": false}                    )                };            </script>        </div></div>
+  <div id="chart_8ee7b139_sidebar">
     <div class="block">
       <label>Temporada</label>
-      <select id="chart_ae7ca04e_season"><option value="2021-22">2021-22</option><option value="2022-23">2022-23</option><option value="2023-24">2023-24</option><option value="2024-25">2024-25</option><option value="2025-26">2025-26</option></select>
+      <select id="chart_8ee7b139_season"><option value="2021-22">2021-22</option><option value="2022-23">2022-23</option><option value="2023-24">2023-24</option><option value="2024-25">2024-25</option><option value="2025-26">2025-26</option></select>
     </div>
   </div>
 </div>
-<div id="chart_ae7ca04e_insight">
+<div id="chart_8ee7b139_insight">
   <div>
     <h4>Qué mirar aquí</h4>
     <p>La caja de cada liga muestra en qué franja de edad se mueven sus plantillas. Los puntos sueltos por abajo son proyectos jóvenes; por arriba, plantillas veteranas.</p>
   </div>
   <div class="fv-dyn">
-    <h4>En lo que estás viendo · <span class="fv-estado" id="chart_ae7ca04e_ins_estado">2025-26</span></h4>
-    <p id="chart_ae7ca04e_ins_fija">En 2025-26 la liga más joven es <strong>Ligue 1</strong> (25.7 años de media) y la más veterana <strong>La Liga</strong> (27.0).</p>
-    <p class="fv-salta" id="chart_ae7ca04e_ins_salta">Los extremos los ponen <strong>Strasbourg</strong> (21.5 años) y <strong>Rayo Vallecano</strong> (28.9): 7.4 años de diferencia entre dos plantillas de la misma temporada.</p>
+    <h4>En lo que estás viendo · <span class="fv-estado" id="chart_8ee7b139_ins_estado">2025-26</span></h4>
+    <p id="chart_8ee7b139_ins_fija">En 2025-26 la liga más joven es <strong>Ligue 1</strong> (25.7 años de media) y la más veterana <strong>La Liga</strong> (27.0).</p>
+    <p class="fv-salta" id="chart_8ee7b139_ins_salta">Los extremos los ponen <strong>Strasbourg</strong> (21.5 años) y <strong>Rayo Vallecano</strong> (28.9): 7.4 años de diferencia entre dos plantillas de la misma temporada.</p>
   </div>
   <details>
     <summary>Por qué estas variables</summary>
@@ -196,14 +204,14 @@
   function setInsight(key, estado) {
     var d = insights[key];
     if (!d) return;
-    document.getElementById('chart_ae7ca04e_ins_estado').textContent = estado;
-    document.getElementById('chart_ae7ca04e_ins_fija').innerHTML = d.fija;
-    var s = document.getElementById('chart_ae7ca04e_ins_salta');
+    document.getElementById('chart_8ee7b139_ins_estado').textContent = estado;
+    document.getElementById('chart_8ee7b139_ins_fija').innerHTML = d.fija;
+    var s = document.getElementById('chart_8ee7b139_ins_salta');
     s.innerHTML = d.salta || '';
     s.style.display = d.salta ? '' : 'none';
   }
   specs.forEach(function(spec) {
-    var el = document.getElementById('chart_ae7ca04e_' + spec.id);
+    var el = document.getElementById('chart_8ee7b139_' + spec.id);
     el.value = spec.default;
     el.addEventListener('change', function(e) {
       var u = spec.updates[e.target.value];
@@ -215,11 +223,11 @@
         // dict = todas las trazas; lista = pasos con sus propios índices
         var steps = Array.isArray(u.restyle) ? u.restyle : [{update: u.restyle}];
         steps.forEach(function(s) {
-          if (s.traces) Plotly.restyle('chart_ae7ca04e', s.update, s.traces);
-          else Plotly.restyle('chart_ae7ca04e', s.update);
+          if (s.traces) Plotly.restyle('chart_8ee7b139', s.update, s.traces);
+          else Plotly.restyle('chart_8ee7b139', s.update);
         });
       }
-      if (u.relayout) Plotly.relayout('chart_ae7ca04e', u.relayout);
+      if (u.relayout) Plotly.relayout('chart_8ee7b139', u.relayout);
     });
   });
 })();

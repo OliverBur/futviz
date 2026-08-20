@@ -12,7 +12,24 @@ from viz_theme import (
 )
 
 SECTION = "Jugadores"
-MIN_MINUTES = 900
+MIN_MINUTES = 500
+
+# Filtro sub-21 de los scatter. `sub21` la calcula `consolidate_data.py` a
+# partir del año de nacimiento que aporta fbref (Understat no publica edad), con
+# el criterio de las categorías sub-N de UEFA: cuenta el año, no el cumpleaños.
+# Los jugadores cuyo nombre no cruzó con fbref quedan sin edad, y por lo tanto
+# fuera del filtro — es lo correcto: edad desconocida no es sub-21.
+SUB21_FILTER = {
+    "col": "sub21",
+    "label": "Edad",
+    "text": "Solo sub-21",
+    "hint": "Menos de 21 al arrancar la temporada — cuenta el año de "
+            "nacimiento, no el cumpleaños.",
+    # Cómo se nombra el filtro en el rótulo de la caja de lectura ("2025-26 ·
+    # Ligue 1 · sub-21"), que es lo que le dice al lector sobre qué población
+    # están hechas las afirmaciones que está leyendo.
+    "estado": "sub-21",
+}
 BASE_SIZE = 8  # tamaño del punto; se le pasa al buscador para que al resaltar
                # y volver no cambie de tamaño respecto del estado inicial
 
@@ -59,25 +76,62 @@ def _scatter_traces(fig, scatter_data, x_col, y_col, x_label, y_label, x_fmt, y_
         ))
 
 
-def _por_temporada_y_liga(generador, df, seasons, *args):
-    """Una entrada por cada combinación temporada x liga; la clave tiene que
-    coincidir con la que arma el JS de la barra lateral."""
+def _entrada(generador, df, season, liga):
+    """El par (fija, salta) de una combinación, o un aviso si no queda nadie a
+    quien describir.
+
+    Hoy ninguna combinación queda vacía —la más chica tiene 14 sub-21—, pero los
+    generadores piden el máximo del subconjunto y sobre un DataFrame vacío eso
+    revienta; subir el corte de minutos bastaría para provocarlo."""
+    d = df[df["temporada"] == season]
+    if liga != ins.LIGA_TODAS:
+        d = d[d["liga"] == liga]
+    if d.empty:
+        return {"fija": "Ningún jugador cumple los filtros elegidos.", "salta": None}
+    return dict(zip(("fija", "salta"), generador(df, season, liga)))
+
+
+def _por_temporada_y_liga(generador, df, seasons):
+    """Una entrada por cada temporada x liga, más esas mismas restringidas a los
+    sub-21 — que son las que se muestran con la casilla marcada.
+
+    Las claves tienen que coincidir con las que arma el JS de la barra lateral:
+    `temporada|liga`, y con el filtro puesto `temporada|liga|sub21`. Las dos
+    versiones se calculan acá, en el build, porque los textos salen de operar
+    sobre los datos y el sitio es estático: en el navegador no hay con qué
+    rehacerlos."""
+    variantes = [("", df)]
+    if "sub21" in df.columns:
+        variantes.append((f"|{SUB21_FILTER['col']}", df[df["sub21"] == True]))
     return {
-        f"{s}|{liga}": dict(zip(("fija", "salta"), generador(df, s, *args, liga)))
+        f"{s}|{liga}{sufijo}": _entrada(generador, datos, s, liga)
+        for sufijo, datos in variantes
         for s in seasons
         for liga in [ins.LIGA_TODAS] + list(LEAGUE_ORDER)
     }
 
 
 def _player_sidebar(fig, scatter_data, x_col, y_col, seasons, season_data, subtitle,
-                     extra_traces=0, insights=None):
+                     extra_traces=0, insights=None, point_filter=None):
     return sidebar_chart_html(
         fig, scatter_data, x_col, y_col, extra_traces=extra_traces,
         name_col="player", search_label="jugador", width=760, height=580,
         base_size=BASE_SIZE, season_data=season_data,
         custom_cols=["player", "team"], subtitle_template=subtitle,
-        insights=insights,
+        insights=insights, point_filter=point_filter,
     )
+
+
+def sub21_filter(df):
+    """El filtro, o None si los datos no traen edades.
+
+    `fbref-players.csv` es opcional en la consolidación, así que el sitio se
+    tiene que poder construir sin él: sin la columna (o sin un solo sub-21 que
+    llegue al corte de minutos) la casilla no se dibuja, en vez de aparecer y
+    no hacer nada al marcarla."""
+    if "sub21" not in df.columns or not df["sub21"].fillna(False).any():
+        return None
+    return SUB21_FILTER
 
 
 def chart_goals_vs_xg(df, seasons, season_data):
@@ -112,7 +166,8 @@ def chart_goals_vs_xg(df, seasons, season_data):
                                        "por_que": ins.goles_xg_por_que(df),
                                        "dinamico": _por_temporada_y_liga(
                                            ins.goles_xg, df, seasons),
-                                   }),
+                                   },
+                                   point_filter=sub21_filter(df)),
     )
 
 
@@ -145,7 +200,8 @@ def chart_assists_vs_xa(df, seasons, season_data):
                                        "por_que": ins.asist_xa_por_que(df),
                                        "dinamico": _por_temporada_y_liga(
                                            ins.asist_xa, df, seasons),
-                                   }),
+                                   },
+                                   point_filter=sub21_filter(df)),
     )
 
 
@@ -179,7 +235,8 @@ def chart_profile(df, seasons, season_data):
                                        "por_que": ins.perfil_por_que(df),
                                        "dinamico": _por_temporada_y_liga(
                                            ins.perfil, df, seasons),
-                                   }),
+                                   },
+                                   point_filter=sub21_filter(df)),
     )
 
 

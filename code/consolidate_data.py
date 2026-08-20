@@ -3,11 +3,14 @@
 Entrada  — `data/<temporada>/` con los archivos tal cual se bajan:
              leagues_{overall,shoot,playtime,misc,gk}.csv  (fbref, equipos)
              {premier,laliga,seriea,bundes,ligue1}-players.csv  (Understat, jugadores)
+             fbref-players.csv  (fbref, jugadores) — opcional, solo aporta el
+                                año de nacimiento, que Understat no publica
 
 Salida   — `data/processed/`:
              teams_all_seasons.{csv,xlsx}    una fila por equipo y temporada,
                                              las 5 tablas de fbref unidas a lo ancho
-             players_all_seasons.{csv,xlsx}  una fila por jugador, liga y temporada
+             players_all_seasons.{csv,xlsx}  una fila por jugador, liga y temporada,
+                                             con `born` y `sub21` si fbref-players.csv estaba
 
 Las temporadas que todavía no estén descargadas se saltan con un aviso, así que
 el script se puede correr hoy con una sola temporada y otra vez cuando estén las
@@ -15,7 +18,9 @@ cinco. Uso:  python consolidate_data.py
 """
 
 import html
+import re
 import unicodedata
+from collections import Counter
 from pathlib import Path
 
 import pandas as pd
@@ -55,6 +60,11 @@ PLAYER_FILES = {
     "laliga-players.csv": "La Liga",
     "premier-players.csv": "Premier League",
 }
+
+# Tabla de jugador de fbref (`fetch_fbref_players.py`). Es opcional, igual que
+# las tablas `vs`: si no está, `born`/`sub21` quedan vacíos y todo lo demás
+# funciona igual.
+FBREF_PLAYER_FILE = "fbref-players.csv"
 
 # Cuántos equipos tiene cada liga en cada temporada. Solo se usa como
 # verificación cruzada de la detección automática: si los dos métodos no
@@ -174,6 +184,142 @@ def load_players_season(season_dir, season):
     return pd.concat(dfs, ignore_index=True)
 
 
+# Letras que NFKD no descompone, porque no son una base + acento sino signos
+# propios del alfabeto. Sin esto 'Ødegaard' nunca cruza con 'Odegaard', que es
+# como lo escribe Understat — y con ellas se cae casi la mitad de los que no
+# cruzaban: escandinavos, polacos y balcánicos.
+# Se sigue la convención de Understat, que es la fuente con la que hay que
+# coincidir: la 'đ' serbocroata la escribe 'dj' ('Đorđe' -> 'Djordje'), mientras
+# que la 'ð' islandesa —otro carácter, aunque se parezcan— es simplemente 'd'.
+TRANSLITERA = str.maketrans({
+    "ø": "o", "ł": "l", "đ": "dj", "ð": "d", "ı": "i", "ħ": "h", "ŧ": "t",
+    "þ": "th", "ß": "ss", "æ": "ae", "œ": "oe",
+})
+
+
+def norm_name(name):
+    """Los tokens del nombre, comparables entre Understat y fbref: sin acentos,
+    sin puntuación y en minúsculas, así 'Gündoğan' y 'Gundogan' dan lo mismo.
+
+    Devuelve la lista de tokens y no un string porque el cruce necesita
+    compararlos como conjunto: las dos fuentes no coinciden en cuántos
+    apellidos ponen ('Ezri Konsa' vs 'Ezri Konsa Ngoyo')."""
+    decomposed = unicodedata.normalize("NFKD", str(name))
+    sin_acentos = "".join(c for c in decomposed if not unicodedata.combining(c))
+    plano = sin_acentos.casefold().translate(TRANSLITERA)
+    # El apóstrofo se borra en vez de separar: fbref escribe "N'Dicka" y
+    # Understat "Ndicka", y espaciarlo daría ['n','dicka'] contra ['ndicka'],
+    # que no son ni iguales ni uno subconjunto del otro. El guion sí separa
+    # ("André-Frank" -> "andre frank"), que es como lo parte la otra fuente.
+    return re.sub(r"[^a-z ]", " ", plano.replace("'", "").replace("’", "")).split()
+
+
+def _key(liga, name):
+    """El cruce es por liga + nombre, no por equipo: Understat y fbref escriben
+    los clubes distinto ('Wolverhampton Wanderers' vs 'Wolves') y además
+    Understat pega los dos clubes de quien se transfirió a mitad de temporada.
+    Dentro de una liga-temporada el nombre solo ya es suficientemente único."""
+    return f"{liga}|{' '.join(norm_name(name))}"
+
+
+def _por_subconjunto(players, fb):
+    """Segunda pasada del cruce, para los que el nombre exacto no resolvió.
+
+    Las dos fuentes no coinciden en cuántas partes del nombre escriben:
+    Understat pone 'Ezri Konsa Ngoyo' donde fbref pone 'Ezri Konsa', y al revés
+    abrevia a 'Ederson' o 'Bremer' lo que fbref escribe completo. En los dos
+    casos los tokens de uno son un subconjunto de los del otro, que es lo que se
+    busca acá.
+
+    Solo se acepta cuando la correspondencia es **única en los dos sentidos**:
+    un solo candidato de fbref para ese jugador, y ese candidato no reclamado
+    por ningún otro. 'Gabriel' contra los cuatro Gabriel del Arsenal es
+    ambiguo, y ante la duda se prefiere dejarlo sin edad antes que asignarle la
+    de otro."""
+    faltan = players.index[players["born"].isna()]
+    if not len(faltan):
+        return players["born"]
+
+    # candidatos agrupados por liga: cruzar entre ligas no tendría sentido y
+    # además multiplicaría las coincidencias espurias
+    por_liga = {}
+    for fila in fb.itertuples(index=False):
+        por_liga.setdefault(fila.liga, []).append((set(fila.tokens), fila.born))
+
+    propuestas = {}
+    for i in faltan:
+        tokens = set(norm_name(players.at[i, "player"]))
+        if not tokens:
+            continue
+        candidatos = [
+            (frozenset(cand), born)
+            for cand, born in por_liga.get(players.at[i, "liga"], [])
+            if tokens <= cand or cand <= tokens
+        ]
+        # varios candidatos con el MISMO born no son ambiguos para lo que
+        # importa acá (es el mismo jugador escrito de dos formas)
+        if len({born for _, born in candidatos}) == 1:
+            propuestas[i] = candidatos[0]
+
+    # que dos jugadores distintos reclamen la misma fila de fbref significa que
+    # el nombre corto no alcanza para distinguirlos: se descartan los dos
+    veces = Counter(cand for cand, _ in propuestas.values())
+    born = players["born"].copy()
+    for i, (cand, valor) in propuestas.items():
+        if veces[cand] == 1:
+            born.at[i] = valor
+    return born
+
+
+def edad_en_temporada(born, season):
+    """Edad cumplida al arrancar la temporada, a partir del AÑO de nacimiento.
+
+    Se usa el año y no la fecha exacta porque es lo que publica fbref, y porque
+    es el mismo criterio de las categorías sub-N de UEFA: la elegibilidad va por
+    año de nacimiento, no por cumpleaños. Para 2024-25 'sub-21' es entonces todo
+    el que nació en 2004 o después."""
+    return int(str(season)[:4]) - born
+
+
+def attach_born(players, season_dir, season):
+    """Agrega `born` y `sub21` cruzando por nombre con la tabla de fbref.
+
+    Devuelve `(df, sin_match)`, donde `sin_match` son las filas de Understat que
+    no encontraron par — se informan en pantalla para poder revisarlas, porque
+    un cruce por nombre nunca pega al 100%."""
+    players = players.copy()
+    path = season_dir / FBREF_PLAYER_FILE
+    if not path.exists():
+        players["born"] = pd.NA
+        players["sub21"] = pd.NA
+        return players, None
+
+    fb = pd.read_csv(path, encoding="utf-8-sig")
+    fb = fb[fb["born"].notna()].copy()
+    fb["born"] = fb["born"].astype(int)
+    fb["key"] = [_key(l, n) for l, n in zip(fb["liga"], fb["player"])]
+
+    # Un jugador aparece dos veces si cambió de club dentro de la misma liga:
+    # son filas distintas pero con el mismo `born`, así que colapsan sin ruido.
+    # Lo ambiguo son dos jugadores DISTINTOS que normalizan al mismo nombre; ahí
+    # no hay forma de saber cuál es cuál, y se descartan los dos antes que
+    # asignarle a uno la edad del otro.
+    nacimientos = fb.groupby("key")["born"].nunique()
+    ambiguos = set(nacimientos[nacimientos > 1].index)
+    fb = fb[~fb["key"].isin(ambiguos)].drop_duplicates("key").copy()
+    fb["tokens"] = [norm_name(n) for n in fb["player"]]
+
+    players["key"] = [_key(l, n) for l, n in zip(players["liga"], players["player"])]
+    players = players.merge(fb[["key", "born"]], on="key", how="left")
+    players["born"] = _por_subconjunto(players, fb)
+
+    sin_match = players.loc[players["born"].isna(), ["player", "team", "liga", "min"]]
+    edad = edad_en_temporada(players["born"], season)
+    players["sub21"] = (edad <= 20).where(players["born"].notna())
+    players["born"] = players["born"].astype("Int64")
+    return players.drop(columns=["key"]), sin_match
+
+
 def load_shots_season(season_dir, season):
     """Los tiros de una temporada (`fetch_shots.py`). Ya vienen con `temporada`
     y `liga`, así que no hay nada que derivar acá."""
@@ -218,8 +364,25 @@ def main():
 
         if all((season_dir / f).exists() for f in PLAYER_FILES):
             p = load_players_season(season_dir, season)
+            p, sin_match = attach_born(p, season_dir, season)
             players.append(p)
-            print(f"  jugadores {len(p):4d}")
+            print(f"  jugadores {len(p):4d}", end="")
+            if sin_match is None:
+                print("  (sin fbref-players.csv: no hay edades)")
+            else:
+                con_born = len(p) - len(sin_match)
+                sub21 = int((p["sub21"] == True).sum())
+                print(f"  · edad {con_born}/{len(p)} ({con_born / len(p):.1%})"
+                      f" · sub-21 {sub21}")
+                # Los que no cruzaron se listan por minutos: un titular sin edad
+                # importa mucho más que un suplente, y es el que hay que ir a
+                # revisar a mano si el porcentaje baja.
+                relevantes = sin_match[sin_match["min"] >= 900]
+                if len(relevantes):
+                    print(f"    sin edad con >=900 min ({len(relevantes)}): " +
+                          ", ".join(relevantes.sort_values("min", ascending=False)
+                                    ["player"].head(8)) +
+                          (" ..." if len(relevantes) > 8 else ""))
         else:
             print("  jugadores faltan archivos *-players.csv, se salta")
 

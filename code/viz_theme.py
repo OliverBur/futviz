@@ -296,6 +296,14 @@ def _sidebar_css(div_id, width, aspect_ratio):
     text-transform: uppercase; letter-spacing: .03em; margin-bottom: 5px; }}
   #{div_id}_sidebar .hint {{ font-size: 11.5px; line-height: 1.45; color: var(--color-muted, {INK["muted"]});
     text-transform: none; letter-spacing: 0; margin-top: -14px; }}
+  /* Casilla de filtro por punto (ej. "solo sub-21"). Necesita anular el
+     `width:100%` de los inputs de arriba, pensado para el buscador. */
+  #{div_id}_sidebar .toggle {{ display: flex; align-items: center; gap: 8px; }}
+  #{div_id}_sidebar .toggle input {{ width: auto; flex: none; margin: 0; padding: 0;
+    accent-color: var(--color-interactive, {INK["axis"]}); cursor: pointer; }}
+  #{div_id}_sidebar .toggle span {{ font-size: 13px; cursor: pointer;
+    color: var(--color-primary, {INK["primary"]}); }}
+  #{div_id}_sidebar .toggle + .hint {{ margin-top: 7px; }}
   #{div_id}_sidebar input, #{div_id}_sidebar select {{ width: 100%; box-sizing: border-box;
     padding: 7px 9px; font-size: 13px; font-family: inherit; color: var(--color-primary, {INK["primary"]});
     background: var(--color-surface, {INK["surface"]}); border: 1px solid var(--color-border, {INK["axis"]});
@@ -442,7 +450,7 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
                         extra_traces=0, base_size=11, highlight_size=20,
                         width=680, height=560, name_col="Squad", search_label="club",
                         season_data=None, custom_cols=None, subtitle_template=None,
-                        insights=None):
+                        insights=None, point_filter=None):
     """Arma el HTML/JS de un gráfico Plotly con una barra lateral genuina a
     la derecha (no superpuesta, es un elemento aparte en un layout flex):
     - `<select>` de temporada (solo si se pasa `season_data`).
@@ -482,6 +490,17 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     100% de su contenedor con relación de aspecto `width:height` fija (así
     no se deforma) hasta un tope de `width`px; en pantallas angostas la
     barra lateral pasa a apilarse debajo del gráfico en vez de achicarlo.
+
+    `point_filter` agrega una casilla que filtra PUNTOS (no trazas enteras,
+    como hace el filtro de liga): un dict
+    `{"col", "label", "text", "hint", "nota"}` donde `col` es una columna
+    booleana de los sub-DataFrames — ej. `sub21`. Se implementa cambiando los
+    datos de cada traza, igual que el cambio de temporada, porque "sub-21" es
+    una propiedad de cada jugador y no de la traza de su liga; los valores
+    nulos se tratan como False (edad desconocida no es sub-21). El filtro se
+    combina con el de liga sin interferir: uno cambia los datos y el otro la
+    visibilidad. `estado` es cómo se nombra el filtro en el rótulo de la caja
+    de lectura, cuyos textos se piden con la clave `...|<col>` al activarlo.
 
     Devuelve el HTML como string (no lo muestra) — ver `render_with_sidebar`
     para mostrarlo directo en un notebook."""
@@ -530,6 +549,14 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
             "y": [sub[y_col].tolist() for _, sub in sd],
             "ents": ents,
         }
+        if point_filter:
+            # Un booleano por punto, no un juego duplicado de x/y/custom: el
+            # filtrado se hace en JS. Duplicar los arreglos costaría el doble
+            # de peso de página, y ya son la parte pesada (ver arriba).
+            payload["f"] = [
+                sub[point_filter["col"]].fillna(False).astype(bool).tolist()
+                for _, sub in sd
+            ]
         if custom_cols:
             # Una sola columna va plana (`%{customdata}` en el hovertemplate);
             # varias, como filas (`%{customdata[0]}`) — igual que lo que arman
@@ -551,6 +578,17 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     <div class="block">
       <label>Temporada</label>
       <select id="{div_id}_season">{season_options}</select>
+    </div>"""
+
+    filter_block = "" if not point_filter else f"""
+    <div class="block">
+      <label>{point_filter.get("label", "Filtrar")}</label>
+      <div class="toggle">
+        <input type="checkbox" id="{div_id}_pfilter">
+        <label for="{div_id}_pfilter" style="display:inline; text-transform:none;
+          letter-spacing:0; margin:0;"><span>{point_filter.get("text", "Filtrar")}</span></label>
+      </div>
+      {f'<p class="hint">{point_filter["hint"]}</p>' if point_filter.get("hint") else ''}
     </div>"""
 
     # Caja de lectura. La clave del estado es "temporada|liga" ("__all__" cuando
@@ -583,7 +621,7 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
         <option value="{_ALL}">Todas las ligas</option>
         {league_options}
       </select>
-    </div>
+    </div>{filter_block}
   </div>
 </div>{insight_box}
 <script>
@@ -597,8 +635,36 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
   var BASE_SIZE = {base_size}, HIGHLIGHT_SIZE = {highlight_size};
   var current = {json.dumps(default_season)};
 
-  function clubMap() {{ return seasons[current].ents; }}
-  function traceNames() {{ return seasons[current].names; }}
+  var filterOn = false;
+  var FILTER_KEY = {json.dumps((point_filter or {}).get("col", ""))};
+  var FILTER_ESTADO = {json.dumps((point_filter or {}).get("estado", ""))};
+
+  // La "vista" es lo que se está mostrando: la temporada elegida y, si la
+  // casilla está marcada, solo los puntos que pasan el filtro. Se recalcula
+  // entera en vez de guardarse precalculada desde Python por el mismo motivo
+  // que los tamaños (ver _payload): duplicar x/y/custom pesa el doble.
+  function computeView() {{
+    var d = seasons[current];
+    if (!filterOn || !d.f) return d;
+    var v = {{names: [], x: [], y: [], ents: {{}}}};
+    if (d.custom) v.custom = [];
+    for (var t = 0; t < d.names.length; t++) {{
+      var nn = [], xx = [], yy = [], cc = [];
+      for (var i = 0; i < d.names[t].length; i++) {{
+        if (!d.f[t][i]) continue;
+        nn.push(d.names[t][i]); xx.push(d.x[t][i]); yy.push(d.y[t][i]);
+        if (d.custom) cc.push(d.custom[t][i]);
+        v.ents[d.names[t][i]] = d.ents[d.names[t][i]];
+      }}
+      v.names.push(nn); v.x.push(xx); v.y.push(yy);
+      if (d.custom) v.custom.push(cc);
+    }}
+    return v;
+  }}
+  var V = computeView();
+
+  function clubMap() {{ return V.ents; }}
+  function traceNames() {{ return V.names; }}
 {insight_js}
   // La caja de lectura depende de los DOS controles, así que se recalcula
   // desde el estado actual en vez de que cada handler arme su propia clave.
@@ -606,9 +672,14 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     if (typeof setInsight !== 'function') return;
     var lg = document.getElementById('{div_id}_league');
     var liga = lg ? lg.value : {_ALL_JSON};
-    var etiqueta = [current, liga === {_ALL_JSON} ? 'Todas las ligas' : liga]
+    // Con el filtro puesto se pide OTRA clave, no la misma con una advertencia:
+    // los textos del subconjunto vienen calculados aparte desde Python, así que
+    // la caja describe siempre la población que se está viendo.
+    var clave = current + '|' + liga + (filterOn ? '|' + FILTER_KEY : '');
+    var etiqueta = [current, liga === {_ALL_JSON} ? 'Todas las ligas' : liga,
+                    filterOn ? FILTER_ESTADO : null]
       .filter(Boolean).join(' · ');
-    setInsight(current + '|' + liga, etiqueta);
+    setInsight(clave, etiqueta);
   }}
 
   // Los tamaños se calculan acá y no vienen precalculados desde Python: uno
@@ -683,25 +754,41 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     applySearch(document.getElementById('{div_id}_search').value);
   }});
 
+  // Repinta las trazas con la vista actual. Lo llaman los dos controles que
+  // cambian QUÉ puntos hay (temporada y filtro); el de liga no lo necesita,
+  // porque ese solo cambia la visibilidad de trazas ya pintadas.
+  function applyData() {{
+    V = computeView();
+    var update = {{x: V.x, y: V.y, 'marker.size': baseSizes()}};
+    if (V.custom) update.customdata = V.custom;
+    Plotly.restyle('{div_id}', update, traceIndices);
+    fillDatalist();
+    // Lo buscado puede no seguir en la vista nueva (otra temporada, o filtrado);
+    // y aunque siga, sus coordenadas son otras, así que se re-aplica.
+    var searchInput = document.getElementById('{div_id}_search');
+    if (!clubMap().hasOwnProperty(searchInput.value)) searchInput.value = '';
+    applySearch(searchInput.value);
+    refreshInsight();
+  }}
+
   var seasonSelect = document.getElementById('{div_id}_season');
   if (seasonSelect) {{
     seasonSelect.value = current;
     seasonSelect.addEventListener('change', function(e) {{
       current = e.target.value;
-      var d = seasons[current];
-      var update = {{x: d.x, y: d.y, 'marker.size': baseSizes()}};
-      if (d.custom) update.customdata = d.custom;
-      Plotly.restyle('{div_id}', update, traceIndices);
       if (subtitles[current]) {{
         Plotly.relayout('{div_id}', {{'title.subtitle.text': subtitles[current]}});
       }}
-      fillDatalist();
-      // Lo buscado puede no existir en la temporada nueva; y aunque exista,
-      // sus coordenadas son otras, así que hay que re-aplicar la búsqueda.
-      var searchInput = document.getElementById('{div_id}_search');
-      if (!clubMap().hasOwnProperty(searchInput.value)) searchInput.value = '';
-      applySearch(searchInput.value);
-      refreshInsight();
+      applyData();
+    }});
+  }}
+
+  var filterBox = document.getElementById('{div_id}_pfilter');
+  if (filterBox) {{
+    filterBox.checked = false;  // el navegador recuerda el estado al recargar
+    filterBox.addEventListener('change', function(e) {{
+      filterOn = e.target.checked;
+      applyData();
     }});
   }}
 
