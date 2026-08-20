@@ -116,82 +116,82 @@
 </header>
 <main><div class="chart-scroll">
 <style>
-  #chart_4a219800_layout { display:flex; flex-wrap: wrap; align-items:flex-start; gap:20px; max-width: 100%; }
-  #chart_4a219800_plotwrap { position: relative; flex: 1 1 280px; width: 100%; max-width: 820px;
+  #chart_439810ab_layout { display:flex; flex-wrap: wrap; align-items:flex-start; gap:20px; max-width: 100%; }
+  #chart_439810ab_plotwrap { position: relative; flex: 1 1 280px; width: 100%; max-width: 820px;
     aspect-ratio: 1.5185185185185186; min-width: 0; }
-  #chart_4a219800_plotwrap > div { position: absolute; inset: 0; }
-  #chart_4a219800_sidebar { font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  #chart_439810ab_plotwrap > div { position: absolute; inset: 0; }
+  #chart_439810ab_sidebar { font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     padding-top: 54px; flex: 1 1 190px; max-width: 260px; box-sizing: border-box; }
-  #chart_4a219800_sidebar .block { margin-bottom: 22px; }
-  #chart_4a219800_sidebar label { display: block; font-size: 11px; color: var(--color-muted, #898781);
+  #chart_439810ab_sidebar .block { margin-bottom: 22px; }
+  #chart_439810ab_sidebar label { display: block; font-size: 11px; color: var(--color-muted, #898781);
     text-transform: uppercase; letter-spacing: .03em; margin-bottom: 5px; }
-  #chart_4a219800_sidebar .hint { font-size: 11.5px; line-height: 1.45; color: var(--color-muted, #898781);
+  #chart_439810ab_sidebar .hint { font-size: 11.5px; line-height: 1.45; color: var(--color-muted, #898781);
     text-transform: none; letter-spacing: 0; margin-top: -14px; }
   /* Casilla de filtro por punto (ej. "solo sub-21"). Necesita anular el
      `width:100%` de los inputs de arriba, pensado para el buscador. */
-  #chart_4a219800_sidebar .toggle { display: flex; align-items: center; gap: 8px; }
-  #chart_4a219800_sidebar .toggle input { width: auto; flex: none; margin: 0; padding: 0;
+  #chart_439810ab_sidebar .toggle { display: flex; align-items: center; gap: 8px; }
+  #chart_439810ab_sidebar .toggle input { width: auto; flex: none; margin: 0; padding: 0;
     accent-color: var(--color-interactive, #c3c2b7); cursor: pointer; }
-  #chart_4a219800_sidebar .toggle span { font-size: 13px; cursor: pointer;
+  #chart_439810ab_sidebar .toggle span { font-size: 13px; cursor: pointer;
     color: var(--color-primary, #0b0b0b); }
-  #chart_4a219800_sidebar .toggle + .hint { margin-top: 7px; }
-  #chart_4a219800_sidebar input, #chart_4a219800_sidebar select { width: 100%; box-sizing: border-box;
+  #chart_439810ab_sidebar .toggle + .hint { margin-top: 7px; }
+  #chart_439810ab_sidebar input, #chart_439810ab_sidebar select { width: 100%; box-sizing: border-box;
     padding: 7px 9px; font-size: 13px; font-family: inherit; color: var(--color-primary, #0b0b0b);
     background: var(--color-surface, #fcfcfb); border: 1px solid var(--color-border, #c3c2b7);
     border-radius: 6px; transition: border-color .15s ease; }
-  #chart_4a219800_sidebar input:focus, #chart_4a219800_sidebar select:focus {
+  #chart_439810ab_sidebar input:focus, #chart_439810ab_sidebar select:focus {
     outline: none; border-color: var(--color-interactive, #c3c2b7); }
   @media (max-width: 520px) {
-    #chart_4a219800_sidebar { padding-top: 4px; max-width: 100%; }
-    #chart_4a219800_plotwrap { aspect-ratio: 0.9111111111111111; }
+    #chart_439810ab_sidebar { padding-top: 4px; max-width: 100%; }
+    #chart_439810ab_plotwrap { aspect-ratio: 0.9111111111111111; }
   }
-  #chart_4a219800_insight { font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  #chart_439810ab_insight { font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     max-width: 820px; margin: 18px 0 4px; display: flex; flex-direction: column; gap: 14px;
     font-size: 13.5px; line-height: 1.58; color: var(--color-text-body, #52514e); }
-  #chart_4a219800_insight h4 { margin: 0 0 5px; font-size: 11px; font-weight: 700;
+  #chart_439810ab_insight h4 { margin: 0 0 5px; font-size: 11px; font-weight: 700;
     text-transform: uppercase; letter-spacing: .05em;
     color: var(--color-muted, #898781); }
-  #chart_4a219800_insight p { margin: 0 0 7px; }
-  #chart_4a219800_insight p:last-child { margin-bottom: 0; }
-  #chart_4a219800_insight strong { color: var(--color-primary, #0b0b0b); font-weight: 600; }
-  #chart_4a219800_insight code { font-size: 12.5px;
+  #chart_439810ab_insight p { margin: 0 0 7px; }
+  #chart_439810ab_insight p:last-child { margin-bottom: 0; }
+  #chart_439810ab_insight strong { color: var(--color-primary, #0b0b0b); font-weight: 600; }
+  #chart_439810ab_insight code { font-size: 12.5px;
     background: var(--color-bg, #e1e0d9); padding: 1px 4px; border-radius: 3px; }
-  #chart_4a219800_insight .fv-dyn { border-left: 3px solid var(--color-interactive, #c3c2b7);
+  #chart_439810ab_insight .fv-dyn { border-left: 3px solid var(--color-interactive, #c3c2b7);
     padding: 2px 0 2px 13px; }
-  #chart_4a219800_insight .fv-estado { color: var(--color-interactive, #c3c2b7);
+  #chart_439810ab_insight .fv-estado { color: var(--color-interactive, #c3c2b7);
     font-weight: 700; letter-spacing: .03em; }
-  #chart_4a219800_insight .fv-salta { margin-top: 6px; }
-  #chart_4a219800_insight details { border-top: 1px solid var(--color-border, #e1e0d9);
+  #chart_439810ab_insight .fv-salta { margin-top: 6px; }
+  #chart_439810ab_insight details { border-top: 1px solid var(--color-border, #e1e0d9);
     padding-top: 11px; }
-  #chart_4a219800_insight summary { cursor: pointer; font-size: 11px; font-weight: 700;
+  #chart_439810ab_insight summary { cursor: pointer; font-size: 11px; font-weight: 700;
     text-transform: uppercase; letter-spacing: .05em;
     color: var(--color-muted, #898781); list-style: none; }
-  #chart_4a219800_insight summary::-webkit-details-marker { display: none; }
-  #chart_4a219800_insight summary::after { content: " +"; }
-  #chart_4a219800_insight details[open] summary::after { content: " −"; }
-  #chart_4a219800_insight details[open] summary { margin-bottom: 9px; }
-  #chart_4a219800_insight summary:hover { color: var(--color-interactive, #0b0b0b); }
+  #chart_439810ab_insight summary::-webkit-details-marker { display: none; }
+  #chart_439810ab_insight summary::after { content: " +"; }
+  #chart_439810ab_insight details[open] summary::after { content: " −"; }
+  #chart_439810ab_insight details[open] summary { margin-bottom: 9px; }
+  #chart_439810ab_insight summary:hover { color: var(--color-interactive, #0b0b0b); }
 </style>
-<div id="chart_4a219800_layout">
-  <div id="chart_4a219800_plotwrap"><div style="height:100%; width:100%;">                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
-        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha256-jvTGqxNp8AGWEcvNLVuKr+8j5dGe9Yw51LQkmDH+IYA=" crossorigin="anonymous"></script>                <div id="chart_4a219800" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("chart_4a219800")) {                    Plotly.newPlot(                        "chart_4a219800",                        [{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003e%{y:.2f}\u003cextra\u003eBundesliga\u003c\u002fextra\u003e","line":{"color":"#e34948","width":2.6},"marker":{"color":"#e34948","line":{"color":"#fcfcfb","width":1},"size":8},"mode":"lines+markers","name":"Bundesliga","x":["2021-22","2022-23","2023-24","2024-25","2025-26"],"y":{"dtype":"f8","bdata":"RkZGRkbGJ0AoKCgoKKgnQKRO+aNOeSZADbhiDbhiJUAvhNkuhNkkQA=="},"type":"scatter"},{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003e%{y:.2f}\u003cextra\u003eSerie A\u003c\u002fextra\u003e","line":{"color":"#2a78d6","width":2.6},"marker":{"color":"#2a78d6","line":{"color":"#fcfcfb","width":1},"size":8},"mode":"lines+markers","name":"Serie A","x":["2021-22","2022-23","2023-24","2024-25","2025-26"],"y":{"dtype":"f8","bdata":"Jk79nluiKkBpxwqEkbYoQI8VCCPtGChAQ3kN5TUUKUBZgTDSjlUpQA=="},"type":"scatter"},{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003e%{y:.2f}\u003cextra\u003eLigue 1\u003c\u002fextra\u003e","line":{"color":"#2e413a","width":2.6},"marker":{"color":"#2e413a","line":{"color":"#fcfcfb","width":1},"size":8},"mode":"lines+markers","name":"Ligue 1","x":["2021-22","2022-23","2023-24","2024-25","2025-26"],"y":{"dtype":"f8","bdata":"UV5DeQ1lJ0BDeQ3lNdQoQPHw8PDw8ChAbBfCbBdCKEAphvrLESkoQA=="},"type":"scatter"},{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003e%{y:.2f}\u003cextra\u003eLa Liga\u003c\u002fextra\u003e","line":{"color":"#eda100","width":2.6},"marker":{"color":"#eda100","line":{"color":"#fcfcfb","width":1},"size":8},"mode":"lines+markers","name":"La Liga","x":["2021-22","2022-23","2023-24","2024-25","2025-26"],"y":{"dtype":"f8","bdata":"nlvi1O95KkBSXkN5DeUpQAXCSDtW4ClAbolTv+fWKECSdqxAGCkpQA=="},"type":"scatter"},{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003e%{y:.2f}\u003cextra\u003ePremier League\u003c\u002fextra\u003e","line":{"color":"#e87ba4","width":2.6},"marker":{"color":"#e87ba4","line":{"color":"#fcfcfb","width":1},"size":8},"mode":"lines+markers","name":"Premier League","x":["2021-22","2022-23","2023-24","2024-25","2025-26"],"y":{"dtype":"f8","bdata":"qt9zS5w6JEAO5TWU15AlQPC5JU79HiZAmpmZmZkZJkD6PbfEqZ8lQA=="},"type":"scatter"}],                        {"template":{"layout":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12},"hoverlabel":{"bgcolor":"#fcfcfb","bordercolor":"#c3c2b7","font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11}},"margin":{"b":60,"l":70,"r":40,"t":90},"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(0,0,0,0)","title":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":18},"subtitle":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12.5}},"x":0.03,"xanchor":"left"},"xaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"},"yaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"}}},"title":{"subtitle":{"text":"Faltas — promedio por equipo de cada liga, temporada a temporada"},"text":"Evolución del estilo por liga"},"xaxis":{"title":{"text":"Temporada"},"type":"category"},"yaxis":{"title":{"text":"Faltas"}},"autosize":true},                        {"displaylogo": false, "responsive": true, "displayModeBar": false}                    )                };            </script>        </div></div>
-  <div id="chart_4a219800_sidebar">
+<div id="chart_439810ab_layout">
+  <div id="chart_439810ab_plotwrap"><div style="height:100%; width:100%;">                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha256-jvTGqxNp8AGWEcvNLVuKr+8j5dGe9Yw51LQkmDH+IYA=" crossorigin="anonymous"></script>                <div id="chart_439810ab" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("chart_439810ab")) {                    Plotly.newPlot(                        "chart_439810ab",                        [{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003e%{y:.2f}\u003cextra\u003eBundesliga\u003c\u002fextra\u003e","line":{"color":"#e34948","width":2.6},"marker":{"color":"#e34948","line":{"color":"#fcfcfb","width":1},"size":8},"mode":"lines+markers","name":"Bundesliga","x":["2021-22","2022-23","2023-24","2024-25","2025-26"],"y":{"dtype":"f8","bdata":"RkZGRkbGJ0AoKCgoKKgnQKRO+aNOeSZADbhiDbhiJUAvhNkuhNkkQA=="},"type":"scatter"},{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003e%{y:.2f}\u003cextra\u003eSerie A\u003c\u002fextra\u003e","line":{"color":"#2a78d6","width":2.6},"marker":{"color":"#2a78d6","line":{"color":"#fcfcfb","width":1},"size":8},"mode":"lines+markers","name":"Serie A","x":["2021-22","2022-23","2023-24","2024-25","2025-26"],"y":{"dtype":"f8","bdata":"Jk79nluiKkBpxwqEkbYoQI8VCCPtGChAQ3kN5TUUKUBZgTDSjlUpQA=="},"type":"scatter"},{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003e%{y:.2f}\u003cextra\u003eLigue 1\u003c\u002fextra\u003e","line":{"color":"#2e413a","width":2.6},"marker":{"color":"#2e413a","line":{"color":"#fcfcfb","width":1},"size":8},"mode":"lines+markers","name":"Ligue 1","x":["2021-22","2022-23","2023-24","2024-25","2025-26"],"y":{"dtype":"f8","bdata":"UV5DeQ1lJ0BDeQ3lNdQoQPHw8PDw8ChAbBfCbBdCKEAphvrLESkoQA=="},"type":"scatter"},{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003e%{y:.2f}\u003cextra\u003eLa Liga\u003c\u002fextra\u003e","line":{"color":"#eda100","width":2.6},"marker":{"color":"#eda100","line":{"color":"#fcfcfb","width":1},"size":8},"mode":"lines+markers","name":"La Liga","x":["2021-22","2022-23","2023-24","2024-25","2025-26"],"y":{"dtype":"f8","bdata":"nlvi1O95KkBSXkN5DeUpQAXCSDtW4ClAbolTv+fWKECSdqxAGCkpQA=="},"type":"scatter"},{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003e%{y:.2f}\u003cextra\u003ePremier League\u003c\u002fextra\u003e","line":{"color":"#e87ba4","width":2.6},"marker":{"color":"#e87ba4","line":{"color":"#fcfcfb","width":1},"size":8},"mode":"lines+markers","name":"Premier League","x":["2021-22","2022-23","2023-24","2024-25","2025-26"],"y":{"dtype":"f8","bdata":"qt9zS5w6JEAO5TWU15AlQPC5JU79HiZAmpmZmZkZJkD6PbfEqZ8lQA=="},"type":"scatter"}],                        {"template":{"layout":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12},"hoverlabel":{"bgcolor":"#fcfcfb","bordercolor":"#c3c2b7","font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11}},"margin":{"b":60,"l":70,"r":40,"t":90},"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(0,0,0,0)","title":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":18},"subtitle":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12.5}},"x":0.03,"xanchor":"left"},"xaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"},"yaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"}}},"title":{"subtitle":{"text":"Faltas — promedio por equipo de cada liga, temporada a temporada"},"text":"Evolución del estilo por liga"},"xaxis":{"title":{"text":"Temporada"},"type":"category"},"yaxis":{"title":{"text":"Faltas"}},"autosize":true},                        {"displaylogo": false, "responsive": true, "displayModeBar": false}                    )                };            </script>        </div></div>
+  <div id="chart_439810ab_sidebar">
     <div class="block">
       <label>Métrica</label>
-      <select id="chart_4a219800_metric"><option value="sh_Standard_Sh/90">Tiros</option><option value="ov_Per 90 Minutes_Gls">Goles</option><option value="sh_Standard_G/Sh">G/Sh</option><option value="gk_Performance_CS%">CS%</option><option value="p90_TklW">Tackles</option><option value="p90_Int">Intercep.</option><option value="p90_Off">Offsides</option><option value="p90_Fls">Faltas</option></select>
+      <select id="chart_439810ab_metric"><option value="sh_Standard_Sh/90">Tiros</option><option value="ov_Per 90 Minutes_Gls">Goles</option><option value="sh_Standard_G/Sh">G/Sh</option><option value="gk_Performance_CS%">CS%</option><option value="p90_TklW">Tackles</option><option value="p90_Int">Intercep.</option><option value="p90_Off">Offsides</option><option value="p90_Fls">Faltas</option></select>
     </div>
     <div class="block"><div class="hint">Promedio por equipo de cada liga, temporada a temporada. Las métricas son las mismas 8 ejes del radar.</div></div>
   </div>
 </div>
-<div id="chart_4a219800_insight">
+<div id="chart_439810ab_insight">
   <div>
     <h4>Qué mirar aquí</h4>
     <p>Cada línea es una liga a lo largo de las 5 temporadas. Lo que importa es si las líneas <strong>se mueven juntas</strong> —eso apunta a un cambio de la competición o del arbitraje, no de los equipos— o si una se separa del resto por su cuenta.</p>
   </div>
   <div class="fv-dyn">
-    <h4>En lo que estás viendo · <span class="fv-estado" id="chart_4a219800_ins_estado">Faltas</span></h4>
-    <p id="chart_4a219800_ins_fija">En las 5 temporadas la media de <strong>Faltas</strong> bajó de 12.05 a 11.71 (3 de las 5 ligas a la baja).</p>
-    <p class="fv-salta" id="chart_4a219800_ins_salta">La que más se movió es <strong>Bundesliga</strong>, que bajó de 11.89 a 10.42 (-12%), mientras las otras cuatro se movieron menos.</p>
+    <h4>En lo que estás viendo · <span class="fv-estado" id="chart_439810ab_ins_estado">Faltas</span></h4>
+    <p id="chart_439810ab_ins_fija">En las 5 temporadas la media de <strong>Faltas</strong> bajó de 12.05 a 11.71 (3 de las 5 ligas a la baja).</p>
+    <p class="fv-salta" id="chart_439810ab_ins_salta">La que más se movió es <strong>Bundesliga</strong>, que bajó de 11.89 a 10.42 (-12%), mientras las otras cuatro se movieron menos.</p>
   </div>
   <details>
     <summary>Por qué estas variables</summary>
@@ -205,14 +205,14 @@
   function setInsight(key, estado) {
     var d = insights[key];
     if (!d) return;
-    document.getElementById('chart_4a219800_ins_estado').textContent = estado;
-    document.getElementById('chart_4a219800_ins_fija').innerHTML = d.fija;
-    var s = document.getElementById('chart_4a219800_ins_salta');
+    document.getElementById('chart_439810ab_ins_estado').textContent = estado;
+    document.getElementById('chart_439810ab_ins_fija').innerHTML = d.fija;
+    var s = document.getElementById('chart_439810ab_ins_salta');
     s.innerHTML = d.salta || '';
     s.style.display = d.salta ? '' : 'none';
   }
   specs.forEach(function(spec) {
-    var el = document.getElementById('chart_4a219800_' + spec.id);
+    var el = document.getElementById('chart_439810ab_' + spec.id);
     el.value = spec.default;
     el.addEventListener('change', function(e) {
       var u = spec.updates[e.target.value];
@@ -224,11 +224,11 @@
         // dict = todas las trazas; lista = pasos con sus propios índices
         var steps = Array.isArray(u.restyle) ? u.restyle : [{update: u.restyle}];
         steps.forEach(function(s) {
-          if (s.traces) Plotly.restyle('chart_4a219800', s.update, s.traces);
-          else Plotly.restyle('chart_4a219800', s.update);
+          if (s.traces) Plotly.restyle('chart_439810ab', s.update, s.traces);
+          else Plotly.restyle('chart_439810ab', s.update);
         });
       }
-      if (u.relayout) Plotly.relayout('chart_4a219800', u.relayout);
+      if (u.relayout) Plotly.relayout('chart_439810ab', u.relayout);
     });
   });
 })();
