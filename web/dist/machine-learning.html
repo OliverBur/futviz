@@ -114,12 +114,39 @@
     line-height: 1.35; margin-bottom: 6px; }
   a.card .card-sub { font-size: 13px; font-weight: 400; color: var(--color-muted); line-height: 1.5; }
 
+  /* Variante "herramienta" (Crea tu gráfico). Ocupa la fila entera y va con
+     el fondo de acento porque no es una gráfica más de la grilla: las otras
+     son una lectura ya hecha y esta es un banco de trabajo. Va al final, así
+     que la fila completa además cierra la grilla en vez de dejar una card
+     suelta en la última fila. */
+  a.card--tool { grid-column: 1 / -1; position: relative; align-items: center;
+    gap: 18px; padding: 24px 26px 24px 30px; overflow: hidden;
+    background: var(--color-brand-accent-soft); border-color: rgba(57, 153, 6, 0.35); }
+  /* Misma barra de acento que el <h1> de la sección. */
+  a.card--tool::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 4px; background: var(--color-brand-accent); }
+  a.card--tool .card-icon { width: 46px; height: 46px; border-radius: 12px;
+    background: var(--color-surface); }
+  a.card--tool .card-icon svg { width: 22px; height: 22px; }
+  a.card--tool .card-title { font-size: 18px; }
+  a.card--tool .card-sub { font-size: 13.5px; max-width: 66ch; }
+  .card-badge { display: inline-block; margin-bottom: 8px; padding: 3px 9px;
+    font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+    color: var(--color-primary); background: var(--color-surface);
+    border: 1px solid rgba(57, 153, 6, 0.35); border-radius: 999px; }
+  .card-cta { display: none; }
+
   @media (min-width: 640px) {
     header { padding: 20px 32px 28px; }
     h1 { font-size: 28px; }
     .lead { font-size: 15px; }
     main { padding: 36px 32px 72px; }
     .grid { grid-template-columns: repeat(2, 1fr); gap: 18px; }
+    .card-cta { display: flex; align-items: center; gap: 7px; flex: none; margin-left: auto;
+      font-size: 13.5px; font-weight: 600; color: var(--color-interactive); }
+    .card-cta svg { width: 16px; height: 16px; }
+    a.card--tool:hover .card-cta svg { transform: translateX(3px); }
+    .card-cta svg { transition: transform .18s ease; }
   }
   @media (min-width: 960px) {
     .grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }

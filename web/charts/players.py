@@ -375,7 +375,7 @@ def chart_explorer(df, seasons, season_data):
     `viz_theme.explorer_chart_html`)."""
     return ChartPage(
         slug="crea-tu-grafico-jugadores", section=SECTION, title="Crea tu gráfico",
-        subtitle="Elige dos variables de jugador y mira cuánto se parecen.",
+        subtitle=f"Cruza cualquier par de las {len(VARIABLES)} variables de jugador — y el r² te dice si de verdad son dos cosas distintas o la misma medida dos veces.",
         body_html=explorer_chart_html(
             season_data, VARIABLES, name_col="player", search_label="jugador",
             entidad="jugadores", default_x="shots", default_y="goals",

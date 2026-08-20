@@ -654,7 +654,7 @@ def chart_explorer(df, seasons, season_data):
     `viz_theme.explorer_chart_html`)."""
     return ChartPage(
         slug="crea-tu-grafico-equipos", section=SECTION, title="Crea tu gráfico",
-        subtitle="Elige dos variables de equipo y mira cuánto se parecen.",
+        subtitle=f"Cruza cualquier par de las {len(VARIABLES)} variables de equipo — y el r² te dice si de verdad son dos cosas distintas o la misma medida dos veces.",
         body_html=explorer_chart_html(
             season_data, VARIABLES, name_col="Squad", search_label="club",
             entidad="equipos", default_x="ov_Poss", default_y="pt_Team Success_PPM",
