@@ -10,8 +10,9 @@ data/.fbref_html/
 # web/dist, no construye nada.
 data/processed/
 
-# Lock que deja seleniumbase al bajar chromedriver
-code/downloaded_files/
+# Lock que deja seleniumbase al bajar chromedriver. Sin prefijo de ruta:
+# lo crea en el directorio desde el que se corra el script, no siempre code/
+downloaded_files/
 .ipynb_checkpoints/
 .claude/
 BITACORA.md

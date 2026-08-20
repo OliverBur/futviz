@@ -234,6 +234,26 @@ def _insight_css(div_id, width):
   #{div_id}_insight summary:hover {{ color: var(--color-interactive, {INK["primary"]}); }}"""
 
 
+def _div_id(fig, *extra):
+    """Id del `<div>` del gráfico, derivado de su contenido.
+
+    Era `uuid4()`, o sea uno distinto en cada build. Como el id aparece decenas
+    de veces dentro del JS de la página, reconstruir el sitio sin cambiar nada
+    ensuciaba **todos** los `web/dist/*.html` con un diff enorme y escondía los
+    cambios de verdad. Derivándolo del contenido, el id solo cambia cuando
+    cambia el gráfico — que es justo cuando el diff tiene que aparecer.
+
+    `extra` son las cosas que definen el gráfico pero no viven en la figura
+    (columnas, payload de temporadas): sin ellas dos gráficos que se ven igual
+    pero se comportan distinto compartirían id, y el JS del segundo terminaría
+    manipulando el primero."""
+    import hashlib
+    import plotly.io as pio
+
+    semilla = pio.to_json(fig) + "|" + "|".join(str(e) for e in extra)
+    return "chart_" + hashlib.sha1(semilla.encode("utf-8")).hexdigest()[:8]
+
+
 def _insight_html(div_id, ins, key, estado):
     d = ins["dinamico"][key]
     salta = d.get("salta")
@@ -347,10 +367,9 @@ def select_chart_html(fig, controls, width=760, height=560, hint=None, min_width
 
     Devuelve el HTML como string."""
     import json
-    import uuid
     import plotly.io as pio
 
-    div_id = f"chart_{uuid.uuid4().hex[:8]}"
+    div_id = _div_id(fig, controls)
     fig.update_layout(autosize=True)
     plot_html = pio.to_html(fig, full_html=False, include_plotlyjs="cdn",
                              div_id=div_id, config={"displaylogo": False, "responsive": True, "displayModeBar": False},
@@ -505,10 +524,9 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     Devuelve el HTML como string (no lo muestra) — ver `render_with_sidebar`
     para mostrarlo directo en un notebook."""
     import json
-    import uuid
     import plotly.io as pio
 
-    div_id = f"chart_{uuid.uuid4().hex[:8]}"
+    div_id = _div_id(fig, x_col, y_col, name_col, sorted(season_data or ()))
     fig.update_layout(autosize=True)
     plot_html = pio.to_html(fig, full_html=False, include_plotlyjs="cdn",
                              div_id=div_id, config={"displaylogo": False, "responsive": True, "displayModeBar": False},
@@ -830,10 +848,9 @@ def plot_html(fig, width=680, height=480):
     Responsivo con el mismo criterio (contenedor con relación de aspecto
     fija en vez de tamaño en px). Devuelve el HTML como string; ver
     `render_plot` para mostrarlo directo en un notebook."""
-    import uuid
     import plotly.io as pio
 
-    div_id = f"chart_{uuid.uuid4().hex[:8]}"
+    div_id = _div_id(fig)
     fig.update_layout(autosize=True)
     inner = pio.to_html(fig, full_html=False, include_plotlyjs="cdn",
                          div_id=div_id, config={"displaylogo": False, "responsive": True, "displayModeBar": False},
