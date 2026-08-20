@@ -4,6 +4,7 @@ el HTML de un gráfico (Plotly vía `viz_theme.sidebar_chart_html`/`plot_html`,
 o una figura de matplotlib exportada a PNG) dentro de una página con la
 identidad visual del proyecto, más un índice que las enlaza."""
 
+import re
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -20,6 +21,19 @@ CODE_DIR = REPO_ROOT / "code"
 SEASON = "2025-26"
 SEASON_DIR = DATA_DIR / SEASON
 PROCESSED_DIR = DATA_DIR / "processed"
+
+# Las temporadas que hay descargadas, leídas de las carpetas de `data/` en vez
+# de listadas a mano: es lo que dice el pie de la landing, y agregar una
+# temporada no tiene por qué obligar a acordarse de tocar un literal acá.
+SEASONS = sorted(d.name for d in DATA_DIR.iterdir()
+                 if d.is_dir() and re.fullmatch(r"\d{4}-\d{2}", d.name))
+
+# Crédito de fuentes del pie de la landing. FBref publica las tablas de equipo;
+# Understat es de donde salen los jugadores (xG/xA, que FBref dejó de publicar
+# en la versión gratuita) y el detalle de tiros.
+FUENTES_SITIO = (f"Datos: FBref (equipos) y Understat (jugadores y tiros) · "
+                 f"Las 5 grandes ligas de Europa, temporadas "
+                 f"{SEASONS[0]} a {SEASONS[-1]}")
 
 sys.path.insert(0, str(CODE_DIR))
 
@@ -113,11 +127,25 @@ PLOTLY_THEME_SCRIPT = """<script>
     return patch;
   }
 
+  // La barra de color de un mapa de calor no es un eje del layout, así que
+  // patchFor() no la ve: sus rótulos viven dentro de la traza y hay que
+  // recolorearlos con restyle o se quedan en tinta oscura sobre fondo oscuro.
+  function patchColorbars(gd, theme) {
+    var c = theme === 'dark' ? DARK : LIGHT;
+    var conBarra = [];
+    (gd.data || []).forEach(function(t, i) { if (t.colorbar) conBarra.push(i); });
+    if (conBarra.length) {
+      Plotly.restyle(gd, {'colorbar.tickfont.color': c.muted,
+                          'colorbar.title.font.color': c.secondary}, conBarra);
+    }
+  }
+
   function syncPlotly() {
     if (!window.Plotly) return;
     var theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
     document.querySelectorAll('.js-plotly-plot').forEach(function(gd) {
       Plotly.relayout(gd, patchFor(gd, theme));
+      patchColorbars(gd, theme);
     });
   }
   syncPlotly();
@@ -168,6 +196,7 @@ class ArticlePage:
     deck: str          # entradilla larga, arriba del artículo
     body_html: str
     meta: list         # pares (etiqueta, valor) para la barra de metadatos
+    fuente: str        # origen de los datos, para el pie del artículo
     kind: str = "article"
     href_prefix: str = "analisis/"
 
@@ -201,6 +230,24 @@ CHART_ICONS = {
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
         'stroke-linecap="round" stroke-linejoin="round"><path d="M3 20V4M3 20h18"/>'
         '<path d="m6 15 4-5 4 3 5-7"/></svg>'
+    ),
+    # Explorador: los deslizadores del panel de control, porque lo que
+    # distingue a esa página no es la forma del gráfico (es un scatter más)
+    # sino que las variables las elige quien mira.
+    "explorer": (
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+        'stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h16"/>'
+        '<circle cx="9" cy="7" r="2" fill="var(--color-bg)"/>'
+        '<circle cx="16" cy="12" r="2" fill="var(--color-bg)"/>'
+        '<circle cx="7" cy="17" r="2" fill="var(--color-bg)"/></svg>'
+    ),
+    # Mapa de calor: la grilla de celdas de distinta intensidad, que es lo
+    # único que lo distingue de un gráfico de barras a este tamaño.
+    "heatmap": (
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+        'stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="1"/>'
+        '<path d="M9 3v18M15 3v18M3 9h18M3 15h18"/>'
+        '<rect x="9" y="9" width="6" height="6" fill="currentColor" stroke="none"/></svg>'
     ),
     # Artículo: hoja con líneas de texto — distinto de los íconos de
     # gráfico para que en la grilla se note que ahí hay una lectura, no
@@ -459,7 +506,7 @@ INDEX_TEMPLATE = """<!doctype html>
 </header>
 <main class="hub-main">
   <div class="cards">{cards}</div>
-  <p class="foot">Datos: FBref (equipos) &amp; Understat (jugadores) · Temporada 2025/2026</p>
+  <p class="foot">{fuentes}</p>
 </main>
 {theme_toggle_script}
 </body>
@@ -718,7 +765,7 @@ ARTICLE_PAGE_TEMPLATE = """<!doctype html>
   <article>{body}</article>
   <div class="wrap article-end">
     <a href="../{section_slug}.html">&larr; Volver a {section_name}</a>
-    <span class="note">Datos: fbref · temporada 2025-26</span>
+    <span class="note">Datos: {fuente}</span>
   </div>
 </main>
 {theme_toggle_script}
@@ -782,7 +829,7 @@ def write_article_page(page: "ArticlePage", dist_dir: Path) -> Path:
 
     html = ARTICLE_PAGE_TEMPLATE.format(
         title=page.title, subtitle=page.subtitle, deck=page.deck, body=page.body_html,
-        meta=meta_html, section_name=page.section,
+        meta=meta_html, fuente=page.fuente, section_name=page.section,
         section_slug=section_meta.get("slug", "index"),
         brand_root=BRAND_ROOT_CSS, font_links=FONT_LINKS,
         theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML,
@@ -863,7 +910,7 @@ def write_index(pages: list[ChartPage], dist_dir: Path) -> Path:
     )
 
     html = INDEX_TEMPLATE.format(
-        cards=cards, brand_root=BRAND_ROOT_CSS, font_links=FONT_LINKS,
+        cards=cards, fuentes=FUENTES_SITIO, brand_root=BRAND_ROOT_CSS, font_links=FONT_LINKS,
         theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML,
         theme_toggle_script=THEME_TOGGLE_SCRIPT,
     )
