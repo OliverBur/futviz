@@ -7,15 +7,66 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+from functools import partial
+
 import insights as ins
 from site_utils import PROCESSED_DIR, ChartPage
 from viz_theme import (
-    LEAGUE_ORDER, SEQUENTIAL_BLUE, INK,
-    league_color, sidebar_chart_html, select_chart_html,
-    league_box_season_html,
+    LEAGUE_ORDER, SEQUENTIAL_BLUE, INK, FUENTE_FBREF,
+    league_color, league_box_season_html,
 )
+from viz_theme import explorer_chart_html as _explorer_chart_html
+from viz_theme import sidebar_chart_html as _sidebar_chart_html
+from viz_theme import select_chart_html as _select_chart_html
 
 SECTION = "Equipos"
+
+# Los nueve gráficos de la sección salen de las mismas tablas de equipo de
+# FBref, así que el crédito que va debajo de cada uno se fija una sola vez acá
+# en vez de repetirse en cada llamada — un gráfico nuevo lo hereda en vez de
+# quedarse sin fuente por olvido.
+sidebar_chart_html = partial(_sidebar_chart_html, fuente=FUENTE_FBREF)
+select_chart_html = partial(_select_chart_html, fuente=FUENTE_FBREF)
+explorer_chart_html = partial(_explorer_chart_html, fuente=FUENTE_FBREF)
+
+# Las variables que se pueden poner en cada eje de "Crea tu gráfico":
+# (columna, etiqueta, grupo del desplegable, decimales con los que se muestra).
+#
+# Están casi todas por 90 minutos y no en total a propósito. Las cinco ligas no
+# juegan la misma cantidad de partidos (la Bundesliga 34, las otras 38) y Ligue 1
+# cambió de 20 a 18 equipos en 2023-24, así que cualquier total mete esa
+# diferencia dentro del dato y la mitad de los cruces terminarían midiendo
+# "cuántos partidos jugó" en vez de lo que dice la etiqueta. Las excepciones son
+# las que ya vienen normalizadas (porcentajes, promedios) y las rojas, que son
+# tan pocas por partido que la tasa se vuelve ruido.
+VARIABLES = [
+    ("ov_Per 90 Minutes_Gls", "Goles por 90'", "Ataque", 2),
+    ("ov_Per 90 Minutes_Ast", "Asistencias por 90'", "Ataque", 2),
+    ("sh_Standard_Sh/90", "Tiros por 90'", "Ataque", 2),
+    ("sh_Standard_SoT/90", "Tiros a puerta por 90'", "Ataque", 2),
+    ("sh_Standard_SoT%", "% de tiros que van a puerta", "Ataque", 1),
+    ("sh_Standard_G/Sh", "Goles por tiro", "Ataque", 2),
+    ("sh_Standard_G/SoT", "Goles por tiro a puerta", "Ataque", 2),
+    ("p90_Crs", "Centros por 90'", "Ataque", 2),
+    ("p90_Off", "Fueras de juego por 90'", "Ataque", 2),
+
+    ("gk_Performance_GA90", "Goles recibidos por 90'", "Defensa y portería", 2),
+    ("p90_SoTA", "Tiros a puerta recibidos por 90'", "Defensa y portería", 2),
+    ("gk_Performance_Save%", "% de paradas", "Defensa y portería", 1),
+    ("gk_Performance_CS%", "% de porterías a cero", "Defensa y portería", 1),
+    ("p90_TklW", "Entradas ganadas por 90'", "Defensa y portería", 2),
+    ("p90_Int", "Intercepciones por 90'", "Defensa y portería", 2),
+
+    ("p90_Fls", "Faltas cometidas por 90'", "Disciplina", 2),
+    ("p90_Fld", "Faltas recibidas por 90'", "Disciplina", 2),
+    ("p90_CrdY", "Amarillas por 90'", "Disciplina", 2),
+    ("ms_Performance_CrdR", "Rojas (total)", "Disciplina", 0),
+
+    ("ov_Poss", "Posesión (%)", "Contexto y resultado", 1),
+    ("ov_Age", "Edad media de la plantilla", "Contexto y resultado", 1),
+    ("pt_Team Success_PPM", "Puntos por partido", "Contexto y resultado", 2),
+    ("pt_Team Success_+/-90", "Diferencia de goles por 90'", "Contexto y resultado", 2),
+]
 
 # Métricas del radar de perfil de liga. El criterio de selección (eta² +
 # rango relativo + no redundancia) está documentado en la bitácora; acá solo
@@ -44,8 +95,10 @@ def load_data():
     derivadas = {
         col.replace("ms_Performance_", "p90_"): df[col] / df["ms_90s"]
         for col in ["ms_Performance_Fls", "ms_Performance_Off", "ms_Performance_Int",
-                    "ms_Performance_TklW", "ms_Performance_CrdY"]
+                    "ms_Performance_TklW", "ms_Performance_CrdY", "ms_Performance_Crs",
+                    "ms_Performance_Fld"]
     }
+    derivadas["p90_SoTA"] = df["gk_Performance_SoTA"] / df["gk_Playing Time_90s"]
     derivadas["gk_ppm"] = ((df["gk_Performance_W"] * 3 + df["gk_Performance_D"])
                             / df["gk_Playing Time_MP"])
     df = pd.concat([df, pd.DataFrame(derivadas)], axis=1)
@@ -592,6 +645,24 @@ def chart_discipline(df, seasons):
     )
 
 
+def chart_explorer(df, seasons, season_data):
+    """"Crea tu gráfico": el lector elige las dos variables.
+
+    No lleva caja de "qué mirar" porque no hay un "acá" del que hablar: el par
+    de variables lo elige quien mira. Lo que sí lleva es el r² del par elegido,
+    calculado en el navegador sobre los puntos que están dibujados (ver
+    `viz_theme.explorer_chart_html`)."""
+    return ChartPage(
+        slug="crea-tu-grafico-equipos", section=SECTION, title="Crea tu gráfico",
+        subtitle="Elige dos variables de equipo y mira cuánto se parecen.",
+        body_html=explorer_chart_html(
+            season_data, VARIABLES, name_col="Squad", search_label="club",
+            entidad="equipos", default_x="ov_Poss", default_y="pt_Team Success_PPM",
+            base_size=11),
+        kind="explorer",
+    )
+
+
 def build(assets_dir) -> list:
     df = load_data()
     seasons = seasons_of(df)
@@ -612,4 +683,5 @@ def build(assets_dir) -> list:
     pages.append(chart_parity(df, seasons))
     pages.append(chart_age(df, seasons))
     pages.append(chart_discipline(df, seasons))
+    pages.append(chart_explorer(df, seasons, season_data))
     return pages

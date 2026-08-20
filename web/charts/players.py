@@ -1,17 +1,63 @@
 """Gráficos a nivel de jugador para el sitio — mismo código/decisiones que
 `code/eda_players.ipynb`, portado a funciones que devuelven `ChartPage`."""
 
+from functools import partial
+
 import pandas as pd
 import plotly.graph_objects as go
 
 import insights as ins
+import shot_map
 from site_utils import PROCESSED_DIR, ChartPage
 from viz_theme import (
-    LEAGUE_ORDER, league_color, sidebar_chart_html, select_chart_html,
-    league_box_season_html,
+    LEAGUE_ORDER, FUENTE_UNDERSTAT, league_color, league_box_season_html,
 )
+from viz_theme import explorer_chart_html as _explorer_chart_html
+from viz_theme import sidebar_chart_html as _sidebar_chart_html
+from viz_theme import select_chart_html as _select_chart_html
 
 SECTION = "Jugadores"
+
+# Todo lo de esta sección sale de Understat (es quien publica xG/xA a nivel de
+# jugador; FBref dejó de hacerlo), así que el crédito se fija una vez acá. La
+# única excepción es el año de nacimiento del filtro sub-21, que sí viene de
+# FBref y se aclara en el propio filtro.
+sidebar_chart_html = partial(_sidebar_chart_html, fuente=FUENTE_UNDERSTAT)
+select_chart_html = partial(_select_chart_html, fuente=FUENTE_UNDERSTAT)
+explorer_chart_html = partial(_explorer_chart_html, fuente=FUENTE_UNDERSTAT)
+
+# Las variables que se pueden poner en cada eje de "Crea tu gráfico":
+# (columna, etiqueta, grupo del desplegable, decimales con los que se muestra).
+# Los totales conviven con sus tasas por 90' a propósito: son preguntas
+# distintas —quién produjo más en la temporada contra quién produce más cuando
+# está en la cancha— y cruzar una contra la otra es una de las cosas
+# interesantes que se pueden hacer acá.
+VARIABLES = [
+    ("goals", "Goles", "Producción", 0),
+    ("a", "Asistencias", "Producción", 0),
+    ("np_goals", "Goles sin penalti", "Producción", 0),
+    ("g90", "Goles por 90'", "Producción", 2),
+    ("a90", "Asistencias por 90'", "Producción", 2),
+
+    ("xG", "xG", "Esperado", 1),
+    ("xA", "xA", "Esperado", 1),
+    ("np_xg", "xG sin penalti", "Esperado", 1),
+    ("xG90", "xG por 90'", "Esperado", 2),
+    ("xA90", "xA por 90'", "Esperado", 2),
+    ("xg_chain", "xG de las jugadas en que participó", "Esperado", 1),
+    ("xg_buildup", "xG de construcción (sin tiro ni asistencia)", "Esperado", 1),
+
+    ("shots", "Tiros", "Volumen de juego", 0),
+    ("sh90", "Tiros por 90'", "Volumen de juego", 2),
+    ("key_passes", "Pases clave", "Volumen de juego", 0),
+    ("kp90", "Pases clave por 90'", "Volumen de juego", 2),
+
+    ("min", "Minutos jugados", "Contexto y disciplina", 0),
+    ("edad", "Edad", "Contexto y disciplina", 0),
+    ("yellow_cards", "Amarillas", "Contexto y disciplina", 0),
+    ("red_cards", "Rojas", "Contexto y disciplina", 0),
+]
+
 MIN_MINUTES = 500
 
 # Filtro sub-21 de los scatter. `sub21` la calcula `consolidate_data.py` a
@@ -24,7 +70,8 @@ SUB21_FILTER = {
     "label": "Edad",
     "text": "Solo sub-21",
     "hint": "Menos de 21 al arrancar la temporada — cuenta el año de "
-            "nacimiento, no el cumpleaños.",
+            "nacimiento, no el cumpleaños. La edad es el único dato de esta "
+            "sección que no sale de Understat, que no la publica: viene de FBref.",
     # Cómo se nombra el filtro en el rótulo de la caja de lectura ("2025-26 ·
     # Ligue 1 · sub-21"), que es lo que le dice al lector sobre qué población
     # están hechas las afirmaciones que está leyendo.
@@ -45,7 +92,23 @@ def load_data():
     df = pd.read_csv(PROCESSED_DIR / "players_all_seasons.csv")
     df["team"] = df["team"].str.split(",").str[-1].str.strip()
     df["liga"] = pd.Categorical(df["liga"], categories=LEAGUE_ORDER, ordered=True)
-    return df[df["min"] >= MIN_MINUTES].reset_index(drop=True)
+    df = df[df["min"] >= MIN_MINUTES].reset_index(drop=True)
+
+    # Derivadas para "Crea tu gráfico". Las tasas por 90' van sobre los minutos
+    # reales y no sobre los partidos: `apps` cuenta también las entradas desde
+    # el banco, así que dividir por ahí le daría una tasa inflada a cualquier
+    # suplente. La edad sale del año de nacimiento con el mismo criterio que
+    # `sub21` (cuenta el año, no el cumpleaños), y queda nula para quien no
+    # cruzó con FBref.
+    noventas = df["min"] / 90
+    df = pd.concat([df, pd.DataFrame({
+        "g90": df["goals"] / noventas,
+        "a90": df["a"] / noventas,
+        "sh90": df["shots"] / noventas,
+        "kp90": df["key_passes"] / noventas,
+        "edad": df["temporada"].str[:4].astype(int) - df["born"],
+    })], axis=1)
+    return df
 
 
 def seasons_of(df):
@@ -285,6 +348,42 @@ def chart_box_xa90(df, seasons):
     )
 
 
+def chart_shot_map():
+    """Mapa de calor de los tiros.
+
+    Es el único gráfico de la sección que no sale de
+    `players_all_seasons.csv` sino del detalle de tiros, y el único cuyo punto
+    no es un jugador sino un remate. Entra igual en Jugadores porque responde a
+    una pregunta de la misma familia que los otros: no cuántos goles hace
+    alguien, sino desde dónde se remata."""
+    df, descartes = shot_map.load(PROCESSED_DIR / "shots_all_seasons.csv")
+    seasons = sorted(df["temporada"].unique())
+    return ChartPage(
+        slug="mapa-tiros", section=SECTION, title="Mapa de calor de los tiros",
+        subtitle="Desde dónde se remata, con filtro de temporada y tipo de tiro.",
+        body_html=shot_map.shot_map_html(df, descartes, seasons),
+        kind="heatmap",
+    )
+
+
+def chart_explorer(df, seasons, season_data):
+    """"Crea tu gráfico": el lector elige las dos variables.
+
+    No lleva caja de "qué mirar" porque no hay un "acá" del que hablar: el par
+    de variables lo elige quien mira. Lo que sí lleva es el r² del par elegido,
+    calculado en el navegador sobre los puntos que están dibujados (ver
+    `viz_theme.explorer_chart_html`)."""
+    return ChartPage(
+        slug="crea-tu-grafico-jugadores", section=SECTION, title="Crea tu gráfico",
+        subtitle="Elige dos variables de jugador y mira cuánto se parecen.",
+        body_html=explorer_chart_html(
+            season_data, VARIABLES, name_col="player", search_label="jugador",
+            entidad="jugadores", default_x="shots", default_y="goals",
+            team_col="team", base_size=BASE_SIZE, point_filter=sub21_filter(df)),
+        kind="explorer",
+    )
+
+
 def build(assets_dir) -> list:
     df = load_data()
     seasons = seasons_of(df)
@@ -295,4 +394,6 @@ def build(assets_dir) -> list:
         chart_profile(df, seasons, season_data),
         chart_box_xg90(df, seasons),
         chart_box_xa90(df, seasons),
+        chart_shot_map(),
+        chart_explorer(df, seasons, season_data),
     ]

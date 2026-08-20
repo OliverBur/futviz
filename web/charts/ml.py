@@ -18,8 +18,9 @@ from sklearn.decomposition import PCA
 from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import StandardScaler
 
-from site_utils import SEASON_DIR, ArticlePage
-from viz_theme import CLUSTER_COLORS, DIVERGING, INK, SEQUENTIAL_BLUE, plot_html
+from site_utils import SEASON, SEASON_DIR, ArticlePage
+from viz_theme import (CLUSTER_COLORS, DIVERGING, FUENTE_FBREF, INK, SEQUENTIAL_BLUE,
+                        plot_html)
 
 SECTION = "Machine Learning"
 RNG = 42
@@ -154,9 +155,12 @@ def _heading(step, title, anchor):
             f'<span class="step">{step}</span>{title}</h2></div>')
 
 
-def _figure(fig, caption, width=880, height=560):
+def _figure(fig, caption, width=880, height=560, fuente=FUENTE_FBREF):
+    """El default es FBref porque este análisis sale de las tablas de equipo;
+    los de `ml_xg.py`, que salen del detalle de tiros, pasan Understat (ver el
+    envoltorio `_figure` de ese módulo)."""
     return (f'<figure class="wrap-wide"><div class="chart-scroll">'
-            f'{plot_html(fig, width=width, height=height)}</div>'
+            f'{plot_html(fig, width=width, height=height, fuente=fuente)}</div>'
             f'<figcaption>{caption}</figcaption></figure>')
 
 
@@ -604,6 +608,7 @@ dejaría de tener que inferirse desde faltas y centros.</p>"""))
             ("Métricas", f"{len(feature_cols)} de estilo, sin datos avanzados"),
             ("Lectura", "~8 min"),
         ],
+        fuente=f"{FUENTE_FBREF} · temporada {SEASON}",
     )
 
 

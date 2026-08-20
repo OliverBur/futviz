@@ -199,10 +199,16 @@
         <label for="chart_16bd1c9f_pfilter" style="display:inline; text-transform:none;
           letter-spacing:0; margin:0;"><span>Solo sub-21</span></label>
       </div>
-      <p class="hint">Menos de 21 al arrancar la temporada — cuenta el año de nacimiento, no el cumpleaños.</p>
+      <p class="hint">Menos de 21 al arrancar la temporada — cuenta el año de nacimiento, no el cumpleaños. La edad es el único dato de esta sección que no sale de Understat, que no la publica: viene de FBref.</p>
     </div>
   </div>
 </div>
+<style>
+  #chart_16bd1c9f_fuente { font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    max-width: 760px; margin: 8px 0 0; text-align: right; font-size: 11.5px;
+    color: var(--color-muted, #898781); }
+</style>
+<p id="chart_16bd1c9f_fuente">Datos: Understat</p>
 <div id="chart_16bd1c9f_insight">
   <div>
     <h4>Qué mirar aquí</h4>
@@ -451,11 +457,25 @@
     return patch;
   }
 
+  // La barra de color de un mapa de calor no es un eje del layout, así que
+  // patchFor() no la ve: sus rótulos viven dentro de la traza y hay que
+  // recolorearlos con restyle o se quedan en tinta oscura sobre fondo oscuro.
+  function patchColorbars(gd, theme) {
+    var c = theme === 'dark' ? DARK : LIGHT;
+    var conBarra = [];
+    (gd.data || []).forEach(function(t, i) { if (t.colorbar) conBarra.push(i); });
+    if (conBarra.length) {
+      Plotly.restyle(gd, {'colorbar.tickfont.color': c.muted,
+                          'colorbar.title.font.color': c.secondary}, conBarra);
+    }
+  }
+
   function syncPlotly() {
     if (!window.Plotly) return;
     var theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
     document.querySelectorAll('.js-plotly-plot').forEach(function(gd) {
       Plotly.relayout(gd, patchFor(gd, theme));
+      patchColorbars(gd, theme);
     });
   }
   syncPlotly();

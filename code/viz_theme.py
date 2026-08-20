@@ -200,6 +200,33 @@ def _md_inline(texto):
     return "".join(partes)
 
 
+# Cómo se nombra cada origen en el crédito que va debajo de cada gráfico. Están
+# acá y no en cada módulo del sitio porque los mismos gráficos se muestran en
+# los notebooks: el crédito tiene que decir lo mismo en los dos lados.
+FUENTE_FBREF = "FBref"
+FUENTE_UNDERSTAT = "Understat"
+
+
+def _fuente_html(div_id, width, fuente):
+    """El crédito de la fuente de datos, alineado al borde derecho del gráfico.
+
+    Va como HTML debajo del gráfico y no como anotación dentro de la figura
+    porque cada gráfico del sitio tiene sus propios márgenes, leyenda y títulos
+    de eje: una anotación anclada al papel termina encimándose a alguno de esos
+    en cuanto la figura cambia de forma, y un crédito no tiene por qué depender
+    de eso. `max-width` es el mismo ancho del gráfico, así que "a la derecha"
+    es el borde derecho del gráfico y no el de la página."""
+    if not fuente:
+        return ""
+    return f"""
+<style>
+  #{div_id}_fuente {{ font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    max-width: {width}px; margin: 8px 0 0; text-align: right; font-size: 11.5px;
+    color: var(--color-muted, {INK["muted"]}); }}
+</style>
+<p id="{div_id}_fuente">Datos: {fuente}</p>"""
+
+
 def _insight_css(div_id, width):
     """La caja de lectura debajo del gráfico. Los colores salen de las variables
     del sitio con los tonos de `INK` como respaldo, igual que la barra lateral:
@@ -297,13 +324,21 @@ def _insight_js(div_id, ins):
   }}"""
 
 
-def _sidebar_css(div_id, width, aspect_ratio):
+def _sidebar_css(div_id, width, aspect_ratio, mobile_aspect=None):
     """Estilos de la barra lateral de controles (gráfico a la izquierda,
     controles en una columna aparte a la derecha, nunca superpuestos).
 
     Compartido por `sidebar_chart_html` (buscador + filtros) y
     `select_chart_html` (solo desplegables), para que los dos tipos de
-    gráfico interactivo del sitio se vean exactamente igual."""
+    gráfico interactivo del sitio se vean exactamente igual.
+
+    En pantalla angosta el gráfico se vuelve más cuadrado: a lo ancho de un
+    teléfono, un scatter con la proporción del escritorio queda demasiado
+    aplastado para distinguir los puntos. `mobile_aspect` anula esa regla para
+    los gráficos donde la proporción no es una preferencia sino parte del
+    contenido — el mapa de tiros dibuja una cancha, y estirar la caja a lo alto
+    no agranda la cancha: solo agrega franjas vacías arriba y abajo."""
+    movil = mobile_aspect or max(aspect_ratio * 0.6, 0.85)
     return f"""
   #{div_id}_layout {{ display:flex; flex-wrap: wrap; align-items:flex-start; gap:20px; max-width: 100%; }}
   #{div_id}_plotwrap {{ position: relative; flex: 1 1 280px; width: 100%; max-width: {width}px;
@@ -332,12 +367,42 @@ def _sidebar_css(div_id, width, aspect_ratio):
     outline: none; border-color: var(--color-interactive, {INK["axis"]}); }}
   @media (max-width: 520px) {{
     #{div_id}_sidebar {{ padding-top: 4px; max-width: 100%; }}
-    #{div_id}_plotwrap {{ aspect-ratio: {max(aspect_ratio * 0.6, 0.85)}; }}
+    #{div_id}_plotwrap {{ aspect-ratio: {movil}; }}
   }}"""
 
 
+def _control_options(c):
+    """La lista plana de valores de un control, los declare como `options` o
+    solo dentro de `groups`."""
+    return c.get("options") or [o for _, opciones in c["groups"] for o in opciones]
+
+
+def _select_options(c):
+    """Los `<option>` de un control, envueltos en `<optgroup>` si declara
+    `groups` = `[(etiqueta o None, [opciones]), ...]`.
+
+    Agrupar hace falta cuando un mismo desplegable mezcla dos taxonomías —el
+    mapa de tiros filtra por jugada Y por parte del cuerpo en un solo control—:
+    sin los grupos la lista se lee como si las opciones fueran excluyentes
+    entre sí, y "cabezazo" y "córner" no lo son."""
+    labels = c.get("labels", {})
+
+    def opt(o):
+        return f'<option value="{o}">{labels.get(o, o)}</option>'
+
+    if not c.get("groups"):
+        return "".join(opt(o) for o in c["options"])
+    partes = []
+    for etiqueta, opciones in c["groups"]:
+        interior = "".join(opt(o) for o in opciones)
+        partes.append(f'<optgroup label="{etiqueta}">{interior}</optgroup>'
+                      if etiqueta else interior)
+    return "".join(partes)
+
+
 def select_chart_html(fig, controls, width=760, height=560, hint=None, min_width=None,
-                       insights=None, insight_control=None):
+                       insights=None, insight_control=None, joint_updates=None,
+                       mobile_aspect=None, fuente=None):
     """Gráfico Plotly con una barra lateral de desplegables genéricos.
 
     Es el hermano simple de `sidebar_chart_html`: sirve para gráficos que no
@@ -359,6 +424,19 @@ def select_chart_html(fig, controls, width=760, height=560, hint=None, min_width
     el filtro de liga y el buscador del otro helper). `hint` es un texto de
     ayuda opcional debajo de los controles.
 
+    `joint_updates` es para los gráficos donde eso **no** alcanza: un mapa de
+    calor no tiene una propiedad por control que se pueda tocar por separado —
+    la matriz `z` depende de la temporada Y del tipo de tiro a la vez, así que
+    dos `restyle` independientes se pisarían. Es un dict
+    `{"valor1|valor2": {"restyle": ..., "relayout": ...}}` con una entrada por
+    combinación de los controles, en el orden en que están declarados, que se
+    aplica después de los `updates` propios de cada control. Con
+    `joint_updates` la caja de lectura también pasa a pedir esa clave
+    compuesta, porque ahí ningún control por sí solo describe lo que se ve.
+
+    Un control puede declarar sus opciones agrupadas (`groups`, ver
+    `_select_options`) en vez de planas.
+
     `min_width` fuerza un ancho mínimo del gráfico en px: para figuras que no
     se pueden achicar sin volverse ilegibles (el radar de 5 subplots), es
     preferible que el contenedor `.chart-scroll` de la página scrollee en
@@ -369,7 +447,7 @@ def select_chart_html(fig, controls, width=760, height=560, hint=None, min_width
     import json
     import plotly.io as pio
 
-    div_id = _div_id(fig, controls)
+    div_id = _div_id(fig, controls, joint_updates)
     fig.update_layout(autosize=True)
     plot_html = pio.to_html(fig, full_html=False, include_plotlyjs="cdn",
                              div_id=div_id, config={"displaylogo": False, "responsive": True, "displayModeBar": False},
@@ -377,14 +455,13 @@ def select_chart_html(fig, controls, width=760, height=560, hint=None, min_width
 
     blocks, specs = [], []
     for c in controls:
-        opts = "".join(f'<option value="{o}">{c.get("labels", {}).get(o, o)}</option>' for o in c["options"])
         blocks.append(f"""
     <div class="block">
       <label>{c["label"]}</label>
-      <select id="{div_id}_{c["id"]}">{opts}</select>
+      <select id="{div_id}_{c["id"]}">{_select_options(c)}</select>
     </div>""")
-        specs.append({"id": c["id"], "default": c.get("default", c["options"][0]),
-                       "updates": c["updates"], "labels": c.get("labels", {})})
+        specs.append({"id": c["id"], "default": c.get("default", _control_options(c)[0]),
+                       "updates": c.get("updates", {}), "labels": c.get("labels", {})})
     if hint:
         blocks.append(f'\n    <div class="block"><div class="hint">{hint}</div></div>')
 
@@ -392,49 +469,68 @@ def select_chart_html(fig, controls, width=760, height=560, hint=None, min_width
                      if min_width else "")
 
     # La caja de lectura la maneja el control que se indique (por defecto el
-    # primero): en el radar es la temporada, en el de evolución la métrica.
+    # primero): en el radar es la temporada, en el de evolución la métrica. Con
+    # `joint_updates` la maneja el estado entero, por la misma razón por la que
+    # el gráfico se actualiza por combinación.
     driver = insight_control or (controls[0]["id"] if controls else None)
-    insight_css = insight_box = insight_js = insight_hook = ""
+    insight_css = insight_box = insight_js = ""
     if insights:
-        ctrl = next(c for c in controls if c["id"] == driver)
-        key0 = ctrl.get("default", ctrl["options"][0])
+        if joint_updates:
+            key0 = "|".join(s["default"] for s in specs)
+            estado0 = " · ".join(s["labels"].get(s["default"], s["default"]) for s in specs)
+        else:
+            ctrl = next(c for c in controls if c["id"] == driver)
+            key0 = ctrl.get("default", _control_options(ctrl)[0])
+            # El rótulo del estado es la etiqueta legible del control, no su
+            # valor: en el de evolución el valor es un nombre de columna
+            # (`p90_Fls`).
+            estado0 = ctrl.get("labels", {}).get(key0, key0)
         insight_css = _insight_css(div_id, width)
-        insight_box = _insight_html(div_id, insights, key0,
-                                     ctrl.get("labels", {}).get(key0, key0))
+        insight_box = _insight_html(div_id, insights, key0, estado0)
         insight_js = _insight_js(div_id, insights)
-        # El rótulo del estado es la etiqueta legible del control, no su valor:
-        # en el de evolución el valor es un nombre de columna (`p90_Fls`).
-        insight_hook = f"""
-      if (spec.id === {json.dumps(driver)}) {{
-        setInsight(e.target.value, spec.labels[e.target.value] || e.target.value);
-      }}"""
 
     html = f"""
-<style>{_sidebar_css(div_id, width, width / height)}{min_width_css}{insight_css}
+<style>{_sidebar_css(div_id, width, width / height, mobile_aspect)}{min_width_css}{insight_css}
 </style>
 <div id="{div_id}_layout">
   <div id="{div_id}_plotwrap">{plot_html}</div>
   <div id="{div_id}_sidebar">{"".join(blocks)}
   </div>
-</div>{insight_box}
+</div>{_fuente_html(div_id, width, fuente)}{insight_box}
 <script>
 (function() {{
-  var specs = {json.dumps(specs)};{insight_js}
+  var specs = {json.dumps(specs)};
+  var joint = {json.dumps(joint_updates or {}, ensure_ascii=False)};
+  var useJoint = {json.dumps(bool(joint_updates))};
+  var driver = {json.dumps(driver)};{insight_js}
+  function valor(spec) {{ return document.getElementById('{div_id}_' + spec.id).value; }}
+  function estado() {{ return specs.map(valor).join('|'); }}
+  function apply(u) {{
+    if (!u) return;
+    if (u.restyle) {{
+      // dict = todas las trazas; lista = pasos con sus propios índices
+      var steps = Array.isArray(u.restyle) ? u.restyle : [{{update: u.restyle}}];
+      steps.forEach(function(s) {{
+        if (s.traces) Plotly.restyle('{div_id}', s.update, s.traces);
+        else Plotly.restyle('{div_id}', s.update);
+      }});
+    }}
+    if (u.relayout) Plotly.relayout('{div_id}', u.relayout);
+  }}
   specs.forEach(function(spec) {{
     var el = document.getElementById('{div_id}_' + spec.id);
     el.value = spec.default;
     el.addEventListener('change', function(e) {{
-      var u = spec.updates[e.target.value];{insight_hook}
-      if (!u) return;
-      if (u.restyle) {{
-        // dict = todas las trazas; lista = pasos con sus propios índices
-        var steps = Array.isArray(u.restyle) ? u.restyle : [{{update: u.restyle}}];
-        steps.forEach(function(s) {{
-          if (s.traces) Plotly.restyle('{div_id}', s.update, s.traces);
-          else Plotly.restyle('{div_id}', s.update);
-        }});
+      apply(spec.updates[e.target.value]);
+      if (useJoint) apply(joint[estado()]);
+      if (typeof setInsight !== 'function') return;
+      if (useJoint) {{
+        setInsight(estado(), specs.map(function(s) {{
+          var v = valor(s); return s.labels[v] || v;
+        }}).join(' · '));
+      }} else if (spec.id === driver) {{
+        setInsight(e.target.value, spec.labels[e.target.value] || e.target.value);
       }}
-      if (u.relayout) Plotly.relayout('{div_id}', u.relayout);
     }});
   }});
 }})();
@@ -469,7 +565,7 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
                         extra_traces=0, base_size=11, highlight_size=20,
                         width=680, height=560, name_col="Squad", search_label="club",
                         season_data=None, custom_cols=None, subtitle_template=None,
-                        insights=None, point_filter=None):
+                        insights=None, point_filter=None, fuente=None):
     """Arma el HTML/JS de un gráfico Plotly con una barra lateral genuina a
     la derecha (no superpuesta, es un elemento aparte en un layout flex):
     - `<select>` de temporada (solo si se pasa `season_data`).
@@ -641,7 +737,7 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
       </select>
     </div>{filter_block}
   </div>
-</div>{insight_box}
+</div>{_fuente_html(div_id, width, fuente)}{insight_box}
 <script>
 (function() {{
   var seasons = {json.dumps(seasons_payload)};
@@ -833,6 +929,420 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     return html
 
 
+def explorer_chart_html(season_data, variables, name_col="Squad", search_label="club",
+                         entidad="equipos", default_x=None, default_y=None,
+                         width=760, height=580, base_size=8, highlight_size=20,
+                         team_col=None, point_filter=None, fuente=None):
+    """Scatter donde las dos variables las elige quien mira, no quien lo escribió.
+
+    Es el tercer tipo de gráfico interactivo del sitio, y existe porque los
+    otros dos no cubren este caso: `sidebar_chart_html` dibuja UN par de
+    columnas fijo y `select_chart_html` cambia la figura con updates
+    precalculados. Acá los pares posibles son N×N, o sea cientos, y
+    precalcularlos sería absurdo — así que el payload lleva la **tabla** (todas
+    las variables de todas las entidades, una sola vez) y el JS arma el par que
+    se le pida. Termina pesando menos que un scatter fijo con la misma cantidad
+    de puntos, porque no duplica nada por combinación.
+
+    `variables` es la lista de `(columna, etiqueta, grupo, decimales)`, en el
+    orden en que se listan en los dos desplegables; el grupo las junta en un
+    `<optgroup>` ("Ataque", "Defensa", ...) y los decimales fijan tanto el
+    redondeo del payload como el formato del hover.
+
+    `season_data` es `{temporada: [(liga, sub_df), ...]}`, la misma estructura
+    que espera `sidebar_chart_html`, y `point_filter` el mismo dict de la
+    casilla de filtro por punto (sub-21).
+
+    La caja de lectura NO lleva "qué mirar": el texto de un gráfico que cambia
+    de variables no se puede escribir de antemano. Lo que lleva es el r² del par
+    que se está viendo, **calculado en el navegador sobre los mismos arreglos
+    que Plotly tiene dibujados** — que es la versión fuerte de la regla de
+    `insights.py`: acá el texto no puede contradecir al gráfico ni siquiera en
+    principio.
+    """
+    import json
+
+    import plotly.graph_objects as go
+    import plotly.io as pio
+
+    cols = [c for c, _, _, _ in variables]
+    etiquetas = {c: e for c, e, _, _ in variables}
+    decimales = {c: d for c, _, _, d in variables}
+
+    # Grupos del <optgroup>, en el orden en que aparecen en la lista.
+    grupos = []
+    for c, _, g, _ in variables:
+        if not grupos or grupos[-1][0] != g:
+            grupos.append((g, []))
+        grupos[-1][1].append(c)
+
+    x0 = default_x or cols[0]
+    y0 = default_y or cols[1]
+    seasons = list(season_data)
+    default_season = seasons[-1]
+    league_order = [liga for liga, _ in season_data[default_season]]
+
+    def _valores(sub, col):
+        """La columna redondeada a como se va a mostrar, con los nulos como
+        `null`: los deja fuera del cálculo del r² y Plotly no los dibuja."""
+        d = decimales[col]
+        return [None if v != v else round(float(v), d) for v in sub[col]]
+
+    def _payload(sd):
+        p = {"n": [sub[name_col].astype(str).tolist() for _, sub in sd],
+             "v": {c: [_valores(sub, c) for _, sub in sd] for c in cols}}
+        if team_col:
+            p["c"] = [sub[team_col].astype(str).tolist() for _, sub in sd]
+        if point_filter:
+            p["f"] = [sub[point_filter["col"]].fillna(False).astype(bool).tolist()
+                      for _, sub in sd]
+        return p
+
+    datos = {s: _payload(sd) for s, sd in season_data.items()}
+
+    # Rango de cada eje sobre TODAS las temporadas, no sobre la que se muestra:
+    # misma regla que en los otros scatter — cambiar de temporada mueve los
+    # puntos, no la escala. Acá además hace que cambiar de variable y volver
+    # deje el gráfico exactamente como estaba.
+    rangos = {}
+    for c in cols:
+        vals = [v for s in seasons for tr in datos[s]["v"][c] for v in tr if v is not None]
+        lo, hi = (min(vals), max(vals)) if vals else (0.0, 1.0)
+        pad = (hi - lo) * 0.06 or (abs(hi) * 0.06 or 1.0)
+        rangos[c] = [lo - pad, hi + pad]
+
+    fig = go.Figure()
+    for liga, sub in season_data[default_season]:
+        fig.add_trace(go.Scatter(
+            x=_valores(sub, x0), y=_valores(sub, y0), mode="markers", name=liga,
+            marker=dict(color=league_color(liga), size=base_size, opacity=0.75,
+                        line=dict(width=0.5, color="white")),
+        ))
+    fig.update_layout(
+        title=dict(text="Crea tu gráfico",
+                   subtitle=dict(text=f"{etiquetas[y0]} vs. {etiquetas[x0]} · {default_season}")),
+        xaxis=dict(title=etiquetas[x0], range=rangos[x0]),
+        yaxis=dict(title=etiquetas[y0], range=rangos[y0]),
+    )
+
+    div_id = _div_id(fig, cols, name_col, sorted(season_data))
+    fig.update_layout(autosize=True)
+    grafico = pio.to_html(
+        fig, full_html=False, include_plotlyjs="cdn", div_id=div_id,
+        config={"displaylogo": False, "responsive": True, "displayModeBar": False},
+        default_width="100%", default_height="100%")
+
+    def _opciones(elegida):
+        partes = []
+        for grupo, columnas in grupos:
+            interior = "".join(
+                f'<option value="{c}"{" selected" if c == elegida else ""}>{etiquetas[c]}</option>'
+                for c in columnas)
+            partes.append(f'<optgroup label="{grupo}">{interior}</optgroup>' if grupo else interior)
+        return "".join(partes)
+
+    season_options = "".join(f'<option value="{s}">{s}</option>' for s in seasons)
+    league_options = "".join(f'<option value="{lg}">{lg}</option>' for lg in league_order)
+    filter_block = "" if not point_filter else f"""
+    <div class="block">
+      <label>{point_filter.get("label", "Filtrar")}</label>
+      <div class="toggle">
+        <input type="checkbox" id="{div_id}_pfilter">
+        <label for="{div_id}_pfilter" style="display:inline; text-transform:none;
+          letter-spacing:0; margin:0;"><span>{point_filter.get("text", "Filtrar")}</span></label>
+      </div>
+      {f'<p class="hint">{point_filter["hint"]}</p>' if point_filter.get("hint") else ''}
+    </div>"""
+
+    ojo = _md_inline(
+        "El r² mide **relación lineal, y nada más**. Dos variables pueden tener un r² "
+        "bajo y estar bien relacionadas de otra forma (en U, por ejemplo), y un r² alto "
+        "no dice cuál causa cuál: puede haber una tercera cosa moviendo a las dos.\n\n"
+        "Ojo también con los pares que comparten aritmética. Un total y su tasa por 90' "
+        "(goles y goles por 90'), o una parte y su todo (goles y goles + asistencias), "
+        "van a dar un r² altísimo porque contienen literalmente el mismo dato — eso no "
+        "es un hallazgo, es la definición.\n\n"
+        "Y el r² depende de la población: con el filtro de liga puesto se calcula sobre "
+        "veinte y pico de puntos, donde salta mucho de una temporada a otra."
+    )
+
+    return f"""
+<style>{_sidebar_css(div_id, width, width / height)}{_insight_css(div_id, width)}
+</style>
+<div id="{div_id}_layout">
+  <div id="{div_id}_plotwrap">{grafico}</div>
+  <div id="{div_id}_sidebar">
+    <div class="block">
+      <label>Eje horizontal</label>
+      <select id="{div_id}_xvar">{_opciones(x0)}</select>
+    </div>
+    <div class="block">
+      <label>Eje vertical</label>
+      <select id="{div_id}_yvar">{_opciones(y0)}</select>
+    </div>
+    <div class="block">
+      <label>Temporada</label>
+      <select id="{div_id}_season">{season_options}</select>
+    </div>
+    <div class="block">
+      <label>Buscar {search_label}</label>
+      <input list="{div_id}_names" id="{div_id}_search" placeholder="Escribe un {search_label}…" autocomplete="off">
+      <datalist id="{div_id}_names"></datalist>
+    </div>
+    <div class="block">
+      <label>Filtrar por liga</label>
+      <select id="{div_id}_league">
+        <option value="{_ALL}">Todas las ligas</option>
+        {league_options}
+      </select>
+    </div>{filter_block}
+  </div>
+</div>{_fuente_html(div_id, width, fuente)}
+<div id="{div_id}_insight">
+  <div class="fv-dyn">
+    <h4>En lo que estás viendo · <span class="fv-estado" id="{div_id}_ins_estado"></span></h4>
+    <p id="{div_id}_ins_fija"></p>
+    <p class="fv-salta" id="{div_id}_ins_salta"></p>
+  </div>
+  <details>
+    <summary>Qué no dice el r²</summary>
+    <div>{ojo}</div>
+  </details>
+</div>
+<script>
+(function() {{
+  var DATOS = {json.dumps(datos, ensure_ascii=False)};
+  var RANGOS = {json.dumps(rangos)};
+  var ETIQUETAS = {json.dumps(etiquetas, ensure_ascii=False)};
+  var DECIMALES = {json.dumps(decimales)};
+  var LIGAS = {json.dumps(league_order, ensure_ascii=False)};
+  var TRAZAS = {json.dumps(list(range(len(league_order))))};
+  var ENTIDAD = {json.dumps(entidad, ensure_ascii=False)};
+  var TODAS = {json.dumps(_ALL)};
+  var BASE = {base_size}, RESALTE = {highlight_size};
+  var CON_EQUIPO = {json.dumps(bool(team_col))};
+  var FILTRO_ESTADO = {json.dumps((point_filter or {}).get("estado", ""), ensure_ascii=False)};
+
+  var temporada = {json.dumps(default_season)};
+  var filtroOn = false;
+  var IDX = [], NOMBRES = [], XS = [], YS = [];
+
+  function el(sufijo) {{ return document.getElementById('{div_id}_' + sufijo); }}
+  function ejeX() {{ return el('xvar').value; }}
+  function ejeY() {{ return el('yvar').value; }}
+
+  // El filtro por punto se resuelve una vez como lista de índices y las
+  // columnas se leen a través de ella: filtrar las N variables cada vez que se
+  // toca la casilla sería tirar trabajo, porque solo dos están en pantalla.
+  function recalcularIndices() {{
+    var d = DATOS[temporada];
+    IDX = d.n.map(function(nombres, t) {{
+      var idx = [];
+      for (var i = 0; i < nombres.length; i++) {{
+        if (!filtroOn || !d.f || d.f[t][i]) idx.push(i);
+      }}
+      return idx;
+    }});
+    NOMBRES = d.n.map(function(nombres, t) {{
+      return IDX[t].map(function(i) {{ return nombres[i]; }});
+    }});
+  }}
+  function columna(c) {{
+    var v = DATOS[temporada].v[c];
+    return IDX.map(function(idx, t) {{ return idx.map(function(i) {{ return v[t][i]; }}); }});
+  }}
+  function equipos() {{
+    var c = DATOS[temporada].c;
+    if (!c) return null;
+    return IDX.map(function(idx, t) {{ return idx.map(function(i) {{ return c[t][i]; }}); }});
+  }}
+  function tamanos(nombre) {{
+    return NOMBRES.map(function(nn) {{
+      return nn.map(function(n) {{ return n === nombre ? RESALTE : BASE; }});
+    }});
+  }}
+
+  // --- r² sobre lo que se está viendo ---------------------------------------
+  // Solo las trazas visibles (filtro de liga) y solo los puntos que tienen las
+  // dos variables: un nulo en cualquiera de las dos deja el par afuera.
+  function paresVisibles() {{
+    var liga = el('league').value, xs = [], ys = [];
+    XS.forEach(function(arr, t) {{
+      if (liga !== TODAS && LIGAS[t] !== liga) return;
+      for (var i = 0; i < arr.length; i++) {{
+        var a = arr[i], b = YS[t][i];
+        if (a === null || b === null) continue;
+        xs.push(a); ys.push(b);
+      }}
+    }});
+    return [xs, ys];
+  }}
+  function pearson(xs, ys) {{
+    var n = xs.length, i;
+    if (n < 3) return null;
+    var mx = 0, my = 0;
+    for (i = 0; i < n; i++) {{ mx += xs[i]; my += ys[i]; }}
+    mx /= n; my /= n;
+    var sxy = 0, sxx = 0, syy = 0;
+    for (i = 0; i < n; i++) {{
+      var dx = xs[i] - mx, dy = ys[i] - my;
+      sxy += dx * dy; sxx += dx * dx; syy += dy * dy;
+    }}
+    if (sxx === 0 || syy === 0) return null;
+    return sxy / Math.sqrt(sxx * syy);
+  }}
+  function banda(r) {{
+    var a = Math.abs(r);
+    if (a < 0.3) return 'Casi no se pisan: cada una mide algo que la otra no capta, ' +
+                        'así que el gráfico está comparando dos cosas de verdad distintas.';
+    if (a < 0.6) return 'Se pisan a medias: hay tendencia, pero queda mucha variación ' +
+                        'que una no explica de la otra.';
+    if (a < 0.85) return 'Se pisan bastante: saber una ya dice buena parte de la otra.';
+    return 'Son casi la misma información: una se puede predecir desde la otra, y ' +
+           'ponerlas en ejes distintos no agrega nada.';
+  }}
+
+  function actualizarTexto() {{
+    var liga = el('league').value;
+    el('ins_estado').textContent =
+      [temporada, liga === TODAS ? 'Todas las ligas' : liga,
+       filtroOn ? FILTRO_ESTADO : null].filter(Boolean).join(' · ');
+
+    var p = paresVisibles(), r = pearson(p[0], p[1]);
+    var ex = ETIQUETAS[ejeX()], ey = ETIQUETAS[ejeY()];
+    if (r === null) {{
+      el('ins_fija').innerHTML = 'No hay puntos suficientes para medir la relación entre ' +
+        '<strong>' + ex + '</strong> y <strong>' + ey + '</strong> con estos filtros.';
+      el('ins_salta').style.display = 'none';
+      return;
+    }}
+    el('ins_fija').innerHTML =
+      '<strong>r² = ' + (r * r * 100).toFixed(0) + '%</strong> entre <strong>' + ex +
+      '</strong> y <strong>' + ey + '</strong> (r = ' + (r >= 0 ? '+' : '−') +
+      Math.abs(r).toFixed(2) + '), sobre ' + p[0].length + ' ' + ENTIDAD + '.';
+    el('ins_salta').innerHTML = banda(r) + ' El r² es la parte de la variación de una que ' +
+      'queda explicada por la otra: <strong>cuanto más chico, más distintas son</strong>. ' +
+      (r >= 0 ? 'El signo es positivo: suben juntas.'
+              : 'El signo es negativo: cuando una sube, la otra baja.');
+    el('ins_salta').style.display = '';
+  }}
+
+  // --- dibujo ---------------------------------------------------------------
+  function hoverTemplate() {{
+    var cx = ejeX(), cy = ejeY();
+    var quien = CON_EQUIPO ? '<b>%{{customdata[0]}}</b> (%{{customdata[1]}})'
+                            : '<b>%{{customdata}}</b>';
+    return quien + '<br>' + ETIQUETAS[cx] + ': %{{x:.' + DECIMALES[cx] + 'f}}' +
+           '<br>' + ETIQUETAS[cy] + ': %{{y:.' + DECIMALES[cy] + 'f}}<extra></extra>';
+  }}
+
+  function llenarDatalist() {{
+    var todos = [];
+    NOMBRES.forEach(function(nn) {{ todos = todos.concat(nn); }});
+    todos.sort();
+    el('names').innerHTML = todos.map(function(n) {{
+      return '<option value="' + n.replace(/"/g, '&quot;') + '"></option>';
+    }}).join('');
+  }}
+
+  function anotacion(nombre) {{
+    for (var t = 0; t < NOMBRES.length; t++) {{
+      var i = NOMBRES[t].indexOf(nombre);
+      if (i === -1 || XS[t][i] === null || YS[t][i] === null) continue;
+      var oscuro = document.documentElement.getAttribute('data-theme') === 'dark';
+      return {{
+        x: XS[t][i], y: YS[t][i], text: nombre, showarrow: true, arrowhead: 2, ax: 0, ay: -32,
+        arrowcolor: oscuro ? '#3A4A4E' : {json.dumps(INK["axis"])},
+        font: {{size: 11, color: oscuro ? '#D7E4E7' : {json.dumps(INK["primary"])}}}
+      }};
+    }}
+    return null;
+  }}
+
+  function aplicarBusqueda(valor) {{
+    var an = valor ? anotacion(valor) : null;
+    Plotly.restyle('{div_id}', {{'marker.size': tamanos(an ? valor : null)}}, TRAZAS);
+    Plotly.relayout('{div_id}', {{annotations: an ? [an] : []}});
+  }}
+
+  function redibujar() {{
+    recalcularIndices();
+    XS = columna(ejeX()); YS = columna(ejeY());
+    var eq = equipos();
+    Plotly.restyle('{div_id}', {{
+      x: XS, y: YS, 'marker.size': tamanos(null),
+      hovertemplate: TRAZAS.map(hoverTemplate),
+      customdata: CON_EQUIPO
+        ? NOMBRES.map(function(nn, t) {{ return nn.map(function(n, i) {{ return [n, eq[t][i]]; }}); }})
+        : NOMBRES
+    }}, TRAZAS);
+    Plotly.relayout('{div_id}', {{
+      'xaxis.title.text': ETIQUETAS[ejeX()], 'yaxis.title.text': ETIQUETAS[ejeY()],
+      'xaxis.range': RANGOS[ejeX()], 'yaxis.range': RANGOS[ejeY()],
+      'title.subtitle.text': ETIQUETAS[ejeY()] + ' vs. ' + ETIQUETAS[ejeX()] + ' · ' + temporada
+    }});
+    llenarDatalist();
+    var buscador = el('search');
+    var sigue = NOMBRES.some(function(nn) {{ return nn.indexOf(buscador.value) !== -1; }});
+    if (!sigue) buscador.value = '';
+    aplicarBusqueda(buscador.value);
+    actualizarTexto();
+  }}
+
+  function acomodarLeyenda() {{
+    var w = document.getElementById('{div_id}').offsetWidth;
+    if (w < 420) {{
+      Plotly.relayout('{div_id}', {{'legend.orientation': 'h', 'legend.x': 0, 'legend.y': -0.46,
+        'legend.yanchor': 'top', 'margin.r': 20, 'margin.t': 70, 'margin.b': 140}});
+    }} else {{
+      Plotly.relayout('{div_id}', {{'legend.orientation': 'v', 'legend.x': 1.02, 'legend.y': 1,
+        'legend.yanchor': 'top', 'margin.r': 40, 'margin.t': 90, 'margin.b': 60}});
+    }}
+  }}
+
+  el('xvar').addEventListener('change', redibujar);
+  el('yvar').addEventListener('change', redibujar);
+  el('season').addEventListener('change', function(e) {{ temporada = e.target.value; redibujar(); }});
+  el('search').addEventListener('input', function(e) {{ aplicarBusqueda(e.target.value); }});
+  el('league').addEventListener('change', function(e) {{
+    var v = e.target.value;
+    Plotly.restyle('{div_id}', {{visible: LIGAS.map(function(lg) {{
+      return v === TODAS || lg === v;
+    }})}}, TRAZAS);
+    // Lo buscado puede haber quedado en una liga que ya no se muestra.
+    var buscador = el('search');
+    if (buscador.value && v !== TODAS) {{
+      var t = -1;
+      NOMBRES.forEach(function(nn, i) {{ if (t === -1 && nn.indexOf(buscador.value) !== -1) t = i; }});
+      if (t !== -1 && LIGAS[t] !== v) {{ buscador.value = ''; aplicarBusqueda(''); }}
+    }}
+    actualizarTexto();
+  }});
+  var casilla = el('pfilter');
+  if (casilla) {{
+    casilla.checked = false;   // el navegador recuerda el estado al recargar
+    casilla.addEventListener('change', function(e) {{ filtroOn = e.target.checked; redibujar(); }});
+  }}
+  document.addEventListener('futviz-theme-change', function() {{
+    aplicarBusqueda(el('search').value);
+  }});
+  window.addEventListener('resize', acomodarLeyenda);
+
+  el('season').value = temporada;
+  acomodarLeyenda();
+  redibujar();
+}})();
+</script>
+"""
+
+
+def render_explorer_chart(*args, **kwargs):
+    """Muestra en el notebook el resultado de `explorer_chart_html(...)`."""
+    from IPython.display import HTML, display
+
+    display(HTML(explorer_chart_html(*args, **kwargs)))
+
+
 def render_with_sidebar(fig, *args, **kwargs):
     """Muestra en el notebook el resultado de `sidebar_chart_html(fig, ...)`.
     Mismos argumentos que esa función."""
@@ -841,7 +1351,7 @@ def render_with_sidebar(fig, *args, **kwargs):
     display(HTML(sidebar_chart_html(fig, *args, **kwargs)))
 
 
-def plot_html(fig, width=680, height=480):
+def plot_html(fig, width=680, height=480, fuente=None):
     """Igual que la parte de gráfico de sidebar_chart_html pero sin barra
     lateral — para gráficos donde las 5 ligas ya están comparadas una al
     lado de la otra (ej. un box plot por liga) y no hace falta filtrar.
@@ -865,7 +1375,7 @@ def plot_html(fig, width=680, height=480):
     #{div_id}_wrap {{ aspect-ratio: {max(aspect_ratio * 0.85, 1.0)}; }}
   }}
 </style>
-<div id="{div_id}_wrap">{inner}</div>
+<div id="{div_id}_wrap">{inner}</div>{_fuente_html(div_id, width, fuente)}
 <script>
 (function() {{
   function updateLegendLayout() {{

@@ -729,3 +729,123 @@ def nivel(df, col, season):
              f"({top['team']}) con {_fmt(top[col])}, unas "
              f"{top[col] / med.iloc[0]:.0f} veces la mediana de su propia liga.")
     return fija, salta
+
+
+# --------------------------------------------------------------------------
+# Mapa de calor de los tiros
+# --------------------------------------------------------------------------
+#
+# Los tres textos trabajan sobre el DataFrame que arma `shot_map.py`: un tiro
+# por fila, ya recortado a la región del mapa, con las columnas derivadas que
+# ahí se calculan (`dist`, `gol`, `en_area`, `en_area_chica`, `izquierda`).
+# La geometría vive allá y no acá a propósito — el mapa y el texto tienen que
+# estar de acuerdo en qué es "dentro del área", y la única forma de garantizarlo
+# es que haya una sola definición.
+
+# Umbrales de lo que cuenta como notable para elegir el dato que salta. Están
+# en las unidades de cada cosa (puntos porcentuales, metros) y se usan para
+# ponerlas en la misma escala: el candidato con el cociente más alto gana, y si
+# ninguno llega a 1 es que la selección no se separa del tiro medio en nada.
+NOTABLE_LADO, NOTABLE_DIST, NOTABLE_CONV, NOTABLE_CHICA = 1.5, 3.0, 1.5, 6.0
+
+
+def miles(n):
+    return f"{int(n):,}".replace(",", ".")
+
+
+def tiros_que_mirar():
+    return ("El mapa mira **hacia la portería**: la línea de fondo es el borde de "
+            "arriba, los dos rectángulos son el área grande y el área chica, y la "
+            "izquierda del mapa es la izquierda del ataque.\n\n"
+            "Cada celda es un cuadrado de 2×2 m, y el color **no cuenta tiros**: "
+            "reparte entre las celdas el 100% de los tiros que estás viendo. Una "
+            "celda oscura dice \"de aquí salió una parte grande de estos tiros\", "
+            "no \"de aquí salieron muchos tiros\". El reparto se rehace cada vez "
+            "que cambias un filtro, y por eso la forma de un tipo de tiro se puede "
+            "comparar con la de otro aunque haya veinte veces más de uno que de "
+            "otro.\n\n"
+            "Pasa el mouse por una celda para ver los números crudos: cuántos "
+            "tiros salieron de ahí y cuántos acabaron en gol.")
+
+
+def tiros_por_que(n_mapa, n_penales, n_fuera):
+    return (
+        f"**Los penaltis quedan fuera** ({miles(n_penales)} en las 5 temporadas). "
+        f"Understat los registra a todos en exactamente el mismo punto, así que en "
+        f"un mapa de 2×2 m caen en una sola celda y la convierten en la más caliente "
+        f"de todas — sin decir nada sobre desde dónde remata un equipo, que es la "
+        f"pregunta del gráfico.\n\n"
+        f"**El mapa llega hasta 36 m de la línea de fondo** y ahí se corta. Los "
+        f"{miles(n_fuera)} tiros de más lejos son el "
+        f"{100 * n_fuera / (n_mapa + n_fuera):.1f}% del total y están tan repartidos "
+        f"que solo agregarían cancha vacía.\n\n"
+        f"**Las opciones del filtro se cruzan entre sí.** Los cuatro tipos de jugada "
+        f"sí son excluyentes, pero \"cabezazo\" los atraviesa a todos: un cabezazo "
+        f"puede venir de un córner igual que de jugada abierta. Por eso cada mapa se "
+        f"calcula sobre el total de **su propia** selección y no sobre los "
+        f"{miles(n_mapa)} tiros del conjunto: si se calculara sobre el conjunto, el "
+        f"mapa de cabezazo se vería casi vacío al lado del de jugada abierta y no "
+        f"habría forma de compararlos."
+    )
+
+
+def tiros(sub, base, frase, ambito):
+    """(fija, salta) del mapa de calor para una combinación temporada × tipo.
+
+    `sub` son los tiros de la combinación elegida y `base` los de esa misma
+    temporada sin filtro de tipo: la referencia contra la que se mide si el tipo
+    elegido se remata desde más cerca, más lejos, más de un lado o con más
+    puntería. `frase` es cómo se nombra el tipo dentro de la oración ("de
+    córner", "con el pie izquierdo", "" para todos)."""
+    if sub.empty:
+        return "No hay tiros de este tipo en la temporada elegida.", None
+
+    n = len(sub)
+    area, dist = 100 * sub["en_area"].mean(), sub["dist"].mean()
+    conv = 100 * sub["gol"].mean()
+    # Una sola cifra de zona y no dos ("y el X% desde el área chica"): con el
+    # tiro libre directo, que por definición no puede salir de dentro del área,
+    # la segunda mitad quedaba en "el 0% y el 0%". El área chica se cuenta en el
+    # dato que salta, donde solo aparece cuando dice algo.
+    fija = (f"De los {miles(n)} tiros {frase}de {ambito}, el **{area:.0f}%** salió "
+            f"desde dentro del área. La distancia media a la portería fue de "
+            f"{_fmt(dist, 1)} m y acabó en gol el {_fmt(conv, 1)}%.")
+
+    # El dato que salta: de qué se separa esta selección respecto del tiro medio
+    # de la misma temporada. Los candidatos se normalizan por su umbral de
+    # notabilidad para poder compararlos entre sí (ver arriba).
+    izq, izq_base = 100 * sub["izquierda"].mean(), 100 * base["izquierda"].mean()
+    chica, chica_base = (100 * sub["en_area_chica"].mean(),
+                         100 * base["en_area_chica"].mean())
+    dist_base, conv_base = base["dist"].mean(), 100 * base["gol"].mean()
+    peso, cual = max([
+        (abs(izq - 50) / NOTABLE_LADO, "lado"),
+        (abs(dist - dist_base) / NOTABLE_DIST, "dist"),
+        (abs(conv - conv_base) / NOTABLE_CONV, "conv"),
+        (abs(chica - chica_base) / NOTABLE_CHICA, "chica"),
+    ])
+
+    if peso < 1:
+        # Ninguna selección se separa del promedio: entonces lo que vale la pena
+        # contar es la propia estructura del mapa, que siempre está ahí.
+        dentro, fuera = sub[sub["en_area"]], sub[~sub["en_area"]]
+        salta = (f"El {100 - area:.0f}% se remató desde fuera del área, y de esos "
+                 f"entró solo el {_fmt(100 * fuera['gol'].mean(), 1)}% contra el "
+                 f"{_fmt(100 * dentro['gol'].mean(), 1)}% de los de dentro.")
+    elif cual == "lado":
+        salta = (f"El **{izq:.0f}%** salió desde la mitad izquierda del ataque y el "
+                 f"{100 - izq:.0f}% desde la derecha, contra un reparto de "
+                 f"{izq_base:.0f}/{100 - izq_base:.0f} en el tiro medio de "
+                 f"{ambito}.")
+    elif cual == "dist":
+        salta = (f"Se remata desde mucho más **{_verbo(dist, dist_base, 'cerca', 'lejos')}** "
+                 f"que el tiro medio de {ambito}: {_fmt(dist, 1)} m contra "
+                 f"{_fmt(dist_base, 1)} m.")
+    elif cual == "chica":
+        salta = (f"El **{chica:.0f}%** salió desde el área chica, contra el "
+                 f"{chica_base:.0f}% del tiro medio de {ambito}.")
+    else:
+        salta = (f"Entra el **{_fmt(conv, 1)}%** contra el {_fmt(conv_base, 1)}% del "
+                 f"tiro medio de {ambito}, aun rematando desde "
+                 f"{_verbo(dist, dist_base, 'más cerca', 'más lejos', igual='la misma distancia')}.")
+    return fija, salta

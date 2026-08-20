@@ -19,17 +19,26 @@ from plotly.subplots import make_subplots
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from site_utils import DATA_DIR, ArticlePage  # noqa: E402
-from viz_theme import SEQUENTIAL_BLUE, DIVERGING, INK, plot_html  # noqa: E402
+from viz_theme import SEQUENTIAL_BLUE, DIVERGING, INK, FUENTE_UNDERSTAT, plot_html  # noqa: E402
 
 # Los helpers de maquetado del artículo ya existen en `ml.py` y son los mismos
 # para cualquier análisis largo: se reusan en vez de duplicarlos.
-from ml import _callout, _figure, _heading, _prose, _stat, _table  # noqa: E402
+from ml import _callout, _heading, _prose, _stat, _table  # noqa: E402
+from ml import _figure as _figure_fbref  # noqa: E402
+
+
+def _figure(fig, caption, **kwargs):
+    """El `_figure` de `ml.py`, pero acreditando Understat: los dos análisis de
+    este módulo salen del detalle de tiros, no de las tablas de equipo de
+    FBref."""
+    return _figure_fbref(fig, caption, fuente=FUENTE_UNDERSTAT, **kwargs)
 
 SECTION = "Machine Learning"
 RNG = 42
 
 LARGO, ANCHO, PORTERIA = 105.0, 68.0, 7.32
 SEASONS = ["2021-22", "2022-23", "2023-24", "2024-25", "2025-26"]
+_FUENTE_ARTICULO = f"{FUENTE_UNDERSTAT} · temporadas {SEASONS[0]} a {SEASONS[-1]}"
 
 _CACHE = {}
 
@@ -629,6 +638,7 @@ def build_xg_article() -> ArticlePage:
               ("Métodos", "XGBoost · regresión logística · calibración"),
               ("Validación", "Partición temporal, prueba en 2025-26"),
               ("Lectura", "~9 min")],
+        fuente=_FUENTE_ARTICULO,
     )
 
 
@@ -848,6 +858,7 @@ def build_definicion_article() -> ArticlePage:
               ("Métodos", "xG cruzado · nulo por simulación · empirical Bayes"),
               ("Hallazgo", "10-14% habilidad, el resto azar"),
               ("Lectura", "~8 min")],
+        fuente=_FUENTE_ARTICULO,
     )
 
 
