@@ -324,6 +324,101 @@ def _insight_js(div_id, ins):
   }}"""
 
 
+def _toplist_css(div_id, width):
+    """La columna del top 5, a la derecha de la caja de lectura.
+
+    Va debajo del gráfico y no dentro de la barra lateral porque no es un
+    control: no cambia nada, cuenta lo que ya se está viendo. Y va al lado de la
+    caja de lectura, no debajo, porque las dos responden a lo mismo desde
+    ángulos distintos —una en prosa, la otra en nombres— y leerlas juntas es lo
+    que hace que el número de la prosa tenga cara.
+
+    El ancho de la columna (250px) es el mismo de la barra lateral de arriba,
+    así que las dos quedan alineadas en el mismo borde derecho."""
+    return f"""
+  #{div_id}_below {{ display: flex; flex-wrap: wrap; align-items: flex-start; gap: 26px; }}
+  /* Anula el max-width de la caja de lectura para que comparta la fila. La
+     columna de texto queda más angosta que los 760px de antes, que además se
+     lee mejor. */
+  #{div_id}_insight {{ flex: 1 1 380px; max-width: {width}px; }}
+  #{div_id}_toplist {{ flex: 0 1 250px; min-width: 190px; margin: 18px 0 4px;
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }}
+  #{div_id}_toplist h4 {{ margin: 0 0 6px; font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .05em; line-height: 1.4;
+    color: var(--color-muted, {INK["muted"]}); }}
+  #{div_id}_toplist ol {{ list-style: none; margin: 0 0 18px; padding: 0; }}
+  #{div_id}_toplist li {{ display: flex; align-items: baseline; gap: 8px; padding: 5px 0;
+    font-size: 12.5px; border-bottom: 1px solid var(--color-border, {INK["grid"]}); }}
+  #{div_id}_toplist li:last-child {{ border-bottom: none; }}
+  #{div_id}_toplist .pos {{ flex: none; width: 12px; text-align: right;
+    color: var(--color-muted, {INK["muted"]}); font-variant-numeric: tabular-nums; }}
+  #{div_id}_toplist .nom {{ flex: 1 1 auto; min-width: 0; overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap;
+    color: var(--color-primary, {INK["primary"]}); }}
+  #{div_id}_toplist .val {{ flex: none; font-weight: 600; font-variant-numeric: tabular-nums;
+    color: var(--color-text-body, {INK["secondary"]}); }}"""
+
+
+def _toplist_html(div_id, top_n):
+    return f"""
+<div id="{div_id}_toplist">
+  <h4>Top {top_n} · <span id="{div_id}_top_x_label"></span></h4>
+  <ol id="{div_id}_top_x"></ol>
+  <h4>Top {top_n} · <span id="{div_id}_top_y_label"></span></h4>
+  <ol id="{div_id}_top_y"></ol>
+</div>"""
+
+
+def _toplist_js(div_id, top_n):
+    """Define `pintarTop(labelX, labelY, nombres, xs, ys)`.
+
+    Las listas se arman en el navegador, sobre los mismos arreglos que Plotly
+    tiene dibujados, y no precalculadas desde Python: así respetan solas los
+    tres filtros (temporada, liga y el de puntos) sin que haya que precalcular
+    una lista por combinación, y no pueden mostrar a alguien que no está en el
+    gráfico. Es el mismo criterio del r² del explorador."""
+    return f"""
+  var TOP_N = {top_n};
+  function _esc(t) {{
+    return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                     .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }}
+  // Los decimales salen de los propios valores: la misma columna sirve para
+  // goles (enteros), para xG (una decimal) y para tasas por 90' (dos), y
+  // pedirle al llamador que los declare por eje sería un parámetro más que se
+  // desincroniza del gráfico.
+  function _dec(vals) {{
+    var v = vals.filter(function(a) {{ return a !== null && isFinite(a); }});
+    if (!v.length) return 0;
+    if (v.every(function(a) {{ return a === Math.round(a); }})) return 0;
+    var mx = Math.max.apply(null, v.map(Math.abs));
+    return mx < 10 ? 2 : 1;
+  }}
+  function _llenar(id, nombres, vals) {{
+    var lista = document.getElementById('{div_id}_' + id);
+    if (!lista) return;
+    var idx = [];
+    for (var i = 0; i < vals.length; i++) {{
+      if (vals[i] !== null && isFinite(vals[i])) idx.push(i);
+    }}
+    idx.sort(function(a, b) {{ return vals[b] - vals[a]; }});
+    var dec = _dec(vals);
+    lista.innerHTML = idx.slice(0, TOP_N).map(function(i, k) {{
+      return '<li><span class="pos">' + (k + 1) + '</span>' +
+             '<span class="nom" title="' + _esc(nombres[i]) + '">' + _esc(nombres[i]) + '</span>' +
+             '<span class="val">' + vals[i].toFixed(dec) + '</span></li>';
+    }}).join('') || '<li><span class="nom">Sin datos</span></li>';
+  }}
+  function pintarTop(labelX, labelY, nombres, xs, ys) {{
+    var ex = document.getElementById('{div_id}_top_x_label');
+    var ey = document.getElementById('{div_id}_top_y_label');
+    if (ex) ex.textContent = labelX;
+    if (ey) ey.textContent = labelY;
+    _llenar('top_x', nombres, xs);
+    _llenar('top_y', nombres, ys);
+  }}"""
+
+
 def _sidebar_css(div_id, width, aspect_ratio, mobile_aspect=None):
     """Estilos de la barra lateral de controles (gráfico a la izquierda,
     controles en una columna aparte a la derecha, nunca superpuestos).
@@ -665,7 +760,8 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
                         extra_traces=0, base_size=11, highlight_size=20,
                         width=680, height=560, name_col="Squad", search_label="club",
                         season_data=None, custom_cols=None, subtitle_template=None,
-                        insights=None, point_filter=None, fuente=None):
+                        insights=None, point_filter=None, fuente=None,
+                        top_n=5, top_labels=None):
     """Arma el HTML/JS de un gráfico Plotly con una barra lateral genuina a
     la derecha (no superpuesta, es un elemento aparte en un layout flex):
     - `<select>` de temporada (solo si se pasa `season_data`).
@@ -705,6 +801,11 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     100% de su contenedor con relación de aspecto `width:height` fija (así
     no se deforma) hasta un tope de `width`px; en pantallas angostas la
     barra lateral pasa a apilarse debajo del gráfico en vez de achicarlo.
+
+    `top_n` es el largo de la lista de los que más puntúan en cada eje, que va
+    a la derecha de la caja de lectura (`None` la saca). Los nombres de los ejes
+    salen del título de cada eje de la figura; `top_labels` es un par para
+    acortarlos cuando ese título es una frase larga que no entra en la columna.
 
     `point_filter` agrega una casilla que filtra PUNTOS (no trazas enteras,
     como hace el filtro de liga): un dict
@@ -818,9 +919,24 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
         insight_box = _insight_html(div_id, insights, key0, estado0)
         insight_js = _insight_js(div_id, insights)
 
+    # Los rótulos de las dos listas: el título de cada eje, salvo que el
+    # llamador pase versiones cortas (hay títulos que son una frase entera).
+    def _titulo(eje, respaldo):
+        t = getattr(getattr(fig.layout, eje).title, "text", None)
+        return t or respaldo
+
+    top_css = top_html = top_js = ""
+    below = insight_box
+    if top_n:
+        etiquetas = top_labels or (_titulo("xaxis", x_col), _titulo("yaxis", y_col))
+        top_css = _toplist_css(div_id, width)
+        top_html = _toplist_html(div_id, top_n)
+        top_js = _toplist_js(div_id, top_n)
+        below = f'<div id="{div_id}_below">{insight_box}{top_html}</div>'
+
     html = f"""
-<style>{_sidebar_css(div_id, width, aspect_ratio)}{insight_css}
-</style>
+<style>{_sidebar_css(div_id, width, aspect_ratio)}{insight_css}{top_css}
+</style>""" + f"""
 <div id="{div_id}_layout">
   <div id="{div_id}_plotwrap">{plot_html}</div>
   <div id="{div_id}_sidebar">{season_block}
@@ -837,9 +953,10 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
       </select>
     </div>{filter_block}
   </div>
-</div>{_fuente_html(div_id, width, fuente)}{insight_box}
+</div>{_fuente_html(div_id, width, fuente)}{below}
 <script>
 (function() {{
+  var TOP_LABELS = {json.dumps(list(etiquetas) if top_n else [], ensure_ascii=False)};{top_js}
   var seasons = {json.dumps(seasons_payload)};
   var subtitles = {json.dumps(subtitles)};
   var baseAnnotations = {json.dumps(base_annotations)};
@@ -879,6 +996,22 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
 
   function clubMap() {{ return V.ents; }}
   function traceNames() {{ return V.names; }}
+
+  // Solo las trazas visibles: el filtro de liga esconde trazas enteras, así que
+  // la lista tiene que preguntarle a la figura y no a los datos.
+  function refreshTop() {{
+    if (typeof pintarTop !== 'function') return;
+    var lg = document.getElementById('{div_id}_league');
+    var liga = lg ? lg.value : {_ALL_JSON};
+    var nombres = [], xs = [], ys = [];
+    for (var t = 0; t < V.names.length; t++) {{
+      if (liga !== {_ALL_JSON} && leagueOrder[t] !== liga) continue;
+      for (var i = 0; i < V.names[t].length; i++) {{
+        nombres.push(V.names[t][i]); xs.push(V.x[t][i]); ys.push(V.y[t][i]);
+      }}
+    }}
+    pintarTop(TOP_LABELS[0], TOP_LABELS[1], nombres, xs, ys);
+  }}
 {insight_js}
   // La caja de lectura depende de los DOS controles, así que se recalcula
   // desde el estado actual en vez de que cada handler arme su propia clave.
@@ -983,6 +1116,7 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     if (!clubMap().hasOwnProperty(searchInput.value)) searchInput.value = '';
     applySearch(searchInput.value);
     refreshInsight();
+    refreshTop();
   }}
 
   var seasonSelect = document.getElementById('{div_id}_season');
@@ -1022,7 +1156,10 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
       Plotly.relayout('{div_id}', {{annotations: baseAnnotations}});
     }}
     refreshInsight();
+    refreshTop();
   }});
+
+  refreshTop();
 }})();
 </script>
 """
@@ -1032,7 +1169,7 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
 def explorer_chart_html(season_data, variables, name_col="Squad", search_label="club",
                          entidad="equipos", default_x=None, default_y=None,
                          width=760, height=580, base_size=8, highlight_size=20,
-                         team_col=None, point_filter=None, fuente=None):
+                         team_col=None, point_filter=None, fuente=None, top_n=5):
     """Scatter donde las dos variables las elige quien mira, no quien lo escribió.
 
     Es el tercer tipo de gráfico interactivo del sitio, y existe porque los
@@ -1166,9 +1303,13 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
         "veinte y pico de puntos, donde salta mucho de una temporada a otra."
     )
 
+    top_css = _toplist_css(div_id, width) if top_n else ""
+    top_html = _toplist_html(div_id, top_n) if top_n else ""
+    top_js = _toplist_js(div_id, top_n) if top_n else ""
+
     return f"""
-<style>{_sidebar_css(div_id, width, width / height)}{_insight_css(div_id, width)}
-</style>
+<style>{_sidebar_css(div_id, width, width / height)}{_insight_css(div_id, width)}{top_css}
+</style>""" + f"""
 <div id="{div_id}_layout">
   <div id="{div_id}_plotwrap">{grafico}</div>
   <div id="{div_id}_sidebar">
@@ -1198,6 +1339,7 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
     </div>{filter_block}
   </div>
 </div>{_fuente_html(div_id, width, fuente)}
+<div id="{div_id}_below">
 <div id="{div_id}_insight">
   <div class="fv-dyn">
     <h4>En lo que estás viendo · <span class="fv-estado" id="{div_id}_ins_estado"></span></h4>
@@ -1208,9 +1350,10 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
     <summary>Qué no dice el r²</summary>
     <div>{ojo}</div>
   </details>
+</div>{top_html}
 </div>
 <script>
-(function() {{
+(function() {{{top_js}
   var DATOS = {json.dumps(datos, ensure_ascii=False)};
   var RANGOS = {json.dumps(rangos)};
   var ETIQUETAS = {json.dumps(etiquetas, ensure_ascii=False)};
@@ -1276,6 +1419,24 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
       }}
     }});
     return [xs, ys];
+  }}
+
+  // Para el top 5 no se piden pares completos como para el r²: un punto con la
+  // variable X presente y la Y nula tiene que seguir contando en la lista de X.
+  function puntosVisibles() {{
+    var liga = el('league').value, nombres = [], xs = [], ys = [];
+    NOMBRES.forEach(function(nn, t) {{
+      if (liga !== TODAS && LIGAS[t] !== liga) return;
+      for (var i = 0; i < nn.length; i++) {{
+        nombres.push(nn[i]); xs.push(XS[t][i]); ys.push(YS[t][i]);
+      }}
+    }});
+    return [nombres, xs, ys];
+  }}
+  function refreshTop() {{
+    if (typeof pintarTop !== 'function') return;
+    var p = puntosVisibles();
+    pintarTop(ETIQUETAS[ejeX()], ETIQUETAS[ejeY()], p[0], p[1], p[2]);
   }}
   function pearson(xs, ys) {{
     var n = xs.length, i;
@@ -1387,6 +1548,7 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
     if (!sigue) buscador.value = '';
     aplicarBusqueda(buscador.value);
     actualizarTexto();
+    refreshTop();
   }}
 
   function acomodarLeyenda() {{
@@ -1417,6 +1579,7 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
       if (t !== -1 && LIGAS[t] !== v) {{ buscador.value = ''; aplicarBusqueda(''); }}
     }}
     actualizarTexto();
+    refreshTop();
   }});
   var casilla = el('pfilter');
   if (casilla) {{
