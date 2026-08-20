@@ -116,75 +116,83 @@
 </header>
 <main><div class="chart-scroll">
 <style>
-  #chart_a388043d_layout { display:flex; flex-wrap: wrap; align-items:flex-start; gap:20px; max-width: 100%; }
-  #chart_a388043d_plotwrap { position: relative; flex: 1 1 280px; width: 100%; max-width: 980px;
+  #chart_1981c46a_layout { display:flex; flex-wrap: wrap; align-items:flex-start; gap:20px; max-width: 100%; }
+  #chart_1981c46a_plotwrap { position: relative; flex: 1 1 280px; width: 100%; max-width: 980px;
     aspect-ratio: 1.75; min-width: 0; }
-  #chart_a388043d_plotwrap > div { position: absolute; inset: 0; }
-  #chart_a388043d_sidebar { font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  #chart_1981c46a_plotwrap > div { position: absolute; inset: 0; }
+  #chart_1981c46a_sidebar { font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     padding-top: 54px; flex: 1 1 190px; max-width: 260px; box-sizing: border-box; }
-  #chart_a388043d_sidebar .block { margin-bottom: 22px; }
-  #chart_a388043d_sidebar label { display: block; font-size: 11px; color: var(--color-muted, #898781);
+  #chart_1981c46a_sidebar .block { margin-bottom: 22px; }
+  #chart_1981c46a_sidebar label { display: block; font-size: 11px; color: var(--color-muted, #898781);
     text-transform: uppercase; letter-spacing: .03em; margin-bottom: 5px; }
-  #chart_a388043d_sidebar .hint { font-size: 11.5px; line-height: 1.45; color: var(--color-muted, #898781);
+  #chart_1981c46a_sidebar .hint { font-size: 11.5px; line-height: 1.45; color: var(--color-muted, #898781);
     text-transform: none; letter-spacing: 0; margin-top: -14px; }
-  #chart_a388043d_sidebar input, #chart_a388043d_sidebar select { width: 100%; box-sizing: border-box;
+  /* Casilla de filtro por punto (ej. "solo sub-21"). Necesita anular el
+     `width:100%` de los inputs de arriba, pensado para el buscador. */
+  #chart_1981c46a_sidebar .toggle { display: flex; align-items: center; gap: 8px; }
+  #chart_1981c46a_sidebar .toggle input { width: auto; flex: none; margin: 0; padding: 0;
+    accent-color: var(--color-interactive, #c3c2b7); cursor: pointer; }
+  #chart_1981c46a_sidebar .toggle span { font-size: 13px; cursor: pointer;
+    color: var(--color-primary, #0b0b0b); }
+  #chart_1981c46a_sidebar .toggle + .hint { margin-top: 7px; }
+  #chart_1981c46a_sidebar input, #chart_1981c46a_sidebar select { width: 100%; box-sizing: border-box;
     padding: 7px 9px; font-size: 13px; font-family: inherit; color: var(--color-primary, #0b0b0b);
     background: var(--color-surface, #fcfcfb); border: 1px solid var(--color-border, #c3c2b7);
     border-radius: 6px; transition: border-color .15s ease; }
-  #chart_a388043d_sidebar input:focus, #chart_a388043d_sidebar select:focus {
+  #chart_1981c46a_sidebar input:focus, #chart_1981c46a_sidebar select:focus {
     outline: none; border-color: var(--color-interactive, #c3c2b7); }
   @media (max-width: 520px) {
-    #chart_a388043d_sidebar { padding-top: 4px; max-width: 100%; }
-    #chart_a388043d_plotwrap { aspect-ratio: 1.05; }
+    #chart_1981c46a_sidebar { padding-top: 4px; max-width: 100%; }
+    #chart_1981c46a_plotwrap { aspect-ratio: 1.05; }
   }
-  #chart_a388043d_plotwrap { min-width: 680px; }
-  #chart_a388043d_insight { font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  #chart_1981c46a_plotwrap { min-width: 680px; }
+  #chart_1981c46a_insight { font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     max-width: 980px; margin: 18px 0 4px; display: flex; flex-direction: column; gap: 14px;
     font-size: 13.5px; line-height: 1.58; color: var(--color-text-body, #52514e); }
-  #chart_a388043d_insight h4 { margin: 0 0 5px; font-size: 11px; font-weight: 700;
+  #chart_1981c46a_insight h4 { margin: 0 0 5px; font-size: 11px; font-weight: 700;
     text-transform: uppercase; letter-spacing: .05em;
     color: var(--color-muted, #898781); }
-  #chart_a388043d_insight p { margin: 0 0 7px; }
-  #chart_a388043d_insight p:last-child { margin-bottom: 0; }
-  #chart_a388043d_insight strong { color: var(--color-primary, #0b0b0b); font-weight: 600; }
-  #chart_a388043d_insight code { font-size: 12.5px;
+  #chart_1981c46a_insight p { margin: 0 0 7px; }
+  #chart_1981c46a_insight p:last-child { margin-bottom: 0; }
+  #chart_1981c46a_insight strong { color: var(--color-primary, #0b0b0b); font-weight: 600; }
+  #chart_1981c46a_insight code { font-size: 12.5px;
     background: var(--color-bg, #e1e0d9); padding: 1px 4px; border-radius: 3px; }
-  #chart_a388043d_insight .fv-dyn { border-left: 3px solid var(--color-interactive, #c3c2b7);
+  #chart_1981c46a_insight .fv-dyn { border-left: 3px solid var(--color-interactive, #c3c2b7);
     padding: 2px 0 2px 13px; }
-  #chart_a388043d_insight .fv-estado { color: var(--color-interactive, #c3c2b7);
+  #chart_1981c46a_insight .fv-estado { color: var(--color-interactive, #c3c2b7);
     font-weight: 700; letter-spacing: .03em; }
-  #chart_a388043d_insight .fv-salta { margin-top: 6px; }
-  #chart_a388043d_insight details { border-top: 1px solid var(--color-border, #e1e0d9);
+  #chart_1981c46a_insight .fv-salta { margin-top: 6px; }
+  #chart_1981c46a_insight details { border-top: 1px solid var(--color-border, #e1e0d9);
     padding-top: 11px; }
-  #chart_a388043d_insight summary { cursor: pointer; font-size: 11px; font-weight: 700;
+  #chart_1981c46a_insight summary { cursor: pointer; font-size: 11px; font-weight: 700;
     text-transform: uppercase; letter-spacing: .05em;
     color: var(--color-muted, #898781); list-style: none; }
-  #chart_a388043d_insight summary::-webkit-details-marker { display: none; }
-  #chart_a388043d_insight summary::after { content: " +"; }
-  #chart_a388043d_insight details[open] summary::after { content: " −"; }
-  #chart_a388043d_insight details[open] summary { margin-bottom: 9px; }
-  #chart_a388043d_insight summary:hover { color: var(--color-interactive, #0b0b0b); }
+  #chart_1981c46a_insight summary::-webkit-details-marker { display: none; }
+  #chart_1981c46a_insight summary::after { content: " +"; }
+  #chart_1981c46a_insight details[open] summary::after { content: " −"; }
+  #chart_1981c46a_insight details[open] summary { margin-bottom: 9px; }
+  #chart_1981c46a_insight summary:hover { color: var(--color-interactive, #0b0b0b); }
 </style>
-<div id="chart_a388043d_layout">
-  <div id="chart_a388043d_plotwrap"><div style="height:100%; width:100%;">                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
-        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha256-jvTGqxNp8AGWEcvNLVuKr+8j5dGe9Yw51LQkmDH+IYA=" crossorigin="anonymous"></script>                <div id="chart_a388043d" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("chart_a388043d")) {                    Plotly.newPlot(                        "chart_a388043d",                        [{"customdata":[13.247222222222222,1.5838888888888887,0.10722222222222223,21.072222222222223,9.387254901960784,8.730392156862745,1.7516339869281046,10.42483660130719,13.247222222222222],"fill":"toself","fillcolor":"rgba(227,73,72,0.06)","hovertemplate":"\u003cb\u003e%{theta}\u003c\u002fb\u003e\u003cbr\u003evalor: %{customdata:.2f}\u003cbr\u003eescala: %{r:.2f}\u003cextra\u003eBundesliga\u003c\u002fextra\u003e","line":{"color":"#e34948","width":2.4},"mode":"lines","name":"Bundesliga","r":[0.9656582837241323,1.0,0.9601990049751246,0.6561489093016418,0.843736231458364,0.7960369487485102,0.7886503732614689,0.7828155139801861,0.9656582837241323],"theta":["Tiros","Goles","G\u002fSh","CS%","Tackles","Intercep.","Offsides","Faltas","Tiros"],"type":"scatterpolar","subplot":"polar"},{"customdata":[12.316500000000001,1.184,0.08549999999999999,32.114999999999995,9.075,7.661842105263157,1.556578947368421,12.667105263157895,12.316500000000001],"fill":"toself","fillcolor":"rgba(42,120,214,0.06)","hovertemplate":"\u003cb\u003e%{theta}\u003c\u002fb\u003e\u003cbr\u003evalor: %{customdata:.2f}\u003cbr\u003eescala: %{r:.2f}\u003cextra\u003eSerie A\u003c\u002fextra\u003e","line":{"color":"#2a78d6","width":2.4},"mode":"lines","name":"Serie A","r":[0.8978131454258292,0.7475271834444055,0.7656716417910449,1.0,0.8156704361873991,0.6986065805156514,0.700829383886256,0.9511905938148404,0.8978131454258292],"theta":["Tiros","Goles","G\u002fSh","CS%","Tackles","Intercep.","Offsides","Faltas","Tiros"],"type":"scatterpolar","subplot":"polar"},{"customdata":[12.43888888888889,1.3711111111111112,0.09777777777777778,28.344444444444445,10.110120816003167,8.864081996434939,1.6100217864923747,12.080213903743315,12.43888888888889],"fill":"toself","fillcolor":"rgba(46,65,58,0.06)","hovertemplate":"\u003cb\u003e%{theta}\u003c\u002fb\u003e\u003cbr\u003evalor: %{customdata:.2f}\u003cbr\u003eescala: %{r:.2f}\u003cextra\u003eLigue 1\u003c\u002fextra\u003e","line":{"color":"#2e413a","width":2.4},"mode":"lines","name":"Ligue 1","r":[0.9067347021423076,0.8656611715187655,0.8756218905472638,0.8825920736243017,0.908708171448662,0.8082267851338174,0.7248913256719224,0.9071201034329532,0.9067347021423076],"theta":["Tiros","Goles","G\u002fSh","CS%","Tackles","Intercep.","Offsides","Faltas","Tiros"],"type":"scatterpolar","subplot":"polar"},{"customdata":[12.478,1.319,0.0925,23.69,9.93157894736842,8.085526315789474,1.8934210526315787,12.580263157894738,12.478],"fill":"toself","fillcolor":"rgba(237,161,0,0.06)","hovertemplate":"\u003cb\u003e%{theta}\u003c\u002fb\u003e\u003cbr\u003evalor: %{customdata:.2f}\u003cbr\u003eescala: %{r:.2f}\u003cextra\u003eLa Liga\u003c\u002fextra\u003e","line":{"color":"#eda100","width":2.4},"mode":"lines","name":"La Liga","r":[0.9095857125501153,0.8327604349351105,0.8283582089552239,0.7376615288805856,0.8926606426478887,0.7372380967316982,0.8524881516587677,0.9446694990613576,0.9095857125501153],"theta":["Tiros","Goles","G\u002fSh","CS%","Tackles","Intercep.","Offsides","Faltas","Tiros"],"type":"scatterpolar","subplot":"polar"},{"customdata":[12.495000000000001,1.3215,0.0965,25.525,9.860526315789475,7.981578947368421,1.5447368421052632,10.811842105263157,12.495000000000001],"fill":"toself","fillcolor":"rgba(232,123,164,0.06)","hovertemplate":"\u003cb\u003e%{theta}\u003c\u002fb\u003e\u003cbr\u003evalor: %{customdata:.2f}\u003cbr\u003eescala: %{r:.2f}\u003cextra\u003ePremier League\u003c\u002fextra\u003e","line":{"color":"#e87ba4","width":2.4},"mode":"lines","name":"Premier League","r":[0.9108249301421456,0.8343388284812348,0.864179104477612,0.7947999377238052,0.886274358241028,0.7277601781569537,0.6954976303317536,0.8118762968086156,0.9108249301421456],"theta":["Tiros","Goles","G\u002fSh","CS%","Tackles","Intercep.","Offsides","Faltas","Tiros"],"type":"scatterpolar","subplot":"polar"},{"hovertemplate":"\u003cb\u003e%{y}\u003c\u002fb\u003e\u003cbr\u003eseparación: %{x:.0f}%\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#3987e5"},"orientation":"h","showlegend":false,"x":[7.025791570559847,10.238461387767895,20.259067357512972,17.701508081505512,13.563050202551285,25.24728165555945,18.41556636553161,34.38510906983582],"y":["Tiros","Tackles","G\u002fSh","Faltas","Intercep.","Goles","Offsides","CS%"],"type":"bar","xaxis":"x","yaxis":"y"}],                        {"template":{"layout":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12},"hoverlabel":{"bgcolor":"#fcfcfb","bordercolor":"#c3c2b7","font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11}},"margin":{"b":60,"l":70,"r":40,"t":90},"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(0,0,0,0)","title":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":18},"subtitle":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12.5}},"x":0.03,"xanchor":"left"},"xaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"},"yaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"}}},"polar":{"domain":{"x":[0.0,0.528],"y":[0.0,1.0]},"radialaxis":{"range":[0,1],"showticklabels":false,"ticks":"","gridcolor":"#e1e0d9","linecolor":"#c3c2b7"},"angularaxis":{"tickfont":{"size":11,"color":"#52514e"},"gridcolor":"#e1e0d9","linecolor":"#c3c2b7"},"bgcolor":"rgba(0,0,0,0)"},"xaxis":{"anchor":"y","domain":[0.648,1.0],"range":[0,38.511322158216124],"ticksuffix":"%"},"yaxis":{"anchor":"x","domain":[0.0,1.0],"tickfont":{"size":10.5}},"annotations":[{"font":{"size":16},"showarrow":false,"text":"Separación por eje (%)","x":0.8240000000000001,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"}],"title":{"subtitle":{"text":"Las 5 ligas sobrepuestas · separación = 1 − (mín ÷ máx) entre ligas · 2025-26"},"text":"Dónde se separa cada liga"},"legend":{"orientation":"h","y":-0.12,"x":0.5,"xanchor":"center"},"margin":{"t":110,"b":80,"l":40,"r":30},"autosize":true},                        {"displaylogo": false, "responsive": true, "displayModeBar": false}                    )                };            </script>        </div></div>
-  <div id="chart_a388043d_sidebar">
+<div id="chart_1981c46a_layout">
+  <div id="chart_1981c46a_plotwrap"><div style="height:100%; width:100%;">                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha256-jvTGqxNp8AGWEcvNLVuKr+8j5dGe9Yw51LQkmDH+IYA=" crossorigin="anonymous"></script>                <div id="chart_1981c46a" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("chart_1981c46a")) {                    Plotly.newPlot(                        "chart_1981c46a",                        [{"customdata":[13.247222222222222,1.5838888888888887,0.10722222222222223,21.072222222222223,9.387254901960784,8.730392156862745,1.7516339869281046,10.42483660130719,13.247222222222222],"fill":"toself","fillcolor":"rgba(227,73,72,0.06)","hovertemplate":"\u003cb\u003e%{theta}\u003c\u002fb\u003e\u003cbr\u003evalor: %{customdata:.2f}\u003cbr\u003eescala: %{r:.2f}\u003cextra\u003eBundesliga\u003c\u002fextra\u003e","line":{"color":"#e34948","width":2.4},"mode":"lines","name":"Bundesliga","r":[0.9656582837241323,1.0,0.9601990049751246,0.6561489093016418,0.843736231458364,0.7960369487485102,0.7886503732614689,0.7828155139801861,0.9656582837241323],"theta":["Tiros","Goles","G\u002fSh","CS%","Tackles","Intercep.","Offsides","Faltas","Tiros"],"type":"scatterpolar","subplot":"polar"},{"customdata":[12.316500000000001,1.184,0.08549999999999999,32.114999999999995,9.075,7.661842105263157,1.556578947368421,12.667105263157895,12.316500000000001],"fill":"toself","fillcolor":"rgba(42,120,214,0.06)","hovertemplate":"\u003cb\u003e%{theta}\u003c\u002fb\u003e\u003cbr\u003evalor: %{customdata:.2f}\u003cbr\u003eescala: %{r:.2f}\u003cextra\u003eSerie A\u003c\u002fextra\u003e","line":{"color":"#2a78d6","width":2.4},"mode":"lines","name":"Serie A","r":[0.8978131454258292,0.7475271834444055,0.7656716417910449,1.0,0.8156704361873991,0.6986065805156514,0.700829383886256,0.9511905938148404,0.8978131454258292],"theta":["Tiros","Goles","G\u002fSh","CS%","Tackles","Intercep.","Offsides","Faltas","Tiros"],"type":"scatterpolar","subplot":"polar"},{"customdata":[12.43888888888889,1.3711111111111112,0.09777777777777778,28.344444444444445,10.110120816003167,8.864081996434939,1.6100217864923747,12.080213903743315,12.43888888888889],"fill":"toself","fillcolor":"rgba(46,65,58,0.06)","hovertemplate":"\u003cb\u003e%{theta}\u003c\u002fb\u003e\u003cbr\u003evalor: %{customdata:.2f}\u003cbr\u003eescala: %{r:.2f}\u003cextra\u003eLigue 1\u003c\u002fextra\u003e","line":{"color":"#2e413a","width":2.4},"mode":"lines","name":"Ligue 1","r":[0.9067347021423076,0.8656611715187655,0.8756218905472638,0.8825920736243017,0.908708171448662,0.8082267851338174,0.7248913256719224,0.9071201034329532,0.9067347021423076],"theta":["Tiros","Goles","G\u002fSh","CS%","Tackles","Intercep.","Offsides","Faltas","Tiros"],"type":"scatterpolar","subplot":"polar"},{"customdata":[12.478,1.319,0.0925,23.69,9.93157894736842,8.085526315789474,1.8934210526315787,12.580263157894738,12.478],"fill":"toself","fillcolor":"rgba(237,161,0,0.06)","hovertemplate":"\u003cb\u003e%{theta}\u003c\u002fb\u003e\u003cbr\u003evalor: %{customdata:.2f}\u003cbr\u003eescala: %{r:.2f}\u003cextra\u003eLa Liga\u003c\u002fextra\u003e","line":{"color":"#eda100","width":2.4},"mode":"lines","name":"La Liga","r":[0.9095857125501153,0.8327604349351105,0.8283582089552239,0.7376615288805856,0.8926606426478887,0.7372380967316982,0.8524881516587677,0.9446694990613576,0.9095857125501153],"theta":["Tiros","Goles","G\u002fSh","CS%","Tackles","Intercep.","Offsides","Faltas","Tiros"],"type":"scatterpolar","subplot":"polar"},{"customdata":[12.495000000000001,1.3215,0.0965,25.525,9.860526315789475,7.981578947368421,1.5447368421052632,10.811842105263157,12.495000000000001],"fill":"toself","fillcolor":"rgba(232,123,164,0.06)","hovertemplate":"\u003cb\u003e%{theta}\u003c\u002fb\u003e\u003cbr\u003evalor: %{customdata:.2f}\u003cbr\u003eescala: %{r:.2f}\u003cextra\u003ePremier League\u003c\u002fextra\u003e","line":{"color":"#e87ba4","width":2.4},"mode":"lines","name":"Premier League","r":[0.9108249301421456,0.8343388284812348,0.864179104477612,0.7947999377238052,0.886274358241028,0.7277601781569537,0.6954976303317536,0.8118762968086156,0.9108249301421456],"theta":["Tiros","Goles","G\u002fSh","CS%","Tackles","Intercep.","Offsides","Faltas","Tiros"],"type":"scatterpolar","subplot":"polar"},{"hovertemplate":"\u003cb\u003e%{y}\u003c\u002fb\u003e\u003cbr\u003eseparación: %{x:.0f}%\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#3987e5"},"orientation":"h","showlegend":false,"x":[7.025791570559847,10.238461387767895,20.259067357512972,17.701508081505512,13.563050202551285,25.24728165555945,18.41556636553161,34.38510906983582],"y":["Tiros","Tackles","G\u002fSh","Faltas","Intercep.","Goles","Offsides","CS%"],"type":"bar","xaxis":"x","yaxis":"y"}],                        {"template":{"layout":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12},"hoverlabel":{"bgcolor":"#fcfcfb","bordercolor":"#c3c2b7","font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11}},"margin":{"b":60,"l":70,"r":40,"t":90},"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(0,0,0,0)","title":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":18},"subtitle":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12.5}},"x":0.03,"xanchor":"left"},"xaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"},"yaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"}}},"polar":{"domain":{"x":[0.0,0.528],"y":[0.0,1.0]},"radialaxis":{"range":[0,1],"showticklabels":false,"ticks":"","gridcolor":"#e1e0d9","linecolor":"#c3c2b7"},"angularaxis":{"tickfont":{"size":11,"color":"#52514e"},"gridcolor":"#e1e0d9","linecolor":"#c3c2b7"},"bgcolor":"rgba(0,0,0,0)"},"xaxis":{"anchor":"y","domain":[0.648,1.0],"range":[0,38.511322158216124],"ticksuffix":"%"},"yaxis":{"anchor":"x","domain":[0.0,1.0],"tickfont":{"size":10.5}},"annotations":[{"font":{"size":16},"showarrow":false,"text":"Separación por eje (%)","x":0.8240000000000001,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"}],"title":{"subtitle":{"text":"Las 5 ligas sobrepuestas · separación = 1 − (mín ÷ máx) entre ligas · 2025-26"},"text":"Dónde se separa cada liga"},"legend":{"orientation":"h","y":-0.12,"x":0.5,"xanchor":"center"},"margin":{"t":110,"b":80,"l":40,"r":30},"autosize":true},                        {"displaylogo": false, "responsive": true, "displayModeBar": false}                    )                };            </script>        </div></div>
+  <div id="chart_1981c46a_sidebar">
     <div class="block">
       <label>Temporada</label>
-      <select id="chart_a388043d_season"><option value="2021-22">2021-22</option><option value="2022-23">2022-23</option><option value="2023-24">2023-24</option><option value="2024-25">2024-25</option><option value="2025-26">2025-26</option></select>
+      <select id="chart_1981c46a_season"><option value="2021-22">2021-22</option><option value="2022-23">2022-23</option><option value="2023-24">2023-24</option><option value="2024-25">2024-25</option><option value="2025-26">2025-26</option></select>
     </div>
     <div class="block"><div class="hint">Las barras conservan siempre el mismo orden y la misma escala, para que al cambiar de temporada se vea qué eje sube y cuál baja.</div></div>
   </div>
 </div>
-<div id="chart_a388043d_insight">
+<div id="chart_1981c46a_insight">
   <div>
     <h4>Qué mirar aquí</h4>
     <p>Las 5 formas encimadas: donde los contornos se pisan, las ligas se parecen; donde uno se despega, ahí hay una diferencia real. Las barras de la derecha ponen número a eso, eje por eje.</p>
   </div>
   <div class="fv-dyn">
-    <h4>En lo que estás viendo · <span class="fv-estado" id="chart_a388043d_ins_estado">2025-26</span></h4>
-    <p id="chart_a388043d_ins_fija">En 2025-26 el eje que más separa a las ligas es <strong>CS%</strong>: la última se queda un 34% por debajo de la primera. En los otros siete la separación va del 7% al 25%.</p>
-    <p class="fv-salta" id="chart_a388043d_ins_salta">En <strong>CS%</strong> la separación va del 16% al 34% según la temporada, así que es inestable: depende bastante del año.</p>
+    <h4>En lo que estás viendo · <span class="fv-estado" id="chart_1981c46a_ins_estado">2025-26</span></h4>
+    <p id="chart_1981c46a_ins_fija">En 2025-26 el eje que más separa a las ligas es <strong>CS%</strong>: la última se queda un 34% por debajo de la primera. En los otros siete la separación va del 7% al 25%.</p>
+    <p class="fv-salta" id="chart_1981c46a_ins_salta">En <strong>CS%</strong> la separación va del 16% al 34% según la temporada, así que es inestable: depende bastante del año.</p>
   </div>
   <details>
     <summary>Por qué estas variables</summary>
@@ -198,14 +206,14 @@
   function setInsight(key, estado) {
     var d = insights[key];
     if (!d) return;
-    document.getElementById('chart_a388043d_ins_estado').textContent = estado;
-    document.getElementById('chart_a388043d_ins_fija').innerHTML = d.fija;
-    var s = document.getElementById('chart_a388043d_ins_salta');
+    document.getElementById('chart_1981c46a_ins_estado').textContent = estado;
+    document.getElementById('chart_1981c46a_ins_fija').innerHTML = d.fija;
+    var s = document.getElementById('chart_1981c46a_ins_salta');
     s.innerHTML = d.salta || '';
     s.style.display = d.salta ? '' : 'none';
   }
   specs.forEach(function(spec) {
-    var el = document.getElementById('chart_a388043d_' + spec.id);
+    var el = document.getElementById('chart_1981c46a_' + spec.id);
     el.value = spec.default;
     el.addEventListener('change', function(e) {
       var u = spec.updates[e.target.value];
@@ -217,11 +225,11 @@
         // dict = todas las trazas; lista = pasos con sus propios índices
         var steps = Array.isArray(u.restyle) ? u.restyle : [{update: u.restyle}];
         steps.forEach(function(s) {
-          if (s.traces) Plotly.restyle('chart_a388043d', s.update, s.traces);
-          else Plotly.restyle('chart_a388043d', s.update);
+          if (s.traces) Plotly.restyle('chart_1981c46a', s.update, s.traces);
+          else Plotly.restyle('chart_1981c46a', s.update);
         });
       }
-      if (u.relayout) Plotly.relayout('chart_a388043d', u.relayout);
+      if (u.relayout) Plotly.relayout('chart_1981c46a', u.relayout);
     });
   });
 })();

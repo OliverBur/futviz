@@ -116,85 +116,93 @@
 </header>
 <main><div class="chart-scroll">
 <style>
-  #chart_31da7694_layout { display:flex; flex-wrap: wrap; align-items:flex-start; gap:20px; max-width: 100%; }
-  #chart_31da7694_plotwrap { position: relative; flex: 1 1 280px; width: 100%; max-width: 760px;
+  #chart_d3aca72f_layout { display:flex; flex-wrap: wrap; align-items:flex-start; gap:20px; max-width: 100%; }
+  #chart_d3aca72f_plotwrap { position: relative; flex: 1 1 280px; width: 100%; max-width: 760px;
     aspect-ratio: 1.3103448275862069; min-width: 0; }
-  #chart_31da7694_plotwrap > div { position: absolute; inset: 0; }
-  #chart_31da7694_sidebar { font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  #chart_d3aca72f_plotwrap > div { position: absolute; inset: 0; }
+  #chart_d3aca72f_sidebar { font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     padding-top: 54px; flex: 1 1 190px; max-width: 260px; box-sizing: border-box; }
-  #chart_31da7694_sidebar .block { margin-bottom: 22px; }
-  #chart_31da7694_sidebar label { display: block; font-size: 11px; color: var(--color-muted, #898781);
+  #chart_d3aca72f_sidebar .block { margin-bottom: 22px; }
+  #chart_d3aca72f_sidebar label { display: block; font-size: 11px; color: var(--color-muted, #898781);
     text-transform: uppercase; letter-spacing: .03em; margin-bottom: 5px; }
-  #chart_31da7694_sidebar .hint { font-size: 11.5px; line-height: 1.45; color: var(--color-muted, #898781);
+  #chart_d3aca72f_sidebar .hint { font-size: 11.5px; line-height: 1.45; color: var(--color-muted, #898781);
     text-transform: none; letter-spacing: 0; margin-top: -14px; }
-  #chart_31da7694_sidebar input, #chart_31da7694_sidebar select { width: 100%; box-sizing: border-box;
+  /* Casilla de filtro por punto (ej. "solo sub-21"). Necesita anular el
+     `width:100%` de los inputs de arriba, pensado para el buscador. */
+  #chart_d3aca72f_sidebar .toggle { display: flex; align-items: center; gap: 8px; }
+  #chart_d3aca72f_sidebar .toggle input { width: auto; flex: none; margin: 0; padding: 0;
+    accent-color: var(--color-interactive, #c3c2b7); cursor: pointer; }
+  #chart_d3aca72f_sidebar .toggle span { font-size: 13px; cursor: pointer;
+    color: var(--color-primary, #0b0b0b); }
+  #chart_d3aca72f_sidebar .toggle + .hint { margin-top: 7px; }
+  #chart_d3aca72f_sidebar input, #chart_d3aca72f_sidebar select { width: 100%; box-sizing: border-box;
     padding: 7px 9px; font-size: 13px; font-family: inherit; color: var(--color-primary, #0b0b0b);
     background: var(--color-surface, #fcfcfb); border: 1px solid var(--color-border, #c3c2b7);
     border-radius: 6px; transition: border-color .15s ease; }
-  #chart_31da7694_sidebar input:focus, #chart_31da7694_sidebar select:focus {
+  #chart_d3aca72f_sidebar input:focus, #chart_d3aca72f_sidebar select:focus {
     outline: none; border-color: var(--color-interactive, #c3c2b7); }
   @media (max-width: 520px) {
-    #chart_31da7694_sidebar { padding-top: 4px; max-width: 100%; }
-    #chart_31da7694_plotwrap { aspect-ratio: 0.85; }
+    #chart_d3aca72f_sidebar { padding-top: 4px; max-width: 100%; }
+    #chart_d3aca72f_plotwrap { aspect-ratio: 0.85; }
   }
-  #chart_31da7694_insight { font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  #chart_d3aca72f_insight { font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     max-width: 760px; margin: 18px 0 4px; display: flex; flex-direction: column; gap: 14px;
     font-size: 13.5px; line-height: 1.58; color: var(--color-text-body, #52514e); }
-  #chart_31da7694_insight h4 { margin: 0 0 5px; font-size: 11px; font-weight: 700;
+  #chart_d3aca72f_insight h4 { margin: 0 0 5px; font-size: 11px; font-weight: 700;
     text-transform: uppercase; letter-spacing: .05em;
     color: var(--color-muted, #898781); }
-  #chart_31da7694_insight p { margin: 0 0 7px; }
-  #chart_31da7694_insight p:last-child { margin-bottom: 0; }
-  #chart_31da7694_insight strong { color: var(--color-primary, #0b0b0b); font-weight: 600; }
-  #chart_31da7694_insight code { font-size: 12.5px;
+  #chart_d3aca72f_insight p { margin: 0 0 7px; }
+  #chart_d3aca72f_insight p:last-child { margin-bottom: 0; }
+  #chart_d3aca72f_insight strong { color: var(--color-primary, #0b0b0b); font-weight: 600; }
+  #chart_d3aca72f_insight code { font-size: 12.5px;
     background: var(--color-bg, #e1e0d9); padding: 1px 4px; border-radius: 3px; }
-  #chart_31da7694_insight .fv-dyn { border-left: 3px solid var(--color-interactive, #c3c2b7);
+  #chart_d3aca72f_insight .fv-dyn { border-left: 3px solid var(--color-interactive, #c3c2b7);
     padding: 2px 0 2px 13px; }
-  #chart_31da7694_insight .fv-estado { color: var(--color-interactive, #c3c2b7);
+  #chart_d3aca72f_insight .fv-estado { color: var(--color-interactive, #c3c2b7);
     font-weight: 700; letter-spacing: .03em; }
-  #chart_31da7694_insight .fv-salta { margin-top: 6px; }
-  #chart_31da7694_insight details { border-top: 1px solid var(--color-border, #e1e0d9);
+  #chart_d3aca72f_insight .fv-salta { margin-top: 6px; }
+  #chart_d3aca72f_insight details { border-top: 1px solid var(--color-border, #e1e0d9);
     padding-top: 11px; }
-  #chart_31da7694_insight summary { cursor: pointer; font-size: 11px; font-weight: 700;
+  #chart_d3aca72f_insight summary { cursor: pointer; font-size: 11px; font-weight: 700;
     text-transform: uppercase; letter-spacing: .05em;
     color: var(--color-muted, #898781); list-style: none; }
-  #chart_31da7694_insight summary::-webkit-details-marker { display: none; }
-  #chart_31da7694_insight summary::after { content: " +"; }
-  #chart_31da7694_insight details[open] summary::after { content: " −"; }
-  #chart_31da7694_insight details[open] summary { margin-bottom: 9px; }
-  #chart_31da7694_insight summary:hover { color: var(--color-interactive, #0b0b0b); }
+  #chart_d3aca72f_insight summary::-webkit-details-marker { display: none; }
+  #chart_d3aca72f_insight summary::after { content: " +"; }
+  #chart_d3aca72f_insight details[open] summary::after { content: " −"; }
+  #chart_d3aca72f_insight details[open] summary { margin-bottom: 9px; }
+  #chart_d3aca72f_insight summary:hover { color: var(--color-interactive, #0b0b0b); }
 </style>
-<div id="chart_31da7694_layout">
-  <div id="chart_31da7694_plotwrap"><div style="height:100%; width:100%;">                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
-        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha256-jvTGqxNp8AGWEcvNLVuKr+8j5dGe9Yw51LQkmDH+IYA=" crossorigin="anonymous"></script>                <div id="chart_31da7694" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("chart_31da7694")) {                    Plotly.newPlot(                        "chart_31da7694",                        [{"customdata":["Augsburg","Bayern Munich","Dortmund","Frankfurt","Freiburg","Gladbach","Hamburger SV","Heidenheim","Hoffenheim","Köln","Leverkusen","Mainz 05","RB Leipzig","St Pauli","Stuttgart","Union Berlin","Werder Bremen","Wolfsburg"],"hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eBundesliga\u003cbr\u003eSoT%%: %{x:.1f}%\u003cbr\u003eG\u002fSoT: %{y:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#e34948","line":{"color":"#fcfcfb","width":1},"opacity":0.88,"size":[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11]},"mode":"markers","name":"Bundesliga","x":{"dtype":"f8","bdata":"ZmZmZmamQUBmZmZmZiZGQM3MzMzMTEJAAAAAAABAQ0AzMzMzMzNBQJqZmZmZ2UFAAAAAAACAQkCamZmZmZk\u002fQJqZmZmZWUJAzczMzMxMQUDNzMzMzAxBQDMzMzMzM0FAMzMzMzPzQkAzMzMzM3NAQDMzMzMz80NAZmZmZmZmP0CamZmZmZk\u002fQM3MzMzMjEFA"},"y":{"dtype":"f8","bdata":"pHA9Ctej0D+uR+F6FK7XP\u002fYoXI\u002fC9dg\u002fZmZmZmZm1j\u002fXo3A9CtfTP6RwPQrXo9A\u002fcT0K16NwzT97FK5H4XrUP9ejcD0K19M\u002f7FG4HoXr0T\u002fD9Shcj8LVP6RwPQrXo9A\u002f16NwPQrX0z8pXI\u002fC9SjMP9ejcD0K19M\u002f16NwPQrX0z+4HoXrUbjOP+xRuB6F69E\u002f"},"type":"scatter"},{"customdata":["Atalanta","Bologna","Cagliari","Como","Cremonese","Fiorentina","Genoa","Hellas Verona","Inter","Juventus","Lazio","Lecce","Milan","Napoli","Parma","Pisa","Roma","Sassuolo","Torino","Udinese"],"hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eSerie A\u003cbr\u003eSoT%%: %{x:.1f}%\u003cbr\u003eG\u002fSoT: %{y:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#2a78d6","line":{"color":"#fcfcfb","width":1},"opacity":0.88,"size":[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11]},"mode":"markers","name":"Serie A","x":{"dtype":"f8","bdata":"mpmZmZkZP0BmZmZmZmY9QM3MzMzMzD9AZmZmZmamQUDNzMzMzAxCQM3MzMzMzDpAMzMzMzNzQEAAAAAAAMBAQJqZmZmZmUFAAAAAAADAQUAzMzMzM7NCQAAAAAAAADpAAAAAAACAQECamZmZmdlBQJqZmZmZmTlAmpmZmZkZPUAzMzMzM7NBQJqZmZmZmUFAzczMzMzMQEBmZmZmZqZAQA=="},"y":{"dtype":"f8","bdata":"SOF6FK5H0T+PwvUoXI\u002fSP4\u002fC9Shcj9I\u002fMzMzMzMz0z8pXI\u002fC9SjMP6RwPQrXo9A\u002fAAAAAAAA0D8zMzMzMzPDP2ZmZmZmZtY\u002fAAAAAAAA0D8pXI\u002fC9SjMP+xRuB6F69E\u002f7FG4HoXr0T8zMzMzMzPTP3E9CtejcM0\u002fCtejcD0Kxz8zMzMzMzPTPzMzMzMzM9M\u002fAAAAAAAA0D9I4XoUrkfRPw=="},"type":"scatter"},{"customdata":["Angers","Auxerre","Brest","Le Havre","Lens","Lille","Lorient","Lyon","Marseille","Metz","Monaco","Nantes","Nice","Paris FC","PSG","Rennes","Strasbourg","Toulouse"],"hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eLigue 1\u003cbr\u003eSoT%%: %{x:.1f}%\u003cbr\u003eG\u002fSoT: %{y:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#2e413a","line":{"color":"#fcfcfb","width":1},"opacity":0.88,"size":[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11]},"mode":"markers","name":"Ligue 1","x":{"dtype":"f8","bdata":"zczMzMyMQUCamZmZmVlAQJqZmZmZmT9AmpmZmZmZQECamZmZmdlAQGZmZmZm5kBAZmZmZmZmQUDNzMzMzAxDQM3MzMzMDENAmpmZmZmZP0AzMzMzM7NBQGZmZmZm5jxAzczMzMyMQUCamZmZmRlBQM3MzMzMzEJAzczMzMyMQUDNzMzMzExEQM3MzMzMzEBA"},"y":{"dtype":"f8","bdata":"cT0K16NwzT9xPQrXo3DNPzMzMzMzM9M\u002fcT0K16NwzT97FK5H4XrUP+xRuB6F69E\u002fH4XrUbge1T\u002fXo3A9CtfTP4\u002fC9Shcj9I\u002fuB6F61G4zj\u002fD9Shcj8LVP7gehetRuM4\u002fuB6F61G4zj8zMzMzMzPTPzMzMzMzM9M\u002fMzMzMzMz0z97FK5H4XrUP4\u002fC9Shcj9I\u002f"},"type":"scatter"},{"customdata":["Alavés","Athletic Club","Atlético Madrid","Barcelona","Celta Vigo","Elche","Espanyol","Getafe","Girona","Levante","Mallorca","Osasuna","Oviedo","Rayo Vallecano","Real Betis","Real Madrid","Real Sociedad","Sevilla","Valencia","Villarreal"],"hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eLa Liga\u003cbr\u003eSoT%%: %{x:.1f}%\u003cbr\u003eG\u002fSoT: %{y:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#eda100","line":{"color":"#fcfcfb","width":1},"opacity":0.88,"size":[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11]},"mode":"markers","name":"La Liga","x":{"dtype":"f8","bdata":"ZmZmZmamQEAAAAAAAIBAQAAAAAAAgENAzczMzMyMQkDNzMzMzAxEQDMzMzMzs0FAMzMzMzNzQEAAAAAAAAA+QDMzMzMzc0JAZmZmZmbmPkBmZmZmZiZDQGZmZmZm5kBAmpmZmZmZP0AAAAAAAEBBQDMzMzMz80BAzczMzMwMQ0CamZmZmZlCQM3MzMzMTD9AZmZmZmZmO0BmZmZmZuZCQA=="},"y":{"dtype":"f8","bdata":"KVyPwvUozD8pXI\u002fC9SjMP+xRuB6F69E\u002fw\u002fUoXI\u002fC1T+PwvUoXI\u002fSPzMzMzMzM9M\u002fAAAAAAAA0D\u002fsUbgehevRP5qZmZmZmck\u002f16NwPQrX0z9I4XoUrkfRP7gehetRuM4\u002fmpmZmZmZyT\u002fhehSuR+HKPzMzMzMzM9M\u002fpHA9Ctej0D\u002fsUbgehevRP+xRuB6F69E\u002fH4XrUbge1T+uR+F6FK7XPw=="},"type":"scatter"},{"customdata":["Arsenal","Aston Villa","Bournemouth","Brentford","Brighton","Burnley","Chelsea","Crystal Palace","Everton","Fulham","Leeds United","Liverpool","Manchester City","Manchester Utd","Newcastle","Nottingham","Sunderland","Tottenham","West Ham","Wolves"],"hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003ePremier League\u003cbr\u003eSoT%%: %{x:.1f}%\u003cbr\u003eG\u002fSoT: %{y:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#e87ba4","line":{"color":"#fcfcfb","width":1},"opacity":0.88,"size":[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11]},"mode":"markers","name":"Premier League","x":{"dtype":"f8","bdata":"mpmZmZnZQECamZmZmZlBQGZmZmZm5kBAZmZmZmYmQkDNzMzMzMxBQJqZmZmZmUBAzczMzMxMQEBmZmZmZuY\u002fQM3MzMzMzEBAMzMzMzOzPEAzMzMzM7M\u002fQM3MzMzMzD1AAAAAAABAQUDNzMzMzAxCQGZmZmZm5kFAZmZmZmZmQEBmZmZmZmZAQM3MzMzMzEBAzczMzMyMQUBmZmZmZqZAQA=="},"y":{"dtype":"f8","bdata":"w\u002fUoXI\u002fC1T\u002fXo3A9CtfTP4\u002fC9Shcj9I\u002f16NwPQrX0z9I4XoUrkfRP+xRuB6F69E\u002fMzMzMzMz0z9xPQrXo3DNPzMzMzMzM9M\u002f7FG4HoXr0T\u002fsUbgehevRP8P1KFyPwtU\u002fZmZmZmZm1j+PwvUoXI\u002fSP0jhehSuR9E\u002f7FG4HoXr0T+kcD0K16PQP3sUrkfhetQ\u002fj8L1KFyP0j9SuB6F61HIPw=="},"type":"scatter"}],                        {"template":{"layout":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12},"hoverlabel":{"bgcolor":"#fcfcfb","bordercolor":"#c3c2b7","font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11}},"margin":{"b":60,"l":70,"r":40,"t":90},"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(0,0,0,0)","title":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":18},"subtitle":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12.5}},"x":0.03,"xanchor":"left"},"xaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"},"yaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"}}},"shapes":[{"line":{"color":"#c3c2b7","dash":"dash","width":1},"type":"line","x0":33.348347107438016,"x1":33.348347107438016,"xref":"x","y0":0,"y1":1,"yref":"y domain"},{"line":{"color":"#c3c2b7","dash":"dash","width":1},"type":"line","x0":0,"x1":1,"xref":"x domain","y0":0.2917768595041323,"y1":0.2917768595041323,"yref":"y"}],"title":{"subtitle":{"text":"Precisión (llegar a puerta) vs. definición (marcar una vez ahí) · 2025-26"},"text":"Eficiencia de definición"},"xaxis":{"title":{"text":"Precisión — % de tiros que van a puerta (SoT%)"},"range":[24.372,45.428]},"yaxis":{"title":{"text":"Definición — goles por tiro a puerta (G\u002fSoT)"},"range":[0.12260000000000001,0.4474]},"annotations":[{"font":{"color":"#898781","size":10.5},"showarrow":false,"text":"certeros y letales","x":33.748347107438015,"xanchor":"left","y":0.435,"yanchor":"bottom"},{"font":{"color":"#898781","size":10.5},"showarrow":false,"text":"poco a puerta, pero letales","x":32.94834710743802,"xanchor":"right","y":0.435,"yanchor":"bottom"},{"font":{"color":"#898781","size":10.5},"showarrow":false,"text":"mucho a puerta, poca pegada","x":33.748347107438015,"xanchor":"left","y":0.13,"yanchor":"top"},{"font":{"color":"#898781","size":10.5},"showarrow":false,"text":"ni certeros ni letales","x":32.94834710743802,"xanchor":"right","y":0.13,"yanchor":"top"}],"autosize":true},                        {"displaylogo": false, "responsive": true, "displayModeBar": false}                    )                };            </script>        </div></div>
-  <div id="chart_31da7694_sidebar">
+<div id="chart_d3aca72f_layout">
+  <div id="chart_d3aca72f_plotwrap"><div style="height:100%; width:100%;">                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha256-jvTGqxNp8AGWEcvNLVuKr+8j5dGe9Yw51LQkmDH+IYA=" crossorigin="anonymous"></script>                <div id="chart_d3aca72f" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("chart_d3aca72f")) {                    Plotly.newPlot(                        "chart_d3aca72f",                        [{"customdata":["Augsburg","Bayern Munich","Dortmund","Frankfurt","Freiburg","Gladbach","Hamburger SV","Heidenheim","Hoffenheim","Köln","Leverkusen","Mainz 05","RB Leipzig","St Pauli","Stuttgart","Union Berlin","Werder Bremen","Wolfsburg"],"hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eBundesliga\u003cbr\u003eSoT%%: %{x:.1f}%\u003cbr\u003eG\u002fSoT: %{y:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#e34948","line":{"color":"#fcfcfb","width":1},"opacity":0.88,"size":[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11]},"mode":"markers","name":"Bundesliga","x":{"dtype":"f8","bdata":"ZmZmZmamQUBmZmZmZiZGQM3MzMzMTEJAAAAAAABAQ0AzMzMzMzNBQJqZmZmZ2UFAAAAAAACAQkCamZmZmZk\u002fQJqZmZmZWUJAzczMzMxMQUDNzMzMzAxBQDMzMzMzM0FAMzMzMzPzQkAzMzMzM3NAQDMzMzMz80NAZmZmZmZmP0CamZmZmZk\u002fQM3MzMzMjEFA"},"y":{"dtype":"f8","bdata":"pHA9Ctej0D+uR+F6FK7XP\u002fYoXI\u002fC9dg\u002fZmZmZmZm1j\u002fXo3A9CtfTP6RwPQrXo9A\u002fcT0K16NwzT97FK5H4XrUP9ejcD0K19M\u002f7FG4HoXr0T\u002fD9Shcj8LVP6RwPQrXo9A\u002f16NwPQrX0z8pXI\u002fC9SjMP9ejcD0K19M\u002f16NwPQrX0z+4HoXrUbjOP+xRuB6F69E\u002f"},"type":"scatter"},{"customdata":["Atalanta","Bologna","Cagliari","Como","Cremonese","Fiorentina","Genoa","Hellas Verona","Inter","Juventus","Lazio","Lecce","Milan","Napoli","Parma","Pisa","Roma","Sassuolo","Torino","Udinese"],"hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eSerie A\u003cbr\u003eSoT%%: %{x:.1f}%\u003cbr\u003eG\u002fSoT: %{y:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#2a78d6","line":{"color":"#fcfcfb","width":1},"opacity":0.88,"size":[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11]},"mode":"markers","name":"Serie A","x":{"dtype":"f8","bdata":"mpmZmZkZP0BmZmZmZmY9QM3MzMzMzD9AZmZmZmamQUDNzMzMzAxCQM3MzMzMzDpAMzMzMzNzQEAAAAAAAMBAQJqZmZmZmUFAAAAAAADAQUAzMzMzM7NCQAAAAAAAADpAAAAAAACAQECamZmZmdlBQJqZmZmZmTlAmpmZmZkZPUAzMzMzM7NBQJqZmZmZmUFAzczMzMzMQEBmZmZmZqZAQA=="},"y":{"dtype":"f8","bdata":"SOF6FK5H0T+PwvUoXI\u002fSP4\u002fC9Shcj9I\u002fMzMzMzMz0z8pXI\u002fC9SjMP6RwPQrXo9A\u002fAAAAAAAA0D8zMzMzMzPDP2ZmZmZmZtY\u002fAAAAAAAA0D8pXI\u002fC9SjMP+xRuB6F69E\u002f7FG4HoXr0T8zMzMzMzPTP3E9CtejcM0\u002fCtejcD0Kxz8zMzMzMzPTPzMzMzMzM9M\u002fAAAAAAAA0D9I4XoUrkfRPw=="},"type":"scatter"},{"customdata":["Angers","Auxerre","Brest","Le Havre","Lens","Lille","Lorient","Lyon","Marseille","Metz","Monaco","Nantes","Nice","Paris FC","PSG","Rennes","Strasbourg","Toulouse"],"hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eLigue 1\u003cbr\u003eSoT%%: %{x:.1f}%\u003cbr\u003eG\u002fSoT: %{y:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#2e413a","line":{"color":"#fcfcfb","width":1},"opacity":0.88,"size":[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11]},"mode":"markers","name":"Ligue 1","x":{"dtype":"f8","bdata":"zczMzMyMQUCamZmZmVlAQJqZmZmZmT9AmpmZmZmZQECamZmZmdlAQGZmZmZm5kBAZmZmZmZmQUDNzMzMzAxDQM3MzMzMDENAmpmZmZmZP0AzMzMzM7NBQGZmZmZm5jxAzczMzMyMQUCamZmZmRlBQM3MzMzMzEJAzczMzMyMQUDNzMzMzExEQM3MzMzMzEBA"},"y":{"dtype":"f8","bdata":"cT0K16NwzT9xPQrXo3DNPzMzMzMzM9M\u002fcT0K16NwzT97FK5H4XrUP+xRuB6F69E\u002fH4XrUbge1T\u002fXo3A9CtfTP4\u002fC9Shcj9I\u002fuB6F61G4zj\u002fD9Shcj8LVP7gehetRuM4\u002fuB6F61G4zj8zMzMzMzPTPzMzMzMzM9M\u002fMzMzMzMz0z97FK5H4XrUP4\u002fC9Shcj9I\u002f"},"type":"scatter"},{"customdata":["Alavés","Athletic Club","Atlético Madrid","Barcelona","Celta Vigo","Elche","Espanyol","Getafe","Girona","Levante","Mallorca","Osasuna","Oviedo","Rayo Vallecano","Real Betis","Real Madrid","Real Sociedad","Sevilla","Valencia","Villarreal"],"hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003eLa Liga\u003cbr\u003eSoT%%: %{x:.1f}%\u003cbr\u003eG\u002fSoT: %{y:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#eda100","line":{"color":"#fcfcfb","width":1},"opacity":0.88,"size":[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11]},"mode":"markers","name":"La Liga","x":{"dtype":"f8","bdata":"ZmZmZmamQEAAAAAAAIBAQAAAAAAAgENAzczMzMyMQkDNzMzMzAxEQDMzMzMzs0FAMzMzMzNzQEAAAAAAAAA+QDMzMzMzc0JAZmZmZmbmPkBmZmZmZiZDQGZmZmZm5kBAmpmZmZmZP0AAAAAAAEBBQDMzMzMz80BAzczMzMwMQ0CamZmZmZlCQM3MzMzMTD9AZmZmZmZmO0BmZmZmZuZCQA=="},"y":{"dtype":"f8","bdata":"KVyPwvUozD8pXI\u002fC9SjMP+xRuB6F69E\u002fw\u002fUoXI\u002fC1T+PwvUoXI\u002fSPzMzMzMzM9M\u002fAAAAAAAA0D\u002fsUbgehevRP5qZmZmZmck\u002f16NwPQrX0z9I4XoUrkfRP7gehetRuM4\u002fmpmZmZmZyT\u002fhehSuR+HKPzMzMzMzM9M\u002fpHA9Ctej0D\u002fsUbgehevRP+xRuB6F69E\u002fH4XrUbge1T+uR+F6FK7XPw=="},"type":"scatter"},{"customdata":["Arsenal","Aston Villa","Bournemouth","Brentford","Brighton","Burnley","Chelsea","Crystal Palace","Everton","Fulham","Leeds United","Liverpool","Manchester City","Manchester Utd","Newcastle","Nottingham","Sunderland","Tottenham","West Ham","Wolves"],"hovertemplate":"\u003cb\u003e%{customdata}\u003c\u002fb\u003e\u003cbr\u003ePremier League\u003cbr\u003eSoT%%: %{x:.1f}%\u003cbr\u003eG\u002fSoT: %{y:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#e87ba4","line":{"color":"#fcfcfb","width":1},"opacity":0.88,"size":[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11]},"mode":"markers","name":"Premier League","x":{"dtype":"f8","bdata":"mpmZmZnZQECamZmZmZlBQGZmZmZm5kBAZmZmZmYmQkDNzMzMzMxBQJqZmZmZmUBAzczMzMxMQEBmZmZmZuY\u002fQM3MzMzMzEBAMzMzMzOzPEAzMzMzM7M\u002fQM3MzMzMzD1AAAAAAABAQUDNzMzMzAxCQGZmZmZm5kFAZmZmZmZmQEBmZmZmZmZAQM3MzMzMzEBAzczMzMyMQUBmZmZmZqZAQA=="},"y":{"dtype":"f8","bdata":"w\u002fUoXI\u002fC1T\u002fXo3A9CtfTP4\u002fC9Shcj9I\u002f16NwPQrX0z9I4XoUrkfRP+xRuB6F69E\u002fMzMzMzMz0z9xPQrXo3DNPzMzMzMzM9M\u002f7FG4HoXr0T\u002fsUbgehevRP8P1KFyPwtU\u002fZmZmZmZm1j+PwvUoXI\u002fSP0jhehSuR9E\u002f7FG4HoXr0T+kcD0K16PQP3sUrkfhetQ\u002fj8L1KFyP0j9SuB6F61HIPw=="},"type":"scatter"}],                        {"template":{"layout":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12},"hoverlabel":{"bgcolor":"#fcfcfb","bordercolor":"#c3c2b7","font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11}},"margin":{"b":60,"l":70,"r":40,"t":90},"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(0,0,0,0)","title":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":18},"subtitle":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12.5}},"x":0.03,"xanchor":"left"},"xaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"},"yaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"}}},"shapes":[{"line":{"color":"#c3c2b7","dash":"dash","width":1},"type":"line","x0":33.348347107438016,"x1":33.348347107438016,"xref":"x","y0":0,"y1":1,"yref":"y domain"},{"line":{"color":"#c3c2b7","dash":"dash","width":1},"type":"line","x0":0,"x1":1,"xref":"x domain","y0":0.2917768595041323,"y1":0.2917768595041323,"yref":"y"}],"title":{"subtitle":{"text":"Precisión (llegar a puerta) vs. definición (marcar una vez ahí) · 2025-26"},"text":"Eficiencia de definición"},"xaxis":{"title":{"text":"Precisión — % de tiros que van a puerta (SoT%)"},"range":[24.372,45.428]},"yaxis":{"title":{"text":"Definición — goles por tiro a puerta (G\u002fSoT)"},"range":[0.12260000000000001,0.4474]},"annotations":[{"font":{"color":"#898781","size":10.5},"showarrow":false,"text":"certeros y letales","x":33.748347107438015,"xanchor":"left","y":0.435,"yanchor":"bottom"},{"font":{"color":"#898781","size":10.5},"showarrow":false,"text":"poco a puerta, pero letales","x":32.94834710743802,"xanchor":"right","y":0.435,"yanchor":"bottom"},{"font":{"color":"#898781","size":10.5},"showarrow":false,"text":"mucho a puerta, poca pegada","x":33.748347107438015,"xanchor":"left","y":0.13,"yanchor":"top"},{"font":{"color":"#898781","size":10.5},"showarrow":false,"text":"ni certeros ni letales","x":32.94834710743802,"xanchor":"right","y":0.13,"yanchor":"top"}],"autosize":true},                        {"displaylogo": false, "responsive": true, "displayModeBar": false}                    )                };            </script>        </div></div>
+  <div id="chart_d3aca72f_sidebar">
     <div class="block">
       <label>Temporada</label>
-      <select id="chart_31da7694_season"><option value="2021-22">2021-22</option><option value="2022-23">2022-23</option><option value="2023-24">2023-24</option><option value="2024-25">2024-25</option><option value="2025-26">2025-26</option></select>
+      <select id="chart_d3aca72f_season"><option value="2021-22">2021-22</option><option value="2022-23">2022-23</option><option value="2023-24">2023-24</option><option value="2024-25">2024-25</option><option value="2025-26">2025-26</option></select>
     </div>
     <div class="block">
       <label>Buscar club</label>
-      <input list="chart_31da7694_clubs" id="chart_31da7694_search" placeholder="Escribe un club…" autocomplete="off">
-      <datalist id="chart_31da7694_clubs"></datalist>
+      <input list="chart_d3aca72f_clubs" id="chart_d3aca72f_search" placeholder="Escribe un club…" autocomplete="off">
+      <datalist id="chart_d3aca72f_clubs"></datalist>
     </div>
     <div class="block">
       <label>Filtrar por liga</label>
-      <select id="chart_31da7694_league">
+      <select id="chart_d3aca72f_league">
         <option value="__all__">Todas las ligas</option>
         <option value="Bundesliga">Bundesliga</option><option value="Serie A">Serie A</option><option value="Ligue 1">Ligue 1</option><option value="La Liga">La Liga</option><option value="Premier League">Premier League</option>
       </select>
     </div>
   </div>
 </div>
-<div id="chart_31da7694_insight">
+<div id="chart_d3aca72f_insight">
   <div>
     <h4>Qué mirar aquí</h4>
     <p>Cada punto es un equipo. El eje horizontal es <strong>llegar</strong> (qué porcentaje de sus tiros van a puerta) y el vertical es <strong>definir</strong> (cuántos goles saca de cada tiro a puerta). Arriba a la derecha están los que hacen bien las dos cosas; abajo a la derecha, los que tiran mucho a puerta y no la meten.</p>
   </div>
   <div class="fv-dyn">
-    <h4>En lo que estás viendo · <span class="fv-estado" id="chart_31da7694_ins_estado">2025-26 · Todas las ligas</span></h4>
-    <p id="chart_31da7694_ins_fija">En las 5 ligas, <strong>Dortmund</strong> es el que más gol saca por tiro a puerta (0.39 G/SoT) contra una media de 0.28.</p>
-    <p class="fv-salta" id="chart_31da7694_ins_salta">El caso opuesto lo tiene <strong>Valencia</strong>: llega poco a puerta (27.4%) y aun así es de los más letales cuando llega (0.33 G/SoT).</p>
+    <h4>En lo que estás viendo · <span class="fv-estado" id="chart_d3aca72f_ins_estado">2025-26 · Todas las ligas</span></h4>
+    <p id="chart_d3aca72f_ins_fija">En las 5 ligas, <strong>Dortmund</strong> es el que más gol saca por tiro a puerta (0.39 G/SoT) contra una media de 0.28.</p>
+    <p class="fv-salta" id="chart_d3aca72f_ins_salta">El caso opuesto lo tiene <strong>Valencia</strong>: llega poco a puerta (27.4%) y aun así es de los más letales cuando llega (0.33 G/SoT).</p>
   </div>
   <details>
     <summary>Por qué estas variables</summary>
@@ -212,16 +220,44 @@
   var BASE_SIZE = 11, HIGHLIGHT_SIZE = 20;
   var current = "2025-26";
 
-  function clubMap() { return seasons[current].ents; }
-  function traceNames() { return seasons[current].names; }
+  var filterOn = false;
+  var FILTER_KEY = "";
+  var FILTER_ESTADO = "";
+
+  // La "vista" es lo que se está mostrando: la temporada elegida y, si la
+  // casilla está marcada, solo los puntos que pasan el filtro. Se recalcula
+  // entera en vez de guardarse precalculada desde Python por el mismo motivo
+  // que los tamaños (ver _payload): duplicar x/y/custom pesa el doble.
+  function computeView() {
+    var d = seasons[current];
+    if (!filterOn || !d.f) return d;
+    var v = {names: [], x: [], y: [], ents: {}};
+    if (d.custom) v.custom = [];
+    for (var t = 0; t < d.names.length; t++) {
+      var nn = [], xx = [], yy = [], cc = [];
+      for (var i = 0; i < d.names[t].length; i++) {
+        if (!d.f[t][i]) continue;
+        nn.push(d.names[t][i]); xx.push(d.x[t][i]); yy.push(d.y[t][i]);
+        if (d.custom) cc.push(d.custom[t][i]);
+        v.ents[d.names[t][i]] = d.ents[d.names[t][i]];
+      }
+      v.names.push(nn); v.x.push(xx); v.y.push(yy);
+      if (d.custom) v.custom.push(cc);
+    }
+    return v;
+  }
+  var V = computeView();
+
+  function clubMap() { return V.ents; }
+  function traceNames() { return V.names; }
 
   var insights = {"2021-22|__all__": {"fija": "En las 5 ligas, <strong>Dortmund</strong> es el que más gol saca por tiro a puerta (0.42 G/SoT) contra una media de 0.30.", "salta": "El caso opuesto lo tiene <strong>Atalanta</strong>: llega poco a puerta (27.9%) y aun así es de los más letales cuando llega (0.34 G/SoT)."}, "2021-22|Bundesliga": {"fija": "En Bundesliga, <strong>Dortmund</strong> es el que más gol saca por tiro a puerta (0.42 G/SoT) contra una media de 0.31.", "salta": "El caso opuesto lo tiene <strong>Köln</strong>: llega poco a puerta (31.9%) y aun así es de los más letales cuando llega (0.34 G/SoT)."}, "2021-22|Serie A": {"fija": "En Serie A, <strong>Hellas Verona</strong> es el que más gol saca por tiro a puerta (0.37 G/SoT) contra una media de 0.29.", "salta": "El desajuste más grande es el de <strong>Sassuolo</strong>: está entre los que más tiros a puerta consiguen (35.9%) pero de los que menos los aprovechan (0.26 G/SoT)."}, "2021-22|Ligue 1": {"fija": "En Ligue 1, <strong>PSG</strong> es el que más gol saca por tiro a puerta (0.40 G/SoT) contra una media de 0.30.", "salta": "El caso opuesto lo tiene <strong>Strasbourg</strong>: llega poco a puerta (31.9%) y aun así es de los más letales cuando llega (0.33 G/SoT)."}, "2021-22|La Liga": {"fija": "En La Liga, <strong>Atlético Madrid</strong> es el que más gol saca por tiro a puerta (0.39 G/SoT) contra una media de 0.29.", "salta": "El desajuste más grande es el de <strong>Real Sociedad</strong>: está entre los que más tiros a puerta consiguen (33.3%) pero de los que menos los aprovechan (0.22 G/SoT)."}, "2021-22|Premier League": {"fija": "En Premier League, <strong>Manchester City</strong> es el que más gol saca por tiro a puerta (0.38 G/SoT) contra una media de 0.29.", "salta": "El desajuste más grande es el de <strong>Southampton</strong>: está entre los que más tiros a puerta consiguen (33.7%) pero de los que menos los aprovechan (0.23 G/SoT)."}, "2022-23|__all__": {"fija": "En las 5 ligas, <strong>Arsenal</strong> es el que más gol saca por tiro a puerta (0.42 G/SoT) contra una media de 0.29.", "salta": "El caso opuesto lo tiene <strong>Augsburg</strong>: llega poco a puerta (28.5%) y aun así es de los más letales cuando llega (0.37 G/SoT)."}, "2022-23|Bundesliga": {"fija": "En Bundesliga, <strong>Union Berlin</strong> es el que más gol saca por tiro a puerta (0.41 G/SoT) contra una media de 0.32.", "salta": "El caso opuesto lo tiene <strong>Union Berlin</strong>: llega poco a puerta (30.2%) y aun así es de los más letales cuando llega (0.41 G/SoT)."}, "2022-23|Serie A": {"fija": "En Serie A, <strong>Salernitana</strong> es el que más gol saca por tiro a puerta (0.38 G/SoT) contra una media de 0.28.", "salta": "El desajuste más grande es el de <strong>Sassuolo</strong>: está entre los que más tiros a puerta consiguen (33.8%) pero de los que menos los aprovechan (0.23 G/SoT)."}, "2022-23|Ligue 1": {"fija": "En Ligue 1, <strong>Montpellier</strong> es el que más gol saca por tiro a puerta (0.35 G/SoT) contra una media de 0.28.", "salta": "El caso opuesto lo tiene <strong>Marseille</strong>: llega poco a puerta (31.7%) y aun así es de los más letales cuando llega (0.32 G/SoT)."}, "2022-23|La Liga": {"fija": "En La Liga, <strong>Barcelona</strong> es el que más gol saca por tiro a puerta (0.37 G/SoT) contra una media de 0.27.", "salta": "El caso opuesto lo tiene <strong>Sevilla</strong>: llega poco a puerta (30.5%) y aun así es de los más letales cuando llega (0.30 G/SoT)."}, "2022-23|Premier League": {"fija": "En Premier League, <strong>Arsenal</strong> es el que más gol saca por tiro a puerta (0.42 G/SoT) contra una media de 0.30.", "salta": "El desajuste más grande es el de <strong>Manchester Utd</strong>: está entre los que más tiros a puerta consiguen (34.9%) pero de los que menos los aprovechan (0.26 G/SoT)."}, "2023-24|__all__": {"fija": "En las 5 ligas, <strong>Girona</strong> es el que más gol saca por tiro a puerta (0.43 G/SoT) contra una media de 0.29.", "salta": "El caso opuesto lo tiene <strong>Heidenheim</strong>: llega poco a puerta (29.1%) y aun así es de los más letales cuando llega (0.39 G/SoT)."}, "2023-24|Bundesliga": {"fija": "En Bundesliga, <strong>Heidenheim</strong> es el que más gol saca por tiro a puerta (0.39 G/SoT) contra una media de 0.31.", "salta": "El caso opuesto lo tiene <strong>Heidenheim</strong>: llega poco a puerta (29.1%) y aun así es de los más letales cuando llega (0.39 G/SoT)."}, "2023-24|Serie A": {"fija": "En Serie A, <strong>Inter</strong> es el que más gol saca por tiro a puerta (0.38 G/SoT) contra una media de 0.29.", "salta": "El caso opuesto lo tiene <strong>Juventus</strong>: llega poco a puerta (27.5%) y aun así es de los más letales cuando llega (0.34 G/SoT)."}, "2023-24|Ligue 1": {"fija": "En Ligue 1, <strong>PSG</strong> es el que más gol saca por tiro a puerta (0.38 G/SoT) contra una media de 0.27.", "salta": "El caso opuesto lo tiene <strong>Marseille</strong>: llega poco a puerta (31.9%) y aun así es de los más letales cuando llega (0.30 G/SoT)."}, "2023-24|La Liga": {"fija": "En La Liga, <strong>Girona</strong> es el que más gol saca por tiro a puerta (0.43 G/SoT) contra una media de 0.28.", "salta": "El caso opuesto lo tiene <strong>Osasuna</strong>: llega poco a puerta (29.5%) y aun así es de los más letales cuando llega (0.33 G/SoT)."}, "2023-24|Premier League": {"fija": "En Premier League, <strong>Newcastle</strong> es el que más gol saca por tiro a puerta (0.38 G/SoT) contra una media de 0.31.", "salta": "El desajuste más grande es el de <strong>Brighton</strong>: está entre los que más tiros a puerta consiguen (35.7%) pero de los que menos los aprovechan (0.23 G/SoT)."}, "2024-25|__all__": {"fija": "En las 5 ligas, <strong>Dortmund</strong> es el que más gol saca por tiro a puerta (0.41 G/SoT) contra una media de 0.30.", "salta": "El caso opuesto lo tiene <strong>Espanyol</strong>: llega poco a puerta (27.9%) y aun así es de los más letales cuando llega (0.34 G/SoT)."}, "2024-25|Bundesliga": {"fija": "En Bundesliga, <strong>Dortmund</strong> es el que más gol saca por tiro a puerta (0.41 G/SoT) contra una media de 0.32.", "salta": "El desajuste más grande es el de <strong>Gladbach</strong>: está entre los que más tiros a puerta consiguen (37.0%) pero de los que menos los aprovechan (0.32 G/SoT)."}, "2024-25|Serie A": {"fija": "En Serie A, <strong>Atalanta</strong> es el que más gol saca por tiro a puerta (0.39 G/SoT) contra una media de 0.29.", "salta": "El caso opuesto lo tiene <strong>Hellas Verona</strong>: llega poco a puerta (25.5%) y aun así es de los más letales cuando llega (0.31 G/SoT)."}, "2024-25|Ligue 1": {"fija": "En Ligue 1, <strong>Strasbourg</strong> es el que más gol saca por tiro a puerta (0.37 G/SoT) contra una media de 0.29.", "salta": "El caso opuesto lo tiene <strong>Saint-Étienne</strong>: llega poco a puerta (31.4%) y aun así es de los más letales cuando llega (0.31 G/SoT)."}, "2024-25|La Liga": {"fija": "En La Liga, <strong>Barcelona</strong> es el que más gol saca por tiro a puerta (0.38 G/SoT) contra una media de 0.29.", "salta": "El caso opuesto lo tiene <strong>Espanyol</strong>: llega poco a puerta (27.9%) y aun así es de los más letales cuando llega (0.34 G/SoT)."}, "2024-25|Premier League": {"fija": "En Premier League, <strong>Arsenal</strong> es el que más gol saca por tiro a puerta (0.37 G/SoT) contra una media de 0.31.", "salta": "El caso opuesto lo tiene <strong>Newcastle</strong>: llega poco a puerta (31.4%) y aun así es de los más letales cuando llega (0.37 G/SoT)."}, "2025-26|__all__": {"fija": "En las 5 ligas, <strong>Dortmund</strong> es el que más gol saca por tiro a puerta (0.39 G/SoT) contra una media de 0.28.", "salta": "El caso opuesto lo tiene <strong>Valencia</strong>: llega poco a puerta (27.4%) y aun así es de los más letales cuando llega (0.33 G/SoT)."}, "2025-26|Bundesliga": {"fija": "En Bundesliga, <strong>Dortmund</strong> es el que más gol saca por tiro a puerta (0.39 G/SoT) contra una media de 0.30.", "salta": "El desajuste más grande es el de <strong>Hamburger SV</strong>: está entre los que más tiros a puerta consiguen (37.0%) pero de los que menos los aprovechan (0.23 G/SoT)."}, "2025-26|Serie A": {"fija": "En Serie A, <strong>Inter</strong> es el que más gol saca por tiro a puerta (0.35 G/SoT) contra una media de 0.26.", "salta": "El desajuste más grande es el de <strong>Lazio</strong>: está entre los que más tiros a puerta consiguen (37.4%) pero de los que menos los aprovechan (0.22 G/SoT)."}, "2025-26|Ligue 1": {"fija": "En Ligue 1, <strong>Monaco</strong> es el que más gol saca por tiro a puerta (0.34 G/SoT) contra una media de 0.28.", "salta": "El desajuste más grande es el de <strong>Angers</strong>: está entre los que más tiros a puerta consiguen (35.1%) pero de los que menos los aprovechan (0.23 G/SoT)."}, "2025-26|La Liga": {"fija": "En La Liga, <strong>Villarreal</strong> es el que más gol saca por tiro a puerta (0.37 G/SoT) contra una media de 0.27.", "salta": "El caso opuesto lo tiene <strong>Valencia</strong>: llega poco a puerta (27.4%) y aun así es de los más letales cuando llega (0.33 G/SoT)."}, "2025-26|Premier League": {"fija": "En Premier League, <strong>Manchester City</strong> es el que más gol saca por tiro a puerta (0.35 G/SoT) contra una media de 0.29.", "salta": "El caso opuesto lo tiene <strong>Liverpool</strong>: llega poco a puerta (29.8%) y aun así es de los más letales cuando llega (0.34 G/SoT)."}};
   function setInsight(key, estado) {
     var d = insights[key];
     if (!d) return;
-    document.getElementById('chart_31da7694_ins_estado').textContent = estado;
-    document.getElementById('chart_31da7694_ins_fija').innerHTML = d.fija;
-    var s = document.getElementById('chart_31da7694_ins_salta');
+    document.getElementById('chart_d3aca72f_ins_estado').textContent = estado;
+    document.getElementById('chart_d3aca72f_ins_fija').innerHTML = d.fija;
+    var s = document.getElementById('chart_d3aca72f_ins_salta');
     s.innerHTML = d.salta || '';
     s.style.display = d.salta ? '' : 'none';
   }
@@ -229,11 +265,16 @@
   // desde el estado actual en vez de que cada handler arme su propia clave.
   function refreshInsight() {
     if (typeof setInsight !== 'function') return;
-    var lg = document.getElementById('chart_31da7694_league');
+    var lg = document.getElementById('chart_d3aca72f_league');
     var liga = lg ? lg.value : "__all__";
-    var etiqueta = [current, liga === "__all__" ? 'Todas las ligas' : liga]
+    // Con el filtro puesto se pide OTRA clave, no la misma con una advertencia:
+    // los textos del subconjunto vienen calculados aparte desde Python, así que
+    // la caja describe siempre la población que se está viendo.
+    var clave = current + '|' + liga + (filterOn ? '|' + FILTER_KEY : '');
+    var etiqueta = [current, liga === "__all__" ? 'Todas las ligas' : liga,
+                    filterOn ? FILTER_ESTADO : null]
       .filter(Boolean).join(' · ');
-    setInsight(current + '|' + liga, etiqueta);
+    setInsight(clave, etiqueta);
   }
 
   // Los tamaños se calculan acá y no vienen precalculados desde Python: uno
@@ -253,12 +294,12 @@
   }
 
   function updateLegendLayout() {
-    var w = document.getElementById('chart_31da7694').offsetWidth;
+    var w = document.getElementById('chart_d3aca72f').offsetWidth;
     if (w < 420) {
-      Plotly.relayout('chart_31da7694', {'legend.orientation': 'h', 'legend.x': 0, 'legend.y': -0.46,
+      Plotly.relayout('chart_d3aca72f', {'legend.orientation': 'h', 'legend.x': 0, 'legend.y': -0.46,
         'legend.yanchor': 'top', 'margin.r': 20, 'margin.t': 70, 'margin.b': 140});
     } else {
-      Plotly.relayout('chart_31da7694', {'legend.orientation': 'v', 'legend.x': 1.02, 'legend.y': 1,
+      Plotly.relayout('chart_d3aca72f', {'legend.orientation': 'v', 'legend.x': 1.02, 'legend.y': 1,
         'legend.yanchor': 'top', 'margin.r': 40, 'margin.t': 90, 'margin.b': 60});
     }
   }
@@ -283,11 +324,11 @@
   function applySearch(val) {
     var map = clubMap();
     if (map.hasOwnProperty(val)) {
-      Plotly.restyle('chart_31da7694', {'marker.size': sizesFor(val)}, traceIndices);
-      Plotly.relayout('chart_31da7694', {annotations: baseAnnotations.concat([themedAnnotation(val, map[val])])});
+      Plotly.restyle('chart_d3aca72f', {'marker.size': sizesFor(val)}, traceIndices);
+      Plotly.relayout('chart_d3aca72f', {annotations: baseAnnotations.concat([themedAnnotation(val, map[val])])});
     } else if (val === '') {
-      Plotly.restyle('chart_31da7694', {'marker.size': baseSizes()}, traceIndices);
-      Plotly.relayout('chart_31da7694', {annotations: baseAnnotations});
+      Plotly.restyle('chart_d3aca72f', {'marker.size': baseSizes()}, traceIndices);
+      Plotly.relayout('chart_d3aca72f', {annotations: baseAnnotations});
     }
   }
 
@@ -296,54 +337,70 @@
   // puede haber estado en segunda).
   function fillDatalist() {
     var names = Object.keys(clubMap()).sort();
-    document.getElementById('chart_31da7694_clubs').innerHTML =
+    document.getElementById('chart_d3aca72f_clubs').innerHTML =
       names.map(function(n) { return '<option value="' + n.replace(/"/g, '&quot;') + '"></option>'; }).join('');
   }
   fillDatalist();
 
-  document.getElementById('chart_31da7694_search').addEventListener('input', function(e) {
+  document.getElementById('chart_d3aca72f_search').addEventListener('input', function(e) {
     applySearch(e.target.value);
   });
   document.addEventListener('futviz-theme-change', function() {
-    applySearch(document.getElementById('chart_31da7694_search').value);
+    applySearch(document.getElementById('chart_d3aca72f_search').value);
   });
 
-  var seasonSelect = document.getElementById('chart_31da7694_season');
+  // Repinta las trazas con la vista actual. Lo llaman los dos controles que
+  // cambian QUÉ puntos hay (temporada y filtro); el de liga no lo necesita,
+  // porque ese solo cambia la visibilidad de trazas ya pintadas.
+  function applyData() {
+    V = computeView();
+    var update = {x: V.x, y: V.y, 'marker.size': baseSizes()};
+    if (V.custom) update.customdata = V.custom;
+    Plotly.restyle('chart_d3aca72f', update, traceIndices);
+    fillDatalist();
+    // Lo buscado puede no seguir en la vista nueva (otra temporada, o filtrado);
+    // y aunque siga, sus coordenadas son otras, así que se re-aplica.
+    var searchInput = document.getElementById('chart_d3aca72f_search');
+    if (!clubMap().hasOwnProperty(searchInput.value)) searchInput.value = '';
+    applySearch(searchInput.value);
+    refreshInsight();
+  }
+
+  var seasonSelect = document.getElementById('chart_d3aca72f_season');
   if (seasonSelect) {
     seasonSelect.value = current;
     seasonSelect.addEventListener('change', function(e) {
       current = e.target.value;
-      var d = seasons[current];
-      var update = {x: d.x, y: d.y, 'marker.size': baseSizes()};
-      if (d.custom) update.customdata = d.custom;
-      Plotly.restyle('chart_31da7694', update, traceIndices);
       if (subtitles[current]) {
-        Plotly.relayout('chart_31da7694', {'title.subtitle.text': subtitles[current]});
+        Plotly.relayout('chart_d3aca72f', {'title.subtitle.text': subtitles[current]});
       }
-      fillDatalist();
-      // Lo buscado puede no existir en la temporada nueva; y aunque exista,
-      // sus coordenadas son otras, así que hay que re-aplicar la búsqueda.
-      var searchInput = document.getElementById('chart_31da7694_search');
-      if (!clubMap().hasOwnProperty(searchInput.value)) searchInput.value = '';
-      applySearch(searchInput.value);
-      refreshInsight();
+      applyData();
     });
   }
 
-  document.getElementById('chart_31da7694_league').addEventListener('change', function(e) {
+  var filterBox = document.getElementById('chart_d3aca72f_pfilter');
+  if (filterBox) {
+    filterBox.checked = false;  // el navegador recuerda el estado al recargar
+    filterBox.addEventListener('change', function(e) {
+      filterOn = e.target.checked;
+      applyData();
+    });
+  }
+
+  document.getElementById('chart_d3aca72f_league').addEventListener('change', function(e) {
     var val = e.target.value;
     var vis = (val === "__all__")
       ? leagueOrder.map(function() { return true; })
       : leagueOrder.map(function(lg) { return lg === val; });
     for (var i = 0; i < extraTraces; i++) vis.push(true);
-    Plotly.restyle('chart_31da7694', {visible: vis});
+    Plotly.restyle('chart_d3aca72f', {visible: vis});
 
-    var searchInput = document.getElementById('chart_31da7694_search');
+    var searchInput = document.getElementById('chart_d3aca72f_search');
     var searched = clubMap()[searchInput.value];
     if (searched && val !== "__all__" && searched.l !== val) {
       searchInput.value = '';
-      Plotly.restyle('chart_31da7694', {'marker.size': baseSizes()}, traceIndices);
-      Plotly.relayout('chart_31da7694', {annotations: baseAnnotations});
+      Plotly.restyle('chart_d3aca72f', {'marker.size': baseSizes()}, traceIndices);
+      Plotly.relayout('chart_d3aca72f', {annotations: baseAnnotations});
     }
     refreshInsight();
   });

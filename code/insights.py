@@ -520,7 +520,10 @@ def edad(df, season, seasons):
 # JUGADORES (Understat)
 # ==========================================================================
 
-MIN_MINUTOS = 900
+# Tiene que coincidir con `MIN_MINUTES` de `web/charts/players.py`: allá filtra
+# los datos y acá solo se nombra en los textos, así que si se separan la caja de
+# lectura termina citando un umbral distinto del que se aplicó.
+MIN_MINUTOS = 500
 
 
 def _top_dif(d, real, esperado, n=1):
