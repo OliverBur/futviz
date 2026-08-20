@@ -380,6 +380,17 @@ def iso_lines(fig, niveles, x_range, y_range, combinar="suma", puntos=80,
     combinado, así que a un lado están los que llegan a ese nivel y al otro los
     que no — sin tener que elegir cuál de los dos ejes importa más.
 
+    **Hoy no lo usa ningún gráfico del sitio, a propósito.** Se probó en el
+    perfil ofensivo (xG90 vs. xA90) y en la eficiencia de definición y se quitó
+    de los dos: el problema no era el dibujo sino meterlo en gráficos que ya
+    tenían su propio sistema de referencia. El perfil ofensivo divide por tipo
+    de jugador con las líneas de promedio, y las diagonales dividen por nivel;
+    superponer las dos varas sobre 1.900 puntos obliga a leer cada punto dos
+    veces, y encima las diagonales cruzaban sobre todo el hueco de arriba a la
+    izquierda para separar 19 jugadores. Queda acá porque el recurso es bueno
+    cuando el gráfico se diseña alrededor de él — no cuando se le encaja
+    encima.
+
     Solo tiene sentido cuando combinar los dos ejes significa algo:
 
     - `combinar="suma"` (`x + y = k`, rectas) pide que los dos ejes estén en la
