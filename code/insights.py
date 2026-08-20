@@ -59,17 +59,12 @@ def definicion_que_mirar():
             "porcentaje de sus tiros van a puerta) y el vertical es **definir** "
             "(cuántos goles saca de cada tiro a puerta). Arriba a la derecha "
             "están los que hacen bien las dos cosas; abajo a la derecha, los que "
-            "tiran mucho a puerta y no la meten.\n\n"
-            "Las **curvas** unen a los equipos con la misma eficiencia total: "
-            "multiplicar los dos ejes da exactamente los goles por tiro, así que "
-            "cada curva es un nivel de esa cuenta. Se puede llegar a la misma "
-            "curva llegando mucho y definiendo poco, o al revés — por eso son "
-            "curvas y no una línea recta.")
+            "tiran mucho a puerta y no la meten.")
 
 
-def definicion_por_que(df, percentiles=()):
+def definicion_por_que(df):
     r = df[X_DEF].corr(df[Y_DEF])
-    texto = (
+    return (
         f"Las dos van en ejes separados porque **no son la misma habilidad**: "
         f"correlacionan {_fmt(r)} sobre las {len(df)} observaciones, o sea que "
         f"comparten apenas un {r ** 2 * 100:.0f}% de su variación. Un equipo puede "
@@ -77,26 +72,9 @@ def definicion_por_que(df, percentiles=()):
         f"Si se mezclaran en un solo indicador de \"eficiencia\" esa distinción se "
         f"perdería, que es justo lo que el gráfico quiere mostrar."
     )
-    if len(percentiles):
-        prod = df[X_DEF] * df[Y_DEF]
-        valores = ", ".join(
-            f"Top {p:g}% en {prod.quantile(1 - p / 100) / 100:.3f} goles por tiro"
-            for p in percentiles)
-        texto += (
-            f"\n\nLas curvas son la forma de mostrar igual el indicador combinado "
-            f"**sin fundir los dos ejes en uno**: cada una es un nivel de goles por "
-            f"tiro, y dónde cae un equipo sobre su curva sigue diciendo por cuál de "
-            f"las dos vías llegó. Los cortes ({valores}) salen de los percentiles de "
-            f"las {len(df['temporada'].unique())} temporadas juntas, no de la que se "
-            f"está mostrando: si se recalcularan con cada cambio del selector, cruzar "
-            f"la misma curva significaría algo distinto en cada temporada.")
-    return texto
 
 
-def definicion(df, season, liga=None, cortes=()):
-    """`cortes` son los niveles de las curvas, como los devuelve
-    `viz_theme.top_levels`: se pasan desde donde se dibuja el gráfico para que
-    el texto no pueda hablar de una curva que no está."""
+def definicion(df, season, liga=None):
     d = df[df["temporada"] == season]
     ambito = "las 5 ligas"
     if liga and liga != LIGA_TODAS:
@@ -108,11 +86,6 @@ def definicion(df, season, liga=None, cortes=()):
     fija = (f"En {ambito}, **{mejor['Squad']}** es el que más gol saca por tiro a "
             f"puerta ({_fmt(mejor[Y_DEF])} G/SoT) contra una media de "
             f"{_fmt(media)}.")
-    if len(cortes):
-        k, etiqueta = cortes[0]
-        n = int((d[X_DEF] * d[Y_DEF] >= k).sum())
-        fija += (f" Por eficiencia total —los dos ejes multiplicados— {n} de "
-                 f"{len(d)} equipos quedan por encima de la curva del {etiqueta}.")
 
     # El dato que salta: el equipo con mayor desajuste entre lo bien que llega
     # y lo bien que define. Se compara por percentil dentro del ámbito, no por
@@ -670,32 +643,11 @@ def perfil_que_mirar():
     return ("Las líneas punteadas son el promedio de cada eje. Abajo a la derecha, "
             "rematadores puros; arriba a la izquierda, creadores puros; arriba a la "
             "derecha, los que hacen las dos cosas — que son pocos y suelen ser los "
-            "nombres que uno espera.\n\n"
-            "Las **diagonales** son otra cosa: unen a los jugadores que suman lo "
-            "mismo entre los dos ejes, así que marcan nivel y no perfil. Cruzar la "
-            "del Top 5% se puede hacer metiendo, creando, o repartiendo entre las "
-            "dos; lo que la línea dice es cuánto hay que aportar en total para "
-            "llegar ahí. Cuanto más arriba a la derecha esté una diagonal, más "
-            "exclusivo es el grupo que la pasa.")
+            "nombres que uno espera.")
 
 
-def perfil_por_que(df, percentiles=()):
+def perfil_por_que(df):
     r = df["xG90"].corr(df["xA90"])
-    cortes = ""
-    if len(percentiles):
-        total = df["xG90"] + df["xA90"]
-        valores = ", ".join(
-            f"Top {p:g}% en {_fmt(total.quantile(1 - p / 100))}" for p in percentiles)
-        cortes = (
-            f"\n\nLas diagonales suman los dos ejes, y eso es una decisión: dan por "
-            f"bueno que **un xG y un xA valen lo mismo**. Es defendible —las dos son "
-            f"probabilidad de gol por 90 minutos, en la misma unidad— pero no es "
-            f"neutral: quien piense que rematar vale más que asistir dibujaría las "
-            f"líneas con otra inclinación. Los cortes ({valores}) salen de los "
-            f"percentiles de las {len(df['temporada'].unique())} temporadas juntas, "
-            f"no de la que se está mostrando: si se recalcularan con cada cambio del "
-            f"selector, cruzar la misma línea significaría algo distinto en cada "
-            f"temporada.")
     return (
         f"Va en tasas por 90 minutos y no en totales para que un suplente que rinde "
         f"mucho en poco tiempo no quede sepultado por un titular indiscutido. El "
@@ -709,14 +661,10 @@ def perfil_por_que(df, percentiles=()):
         f"Los dos ejes correlacionan {_fmt(r)}: comparten algo (los buenos atacantes "
         f"tienden a participar en todo) pero dejan sitio de sobra para perfiles "
         f"distintos, que es lo que hace que valga la pena cruzarlos."
-        + cortes
     )
 
 
-def perfil(df, season, liga=None, cortes=()):
-    """`cortes` son los niveles de las diagonales, como los devuelve
-    `viz_theme.top_levels`: se pasan desde donde se dibuja el gráfico para que
-    el texto no pueda hablar de una línea que no está."""
+def perfil(df, season, liga=None):
     d = df[df["temporada"] == season]
     ambito = "las 5 ligas"
     if liga and liga != LIGA_TODAS:
@@ -736,19 +684,9 @@ def perfil(df, season, liga=None, cortes=()):
     completo = d.loc[(rx + ry).idxmax()]
     n_ambos = int(((d["xG90"] > d["xG90"].mean()) & (d["xA90"] > d["xA90"].mean())).sum())
     salta = (f"El perfil más completo es **{completo['player']}** "
-             f"({_fmt(completo['xG90'])} xG90 y {_fmt(completo['xA90'])} xA90).")
-
-    if len(cortes) >= 2:
-        total = d["xG90"] + d["xA90"]
-        (k1, e1), (k2, e2) = cortes[0], cortes[1]
-        salta += (f" De los {len(d)} jugadores de {ambito}, "
-                  f"**{int((total >= k1).sum())}** cruzan la diagonal del {e1} y "
-                  f"{int((total >= k2).sum())} la del {e2}, mientras que {n_ambos} "
-                  f"superan el promedio en los dos ejes a la vez: tener nivel alto y "
-                  f"tener perfil completo no son lo mismo.")
-    else:
-        salta += (f" Solo {n_ambos} de {len(d)} jugadores superan el promedio en los "
-                  f"dos ejes a la vez: hacer las dos cosas es raro.")
+             f"({_fmt(completo['xG90'])} xG90 y {_fmt(completo['xA90'])} xA90). Solo "
+             f"{n_ambos} de {len(d)} jugadores superan el promedio en los dos ejes a "
+             f"la vez: hacer las dos cosas es raro.")
     return fija, salta
 
 
