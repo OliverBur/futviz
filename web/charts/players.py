@@ -11,6 +11,7 @@ import shot_map
 from site_utils import PROCESSED_DIR, ChartPage
 from viz_theme import (
     LEAGUE_ORDER, FUENTE_UNDERSTAT, league_color, league_box_season_html,
+    iso_lines, top_levels,
 )
 from viz_theme import explorer_chart_html as _explorer_chart_html
 from viz_theme import sidebar_chart_html as _sidebar_chart_html
@@ -175,9 +176,11 @@ def _por_temporada_y_liga(generador, df, seasons):
 
 
 def _player_sidebar(fig, scatter_data, x_col, y_col, seasons, season_data, subtitle,
-                     extra_traces=0, insights=None, point_filter=None):
+                     extra_traces=0, insights=None, point_filter=None,
+                     base_annotations=None):
     return sidebar_chart_html(
         fig, scatter_data, x_col, y_col, extra_traces=extra_traces,
+        base_annotations=base_annotations,
         name_col="player", search_label="jugador", width=760, height=580,
         base_size=BASE_SIZE, season_data=season_data,
         custom_cols=["player", "team"], subtitle_template=subtitle,
@@ -268,8 +271,18 @@ def chart_assists_vs_xa(df, seasons, season_data):
     )
 
 
+# Percentiles de xG90 + xA90 que dibujan las diagonales de "de acá para arriba
+# están los mejores". Tres y no más: cada una agrega una línea al gráfico y con
+# cinco el fondo empieza a competir con los puntos. Se eligió 10 y no 25 para la
+# tercera porque el rótulo del 25% caía dentro de la nube —donde se junta la
+# mitad de la liga— y quedaba ilegible; el del 10% cae en el hueco de arriba a
+# la izquierda, como los otros dos.
+PERFIL_PERCENTILES = [1, 5, 10]
+
+
 def chart_profile(df, seasons, season_data):
     scatter_data = season_data[seasons[-1]]
+    x_range, y_range = _padded(df["xG90"]), _padded(df["xA90"])
 
     fig = go.Figure()
     _scatter_traces(fig, scatter_data, "xG90", "xA90", "xG90", "xA90", ".2f", ".2f")
@@ -280,24 +293,32 @@ def chart_profile(df, seasons, season_data):
     fig.add_hline(y=df["xA90"].mean(), line=dict(color="#c3c2b7", width=1, dash="dot"))
     fig.add_vline(x=df["xG90"].mean(), line=dict(color="#c3c2b7", width=1, dash="dot"))
 
+    # Las curvas van DESPUÉS de las trazas de liga: el filtro de liga asume ese
+    # orden y si se agregan antes esconde la liga equivocada.
+    niveles = top_levels(df["xG90"] + df["xA90"], PERFIL_PERCENTILES)
+    anotaciones = iso_lines(fig, niveles, x_range, y_range, combinar="suma")
+
     subtitle = ("Killer puro, creador puro o todocampo — "
                 f"jugadores con ≥{MIN_MINUTES} min · {{temporada}}")
     fig.update_layout(
         title=dict(text="Perfil ofensivo: xG90 vs. xA90",
                    subtitle=dict(text=subtitle.format(temporada=seasons[-1]))),
         xaxis_title="xG por 90'", yaxis_title="xA por 90'",
-        xaxis=dict(range=_padded(df["xG90"])), yaxis=dict(range=_padded(df["xA90"])),
+        xaxis=dict(range=x_range), yaxis=dict(range=y_range),
+        annotations=anotaciones,
     )
     return ChartPage(
         slug="perfil-ofensivo", section=SECTION, title="Perfil ofensivo: xG90 vs. xA90",
         subtitle="Tasas por 90' — killer puro, creador puro o todocampo.",
         body_html=_player_sidebar(fig, scatter_data, "xG90", "xA90", seasons, season_data,
-                                   subtitle,
+                                   subtitle, extra_traces=len(niveles),
+                                   base_annotations=anotaciones,
                                    insights={
                                        "que_mirar": ins.perfil_que_mirar(),
-                                       "por_que": ins.perfil_por_que(df),
+                                       "por_que": ins.perfil_por_que(df, PERFIL_PERCENTILES),
                                        "dinamico": _por_temporada_y_liga(
-                                           ins.perfil, df, seasons),
+                                           partial(ins.perfil, cortes=niveles),
+                                           df, seasons),
                                    },
                                    point_filter=sub21_filter(df)),
     )
