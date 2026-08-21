@@ -70,9 +70,11 @@ SUB21_FILTER = {
     "col": "sub21",
     "label": "Edad",
     "text": "Solo sub-21",
-    "hint": "Menos de 21 al arrancar la temporada — cuenta el año de "
-            "nacimiento, no el cumpleaños. La edad es el único dato de esta "
-            "sección que no sale de Understat, que no la publica: viene de FBref.",
+    # El corte de minutos se nombra acá y no en el filtro de posición porque es
+    # de la gráfica entera, no de un control: sale de MIN_MINUTES, que es de
+    # donde sale el filtro, para que no puedan decir cosas distintas.
+    "hint": f"Menos de 21 al arrancar la temporada, cuenta el año de "
+            f"nacimiento. Al menos {MIN_MINUTES} minutos jugados.",
     # Cómo se nombra el filtro en el rótulo de la caja de lectura ("2025-26 ·
     # Ligue 1 · sub-21"), que es lo que le dice al lector sobre qué población
     # están hechas las afirmaciones que está leyendo.
@@ -238,21 +240,14 @@ def posiciones_de(df):
 def posicion_filter(df):
     """El filtro de posición, o None si los datos no la traen.
 
-    El porcentaje sin posición del aviso se calcula sobre los jugadores que
-    llegan al corte de minutos —los que se dibujan— y no sobre la tabla
-    entera: es el que afecta a lo que el lector está viendo."""
+    Va sin nota al pie por decisión del usuario: el desplegable solo. Lo que
+    decía —que es la posición principal, que sale de FBref y que quien no cruza
+    por nombre queda fuera al elegir una— está documentado en
+    `POSICION_FILTER_BASE` y en `consolidate_data.posicion_fbref`."""
     opciones = posiciones_de(df)
     if not opciones:
         return None
-    sin_dato = df["posicion"].isna().mean()
-    return {
-        **POSICION_FILTER_BASE,
-        "options": opciones,
-        "hint": (f"La posición principal: a quien alterna entre lateral y extremo lo "
-                 f"cuenta donde más jugó. Viene de FBref —Understat no dice cuál es "
-                 f"la principal— y se cruza por nombre, así que el {sin_dato:.1%} que "
-                 f"no cruza queda fuera al elegir una posición."),
-    }
+    return {**POSICION_FILTER_BASE, "options": opciones}
 
 
 def chart_goals_vs_xg(df, seasons, season_data):
@@ -403,8 +398,7 @@ def _box_page(df, seasons, *, y_col, y_axis_title, slug, title, subtitle, chart_
     return ChartPage(
         slug=slug, section=SECTION, title=title, subtitle=subtitle,
         body_html=select_chart_html(fig, controls, width=800, height=520,
-                                     insights=insights, joint_updates=joint,
-                                     hint=cat["hint"] if cat else None),
+                                     insights=insights, joint_updates=joint),
         kind="box",
     )
 
