@@ -350,7 +350,18 @@ def chart_style_evolution(df, seasons):
     avg = (df.groupby(["temporada", "liga"], observed=True)[metric_cols]
            .mean().reset_index())
 
-    default_metric = "p90_Fls"  # el eje con más diferencia real entre ligas
+    default_metric = "ov_Per 90 Minutes_Gls"  # los goles: es de lo que se habla
+
+    def _series_y_rango(col):
+        """Las 5 series de una métrica y el rango de su eje, con un poco de
+        aire: sin fijarlo Plotly reescala a cada cambio y una caída chica puede
+        verse como un desplome."""
+        ys = [avg[avg["liga"] == liga].sort_values("temporada")[col].tolist()
+              for liga in LEAGUE_ORDER]
+        lo = min(min(y) for y in ys)
+        hi = max(max(y) for y in ys)
+        pad = (hi - lo) * 0.12 or 0.1
+        return ys, [lo - pad, hi + pad]
 
     fig = go.Figure()
     for liga in LEAGUE_ORDER:
@@ -368,21 +379,19 @@ def chart_style_evolution(df, seasons):
                    subtitle=dict(text=_evolution_subtitle(col2label[default_metric]))),
         xaxis_title="Temporada", yaxis_title=col2label[default_metric],
         xaxis=dict(type="category"),
+        # El mismo rango que le toca a esta métrica en `updates`, y no el que
+        # Plotly calcule solo: si no, el gráfico se movía un poco al elegir
+        # otra métrica y volver a la inicial.
+        yaxis=dict(range=_series_y_rango(default_metric)[1]),
     )
 
     updates = {}
     for col in metric_cols:
-        ys = [avg[avg["liga"] == liga].sort_values("temporada")[col].tolist()
-              for liga in LEAGUE_ORDER]
-        # Rango con un poco de aire: sin esto Plotly reescala a cada cambio y
-        # una caída chica puede verse como un desplome.
-        lo = min(min(y) for y in ys)
-        hi = max(max(y) for y in ys)
-        pad = (hi - lo) * 0.12 or 0.1
+        ys, rango = _series_y_rango(col)
         updates[col] = {
             "restyle": {"y": ys},
             "relayout": {"yaxis.title.text": col2label[col],
-                          "yaxis.range": [lo - pad, hi + pad],
+                          "yaxis.range": rango,
                           "title.subtitle.text": _evolution_subtitle(col2label[col])},
         }
 
