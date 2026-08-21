@@ -3,14 +3,16 @@
 Entrada  — `data/<temporada>/` con los archivos tal cual se bajan:
              leagues_{overall,shoot,playtime,misc,gk}.csv  (fbref, equipos)
              {premier,laliga,seriea,bundes,ligue1}-players.csv  (Understat, jugadores)
-             fbref-players.csv  (fbref, jugadores) — opcional, solo aporta el
-                                año de nacimiento, que Understat no publica
+             fbref-players.csv  (fbref, jugadores) — opcional, aporta el año de
+                                nacimiento y la posición principal, que
+                                Understat no publica
 
 Salida   — `data/processed/`:
              teams_all_seasons.{csv,xlsx}    una fila por equipo y temporada,
                                              las 5 tablas de fbref unidas a lo ancho
              players_all_seasons.{csv,xlsx}  una fila por jugador, liga y temporada,
-                                             con `born` y `sub21` si fbref-players.csv estaba
+                                             con `born`, `sub21` y `posicion` si estaba
+                                             fbref-players.csv
 
 Las temporadas que todavía no estén descargadas se saltan con un aviso, así que
 el script se puede correr hoy con una sola temporada y otra vez cuando estén las
@@ -62,8 +64,9 @@ PLAYER_FILES = {
 }
 
 # Tabla de jugador de fbref (`fetch_fbref_players.py`). Es opcional, igual que
-# las tablas `vs`: si no está, `born`/`sub21` quedan vacíos y todo lo demás
-# funciona igual.
+# las tablas `vs`: si no está, `born`/`sub21` quedan vacíos, `posicion` se
+# queda con lo poco que se puede deducir de Understat, y todo lo demás funciona
+# igual.
 FBREF_PLAYER_FILE = "fbref-players.csv"
 
 # Cuántos equipos tiene cada liga en cada temporada. Solo se usa como
@@ -222,6 +225,44 @@ def _key(liga, name):
     return f"{liga}|{' '.join(norm_name(name))}"
 
 
+# --------------------------------------------------------------------------
+# Posición
+# --------------------------------------------------------------------------
+#
+# Una sola categoría gruesa por jugador, no la lista de puestos: lo que se
+# quiere poder preguntar es "defensas / medios / delanteros", y dentro de cada
+# uno entran todas sus variantes (central y lateral, pivote y enganche, extremo
+# y punta). Ninguna de las dos fuentes publica algo más fino que eso de forma
+# utilizable, así que tampoco se pierde nada por agrupar.
+POSICIONES = ("Portero", "Defensa", "Medio", "Delantero")
+FBREF_A_POSICION = {"GK": "Portero", "DF": "Defensa", "MF": "Medio", "FW": "Delantero"}
+UNDERSTAT_A_POSICION = {"GK": "Portero", "D": "Defensa", "M": "Medio", "F": "Delantero"}
+
+
+def posicion_fbref(pos):
+    """fbref lista los puestos de más a menos jugado ('MF,FW' contra 'FW,MF'),
+    así que el principal es el primero. Es la fuente preferida justamente por
+    eso: es la única de las dos que dice cuál es el principal."""
+    if pd.isna(pos):
+        return None
+    return FBREF_A_POSICION.get(str(pos).split(",")[0].strip())
+
+
+def posicion_understat(position):
+    """Respaldo para el ~5% que no cruza con fbref.
+
+    El campo de Understat es el CONJUNTO de puestos en los que apareció, en
+    orden alfabético ('D M S', nunca 'M D S'), así que el orden no dice nada y
+    solo sirve cuando hay uno solo: un 'D M S' es un lateral o un carrilero, y
+    adivinar cuál de los dos es peor que dejarlo sin posición. La 'S' es "entró
+    desde el banco", no un puesto, y se ignora."""
+    if pd.isna(position):
+        return None
+    puestos = {UNDERSTAT_A_POSICION[t] for t in str(position).split()
+               if t in UNDERSTAT_A_POSICION}
+    return puestos.pop() if len(puestos) == 1 else None
+
+
 def _por_subconjunto(players, fb):
     """Segunda pasada del cruce, para los que el nombre exacto no resolvió.
 
@@ -235,16 +276,24 @@ def _por_subconjunto(players, fb):
     un solo candidato de fbref para ese jugador, y ese candidato no reclamado
     por ningún otro. 'Gabriel' contra los cuatro Gabriel del Arsenal es
     ambiguo, y ante la duda se prefiere dejarlo sin edad antes que asignarle la
-    de otro."""
+    de otro.
+
+    Trae `born` y `pos` de una sola pasada: son dos columnas de la MISMA fila de
+    fbref, y resolver el cruce dos veces para llegar a ella sería hacer el
+    doble de trabajo para el mismo resultado. La unicidad se sigue evaluando
+    sobre `born` porque es el dato que distingue a dos personas — dos filas del
+    mismo jugador (cambió de club dentro de la liga) comparten `born` pero
+    pueden traer distinto `pos`."""
+    born, pos = players["born"].copy(), players["fb_pos"].copy()
     faltan = players.index[players["born"].isna()]
     if not len(faltan):
-        return players["born"]
+        return born, pos
 
     # candidatos agrupados por liga: cruzar entre ligas no tendría sentido y
     # además multiplicaría las coincidencias espurias
     por_liga = {}
     for fila in fb.itertuples(index=False):
-        por_liga.setdefault(fila.liga, []).append((set(fila.tokens), fila.born))
+        por_liga.setdefault(fila.liga, []).append((set(fila.tokens), fila.born, fila.pos))
 
     propuestas = {}
     for i in faltan:
@@ -252,23 +301,23 @@ def _por_subconjunto(players, fb):
         if not tokens:
             continue
         candidatos = [
-            (frozenset(cand), born)
-            for cand, born in por_liga.get(players.at[i, "liga"], [])
+            (frozenset(cand), b, p)
+            for cand, b, p in por_liga.get(players.at[i, "liga"], [])
             if tokens <= cand or cand <= tokens
         ]
         # varios candidatos con el MISMO born no son ambiguos para lo que
         # importa acá (es el mismo jugador escrito de dos formas)
-        if len({born for _, born in candidatos}) == 1:
+        if len({b for _, b, _ in candidatos}) == 1:
             propuestas[i] = candidatos[0]
 
     # que dos jugadores distintos reclamen la misma fila de fbref significa que
     # el nombre corto no alcanza para distinguirlos: se descartan los dos
-    veces = Counter(cand for cand, _ in propuestas.values())
-    born = players["born"].copy()
-    for i, (cand, valor) in propuestas.items():
+    veces = Counter(cand for cand, _, _ in propuestas.values())
+    for i, (cand, b, p) in propuestas.items():
         if veces[cand] == 1:
-            born.at[i] = valor
-    return born
+            born.at[i] = b
+            pos.at[i] = p
+    return born, pos
 
 
 def edad_en_temporada(born, season):
@@ -281,17 +330,21 @@ def edad_en_temporada(born, season):
     return int(str(season)[:4]) - born
 
 
-def attach_born(players, season_dir, season):
-    """Agrega `born` y `sub21` cruzando por nombre con la tabla de fbref.
+def attach_fbref(players, season_dir, season):
+    """Agrega `born`, `sub21` y `posicion` cruzando por nombre con la tabla de
+    fbref. Los tres salen del mismo cruce: Understat no publica ni la edad ni
+    una posición que diga cuál es la principal (ver `posicion_understat`).
 
     Devuelve `(df, sin_match)`, donde `sin_match` son las filas de Understat que
     no encontraron par — se informan en pantalla para poder revisarlas, porque
-    un cruce por nombre nunca pega al 100%."""
+    un cruce por nombre nunca pega al 100%. Los que no cruzan igual pueden
+    terminar con posición: para eso está el respaldo de Understat."""
     players = players.copy()
     path = season_dir / FBREF_PLAYER_FILE
     if not path.exists():
         players["born"] = pd.NA
         players["sub21"] = pd.NA
+        players["posicion"] = [posicion_understat(p) for p in players["position"]]
         return players, None
 
     fb = pd.read_csv(path, encoding="utf-8-sig")
@@ -306,18 +359,25 @@ def attach_born(players, season_dir, season):
     # asignarle a uno la edad del otro.
     nacimientos = fb.groupby("key")["born"].nunique()
     ambiguos = set(nacimientos[nacimientos > 1].index)
-    fb = fb[~fb["key"].isin(ambiguos)].drop_duplicates("key").copy()
+    # Ordenado por minutos, la fila que sobrevive al colapso es la del club
+    # donde más jugó — indistinto para `born`, pero es la que corresponde para
+    # `pos`: quien se fue en enero pudo jugar de otra cosa en el club nuevo.
+    fb = (fb[~fb["key"].isin(ambiguos)]
+            .sort_values("min", ascending=False).drop_duplicates("key").copy())
     fb["tokens"] = [norm_name(n) for n in fb["player"]]
 
     players["key"] = [_key(l, n) for l, n in zip(players["liga"], players["player"])]
-    players = players.merge(fb[["key", "born"]], on="key", how="left")
-    players["born"] = _por_subconjunto(players, fb)
+    players = players.merge(fb[["key", "born", "pos"]].rename(columns={"pos": "fb_pos"}),
+                             on="key", how="left")
+    players["born"], players["fb_pos"] = _por_subconjunto(players, fb)
 
     sin_match = players.loc[players["born"].isna(), ["player", "team", "liga", "min"]]
     edad = edad_en_temporada(players["born"], season)
     players["sub21"] = (edad <= 20).where(players["born"].notna())
     players["born"] = players["born"].astype("Int64")
-    return players.drop(columns=["key"]), sin_match
+    players["posicion"] = [posicion_fbref(f) or posicion_understat(u)
+                            for f, u in zip(players["fb_pos"], players["position"])]
+    return players.drop(columns=["key", "fb_pos"]), sin_match
 
 
 def load_shots_season(season_dir, season):
@@ -364,16 +424,20 @@ def main():
 
         if all((season_dir / f).exists() for f in PLAYER_FILES):
             p = load_players_season(season_dir, season)
-            p, sin_match = attach_born(p, season_dir, season)
+            p, sin_match = attach_fbref(p, season_dir, season)
             players.append(p)
+            con_pos = int(p["posicion"].notna().sum())
             print(f"  jugadores {len(p):4d}", end="")
             if sin_match is None:
-                print("  (sin fbref-players.csv: no hay edades)")
+                print("  (sin fbref-players.csv: no hay edades)"
+                      f" · posición {con_pos}/{len(p)} ({con_pos / len(p):.1%},"
+                      f" solo el respaldo de Understat)")
             else:
                 con_born = len(p) - len(sin_match)
                 sub21 = int((p["sub21"] == True).sum())
                 print(f"  · edad {con_born}/{len(p)} ({con_born / len(p):.1%})"
-                      f" · sub-21 {sub21}")
+                      f" · sub-21 {sub21}"
+                      f" · posición {con_pos}/{len(p)} ({con_pos / len(p):.1%})")
                 # Los que no cruzaron se listan por minutos: un titular sin edad
                 # importa mucho más que un suplente, y es el que hay que ir a
                 # revisar a mano si el porcentaje baja.

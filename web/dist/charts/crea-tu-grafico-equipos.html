@@ -135,6 +135,7 @@
   #chart_7b033dce_sidebar .toggle span { font-size: 13px; cursor: pointer;
     color: var(--color-primary, #0b0b0b); }
   #chart_7b033dce_sidebar .toggle + .hint { margin-top: 7px; }
+  #chart_7b033dce_sidebar select + .hint { margin-top: 7px; }
   #chart_7b033dce_sidebar input, #chart_7b033dce_sidebar select { width: 100%; box-sizing: border-box;
     padding: 7px 9px; font-size: 13px; font-family: inherit; color: var(--color-primary, #0b0b0b);
     background: var(--color-surface, #fcfcfb); border: 1px solid var(--color-border, #c3c2b7);
@@ -300,24 +301,30 @@
   var BASE = 11, RESALTE = 20;
   var CON_EQUIPO = false;
   var FILTRO_ESTADO = "";
+  var CAT_OPCIONES = [];
 
   var temporada = "2025-26";
   var filtroOn = false;
+  var categoria = TODAS;
   var IDX = [], NOMBRES = [], XS = [], YS = [];
 
   function el(sufijo) { return document.getElementById('chart_7b033dce_' + sufijo); }
   function ejeX() { return el('xvar').value; }
   function ejeY() { return el('yvar').value; }
 
-  // El filtro por punto se resuelve una vez como lista de índices y las
+  // Los filtros por punto se resuelven una vez como lista de índices y las
   // columnas se leen a través de ella: filtrar las N variables cada vez que se
-  // toca la casilla sería tirar trabajo, porque solo dos están en pantalla.
+  // toca un control sería tirar trabajo, porque solo dos están en pantalla.
   function recalcularIndices() {
     var d = DATOS[temporada];
+    var usaCat = categoria !== TODAS && !!d.g;
+    var cat = usaCat ? CAT_OPCIONES.indexOf(categoria) : -1;
     IDX = d.n.map(function(nombres, t) {
       var idx = [];
       for (var i = 0; i < nombres.length; i++) {
-        if (!filtroOn || !d.f || d.f[t][i]) idx.push(i);
+        if (filtroOn && d.f && !d.f[t][i]) continue;
+        if (usaCat && d.g[t][i] !== cat) continue;
+        idx.push(i);
       }
       return idx;
     });
@@ -373,9 +380,13 @@
     var p = puntosVisibles();
     pintarTop(ETIQUETAS[ejeX()], ETIQUETAS[ejeY()], p[0], p[1], p[2]);
   }
+  // Devuelve el r, o por qué no hay r: 'pocos' (no alcanzan los puntos) y
+  // 'plano' (alguno de los dos ejes no varía) se distinguen porque son cosas
+  // distintas y el aviso tiene que decir cuál es — con el filtro de categoría
+  // 'plano' es fácil de encontrar (porteros contra tiros, por ejemplo).
   function pearson(xs, ys) {
     var n = xs.length, i;
-    if (n < 3) return null;
+    if (n < 3) return 'pocos';
     var mx = 0, my = 0;
     for (i = 0; i < n; i++) { mx += xs[i]; my += ys[i]; }
     mx /= n; my /= n;
@@ -384,7 +395,7 @@
       var dx = xs[i] - mx, dy = ys[i] - my;
       sxy += dx * dy; sxx += dx * dx; syy += dy * dy;
     }
-    if (sxx === 0 || syy === 0) return null;
+    if (sxx === 0 || syy === 0) return 'plano';
     return sxy / Math.sqrt(sxx * syy);
   }
   function banda(r) {
@@ -402,13 +413,18 @@
     var liga = el('league').value;
     el('ins_estado').textContent =
       [temporada, liga === TODAS ? 'Todas las ligas' : liga,
+       categoria !== TODAS ? categoria : null,
        filtroOn ? FILTRO_ESTADO : null].filter(Boolean).join(' · ');
 
     var p = paresVisibles(), r = pearson(p[0], p[1]);
     var ex = ETIQUETAS[ejeX()], ey = ETIQUETAS[ejeY()];
-    if (r === null) {
-      el('ins_fija').innerHTML = 'No hay puntos suficientes para medir la relación entre ' +
-        '<strong>' + ex + '</strong> y <strong>' + ey + '</strong> con estos filtros.';
+    if (typeof r === 'string') {
+      el('ins_fija').innerHTML = r === 'plano'
+        ? 'Con estos filtros, <strong>' + ex + '</strong> o <strong>' + ey + '</strong> vale ' +
+          'lo mismo en los ' + p[0].length + ' ' + ENTIDAD + ' que quedan: sin variación en ' +
+          'uno de los dos ejes no hay relación que medir.'
+        : 'No hay puntos suficientes para medir la relación entre <strong>' + ex +
+          '</strong> y <strong>' + ey + '</strong> con estos filtros.';
       el('ins_salta').style.display = 'none';
       return;
     }
@@ -520,6 +536,11 @@
   if (casilla) {
     casilla.checked = false;   // el navegador recuerda el estado al recargar
     casilla.addEventListener('change', function(e) { filtroOn = e.target.checked; redibujar(); });
+  }
+  var selectorCat = el('cat');
+  if (selectorCat) {
+    selectorCat.value = categoria;   // ídem
+    selectorCat.addEventListener('change', function(e) { categoria = e.target.value; redibujar(); });
   }
   document.addEventListener('futviz-theme-change', function() {
     aplicarBusqueda(el('search').value);

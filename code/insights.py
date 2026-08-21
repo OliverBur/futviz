@@ -335,10 +335,10 @@ def porteria_por_que(df):
         f"cero son, en buena medida, **otra forma de medir lo bueno que es el "
         f"equipo**. Un equipo que domina concede poco, y conceder poco produce "
         f"porterías a cero.\n\n"
-        f"Es el mismo hallazgo que sostiene el análisis de estilos de la sección de "
-        f"Machine Learning: con datos públicos, casi cualquier métrica que parezca de "
-        f"estilo termina midiendo nivel. Para juzgar al portero hay que separar "
-        f"cuánto le disparan de cuánto ataja, que es lo que hace el gráfico siguiente."
+        f"Y no es un caso aislado: con datos públicos, casi cualquier métrica que "
+        f"parezca de estilo termina midiendo nivel. Para juzgar al portero hay que "
+        f"separar cuánto le disparan de cuánto ataja, que es lo que hace el gráfico "
+        f"siguiente."
     )
 
 
@@ -643,7 +643,13 @@ def perfil_que_mirar():
     return ("Las líneas punteadas son el promedio de cada eje. Abajo a la derecha, "
             "rematadores puros; arriba a la izquierda, creadores puros; arriba a la "
             "derecha, los que hacen las dos cosas — que son pocos y suelen ser los "
-            "nombres que uno espera.")
+            "nombres que uno espera.\n\n"
+            "Ojo con leer la nube entera de un saque: **buena parte de la distancia "
+            "entre dos puntos es el puesto en el que juegan**, no lo bueno que es cada "
+            "uno. Un central y un extremo caen lejísimos sin que eso diga nada de "
+            "ninguno de los dos. El filtro de posición de la barra lateral deja la "
+            "comparación entre iguales, que es donde un xG90 alto empieza a significar "
+            "algo.")
 
 
 def perfil_por_que(df):
@@ -702,18 +708,35 @@ def nivel_que_mirar(que):
 
 
 def nivel_por_que(col):
-    cual = "xG por 90'" if col == "xG90" else "xA por 90'"
+    es_gol = col == "xG90"
+    cual = "xG por 90'" if es_gol else "xA por 90'"
+    if es_gol:
+        esperado = (
+            f"Y va sobre lo **esperado** y no sobre goles reales porque a nivel de "
+            f"jugador la muestra es chica: un delantero remata unas cien veces en una "
+            f"temporada, y sobre esa base los goles oscilan mucho por azar. El xG "
+            f"acumula la probabilidad de cada remate, así que da una lectura mucho "
+            f"más estable del nivel goleador de la liga."
+        )
+        filtro = ("un jugador con 150 minutos y una ocasión clara aparecería como el "
+                  "más peligroso de su liga.")
+    else:
+        esperado = (
+            f"Y va sobre lo **esperado** y no sobre asistencias reales porque una "
+            f"asistencia solo existe si otro la mete: mide al que remató tanto como "
+            f"al que dio el pase. El xA le pone a cada pase la probabilidad de gol "
+            f"del remate que habilitó, haya entrado o no, así que se queda con la "
+            f"parte que sí hizo el creador y da una lectura mucho más estable del "
+            f"nivel de creación de la liga."
+        )
+        filtro = ("un jugador con 150 minutos y un pase que dejó a un compañero solo "
+                  "aparecería como el más creador de su liga.")
     return (
         f"Se grafica {cual} y no el total de la temporada porque el total mezcla dos "
         f"cosas: lo bueno que es un jugador y cuánto jugó. La tasa aísla la primera.\n\n"
-        f"Y va sobre lo **esperado** y no sobre goles o asistencias reales porque a "
-        f"nivel de jugador la muestra es chica: un delantero remata unas cien veces "
-        f"en una temporada, y sobre esa base los goles oscilan mucho por azar. El xG "
-        f"acumula la probabilidad de cada remate, así que da una lectura mucho más "
-        f"estable del nivel ofensivo de la liga.\n\n"
-        f"El filtro de {MIN_MINUTOS} minutos deja fuera a quien jugó poco: sin él, un "
-        f"jugador con 150 minutos y una ocasión clara aparecería como el más "
-        f"peligroso de su liga."
+        f"{esperado}\n\n"
+        f"El filtro de {MIN_MINUTOS} minutos deja fuera a quien jugó poco: sin él, "
+        f"{filtro}"
     )
 
 

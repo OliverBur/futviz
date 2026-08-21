@@ -582,7 +582,7 @@ def chart_gk_demand(df, seasons, season_data):
 
 def _box_page(df, seasons, *, y_col, y_axis_title, slug, title, subtitle, chart_title,
                chart_subtitle, hover_fmt=".1f", annotate_cv=False, insights=None):
-    fig, controls = league_box_season_html(
+    fig, controls, _ = league_box_season_html(
         df, y_col, y_axis_title, seasons, hover_fmt=hover_fmt, annotate_cv=annotate_cv,
         subtitle_template=chart_subtitle,
     )
