@@ -323,34 +323,49 @@
     return m ? m[1] : null;
   }
 
-  // Repinta las trazas cuyo `name` es una liga. Se toca solo la propiedad que
-  // la traza YA tiene —un box no tiene lo mismo que un scatterpolar— porque un
-  // restyle de una propiedad ausente se la inventa y puede cambiar el dibujo.
-  function patchLigas(gd, theme) {
+  // Los colores de liga de un gráfico, listos para UNA sola llamada a Plotly.
+  //
+  // Se agrupan por el juego de propiedades que toca cambiar —un box no tiene lo
+  // mismo que un scatterpolar, y una propiedad ausente no se toca porque un
+  // restyle se la inventaría— y dentro de cada grupo los valores van como
+  // arreglo, uno por traza. En la práctica las 5 trazas de liga de un gráfico
+  // son del mismo tipo, así que sale un solo grupo. Repintarlas de a una era
+  // un redibujo por traza: en un scatter de 1.900 puntos, ~1.100ms de cambio
+  // de tema contra los ~60 que tarda así.
+  function ligasUpdate(gd, theme) {
     var i = theme === 'dark' ? 1 : 0;
+    var grupos = [], porFirma = {};
     (gd.data || []).forEach(function(t, idx) {
       var par = LIGAS[t.name];
       if (!par) return;
-      var color = par[i], patch = {};
-      if (t.marker && t.marker.color) patch['marker.color'] = color;
-      if (t.line && t.line.color) patch['line.color'] = color;
+      var color = par[i], props = {};
+      if (t.marker && t.marker.color) props['marker.color'] = color;
+      if (t.line && t.line.color) props['line.color'] = color;
       var a = alphaDe(t.fillcolor);
-      if (a !== null) patch.fillcolor = conAlpha(color, a);
-      if (Object.keys(patch).length) Plotly.restyle(gd, patch, [idx]);
+      if (a !== null) props.fillcolor = conAlpha(color, a);
+      var claves = Object.keys(props);
+      if (!claves.length) return;
+      var firma = claves.join('|');
+      var g = porFirma[firma];
+      if (!g) { g = porFirma[firma] = {idx: [], vals: {}}; grupos.push(g); }
+      g.idx.push(idx);
+      claves.forEach(function(p) { (g.vals[p] = g.vals[p] || []).push(props[p]); });
     });
+
     // Los títulos de cada subplot del radar son anotaciones pintadas con el
-    // color de su liga; se las reconoce justamente por eso.
-    var anns = (gd.layout && gd.layout.annotations) || [], ap = {};
+    // color de su liga; se las reconoce justamente por eso. Van al patch del
+    // layout para que entren en la misma llamada.
+    var anns = (gd.layout && gd.layout.annotations) || [], lay = {};
     anns.forEach(function(an, k) {
-      var col = an.font && an.font.color;
+      var col = ((an.font && an.font.color) || '').toLowerCase();
       if (!col) return;
       Object.keys(LIGAS).forEach(function(liga) {
-        if (LIGAS[liga].indexOf(col.toLowerCase()) !== -1) {
-          ap['annotations[' + k + '].font.color'] = LIGAS[liga][i];
+        if (LIGAS[liga].indexOf(col) !== -1) {
+          lay['annotations[' + k + '].font.color'] = LIGAS[liga][i];
         }
       });
     });
-    if (Object.keys(ap).length) Plotly.relayout(gd, ap);
+    return {grupos: grupos, layout: lay};
   }
 
   // Los ejes se descubren leyendo el layout real de cada gráfico en vez de
@@ -400,9 +415,20 @@
     if (!window.Plotly) return;
     var theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
     document.querySelectorAll('.js-plotly-plot').forEach(function(gd) {
-      Plotly.relayout(gd, patchFor(gd, theme));
+      var ligas = ligasUpdate(gd, theme);
+      var lay = patchFor(gd, theme);
+      Object.keys(ligas.layout).forEach(function(k) { lay[k] = ligas.layout[k]; });
+      // Un solo redibujo: `update` aplica trazas y layout de una pasada, en vez
+      // de un relayout más un restyle por traza.
+      if (ligas.grupos.length) {
+        Plotly.update(gd, ligas.grupos[0].vals, lay, ligas.grupos[0].idx);
+        for (var i = 1; i < ligas.grupos.length; i++) {
+          Plotly.restyle(gd, ligas.grupos[i].vals, ligas.grupos[i].idx);
+        }
+      } else {
+        Plotly.relayout(gd, lay);
+      }
       patchColorbars(gd, theme);
-      patchLigas(gd, theme);
     });
   }
   syncPlotly();

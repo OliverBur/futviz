@@ -1215,7 +1215,12 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     applySearch(e.target.value);
   }});
   document.addEventListener('futviz-theme-change', function() {{
-    applySearch(document.getElementById('{div_id}_search').value);
+    // Solo si hay algo buscado. Lo único que cambia de color con el tema es la
+    // anotación del buscador, y sin búsqueda no hay anotación: repintar igual
+    // costaba un restyle de los tamaños de los 1.900 marcadores más un
+    // relayout, ~460ms de los ~750 que tardaba el cambio de tema.
+    var buscado = document.getElementById('{div_id}_search').value;
+    if (buscado) applySearch(buscado);
   }});
 
   // Repinta las trazas con la vista actual. Lo llaman los dos controles que
@@ -1753,7 +1758,10 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
     selectorCat.addEventListener('change', function(e) {{ categoria = e.target.value; redibujar(); }});
   }}
   document.addEventListener('futviz-theme-change', function() {{
-    aplicarBusqueda(el('search').value);
+    // Ídem que en sidebar_chart_html: sin búsqueda no hay anotación que
+    // recolorear, y repintar igual es lo más caro del cambio de tema.
+    var buscado = el('search').value;
+    if (buscado) aplicarBusqueda(buscado);
   }});
   window.addEventListener('resize', acomodarLeyenda);
 
