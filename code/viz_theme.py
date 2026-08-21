@@ -454,6 +454,7 @@ def _sidebar_css(div_id, width, aspect_ratio, mobile_aspect=None):
   #{div_id}_sidebar .toggle span {{ font-size: 13px; cursor: pointer;
     color: var(--color-primary, {INK["primary"]}); }}
   #{div_id}_sidebar .toggle + .hint {{ margin-top: 7px; }}
+  #{div_id}_sidebar select + .hint {{ margin-top: 7px; }}
   #{div_id}_sidebar input, #{div_id}_sidebar select {{ width: 100%; box-sizing: border-box;
     padding: 7px 9px; font-size: 13px; font-family: inherit; color: var(--color-primary, {INK["primary"]});
     background: var(--color-surface, {INK["surface"]}); border: 1px solid var(--color-border, {INK["axis"]});
@@ -760,7 +761,7 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
                         extra_traces=0, base_size=11, highlight_size=20,
                         width=680, height=560, name_col="Squad", search_label="club",
                         season_data=None, custom_cols=None, subtitle_template=None,
-                        insights=None, point_filter=None, fuente=None,
+                        insights=None, point_filter=None, cat_filter=None, fuente=None,
                         top_n=5, top_labels=None):
     """Arma el HTML/JS de un gráfico Plotly con una barra lateral genuina a
     la derecha (no superpuesta, es un elemento aparte en un layout flex):
@@ -818,6 +819,16 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     visibilidad. `estado` es cómo se nombra el filtro en el rótulo de la caja
     de lectura, cuyos textos se piden con la clave `...|<col>` al activarlo.
 
+    `cat_filter` es el mismo mecanismo pero para una columna CATEGÓRICA en vez
+    de booleana — un `<select>` en lugar de una casilla:
+    `{"col", "label", "options", "all_label", "hint", "clave"}`. Los puntos
+    cuyo valor no está en `options` (dato faltante) quedan fuera al elegir
+    cualquier categoría, igual que los nulos del filtro booleano. Se combina
+    con los otros dos, y la clave de la caja de lectura pasa a ser
+    `temporada|liga|<clave>:<categoría>[|<col booleana>]` — los segmentos se
+    agregan solo cuando el filtro está puesto, así que las claves de un gráfico
+    sin estos filtros no cambian.
+
     Devuelve el HTML como string (no lo muestra) — ver `render_with_sidebar`
     para mostrarlo directo en un notebook."""
     import json
@@ -872,6 +883,13 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
                 sub[point_filter["col"]].fillna(False).astype(bool).tolist()
                 for _, sub in sd
             ]
+        if cat_filter:
+            # El ÍNDICE de la categoría, no su nombre: son miles de puntos y
+            # repetir "Delantero" en cada uno pesa diez veces más que un entero.
+            # -1 es "sin dato", que no pertenece a ninguna categoría.
+            codigo = {v: i for i, v in enumerate(cat_filter["options"])}
+            payload["g"] = [[codigo.get(v, -1) for v in sub[cat_filter["col"]]]
+                             for _, sub in sd]
         if custom_cols:
             # Una sola columna va plana (`%{customdata}` en el hovertemplate);
             # varias, como filas (`%{customdata[0]}`) — igual que lo que arman
@@ -904,6 +922,18 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
           letter-spacing:0; margin:0;"><span>{point_filter.get("text", "Filtrar")}</span></label>
       </div>
       {f'<p class="hint">{point_filter["hint"]}</p>' if point_filter.get("hint") else ''}
+    </div>"""
+
+    cat_options = "" if not cat_filter else "".join(
+        f'<option value="{o}">{o}</option>' for o in cat_filter["options"])
+    cat_block = "" if not cat_filter else f"""
+    <div class="block">
+      <label>{cat_filter.get("label", "Categoría")}</label>
+      <select id="{div_id}_cat">
+        <option value="{_ALL}">{cat_filter.get("all_label", "Todas")}</option>
+        {cat_options}
+      </select>
+      {f'<p class="hint">{cat_filter["hint"]}</p>' if cat_filter.get("hint") else ''}
     </div>"""
 
     # Caja de lectura. La clave del estado es "temporada|liga" ("__all__" cuando
@@ -951,7 +981,7 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
         <option value="{_ALL}">Todas las ligas</option>
         {league_options}
       </select>
-    </div>{filter_block}
+    </div>{cat_block}{filter_block}
   </div>
 </div>{_fuente_html(div_id, width, fuente)}{below}
 <script>
@@ -970,19 +1000,28 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
   var FILTER_KEY = {json.dumps((point_filter or {}).get("col", ""))};
   var FILTER_ESTADO = {json.dumps((point_filter or {}).get("estado", ""))};
 
-  // La "vista" es lo que se está mostrando: la temporada elegida y, si la
-  // casilla está marcada, solo los puntos que pasan el filtro. Se recalcula
-  // entera en vez de guardarse precalculada desde Python por el mismo motivo
-  // que los tamaños (ver _payload): duplicar x/y/custom pesa el doble.
+  var catSel = {_ALL_JSON};
+  var CAT_OPTIONS = {json.dumps((cat_filter or {}).get("options", []), ensure_ascii=False)};
+  var CAT_CLAVE = {json.dumps((cat_filter or {}).get("clave", "cat"), ensure_ascii=False)};
+
+  // La "vista" es lo que se está mostrando: la temporada elegida y, si hay
+  // algún filtro por punto puesto, solo los que pasan. Se recalcula entera en
+  // vez de guardarse precalculada desde Python por el mismo motivo que los
+  // tamaños (ver _payload): duplicar x/y/custom pesa el doble — y con dos
+  // filtros combinables serían seis juegos de arreglos, no dos.
   function computeView() {{
     var d = seasons[current];
-    if (!filterOn || !d.f) return d;
+    var usaFiltro = filterOn && !!d.f;
+    var usaCat = catSel !== {_ALL_JSON} && !!d.g;
+    if (!usaFiltro && !usaCat) return d;
+    var cat = usaCat ? CAT_OPTIONS.indexOf(catSel) : -1;
     var v = {{names: [], x: [], y: [], ents: {{}}}};
     if (d.custom) v.custom = [];
     for (var t = 0; t < d.names.length; t++) {{
       var nn = [], xx = [], yy = [], cc = [];
       for (var i = 0; i < d.names[t].length; i++) {{
-        if (!d.f[t][i]) continue;
+        if (usaFiltro && !d.f[t][i]) continue;
+        if (usaCat && d.g[t][i] !== cat) continue;
         nn.push(d.names[t][i]); xx.push(d.x[t][i]); yy.push(d.y[t][i]);
         if (d.custom) cc.push(d.custom[t][i]);
         v.ents[d.names[t][i]] = d.ents[d.names[t][i]];
@@ -1019,12 +1058,16 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     if (typeof setInsight !== 'function') return;
     var lg = document.getElementById('{div_id}_league');
     var liga = lg ? lg.value : {_ALL_JSON};
-    // Con el filtro puesto se pide OTRA clave, no la misma con una advertencia:
-    // los textos del subconjunto vienen calculados aparte desde Python, así que
-    // la caja describe siempre la población que se está viendo.
-    var clave = current + '|' + liga + (filterOn ? '|' + FILTER_KEY : '');
+    // Con un filtro puesto se pide OTRA clave, no la misma con una advertencia:
+    // los textos de cada subconjunto vienen calculados aparte desde Python, así
+    // que la caja describe siempre la población que se está viendo. El orden de
+    // los segmentos es fijo (categoría antes que casilla) porque tiene que dar
+    // exactamente la misma cadena que arma Python al generar las claves.
+    var conCat = catSel !== {_ALL_JSON};
+    var clave = current + '|' + liga + (conCat ? '|' + CAT_CLAVE + ':' + catSel : '')
+                + (filterOn ? '|' + FILTER_KEY : '');
     var etiqueta = [current, liga === {_ALL_JSON} ? 'Todas las ligas' : liga,
-                    filterOn ? FILTER_ESTADO : null]
+                    conCat ? catSel : null, filterOn ? FILTER_ESTADO : null]
       .filter(Boolean).join(' · ');
     setInsight(clave, etiqueta);
   }}
@@ -1140,6 +1183,15 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     }});
   }}
 
+  var catSelect = document.getElementById('{div_id}_cat');
+  if (catSelect) {{
+    catSelect.value = catSel;  // el navegador recuerda el estado al recargar
+    catSelect.addEventListener('change', function(e) {{
+      catSel = e.target.value;
+      applyData();
+    }});
+  }}
+
   document.getElementById('{div_id}_league').addEventListener('change', function(e) {{
     var val = e.target.value;
     var vis = (val === {_ALL_JSON})
@@ -1169,7 +1221,8 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
 def explorer_chart_html(season_data, variables, name_col="Squad", search_label="club",
                          entidad="equipos", default_x=None, default_y=None,
                          width=760, height=580, base_size=8, highlight_size=20,
-                         team_col=None, point_filter=None, fuente=None, top_n=5):
+                         team_col=None, point_filter=None, cat_filter=None,
+                         fuente=None, top_n=5):
     """Scatter donde las dos variables las elige quien mira, no quien lo escribió.
 
     Es el tercer tipo de gráfico interactivo del sitio, y existe porque los
@@ -1187,8 +1240,11 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
     redondeo del payload como el formato del hover.
 
     `season_data` es `{temporada: [(liga, sub_df), ...]}`, la misma estructura
-    que espera `sidebar_chart_html`, y `point_filter` el mismo dict de la
-    casilla de filtro por punto (sub-21).
+    que espera `sidebar_chart_html`; `point_filter` el mismo dict de la casilla
+    de filtro por punto (sub-21) y `cat_filter` el del desplegable de filtro
+    categórico (posición). Acá no hay claves de caja de lectura que armar —el
+    texto se calcula en el navegador— así que de `cat_filter` solo se usan
+    `col`, `label`, `options`, `all_label` y `hint`.
 
     La caja de lectura NO lleva "qué mirar": el texto de un gráfico que cambia
     de variables no se puede escribir de antemano. Lo que lleva es el r² del par
@@ -1233,6 +1289,12 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
         if point_filter:
             p["f"] = [sub[point_filter["col"]].fillna(False).astype(bool).tolist()
                       for _, sub in sd]
+        if cat_filter:
+            # Índice de la categoría, no su nombre (-1 = sin dato); mismo
+            # criterio de peso que en `sidebar_chart_html`.
+            codigo = {v: i for i, v in enumerate(cat_filter["options"])}
+            p["g"] = [[codigo.get(v, -1) for v in sub[cat_filter["col"]]]
+                       for _, sub in sd]
         return p
 
     datos = {s: _payload(sd) for s, sd in season_data.items()}
@@ -1291,6 +1353,18 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
       {f'<p class="hint">{point_filter["hint"]}</p>' if point_filter.get("hint") else ''}
     </div>"""
 
+    cat_options = "" if not cat_filter else "".join(
+        f'<option value="{o}">{o}</option>' for o in cat_filter["options"])
+    cat_block = "" if not cat_filter else f"""
+    <div class="block">
+      <label>{cat_filter.get("label", "Categoría")}</label>
+      <select id="{div_id}_cat">
+        <option value="{_ALL}">{cat_filter.get("all_label", "Todas")}</option>
+        {cat_options}
+      </select>
+      {f'<p class="hint">{cat_filter["hint"]}</p>' if cat_filter.get("hint") else ''}
+    </div>"""
+
     ojo = _md_inline(
         "El r² mide **relación lineal, y nada más**. Dos variables pueden tener un r² "
         "bajo y estar bien relacionadas de otra forma (en U, por ejemplo), y un r² alto "
@@ -1336,7 +1410,7 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
         <option value="{_ALL}">Todas las ligas</option>
         {league_options}
       </select>
-    </div>{filter_block}
+    </div>{cat_block}{filter_block}
   </div>
 </div>{_fuente_html(div_id, width, fuente)}
 <div id="{div_id}_below">
@@ -1365,24 +1439,30 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
   var BASE = {base_size}, RESALTE = {highlight_size};
   var CON_EQUIPO = {json.dumps(bool(team_col))};
   var FILTRO_ESTADO = {json.dumps((point_filter or {}).get("estado", ""), ensure_ascii=False)};
+  var CAT_OPCIONES = {json.dumps((cat_filter or {}).get("options", []), ensure_ascii=False)};
 
   var temporada = {json.dumps(default_season)};
   var filtroOn = false;
+  var categoria = TODAS;
   var IDX = [], NOMBRES = [], XS = [], YS = [];
 
   function el(sufijo) {{ return document.getElementById('{div_id}_' + sufijo); }}
   function ejeX() {{ return el('xvar').value; }}
   function ejeY() {{ return el('yvar').value; }}
 
-  // El filtro por punto se resuelve una vez como lista de índices y las
+  // Los filtros por punto se resuelven una vez como lista de índices y las
   // columnas se leen a través de ella: filtrar las N variables cada vez que se
-  // toca la casilla sería tirar trabajo, porque solo dos están en pantalla.
+  // toca un control sería tirar trabajo, porque solo dos están en pantalla.
   function recalcularIndices() {{
     var d = DATOS[temporada];
+    var usaCat = categoria !== TODAS && !!d.g;
+    var cat = usaCat ? CAT_OPCIONES.indexOf(categoria) : -1;
     IDX = d.n.map(function(nombres, t) {{
       var idx = [];
       for (var i = 0; i < nombres.length; i++) {{
-        if (!filtroOn || !d.f || d.f[t][i]) idx.push(i);
+        if (filtroOn && d.f && !d.f[t][i]) continue;
+        if (usaCat && d.g[t][i] !== cat) continue;
+        idx.push(i);
       }}
       return idx;
     }});
@@ -1438,9 +1518,13 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
     var p = puntosVisibles();
     pintarTop(ETIQUETAS[ejeX()], ETIQUETAS[ejeY()], p[0], p[1], p[2]);
   }}
+  // Devuelve el r, o por qué no hay r: 'pocos' (no alcanzan los puntos) y
+  // 'plano' (alguno de los dos ejes no varía) se distinguen porque son cosas
+  // distintas y el aviso tiene que decir cuál es — con el filtro de categoría
+  // 'plano' es fácil de encontrar (porteros contra tiros, por ejemplo).
   function pearson(xs, ys) {{
     var n = xs.length, i;
-    if (n < 3) return null;
+    if (n < 3) return 'pocos';
     var mx = 0, my = 0;
     for (i = 0; i < n; i++) {{ mx += xs[i]; my += ys[i]; }}
     mx /= n; my /= n;
@@ -1449,7 +1533,7 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
       var dx = xs[i] - mx, dy = ys[i] - my;
       sxy += dx * dy; sxx += dx * dx; syy += dy * dy;
     }}
-    if (sxx === 0 || syy === 0) return null;
+    if (sxx === 0 || syy === 0) return 'plano';
     return sxy / Math.sqrt(sxx * syy);
   }}
   function banda(r) {{
@@ -1467,13 +1551,18 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
     var liga = el('league').value;
     el('ins_estado').textContent =
       [temporada, liga === TODAS ? 'Todas las ligas' : liga,
+       categoria !== TODAS ? categoria : null,
        filtroOn ? FILTRO_ESTADO : null].filter(Boolean).join(' · ');
 
     var p = paresVisibles(), r = pearson(p[0], p[1]);
     var ex = ETIQUETAS[ejeX()], ey = ETIQUETAS[ejeY()];
-    if (r === null) {{
-      el('ins_fija').innerHTML = 'No hay puntos suficientes para medir la relación entre ' +
-        '<strong>' + ex + '</strong> y <strong>' + ey + '</strong> con estos filtros.';
+    if (typeof r === 'string') {{
+      el('ins_fija').innerHTML = r === 'plano'
+        ? 'Con estos filtros, <strong>' + ex + '</strong> o <strong>' + ey + '</strong> vale ' +
+          'lo mismo en los ' + p[0].length + ' ' + ENTIDAD + ' que quedan: sin variación en ' +
+          'uno de los dos ejes no hay relación que medir.'
+        : 'No hay puntos suficientes para medir la relación entre <strong>' + ex +
+          '</strong> y <strong>' + ey + '</strong> con estos filtros.';
       el('ins_salta').style.display = 'none';
       return;
     }}
@@ -1585,6 +1674,11 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
   if (casilla) {{
     casilla.checked = false;   // el navegador recuerda el estado al recargar
     casilla.addEventListener('change', function(e) {{ filtroOn = e.target.checked; redibujar(); }});
+  }}
+  var selectorCat = el('cat');
+  if (selectorCat) {{
+    selectorCat.value = categoria;   // ídem
+    selectorCat.addEventListener('change', function(e) {{ categoria = e.target.value; redibujar(); }});
   }}
   document.addEventListener('futviz-theme-change', function() {{
     aplicarBusqueda(el('search').value);
@@ -1713,15 +1807,32 @@ def _cv_annotations(df, y_col, name_col="Squad", y_at=None):
 
 def league_box_season_html(df, y_col, y_axis_title, seasons, hover_fmt=".1f",
                             annotate_cv=False, name_col="Squad", subtitle_template=None,
-                            width=800, height=520, season_col="temporada"):
+                            width=800, height=520, season_col="temporada",
+                            cat_filter=None):
     """Box plot por liga con selector de temporada.
 
     El eje Y se fija con el rango de LAS 5 temporadas y no con el de cada una:
     si se reescalara en cada cambio, dos cajas del mismo alto significarían
     dispersiones distintas y el gráfico mentiría justo en lo que se quiere
     comparar. Por lo mismo las anotaciones de CV se recalculan pero se dibujan
-    siempre a la misma altura."""
+    siempre a la misma altura. Y por lo mismo el rango tampoco depende de
+    `cat_filter`: si al elegir "Delantero" la escala se ajustara, la caja de
+    los delanteros se vería igual de alta que la de los defensas.
+
+    `cat_filter` agrega un segundo desplegable que filtra por una columna
+    categórica (`{"col", "label", "options", "all_label", "clave"}`, el mismo
+    dict que reciben los otros helpers). Cuando está, los dos controles no
+    pueden actualizar el gráfico por separado —los dos cambian la misma `y`,
+    así que se pisarían— y lo que se devuelve son `joint_updates`, una entrada
+    por combinación, que es el mecanismo que `select_chart_html` ya tiene para
+    ese caso.
+
+    Devuelve `(fig, controls, joint_updates)`, con `joint_updates` en None
+    cuando no hay `cat_filter`."""
     default = seasons[-1]
+    todas = cat_filter.get("all_label", "Todas") if cat_filter else None
+    cat_options = [_ALL] + list(cat_filter["options"]) if cat_filter else [None]
+
     sub_default = df[df[season_col] == default]
     fig = league_box_figure(sub_default, y_col, y_axis_title, hover_fmt=hover_fmt,
                              name_col=name_col)
@@ -1733,9 +1844,7 @@ def league_box_season_html(df, y_col, y_axis_title, seasons, hover_fmt=".1f",
     if annotate_cv:
         fig.update_layout(annotations=_cv_annotations(sub_default, y_col, name_col, y_at=cv_y))
 
-    updates = {}
-    for s in seasons:
-        d = df[df[season_col] == s]
+    def _update(d, s):
         parts = [d[d["liga"] == liga] for liga in LEAGUE_ORDER]
         upd = {
             "restyle": {
@@ -1751,7 +1860,24 @@ def league_box_season_html(df, y_col, y_axis_title, seasons, hover_fmt=".1f",
             relayout["annotations"] = _cv_annotations(d, y_col, name_col, y_at=cv_y)
         if relayout:
             upd["relayout"] = relayout
-        updates[s] = upd
+        return upd
 
-    return fig, [{"id": "season", "label": "Temporada", "options": list(seasons),
-                   "default": default, "updates": updates}]
+    season_control = {"id": "season", "label": "Temporada", "options": list(seasons),
+                       "default": default}
+    if not cat_filter:
+        season_control["updates"] = {s: _update(df[df[season_col] == s], s)
+                                      for s in seasons}
+        return fig, [season_control], None
+
+    joint = {}
+    for s in seasons:
+        d = df[df[season_col] == s]
+        for cat in cat_options:
+            sub = d if cat == _ALL else d[d[cat_filter["col"]] == cat]
+            joint[f"{s}|{cat}"] = _update(sub, s)
+
+    cat_control = {"id": cat_filter.get("clave", "cat"),
+                    "label": cat_filter.get("label", "Categoría"),
+                    "options": cat_options, "default": _ALL,
+                    "labels": {_ALL: todas}}
+    return fig, [season_control, cat_control], joint

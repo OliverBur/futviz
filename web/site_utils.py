@@ -449,6 +449,29 @@ INDEX_TEMPLATE = """<!doctype html>
     max-width: 56ch; margin: 0 auto; }}
   .motivation .accent-word {{ color: var(--color-interactive); font-weight: 600; }}
 
+  /* "Quién hizo esto". Va en el hero y no en el pie: en un sitio de una
+     persona la autoría es parte de la presentación, no una nota al pie —
+     y el pie de la landing ya está ocupado por el crédito de las fuentes,
+     que es otra cosa. */
+  .author {{ color: var(--color-muted); font-size: 13.5px; margin: 24px 0 0; }}
+  .author strong {{ color: var(--color-text-body); font-weight: 600; }}
+  .social {{ display: flex; justify-content: center; gap: 10px; margin-top: 12px; }}
+  /* Píldoras con logo + nombre, no el logo solo: los dos glifos son
+     reconocibles pero el texto es lo que hace que el link se entienda sin
+     tener que reconocerlos, y da un objetivo táctil de tamaño decente. */
+  .social-link {{ display: inline-flex; align-items: center; gap: 7px;
+    padding: 7px 14px; border-radius: 999px; text-decoration: none;
+    font-size: 13px; font-weight: 600; color: var(--color-primary);
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    transition: transform .18s ease, box-shadow .18s ease,
+      border-color .18s ease, color .18s ease; }}
+  .social-link svg {{ width: 16px; height: 16px; fill: currentColor; flex: none; }}
+  .social-link:hover {{ transform: translateY(-2px); color: var(--color-interactive);
+    border-color: var(--color-interactive);
+    box-shadow: 0 6px 16px rgba(44, 76, 84, 0.14); }}
+  .social-link:focus-visible {{ outline: 2px solid var(--color-interactive);
+    outline-offset: 2px; }}
+
   .hub-main {{ max-width: 900px; margin: 0 auto; padding: 44px 20px 56px; text-align: center; }}
   .cards {{ display: flex; flex-direction: column; align-items: center; gap: 20px; }}
   .foot {{ color: var(--color-muted); font-size: 12.5px; margin: 48px 0 0; }}
@@ -501,8 +524,20 @@ INDEX_TEMPLATE = """<!doctype html>
 <header class="hero-header">
   <img class="logo-large" src="assets/logo.png" alt="FutViz">
   <p class="motivation">Nació de juntar mi pasión por el <span class="accent-word">fútbol</span> con la
-    <span class="accent-word">ciencia de datos</span>: partir de información pública y simple, y sacarle
-    todo el jugo posible.</p>
+    <span class="accent-word">ciencia de datos</span>.</p>
+  <p class="author">Autor: <strong>Oliver Burguete</strong></p>
+  <div class="social">
+    <a class="social-link" href="https://github.com/OliverBur"
+       target="_blank" rel="noopener noreferrer">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+      GitHub
+    </a>
+    <a class="social-link" href="https://www.linkedin.com/in/oliburguete"
+       target="_blank" rel="noopener noreferrer">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/></svg>
+      LinkedIn
+    </a>
+  </div>
 </header>
 <main class="hub-main">
   <div class="cards">{cards}</div>
@@ -596,10 +631,6 @@ SECTION_PAGE_TEMPLATE = """<!doctype html>
   a.card--tool .card-icon svg {{ width: 22px; height: 22px; }}
   a.card--tool .card-title {{ font-size: 18px; }}
   a.card--tool .card-sub {{ font-size: 13.5px; max-width: 66ch; }}
-  .card-badge {{ display: inline-block; margin-bottom: 8px; padding: 3px 9px;
-    font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
-    color: var(--color-primary); background: var(--color-surface);
-    border: 1px solid rgba(57, 153, 6, 0.35); border-radius: 999px; }}
   .card-cta {{ display: none; }}
 
   @media (min-width: 640px) {{
@@ -649,13 +680,11 @@ CARD_TEMPLATE = """<a class="card" href="{href}">
 """
 
 # La card de las páginas `kind="explorer"`. Es otra plantilla y no la misma con
-# una clase extra porque lleva cosas que las otras no tienen: el rótulo de
-# "herramienta" y la llamada a la acción. Ver `a.card--tool` en el CSS de la
-# página de sección para por qué se distingue.
+# una clase extra porque lleva la llamada a la acción, que las otras no tienen.
+# Ver `a.card--tool` en el CSS de la página de sección para por qué se distingue.
 TOOL_CARD_TEMPLATE = """<a class="card card--tool" href="{href}">
   <div class="card-icon">{icon}</div>
   <div>
-    <span class="card-badge">Herramienta</span>
     <div class="card-title">{title}</div>
     <div class="card-sub">{subtitle}</div>
   </div>

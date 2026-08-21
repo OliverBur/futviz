@@ -8,6 +8,7 @@ import plotly.graph_objects as go
 
 import insights as ins
 import shot_map
+from consolidate_data import POSICIONES
 from site_utils import PROCESSED_DIR, ChartPage
 from viz_theme import (
     LEAGUE_ORDER, FUENTE_UNDERSTAT, league_color, league_box_season_html,
@@ -76,6 +77,25 @@ SUB21_FILTER = {
     # Ligue 1 · sub-21"), que es lo que le dice al lector sobre qué población
     # están hechas las afirmaciones que está leyendo.
     "estado": "sub-21",
+}
+
+# Filtro de posición. Es el segundo dato que aporta FBref (ver `sub21` arriba):
+# Understat publica el conjunto de puestos en los que un jugador apareció, pero
+# no cuál es el principal, así que la categoría la arma `consolidate_data.py`
+# cruzando por nombre igual que la edad.
+#
+# Existe porque sin él "Perfil ofensivo" compara a un central con un extremo
+# como si midieran lo mismo: casi toda la separación vertical y horizontal de
+# esa nube es la posición, no el jugador. Con el filtro puesto la comparación
+# pasa a ser dentro del puesto, que es la única en la que un xG90 alto quiere
+# decir algo.
+POSICION_FILTER_BASE = {
+    "col": "posicion",
+    "label": "Posición",
+    "all_label": "Todas las posiciones",
+    # Prefijo del segmento que este filtro agrega a la clave de la caja de
+    # lectura ("2025-26|__all__|pos:Medio|sub21").
+    "clave": "pos",
 }
 BASE_SIZE = 8  # tamaño del punto; se le pasa al buscador para que al resaltar
                # y volver no cambie de tamaño respecto del estado inicial
@@ -155,17 +175,23 @@ def _entrada(generador, df, season, liga):
 
 
 def _por_temporada_y_liga(generador, df, seasons):
-    """Una entrada por cada temporada x liga, más esas mismas restringidas a los
-    sub-21 — que son las que se muestran con la casilla marcada.
+    """Una entrada por cada temporada x liga, y por cada combinación de los dos
+    filtros por punto encima de esas — que son las que se muestran al tocarlos.
 
     Las claves tienen que coincidir con las que arma el JS de la barra lateral:
-    `temporada|liga`, y con el filtro puesto `temporada|liga|sub21`. Las dos
-    versiones se calculan acá, en el build, porque los textos salen de operar
-    sobre los datos y el sitio es estático: en el navegador no hay con qué
-    rehacerlos."""
+    `temporada|liga`, más `|pos:<posición>` y `|sub21` cuando cada filtro está
+    puesto, en ese orden. Los sub-21 se derivan de TODAS las variantes
+    anteriores y no solo de la base, porque los dos filtros se combinan en la
+    pantalla; son 10 variantes x 30 combinaciones de temporada y liga.
+
+    Se calculan acá, en el build, porque los textos salen de operar sobre los
+    datos y el sitio es estático: en el navegador no hay con qué rehacerlos."""
     variantes = [("", df)]
+    variantes += [(f"|{POSICION_FILTER_BASE['clave']}:{p}", df[df["posicion"] == p])
+                   for p in posiciones_de(df)]
     if "sub21" in df.columns:
-        variantes.append((f"|{SUB21_FILTER['col']}", df[df["sub21"] == True]))
+        variantes += [(f"{sufijo}|{SUB21_FILTER['col']}", datos[datos["sub21"] == True])
+                       for sufijo, datos in list(variantes)]
     return {
         f"{s}|{liga}{sufijo}": _entrada(generador, datos, s, liga)
         for sufijo, datos in variantes
@@ -175,13 +201,14 @@ def _por_temporada_y_liga(generador, df, seasons):
 
 
 def _player_sidebar(fig, scatter_data, x_col, y_col, seasons, season_data, subtitle,
-                     extra_traces=0, insights=None, point_filter=None):
+                     extra_traces=0, insights=None, point_filter=None,
+                     cat_filter=None):
     return sidebar_chart_html(
         fig, scatter_data, x_col, y_col, extra_traces=extra_traces,
         name_col="player", search_label="jugador", width=760, height=580,
         base_size=BASE_SIZE, season_data=season_data,
         custom_cols=["player", "team"], subtitle_template=subtitle,
-        insights=insights, point_filter=point_filter,
+        insights=insights, point_filter=point_filter, cat_filter=cat_filter,
     )
 
 
@@ -195,6 +222,37 @@ def sub21_filter(df):
     if "sub21" not in df.columns or not df["sub21"].fillna(False).any():
         return None
     return SUB21_FILTER
+
+
+def posiciones_de(df):
+    """Las posiciones que de verdad aparecen en los datos, en orden de cancha.
+
+    Se listan las que están y no las cuatro fijas por el mismo motivo que el
+    sub-21: un desplegable no debe ofrecer una opción que deje el gráfico
+    vacío."""
+    if "posicion" not in df.columns:
+        return []
+    return [p for p in POSICIONES if (df["posicion"] == p).any()]
+
+
+def posicion_filter(df):
+    """El filtro de posición, o None si los datos no la traen.
+
+    El porcentaje sin posición del aviso se calcula sobre los jugadores que
+    llegan al corte de minutos —los que se dibujan— y no sobre la tabla
+    entera: es el que afecta a lo que el lector está viendo."""
+    opciones = posiciones_de(df)
+    if not opciones:
+        return None
+    sin_dato = df["posicion"].isna().mean()
+    return {
+        **POSICION_FILTER_BASE,
+        "options": opciones,
+        "hint": (f"La posición principal: a quien alterna entre lateral y extremo lo "
+                 f"cuenta donde más jugó. Viene de FBref —Understat no dice cuál es "
+                 f"la principal— y se cruza por nombre, así que el {sin_dato:.1%} que "
+                 f"no cruza queda fuera al elegir una posición."),
+    }
 
 
 def chart_goals_vs_xg(df, seasons, season_data):
@@ -230,7 +288,8 @@ def chart_goals_vs_xg(df, seasons, season_data):
                                        "dinamico": _por_temporada_y_liga(
                                            ins.goles_xg, df, seasons),
                                    },
-                                   point_filter=sub21_filter(df)),
+                                   point_filter=sub21_filter(df),
+                                   cat_filter=posicion_filter(df)),
     )
 
 
@@ -264,7 +323,8 @@ def chart_assists_vs_xa(df, seasons, season_data):
                                        "dinamico": _por_temporada_y_liga(
                                            ins.asist_xa, df, seasons),
                                    },
-                                   point_filter=sub21_filter(df)),
+                                   point_filter=sub21_filter(df),
+                                   cat_filter=posicion_filter(df)),
     )
 
 
@@ -299,22 +359,42 @@ def chart_profile(df, seasons, season_data):
                                        "dinamico": _por_temporada_y_liga(
                                            ins.perfil, df, seasons),
                                    },
-                                   point_filter=sub21_filter(df)),
+                                   point_filter=sub21_filter(df),
+                                   cat_filter=posicion_filter(df)),
     )
 
 
 def _box_page(df, seasons, *, y_col, y_axis_title, slug, title, subtitle, chart_title,
                chart_subtitle):
+    """Los dos boxplots por liga.
+
+    Acá el filtro de posición pesa más que en los scatter: sin él, la altura de
+    cada caja depende sobre todo de cuántos porteros y centrales tenga la liga,
+    que es una propiedad de la muestra y no del fútbol que se juega. Con la
+    posición fija, la comparación entre ligas pasa a ser entre poblaciones
+    comparables.
+
+    Va como segundo desplegable y no como casilla porque `select_chart_html`
+    no tiene filtros por punto: los updates vienen precalculados desde acá, y
+    los dos controles tocan la misma `y`, así que se pasan combinados
+    (`joint_updates`)."""
+    cat = posicion_filter(df)
+    fig, controls, joint = league_box_season_html(
+        df, y_col, y_axis_title, seasons, hover_fmt=".2f", name_col="player",
+        subtitle_template=chart_subtitle, cat_filter=cat,
+    )
     insights = {
         "que_mirar": ins.nivel_que_mirar("gol" if y_col == "xG90" else "juego"),
         "por_que": ins.nivel_por_que(y_col),
-        "dinamico": {s: dict(zip(("fija", "salta"), ins.nivel(df, y_col, s)))
-                      for s in seasons},
+        # Con `joint_updates` la clave de la caja es el estado entero de los
+        # controles ("2025-26|Delantero"), no solo la temporada.
+        "dinamico": ({f"{s}|{p}": _nivel_entrada(df, y_col, s, p)
+                       for s in seasons
+                       for p in [ins.LIGA_TODAS] + list(cat["options"])}
+                      if cat else
+                      {s: dict(zip(("fija", "salta"), ins.nivel(df, y_col, s)))
+                       for s in seasons}),
     }
-    fig, controls = league_box_season_html(
-        df, y_col, y_axis_title, seasons, hover_fmt=".2f", name_col="player",
-        subtitle_template=chart_subtitle,
-    )
     fig.update_layout(
         title=dict(text=chart_title,
                    subtitle=dict(text=chart_subtitle.format(temporada=seasons[-1]))),
@@ -323,9 +403,19 @@ def _box_page(df, seasons, *, y_col, y_axis_title, slug, title, subtitle, chart_
     return ChartPage(
         slug=slug, section=SECTION, title=title, subtitle=subtitle,
         body_html=select_chart_html(fig, controls, width=800, height=520,
-                                     insights=insights),
+                                     insights=insights, joint_updates=joint,
+                                     hint=cat["hint"] if cat else None),
         kind="box",
     )
+
+
+def _nivel_entrada(df, y_col, season, posicion):
+    """El par (fija, salta) de una temporada y posición, o un aviso si no queda
+    nadie — mismo criterio que `_entrada` para los scatter."""
+    d = df if posicion == ins.LIGA_TODAS else df[df["posicion"] == posicion]
+    if d[d["temporada"] == season].empty:
+        return {"fija": "Ningún jugador cumple los filtros elegidos.", "salta": None}
+    return dict(zip(("fija", "salta"), ins.nivel(d, y_col, season)))
 
 
 def chart_box_xg90(df, seasons):
@@ -379,7 +469,8 @@ def chart_explorer(df, seasons, season_data):
         body_html=explorer_chart_html(
             season_data, VARIABLES, name_col="player", search_label="jugador",
             entidad="jugadores", default_x="shots", default_y="goals",
-            team_col="team", base_size=BASE_SIZE, point_filter=sub21_filter(df)),
+            team_col="team", base_size=BASE_SIZE, point_filter=sub21_filter(df),
+            cat_filter=posicion_filter(df)),
         kind="explorer",
     )
 

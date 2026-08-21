@@ -135,6 +135,7 @@
   #chart_98757492_sidebar .toggle span { font-size: 13px; cursor: pointer;
     color: var(--color-primary, #0b0b0b); }
   #chart_98757492_sidebar .toggle + .hint { margin-top: 7px; }
+  #chart_98757492_sidebar select + .hint { margin-top: 7px; }
   #chart_98757492_sidebar input, #chart_98757492_sidebar select { width: 100%; box-sizing: border-box;
     padding: 7px 9px; font-size: 13px; font-family: inherit; color: var(--color-primary, #0b0b0b);
     background: var(--color-surface, #fcfcfb); border: 1px solid var(--color-border, #c3c2b7);
@@ -233,7 +234,7 @@
   </div>
   <details>
     <summary>Por qué estas variables</summary>
-    <div><p>Estas dos variables correlacionan <strong>0.74</strong>, que es muchísimo. Por eso el gráfico no se lee como &quot;tener buen portero da puntos&quot;: las porterías a cero son, en buena medida, <strong>otra forma de medir lo bueno que es el equipo</strong>. Un equipo que domina concede poco, y conceder poco produce porterías a cero.</p><p>Es el mismo hallazgo que sostiene el análisis de estilos de la sección de Machine Learning: con datos públicos, casi cualquier métrica que parezca de estilo termina midiendo nivel. Para juzgar al portero hay que separar cuánto le disparan de cuánto ataja, que es lo que hace el gráfico siguiente.</p></div>
+    <div><p>Estas dos variables correlacionan <strong>0.74</strong>, que es muchísimo. Por eso el gráfico no se lee como &quot;tener buen portero da puntos&quot;: las porterías a cero son, en buena medida, <strong>otra forma de medir lo bueno que es el equipo</strong>. Un equipo que domina concede poco, y conceder poco produce porterías a cero.</p><p>Y no es un caso aislado: con datos públicos, casi cualquier métrica que parezca de estilo termina midiendo nivel. Para juzgar al portero hay que separar cuánto le disparan de cuánto ataja, que es lo que hace el gráfico siguiente.</p></div>
   </details>
 </div>
 <div id="chart_98757492_toplist">
@@ -297,19 +298,28 @@
   var FILTER_KEY = "";
   var FILTER_ESTADO = "";
 
-  // La "vista" es lo que se está mostrando: la temporada elegida y, si la
-  // casilla está marcada, solo los puntos que pasan el filtro. Se recalcula
-  // entera en vez de guardarse precalculada desde Python por el mismo motivo
-  // que los tamaños (ver _payload): duplicar x/y/custom pesa el doble.
+  var catSel = "__all__";
+  var CAT_OPTIONS = [];
+  var CAT_CLAVE = "cat";
+
+  // La "vista" es lo que se está mostrando: la temporada elegida y, si hay
+  // algún filtro por punto puesto, solo los que pasan. Se recalcula entera en
+  // vez de guardarse precalculada desde Python por el mismo motivo que los
+  // tamaños (ver _payload): duplicar x/y/custom pesa el doble — y con dos
+  // filtros combinables serían seis juegos de arreglos, no dos.
   function computeView() {
     var d = seasons[current];
-    if (!filterOn || !d.f) return d;
+    var usaFiltro = filterOn && !!d.f;
+    var usaCat = catSel !== "__all__" && !!d.g;
+    if (!usaFiltro && !usaCat) return d;
+    var cat = usaCat ? CAT_OPTIONS.indexOf(catSel) : -1;
     var v = {names: [], x: [], y: [], ents: {}};
     if (d.custom) v.custom = [];
     for (var t = 0; t < d.names.length; t++) {
       var nn = [], xx = [], yy = [], cc = [];
       for (var i = 0; i < d.names[t].length; i++) {
-        if (!d.f[t][i]) continue;
+        if (usaFiltro && !d.f[t][i]) continue;
+        if (usaCat && d.g[t][i] !== cat) continue;
         nn.push(d.names[t][i]); xx.push(d.x[t][i]); yy.push(d.y[t][i]);
         if (d.custom) cc.push(d.custom[t][i]);
         v.ents[d.names[t][i]] = d.ents[d.names[t][i]];
@@ -356,12 +366,16 @@
     if (typeof setInsight !== 'function') return;
     var lg = document.getElementById('chart_98757492_league');
     var liga = lg ? lg.value : "__all__";
-    // Con el filtro puesto se pide OTRA clave, no la misma con una advertencia:
-    // los textos del subconjunto vienen calculados aparte desde Python, así que
-    // la caja describe siempre la población que se está viendo.
-    var clave = current + '|' + liga + (filterOn ? '|' + FILTER_KEY : '');
+    // Con un filtro puesto se pide OTRA clave, no la misma con una advertencia:
+    // los textos de cada subconjunto vienen calculados aparte desde Python, así
+    // que la caja describe siempre la población que se está viendo. El orden de
+    // los segmentos es fijo (categoría antes que casilla) porque tiene que dar
+    // exactamente la misma cadena que arma Python al generar las claves.
+    var conCat = catSel !== "__all__";
+    var clave = current + '|' + liga + (conCat ? '|' + CAT_CLAVE + ':' + catSel : '')
+                + (filterOn ? '|' + FILTER_KEY : '');
     var etiqueta = [current, liga === "__all__" ? 'Todas las ligas' : liga,
-                    filterOn ? FILTER_ESTADO : null]
+                    conCat ? catSel : null, filterOn ? FILTER_ESTADO : null]
       .filter(Boolean).join(' · ');
     setInsight(clave, etiqueta);
   }
@@ -473,6 +487,15 @@
     filterBox.checked = false;  // el navegador recuerda el estado al recargar
     filterBox.addEventListener('change', function(e) {
       filterOn = e.target.checked;
+      applyData();
+    });
+  }
+
+  var catSelect = document.getElementById('chart_98757492_cat');
+  if (catSelect) {
+    catSelect.value = catSel;  // el navegador recuerda el estado al recargar
+    catSelect.addEventListener('change', function(e) {
+      catSel = e.target.value;
       applyData();
     });
   }
