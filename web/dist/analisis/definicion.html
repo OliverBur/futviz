@@ -309,6 +309,50 @@
   var LIGHT = {primary:'#0b0b0b', secondary:'#52514e', muted:'#898781', grid:'#e1e0d9', axis:'#c3c2b7', surface:'#fcfcfb'};
   var DARK = {primary:'#D7E4E7', secondary:'#C7D3D6', muted:'#8CA0A5', grid:'#2C393C', axis:'#3A4A4E', surface:'#1B2426'};
 
+  // Los colores de liga son [claro, oscuro] — mismo hue, distinta luminosidad
+  // y croma (ver LEAGUE_COLORS_DARK en viz_theme.py para por qué no alcanza
+  // con usar los mismos en los dos modos).
+  var LIGAS = {"Bundesliga": ["#e34948", "#dd1d2d"], "Serie A": ["#2a78d6", "#2878d7"], "Ligue 1": ["#2e413a", "#0c7b60"], "La Liga": ["#eda100", "#c28412"], "Premier League": ["#e87ba4", "#cc7193"]};
+
+  function conAlpha(hex, alpha) {
+    var n = parseInt(hex.slice(1), 16);
+    return 'rgba(' + [(n >> 16) & 255, (n >> 8) & 255, n & 255].join(',') + ',' + alpha + ')';
+  }
+  function alphaDe(css) {
+    var m = /rgba?\([^)]*,\s*([0-9.]+)\s*\)/.exec(css || '');
+    return m ? m[1] : null;
+  }
+
+  // Repinta las trazas cuyo `name` es una liga. Se toca solo la propiedad que
+  // la traza YA tiene —un box no tiene lo mismo que un scatterpolar— porque un
+  // restyle de una propiedad ausente se la inventa y puede cambiar el dibujo.
+  function patchLigas(gd, theme) {
+    var i = theme === 'dark' ? 1 : 0;
+    (gd.data || []).forEach(function(t, idx) {
+      var par = LIGAS[t.name];
+      if (!par) return;
+      var color = par[i], patch = {};
+      if (t.marker && t.marker.color) patch['marker.color'] = color;
+      if (t.line && t.line.color) patch['line.color'] = color;
+      var a = alphaDe(t.fillcolor);
+      if (a !== null) patch.fillcolor = conAlpha(color, a);
+      if (Object.keys(patch).length) Plotly.restyle(gd, patch, [idx]);
+    });
+    // Los títulos de cada subplot del radar son anotaciones pintadas con el
+    // color de su liga; se las reconoce justamente por eso.
+    var anns = (gd.layout && gd.layout.annotations) || [], ap = {};
+    anns.forEach(function(an, k) {
+      var col = an.font && an.font.color;
+      if (!col) return;
+      Object.keys(LIGAS).forEach(function(liga) {
+        if (LIGAS[liga].indexOf(col.toLowerCase()) !== -1) {
+          ap['annotations[' + k + '].font.color'] = LIGAS[liga][i];
+        }
+      });
+    });
+    if (Object.keys(ap).length) Plotly.relayout(gd, ap);
+  }
+
   // Los ejes se descubren leyendo el layout real de cada gráfico en vez de
   // listar 'xaxis'/'yaxis' a mano: un gráfico con subplots tiene xaxis2,
   // yaxis2..., y un radar no tiene ejes cartesianos sino `polar`. Con la
@@ -358,6 +402,7 @@
     document.querySelectorAll('.js-plotly-plot').forEach(function(gd) {
       Plotly.relayout(gd, patchFor(gd, theme));
       patchColorbars(gd, theme);
+      patchLigas(gd, theme);
     });
   }
   syncPlotly();
