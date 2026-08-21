@@ -182,6 +182,29 @@ def apply_plotly_theme(opaque_surface=False):
 # mitad "liga" de la clave de estado de la caja de lectura ("temporada|liga").
 _ALL = "__all__"
 
+# Lo que ocupa la columna de controles a la derecha del gráfico: el gap del
+# layout más el ancho máximo de la barra lateral (ver `_sidebar_css`). El
+# bloque entero mide entonces `width + SIDEBAR_ANCHO`, que es lo que hace falta
+# saber para centrarlo — la fila de abajo (caja de lectura + top 5) mide algo
+# menos, así que entra en el mismo ancho.
+SIDEBAR_ANCHO = 20 + 260
+
+
+def _centrado(html, width, extra=SIDEBAR_ANCHO):
+    """Centra el bloque entero de un gráfico dentro del contenedor de la página.
+
+    El gráfico y sus controles suman un ancho FIJO, pero la tarjeta que los
+    contiene se estira a lo ancho de la ventana: sin esto, en un monitor grande
+    queda todo pegado al borde izquierdo con medio ancho vacío a la derecha.
+
+    Se centra el bloque completo y no cada pieza por separado a propósito: las
+    piezas están alineadas entre sí —el crédito de la fuente va al borde derecho
+    del gráfico, la caja de lectura al izquierdo— y centrarlas una por una, con
+    sus max-width distintos, las desalinearía. `max-width` y no `width` para que
+    en pantalla angosta se siga achicando como hasta ahora."""
+    return (f'<div style="max-width: {width + extra}px; margin-inline: auto;">'
+            f'{html}</div>')
+
 
 def _md_inline(texto):
     """Convierte el subconjunto de markdown que usan los textos de `insights.py`
@@ -742,7 +765,7 @@ def select_chart_html(fig, controls, width=760, height=560, hint=None, min_width
 }})();
 </script>
 """
-    return html
+    return _centrado(html, width)
 
 
 def render_select_chart(fig, *args, **kwargs):
@@ -1227,7 +1250,7 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
 }})();
 </script>
 """
-    return html
+    return _centrado(html, width)
 
 
 def explorer_chart_html(season_data, variables, name_col="Squad", search_label="club",
@@ -1391,7 +1414,7 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
     top_html = _toplist_html(div_id, top_n) if top_n else ""
     top_js = _toplist_js(div_id, top_n) if top_n else ""
 
-    return f"""
+    return _centrado(f"""
 <style>{_sidebar_css(div_id, width, width / height)}{_insight_css(div_id, width)}{top_css}
 </style>""" + f"""
 <div id="{div_id}_layout">
@@ -1700,7 +1723,7 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
   redibujar();
 }})();
 </script>
-"""
+""", width)
 
 
 def render_explorer_chart(*args, **kwargs):
