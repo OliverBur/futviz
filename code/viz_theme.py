@@ -18,6 +18,39 @@ LEAGUE_COLORS = {
     "Premier League": "#e87ba4",  # magenta
 }
 
+# Las mismas 5 ligas para fondo oscuro. **El hue de cada una es el mismo** —la
+# identidad no cambia entre modos, solo la luminosidad y el croma— y aun así
+# ninguna es la de arriba: sobre #12181A la paleta clara falla tres de los
+# cinco checks de la skill de dataviz (puerto Python del validate_palette.js,
+# mismos umbrales y misma simulación Machado 2009).
+#
+# Lo que estaba mal, medido:
+#   - Ligue 1 tenía croma 0.03 (piso 0.10): no era "aqua oscuro" como decía su
+#     comentario, era gris. Y 1.65:1 de contraste contra el fondo oscuro, la
+#     mitad del mínimo de 3:1 — de ahí que casi no se viera.
+#   - La Liga quedaba fuera de la banda de luminosidad de oscuro por arriba
+#     (L 0.76 contra un techo de 0.67): quemaba.
+#   - Bundesliga y Premier League están a ΔE 13.2 en visión normal, bajo el
+#     piso de 15. Rojo y rosa demasiado parecidos — y esto ya pasaba en claro.
+#
+# Y lo que obligó a subir el croma: al meter las 5 dentro de la banda de
+# oscuro las luminosidades se comprimen, y ahí rojo↔amarillo y rojo↔verde
+# COLAPSAN bajo daltonismo (ΔE 5.5 y 5.9, bajo el piso de 6). Hoy no se nota
+# solo porque dos de los defectos de arriba lo estaban tapando: La Liga se
+# salvaba por estar fuera de banda y Ligue 1 por ser gris. La única salida con
+# los hues intactos es más saturación, que además es lo que pide un fondo
+# oscuro. Así que el cambio no es "bajarles el brillo", es "subirles el color".
+#
+# Resultado (todos los checks en pass sobre #12181A): peor par bajo daltonismo
+# ΔE 8.1, peor par en visión normal 15.2, contraste 3.4:1 a 5.6:1.
+LEAGUE_COLORS_DARK = {
+    "Bundesliga": "#dd1d2d",      # rojo    (hue 24.9°, igual que en claro)
+    "Serie A": "#2878d7",         # azul    (255.5° — prácticamente el mismo color)
+    "Ligue 1": "#0c7b60",         # aqua    (170.0° — el que siempre quiso ser)
+    "La Liga": "#c28412",         # ámbar   (75.1°)
+    "Premier League": "#cc7193",  # magenta (357.4°)
+}
+
 # Rampa secuencial (magnitud, un solo equipo/métrica), claro -> oscuro
 SEQUENTIAL_BLUE = ["#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"]
 
@@ -68,17 +101,23 @@ DARK_INK = {
 
 @contextlib.contextmanager
 def dark_ink():
-    """Cambia INK a la paleta oscura (mutación in-place del dict — todo lo
-    que hizo `from viz_theme import INK` ve el cambio sin re-importar) y
-    re-aplica el tema de matplotlib, para renderizar la misma figura una
-    segunda vez en oscuro. Restaura la paleta clara al salir."""
-    original = dict(INK)
+    """Cambia INK y LEAGUE_COLORS a sus versiones oscuras (mutación in-place de
+    los dicts — todo lo que hizo `from viz_theme import INK` ve el cambio sin
+    re-importar) y re-aplica el tema de matplotlib, para renderizar la misma
+    figura una segunda vez en oscuro. Restaura la paleta clara al salir.
+
+    Los colores de liga entran acá y no solo en el JS del sitio porque los PNG
+    de matplotlib se renderizan dos veces, una por tema: si no, la versión
+    oscura saldría con el Ligue 1 gris que no se ve."""
+    original_ink, original_ligas = dict(INK), dict(LEAGUE_COLORS)
     INK.update(DARK_INK)
+    LEAGUE_COLORS.update(LEAGUE_COLORS_DARK)
     apply_theme()
     try:
         yield
     finally:
-        INK.update(original)
+        INK.update(original_ink)
+        LEAGUE_COLORS.update(original_ligas)
         apply_theme()
 
 
