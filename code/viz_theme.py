@@ -573,6 +573,16 @@ def _control_options(c):
     return c.get("options") or [o for _, opciones in c["groups"] for o in opciones]
 
 
+def _rotulo(control, respaldo="Filtrar"):
+    """El `<label>` de un control de la barra lateral, o nada.
+
+    `"label": None` lo saca a propósito: una casilla cuyo texto ya dice qué
+    hace ("Jugadores sub-21") no necesita además un encabezado arriba, que
+    termina diciendo lo mismo dos veces."""
+    texto = control.get("label", respaldo)
+    return f"\n      <label>{texto}</label>" if texto else ""
+
+
 def _select_options(c):
     """Los `<option>` de un control, envueltos en `<optgroup>` si declara
     `groups` = `[(etiqueta o None, [opciones]), ...]`.
@@ -764,13 +774,17 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
                         insights=None, point_filter=None, cat_filter=None, fuente=None,
                         top_n=5, top_labels=None):
     """Arma el HTML/JS de un gráfico Plotly con una barra lateral genuina a
-    la derecha (no superpuesta, es un elemento aparte en un layout flex):
+    la derecha (no superpuesta, es un elemento aparte en un layout flex). Los
+    controles van **de lo que acota la población a lo que busca dentro de
+    ella**, que es el orden en que se usan:
     - `<select>` de temporada (solo si se pasa `season_data`).
+    - `<select>` para filtrar por liga.
+    - `<select>` de `cat_filter`, si se pasa (ej. la posición).
     - Buscador con autocompletado NATIVO del navegador (`<input list>` +
       `<datalist>`) sobre `name_col` (ej. "Squad" para equipos, "player"
       para jugadores) — escribes unas letras y aparecen las opciones que
       matchean, sin necesidad de Dash ni de un menú con cientos de opciones.
-    - `<select>` para filtrar por liga.
+    - Casilla de `point_filter`, si se pasa (ej. sub-21).
     Los controles manipulan el gráfico ya renderizado vía
     `Plotly.restyle`/`Plotly.relayout` en JS puro: no depende de un kernel
     vivo (ni de Python en general una vez generado el HTML), así que sirve
@@ -914,8 +928,7 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     </div>"""
 
     filter_block = "" if not point_filter else f"""
-    <div class="block">
-      <label>{point_filter.get("label", "Filtrar")}</label>
+    <div class="block">{_rotulo(point_filter)}
       <div class="toggle">
         <input type="checkbox" id="{div_id}_pfilter">
         <label for="{div_id}_pfilter" style="display:inline; text-transform:none;
@@ -927,8 +940,7 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     cat_options = "" if not cat_filter else "".join(
         f'<option value="{o}">{o}</option>' for o in cat_filter["options"])
     cat_block = "" if not cat_filter else f"""
-    <div class="block">
-      <label>{cat_filter.get("label", "Categoría")}</label>
+    <div class="block">{_rotulo(cat_filter, "Categoría")}
       <select id="{div_id}_cat">
         <option value="{_ALL}">{cat_filter.get("all_label", "Todas")}</option>
         {cat_options}
@@ -971,17 +983,17 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
   <div id="{div_id}_plotwrap">{plot_html}</div>
   <div id="{div_id}_sidebar">{season_block}
     <div class="block">
-      <label>Buscar {search_label}</label>
-      <input list="{div_id}_clubs" id="{div_id}_search" placeholder="Escribe un {search_label}…" autocomplete="off">
-      <datalist id="{div_id}_clubs"></datalist>
-    </div>
-    <div class="block">
       <label>Filtrar por liga</label>
       <select id="{div_id}_league">
         <option value="{_ALL}">Todas las ligas</option>
         {league_options}
       </select>
-    </div>{cat_block}{filter_block}
+    </div>{cat_block}
+    <div class="block">
+      <label>Buscar {search_label}</label>
+      <input list="{div_id}_clubs" id="{div_id}_search" placeholder="Escribe un {search_label}…" autocomplete="off">
+      <datalist id="{div_id}_clubs"></datalist>
+    </div>{filter_block}
   </div>
 </div>{_fuente_html(div_id, width, fuente)}{below}
 <script>
@@ -1343,8 +1355,7 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
     season_options = "".join(f'<option value="{s}">{s}</option>' for s in seasons)
     league_options = "".join(f'<option value="{lg}">{lg}</option>' for lg in league_order)
     filter_block = "" if not point_filter else f"""
-    <div class="block">
-      <label>{point_filter.get("label", "Filtrar")}</label>
+    <div class="block">{_rotulo(point_filter)}
       <div class="toggle">
         <input type="checkbox" id="{div_id}_pfilter">
         <label for="{div_id}_pfilter" style="display:inline; text-transform:none;
@@ -1356,8 +1367,7 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
     cat_options = "" if not cat_filter else "".join(
         f'<option value="{o}">{o}</option>' for o in cat_filter["options"])
     cat_block = "" if not cat_filter else f"""
-    <div class="block">
-      <label>{cat_filter.get("label", "Categoría")}</label>
+    <div class="block">{_rotulo(cat_filter, "Categoría")}
       <select id="{div_id}_cat">
         <option value="{_ALL}">{cat_filter.get("all_label", "Todas")}</option>
         {cat_options}
@@ -1400,17 +1410,17 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
       <select id="{div_id}_season">{season_options}</select>
     </div>
     <div class="block">
-      <label>Buscar {search_label}</label>
-      <input list="{div_id}_names" id="{div_id}_search" placeholder="Escribe un {search_label}…" autocomplete="off">
-      <datalist id="{div_id}_names"></datalist>
-    </div>
-    <div class="block">
       <label>Filtrar por liga</label>
       <select id="{div_id}_league">
         <option value="{_ALL}">Todas las ligas</option>
         {league_options}
       </select>
-    </div>{cat_block}{filter_block}
+    </div>{cat_block}
+    <div class="block">
+      <label>Buscar {search_label}</label>
+      <input list="{div_id}_names" id="{div_id}_search" placeholder="Escribe un {search_label}…" autocomplete="off">
+      <datalist id="{div_id}_names"></datalist>
+    </div>{filter_block}
   </div>
 </div>{_fuente_html(div_id, width, fuente)}
 <div id="{div_id}_below">

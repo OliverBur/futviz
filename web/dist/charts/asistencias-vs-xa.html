@@ -203,11 +203,6 @@
       <select id="chart_c01277c3_season"><option value="2021-22">2021-22</option><option value="2022-23">2022-23</option><option value="2023-24">2023-24</option><option value="2024-25">2024-25</option><option value="2025-26">2025-26</option></select>
     </div>
     <div class="block">
-      <label>Buscar jugador</label>
-      <input list="chart_c01277c3_clubs" id="chart_c01277c3_search" placeholder="Escribe un jugador…" autocomplete="off">
-      <datalist id="chart_c01277c3_clubs"></datalist>
-    </div>
-    <div class="block">
       <label>Filtrar por liga</label>
       <select id="chart_c01277c3_league">
         <option value="__all__">Todas las ligas</option>
@@ -223,13 +218,17 @@
       
     </div>
     <div class="block">
-      <label>Edad</label>
+      <label>Buscar jugador</label>
+      <input list="chart_c01277c3_clubs" id="chart_c01277c3_search" placeholder="Escribe un jugador…" autocomplete="off">
+      <datalist id="chart_c01277c3_clubs"></datalist>
+    </div>
+    <div class="block">
       <div class="toggle">
         <input type="checkbox" id="chart_c01277c3_pfilter">
         <label for="chart_c01277c3_pfilter" style="display:inline; text-transform:none;
-          letter-spacing:0; margin:0;"><span>Solo sub-21</span></label>
+          letter-spacing:0; margin:0;"><span>Jugadores sub-21</span></label>
       </div>
-      <p class="hint">Menos de 21 al arrancar la temporada, cuenta el año de nacimiento. Al menos 500 minutos jugados.</p>
+      <p class="hint">Menos de 21 al arrancar la temporada, cuenta el año de nacimiento.</p>
     </div>
   </div>
 </div>

@@ -68,13 +68,12 @@ MIN_MINUTES = 500
 # fuera del filtro — es lo correcto: edad desconocida no es sub-21.
 SUB21_FILTER = {
     "col": "sub21",
-    "label": "Edad",
-    "text": "Solo sub-21",
-    # El corte de minutos se nombra acá y no en el filtro de posición porque es
-    # de la gráfica entera, no de un control: sale de MIN_MINUTES, que es de
-    # donde sale el filtro, para que no puedan decir cosas distintas.
-    "hint": f"Menos de 21 al arrancar la temporada, cuenta el año de "
-            f"nacimiento. Al menos {MIN_MINUTES} minutos jugados.",
+    # Sin rótulo arriba: la casilla ya se explica sola, y un "EDAD" encima de
+    # "Jugadores sub-21" era decir lo mismo dos veces. El corte de minutos
+    # tampoco va acá — ya está en el subtítulo de cada gráfica.
+    "label": None,
+    "text": "Jugadores sub-21",
+    "hint": "Menos de 21 al arrancar la temporada, cuenta el año de nacimiento.",
     # Cómo se nombra el filtro en el rótulo de la caja de lectura ("2025-26 ·
     # Ligue 1 · sub-21"), que es lo que le dice al lector sobre qué población
     # están hechas las afirmaciones que está leyendo.
