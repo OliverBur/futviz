@@ -81,6 +81,12 @@
      ver PLOTLY_THEME_SCRIPT) como los PNG de matplotlib (dos versiones
      pre-renderizadas, claro/oscuro — ver viz_theme.dark_ink()) siguen el
      tema de la página, así que la tarjeta puede seguir var(--color-bg). */
+  /* La tarjeta se estira a lo ancho a propósito; lo que se centra dentro es el
+     bloque del gráfico, que sí tiene ancho fijo (ver `viz_theme._centrado`).
+     Se probó `width: fit-content` para que la tarjeta se ajustara al gráfico
+     y NO sirve: el ancho máximo de un flex con `width:100%` adentro lo calcula
+     de menos, y termina encogiendo el gráfico —un boxplot de 800px quedaba en
+     520— que es peor que el marco ancho. */
   .chart-scroll { max-width: 100%; overflow-x: auto; background: var(--color-bg);
     border: 1px solid var(--color-border); border-radius: 14px; padding: 20px; }
   img.static-chart { max-width: 100%; min-width: 600px; height: auto; border-radius: 6px; display: block; }
@@ -114,7 +120,7 @@
 </button>
   </div>
 </header>
-<main><div class="chart-scroll">
+<main><div class="chart-scroll"><div style="max-width: 1040px; margin-inline: auto;">
 <style>
   #chart_c01277c3_layout { display:flex; flex-wrap: wrap; align-items:flex-start; gap:20px; max-width: 100%; }
   #chart_c01277c3_plotwrap { position: relative; flex: 1 1 280px; width: 100%; max-width: 760px;
@@ -538,7 +544,7 @@
   refreshTop();
 })();
 </script>
-</div></main>
+</div></div></main>
 <script>
 (function() {
   var LIGHT = {primary:'#0b0b0b', secondary:'#52514e', muted:'#898781', grid:'#e1e0d9', axis:'#c3c2b7', surface:'#fcfcfb'};

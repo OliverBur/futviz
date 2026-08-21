@@ -310,6 +310,12 @@ PAGE_TEMPLATE = """<!doctype html>
      ver PLOTLY_THEME_SCRIPT) como los PNG de matplotlib (dos versiones
      pre-renderizadas, claro/oscuro — ver viz_theme.dark_ink()) siguen el
      tema de la página, así que la tarjeta puede seguir var(--color-bg). */
+  /* La tarjeta se estira a lo ancho a propósito; lo que se centra dentro es el
+     bloque del gráfico, que sí tiene ancho fijo (ver `viz_theme._centrado`).
+     Se probó `width: fit-content` para que la tarjeta se ajustara al gráfico
+     y NO sirve: el ancho máximo de un flex con `width:100%` adentro lo calcula
+     de menos, y termina encogiendo el gráfico —un boxplot de 800px quedaba en
+     520— que es peor que el marco ancho. */
   .chart-scroll {{ max-width: 100%; overflow-x: auto; background: var(--color-bg);
     border: 1px solid var(--color-border); border-radius: 14px; padding: 20px; }}
   img.static-chart {{ max-width: 100%; min-width: 600px; height: auto; border-radius: 6px; display: block; }}
