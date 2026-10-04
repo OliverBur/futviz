@@ -438,7 +438,12 @@ def _toplist_js(div_id, top_n):
     tiene dibujados, y no precalculadas desde Python: así respetan solas los
     tres filtros (temporada, liga y el de puntos) sin que haya que precalcular
     una lista por combinación, y no pueden mostrar a alguien que no está en el
-    gráfico. Es el mismo criterio del r² del explorador."""
+    gráfico. Es el mismo criterio del r² del explorador.
+
+    `pintarTop` además DEVUELVE la unión de nombres de las dos listas — quien
+    llama la usa para resaltar esos mismos puntos en el gráfico (ver
+    `applyMarkerStyle` en `sidebar_chart_html`/`explorer_chart_html`), así que
+    "está en el Top 5" significa lo mismo en el texto y en el punto."""
     return f"""
   var TOP_N = {top_n};
   function _esc(t) {{
@@ -457,27 +462,29 @@ def _toplist_js(div_id, top_n):
     return mx < 10 ? 2 : 1;
   }}
   function _llenar(id, nombres, vals) {{
-    var lista = document.getElementById('{div_id}_' + id);
-    if (!lista) return;
     var idx = [];
     for (var i = 0; i < vals.length; i++) {{
       if (vals[i] !== null && isFinite(vals[i])) idx.push(i);
     }}
     idx.sort(function(a, b) {{ return vals[b] - vals[a]; }});
-    var dec = _dec(vals);
-    lista.innerHTML = idx.slice(0, TOP_N).map(function(i, k) {{
-      return '<li><span class="pos">' + (k + 1) + '</span>' +
-             '<span class="nom" title="' + _esc(nombres[i]) + '">' + _esc(nombres[i]) + '</span>' +
-             '<span class="val">' + vals[i].toFixed(dec) + '</span></li>';
-    }}).join('') || '<li><span class="nom">Sin datos</span></li>';
+    var top = idx.slice(0, TOP_N);
+    var lista = document.getElementById('{div_id}_' + id);
+    if (lista) {{
+      var dec = _dec(vals);
+      lista.innerHTML = top.map(function(i, k) {{
+        return '<li><span class="pos">' + (k + 1) + '</span>' +
+               '<span class="nom" title="' + _esc(nombres[i]) + '">' + _esc(nombres[i]) + '</span>' +
+               '<span class="val">' + vals[i].toFixed(dec) + '</span></li>';
+      }}).join('') || '<li><span class="nom">Sin datos</span></li>';
+    }}
+    return top.map(function(i) {{ return nombres[i]; }});
   }}
   function pintarTop(labelX, labelY, nombres, xs, ys) {{
     var ex = document.getElementById('{div_id}_top_x_label');
     var ey = document.getElementById('{div_id}_top_y_label');
     if (ex) ex.textContent = labelX;
     if (ey) ey.textContent = labelY;
-    _llenar('top_x', nombres, xs);
-    _llenar('top_y', nombres, ys);
+    return _llenar('top_x', nombres, xs).concat(_llenar('top_y', nombres, ys));
   }}"""
 
 
@@ -517,6 +524,36 @@ def _sidebar_css(div_id, width, aspect_ratio, mobile_aspect=None):
     color: var(--color-primary, {INK["primary"]}); }}
   #{div_id}_sidebar .toggle + .hint {{ margin-top: 7px; }}
   #{div_id}_sidebar select + .hint {{ margin-top: 7px; }}
+  /* Nota larga dentro de una (i) al lado del rótulo, en vez de tres renglones
+     fijos de barra lateral. La ventanita se ancla al `.block` y no al icono:
+     la columna mide 260px y un globo colgado del icono —que está a la derecha
+     del rótulo— se saldría por el borde. Anclada al bloque ocupa exactamente
+     el ancho de la columna y aparece donde antes estaba el párrafo. Se abre
+     con el mouse Y con el tabulador; sin JS. */
+  #{div_id}_sidebar .block {{ position: relative; }}
+  #{div_id}_sidebar .fv-info {{ display: inline-flex; align-items: center; justify-content: center;
+    width: 14px; height: 14px; margin-left: 5px; vertical-align: -2px; border-radius: 50%;
+    border: 1px solid var(--color-border, {INK["axis"]}); color: var(--color-muted, {INK["muted"]});
+    font-size: 9.5px; font-weight: 700; font-style: italic; line-height: 1;
+    text-transform: none; letter-spacing: 0; cursor: help; user-select: none;
+    transition: border-color .15s ease, color .15s ease; }}
+  #{div_id}_sidebar .fv-info:hover, #{div_id}_sidebar .fv-info:focus-visible {{
+    border-color: var(--color-interactive, {INK["axis"]});
+    color: var(--color-interactive, {INK["primary"]}); outline: none; }}
+  #{div_id}_sidebar .fv-tip {{ position: absolute; left: 0; right: 0; top: 100%; z-index: 30;
+    margin-top: 5px; padding: 9px 11px; border-radius: 7px;
+    background: var(--color-surface, {INK["surface"]});
+    border: 1px solid var(--color-border, {INK["axis"]});
+    box-shadow: 0 4px 14px rgba(18, 24, 26, .13);
+    font-size: 11.5px; line-height: 1.45; font-weight: 400; font-style: normal;
+    text-transform: none; letter-spacing: 0; text-align: left;
+    color: var(--color-text-body, {INK["secondary"]});
+    opacity: 0; visibility: hidden; transition: opacity .12s ease; }}
+  #{div_id}_sidebar .fv-info:hover .fv-tip,
+  #{div_id}_sidebar .fv-info:focus-visible .fv-tip {{ opacity: 1; visibility: visible; }}
+  @media (prefers-reduced-motion: reduce) {{
+    #{div_id}_sidebar .fv-tip, #{div_id}_sidebar .fv-info {{ transition: none; }}
+  }}
   #{div_id}_sidebar input, #{div_id}_sidebar select {{ width: 100%; box-sizing: border-box;
     padding: 7px 9px; font-size: 13px; font-family: inherit; color: var(--color-primary, {INK["primary"]});
     background: var(--color-surface, {INK["surface"]}); border: 1px solid var(--color-border, {INK["axis"]});
@@ -635,14 +672,91 @@ def _control_options(c):
     return c.get("options") or [o for _, opciones in c["groups"] for o in opciones]
 
 
-def _rotulo(control, respaldo="Filtrar"):
+def _cats(cat_filter):
+    """Normaliza `cat_filter` a lista. Acepta un dict (un solo desplegable, que
+    es como nació y como lo sigue usando la mayoría de los gráficos) o una lista
+    de dicts, y devuelve siempre una lista para que el resto del código tenga un
+    solo camino."""
+    if not cat_filter:
+        return []
+    if not isinstance(cat_filter, (list, tuple)):
+        return [cat_filter]
+    # Los `None` se descartan: los llamadores arman la lista con funciones que
+    # devuelven None cuando los datos no traen esa columna (`posicion_filter`,
+    # `nivel_filter`), así que `[posicion_filter(df), nivel_filter(df)]` tiene
+    # que funcionar aunque falte cualquiera de las dos.
+    return [c for c in cat_filter if c]
+
+
+def _cat_bloques(cats, div_id):
+    """El HTML de los `<select>`, uno por filtro categórico."""
+    bloques = []
+    for k, cf in enumerate(cats):
+        opciones = "".join(f'<option value="{o}">{o}</option>' for o in cf["options"])
+        bloques.append(f"""
+    <div class="block">{_rotulo(cf, "Categoría", div_id, f"cat{k}")}
+      <select id="{div_id}_cat{k}">
+        <option value="{_ALL}">{cf.get("all_label", "Todas")}</option>
+        {opciones}
+      </select>
+      {_hint_parrafo(cf)}
+    </div>""")
+    return "".join(bloques)
+
+
+def _cat_codigos(cats, sd, col_de_sub):
+    """Un arreglo de índices de categoría por filtro y por traza.
+
+    Se guarda el ÍNDICE y no el nombre: son miles de puntos y repetir
+    "Delantero" en cada uno pesa diez veces más que un entero. -1 es "sin
+    dato", que no pertenece a ninguna categoría."""
+    salida = []
+    for cf in cats:
+        codigo = {v: i for i, v in enumerate(cf["options"])}
+        salida.append([[codigo.get(v, -1) for v in col_de_sub(sub_df, cf["col"])]
+                        for sub_df in sd])
+    return salida
+
+
+def _rotulo(control, respaldo="Filtrar", div_id="", clave=""):
     """El `<label>` de un control de la barra lateral, o nada.
 
     `"label": None` lo saca a propósito: una casilla cuyo texto ya dice qué
     hace ("Jugadores sub-21") no necesita además un encabezado arriba, que
-    termina diciendo lo mismo dos veces."""
+    termina diciendo lo mismo dos veces.
+
+    Con `"info": True` el `hint` no va como párrafo debajo del control sino
+    dentro de una (i) al lado del rótulo, que lo muestra al pasar el mouse o al
+    llegar con el tabulador. Es para las notas largas: la del nivel de club
+    ocupaba tres renglones fijos de barra lateral para algo que se consulta una
+    vez."""
     texto = control.get("label", respaldo)
-    return f"\n      <label>{texto}</label>" if texto else ""
+    if not texto:
+        return ""
+    return f"\n      <label>{texto}{_info_icono(control, div_id, clave)}</label>"
+
+
+def _info_icono(control, div_id="", clave=""):
+    """La (i) con la nota adentro, o nada si el control no la pide.
+
+    Va aparte de `_rotulo` porque no todos los controles tienen rótulo: la
+    casilla del sub-21 lo lleva a `None` a propósito (su propio texto ya dice
+    qué hace), así que ahí el icono tiene que ir pegado a ese texto y no a un
+    encabezado que no existe."""
+    if not (control.get("info") and control.get("hint")):
+        return ""
+    tip_id = f"{div_id}_tip_{clave}"
+    return (f'<span class="fv-info" tabindex="0" role="button" '
+            f'aria-describedby="{tip_id}" aria-label="Qué significa este filtro">i'
+            f'<span class="fv-tip" id="{tip_id}" role="tooltip">{control["hint"]}</span>'
+            f'</span>')
+
+
+def _hint_parrafo(control):
+    """El `hint` como párrafo debajo del control — salvo que vaya en la (i)."""
+    if not control.get("hint") or control.get("info"):
+        return ""
+    return f'<p class="hint">{control["hint"]}</p>'
 
 
 def _select_options(c):
@@ -841,7 +955,8 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     ella**, que es el orden en que se usan:
     - `<select>` de temporada (solo si se pasa `season_data`).
     - `<select>` para filtrar por liga.
-    - `<select>` de `cat_filter`, si se pasa (ej. la posición).
+    - Un `<select>` por cada filtro de `cat_filter` (ej. la posición, el nivel
+      de club).
     - Buscador con autocompletado NATIVO del navegador (`<input list>` +
       `<datalist>`) sobre `name_col` (ej. "Squad" para equipos, "player"
       para jugadores) — escribes unas letras y aparecen las opciones que
@@ -871,8 +986,11 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     mantener fijos los índices de traza es lo que evita el desalineado
     descrito arriba. `custom_cols` son las columnas del `customdata` (hace
     falta para poder reconstruirlo al cambiar de temporada) y
-    `subtitle_template` un texto con `{temporada}` para actualizar el
-    subtítulo.
+    `subtitle_template` para actualizar el subtítulo: un texto con
+    `{temporada}` (se resuelve igual para las N temporadas), o ya un dict
+    `{temporada: texto}` cuando el subtítulo varía en algo más que la
+    temporada — ver `players._player_sidebar`, donde el corte de minutos
+    también cambia de una a otra.
 
     Responsivo: el gráfico no lleva ancho/alto fijo en px, sino que ocupa el
     100% de su contenedor con relación de aspecto `width:height` fija (así
@@ -899,17 +1017,23 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     de booleana — un `<select>` en lugar de una casilla:
     `{"col", "label", "options", "all_label", "hint", "clave"}`. Los puntos
     cuyo valor no está en `options` (dato faltante) quedan fuera al elegir
-    cualquier categoría, igual que los nulos del filtro booleano. Se combina
-    con los otros dos, y la clave de la caja de lectura pasa a ser
-    `temporada|liga|<clave>:<categoría>[|<col booleana>]` — los segmentos se
-    agregan solo cuando el filtro está puesto, así que las claves de un gráfico
-    sin estos filtros no cambian.
+    cualquier categoría, igual que los nulos del filtro booleano.
+
+    Acepta **un dict o una lista de dicts**: las gráficas de Jugadores llevan
+    dos a la vez (posición y nivel del club) y las de Equipos uno solo. Todos
+    se combinan entre sí y con los otros dos controles, y la clave de la caja
+    de lectura pasa a ser
+    `temporada|liga[|<clave>:<categoría>]…[|<col booleana>]` — los segmentos se
+    agregan solo cuando cada filtro está puesto y **en el orden en que vienen
+    en la lista**, así que Python y el JS tienen que recorrerla igual. Las
+    claves de un gráfico sin estos filtros no cambian.
 
     Devuelve el HTML como string (no lo muestra) — ver `render_with_sidebar`
     para mostrarlo directo en un notebook."""
     import json
     import plotly.io as pio
 
+    cats = _cats(cat_filter)
     div_id = _div_id(fig, x_col, y_col, name_col, sorted(season_data or ()))
     fig.update_layout(autosize=True)
     plot_html = pio.to_html(fig, full_html=False, include_plotlyjs="cdn",
@@ -921,6 +1045,19 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     base_annotations = list(base_annotations or [])
     trace_indices = list(range(len(scatter_data)))
     league_order = [liga for liga, _ in scatter_data]
+
+    # Los tres atributos "de reposo" del marcador de cada traza de liga, para
+    # poder volver a ellos cuando se apaga el resaltado de Top 5 o de
+    # búsqueda. No se hardcodean porque cada gráfico los define distinto
+    # (0.75 de opacidad en Jugadores, 0.88 en Equipos; blanco de borde en
+    # unos, INK["surface"] en otros) — se leen de la propia figura, que ya
+    # los trae puestos desde antes de llamar acá.
+    base_opacity = [fig.data[i].marker.opacity if fig.data[i].marker.opacity is not None else 0.85
+                     for i in trace_indices]
+    base_line_width = [fig.data[i].marker.line.width if fig.data[i].marker.line.width is not None else 0.6
+                        for i in trace_indices]
+    base_line_color = [fig.data[i].marker.line.color if fig.data[i].marker.line.color is not None else INK["surface"]
+                        for i in trace_indices]
 
     # Con una sola temporada se usa la clave "" y el selector no se dibuja, así
     # que el camino de un período es el mismo código que el de cinco.
@@ -959,13 +1096,11 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
                 sub[point_filter["col"]].fillna(False).astype(bool).tolist()
                 for _, sub in sd
             ]
-        if cat_filter:
-            # El ÍNDICE de la categoría, no su nombre: son miles de puntos y
-            # repetir "Delantero" en cada uno pesa diez veces más que un entero.
-            # -1 es "sin dato", que no pertenece a ninguna categoría.
-            codigo = {v: i for i, v in enumerate(cat_filter["options"])}
-            payload["g"] = [[codigo.get(v, -1) for v in sub[cat_filter["col"]]]
-                             for _, sub in sd]
+        if cats:
+            # `g[k][t][i]` = categoría del punto `i` de la traza `t` según el
+            # filtro `k`. Ver `_cat_codigos` para por qué son índices.
+            payload["g"] = _cat_codigos(cats, [s for _, s in sd],
+                                         lambda d, c: d[c])
         if custom_cols:
             # Una sola columna va plana (`%{customdata}` en el hovertemplate);
             # varias, como filas (`%{customdata[0]}`) — igual que lo que arman
@@ -978,7 +1113,9 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
         return payload
 
     seasons_payload = {s: _payload(sd) for s, sd in season_data.items()}
-    subtitles = ({s: subtitle_template.format(temporada=s) for s in seasons}
+    subtitles = ({s: (subtitle_template[s] if isinstance(subtitle_template, dict)
+                       else subtitle_template.format(temporada=s))
+                  for s in seasons}
                  if subtitle_template else {})
 
     season_options = "".join(f'<option value="{s}">{s}</option>' for s in seasons)
@@ -990,25 +1127,17 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     </div>"""
 
     filter_block = "" if not point_filter else f"""
-    <div class="block">{_rotulo(point_filter)}
+    <div class="block">{_rotulo(point_filter, div_id=div_id, clave="pf")}
       <div class="toggle">
         <input type="checkbox" id="{div_id}_pfilter">
         <label for="{div_id}_pfilter" style="display:inline; text-transform:none;
           letter-spacing:0; margin:0;"><span>{point_filter.get("text", "Filtrar")}</span></label>
+        {_info_icono(point_filter, div_id, "pf") if not point_filter.get("label") else ''}
       </div>
-      {f'<p class="hint">{point_filter["hint"]}</p>' if point_filter.get("hint") else ''}
+      {_hint_parrafo(point_filter)}
     </div>"""
 
-    cat_options = "" if not cat_filter else "".join(
-        f'<option value="{o}">{o}</option>' for o in cat_filter["options"])
-    cat_block = "" if not cat_filter else f"""
-    <div class="block">{_rotulo(cat_filter, "Categoría")}
-      <select id="{div_id}_cat">
-        <option value="{_ALL}">{cat_filter.get("all_label", "Todas")}</option>
-        {cat_options}
-      </select>
-      {f'<p class="hint">{cat_filter["hint"]}</p>' if cat_filter.get("hint") else ''}
-    </div>"""
+    cat_block = _cat_bloques(cats, div_id)
 
     # Caja de lectura. La clave del estado es "temporada|liga" ("__all__" cuando
     # no hay filtro de liga), así que se actualiza con cualquiera de los dos
@@ -1068,15 +1197,29 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
   var leagueOrder = {json.dumps(league_order)};
   var extraTraces = {extra_traces};
   var BASE_SIZE = {base_size}, HIGHLIGHT_SIZE = {highlight_size};
+  var BASE_OPACITY = {json.dumps(base_opacity)};
+  var BASE_LINE_WIDTH = {json.dumps(base_line_width)};
+  var BASE_LINE_COLOR = {json.dumps(base_line_color)};
+  // Tamaño intermedio para el Top 5 automático: más que un punto cualquiera,
+  // menos que el resaltado explícito de una búsqueda, para que la jerarquía
+  // visual distinga los dos resaltados. El color del anillo es fijo (no
+  // depende del tema) a propósito — ver el porqué en `applyMarkerStyle`.
+  var TOP_SIZE = BASE_SIZE + 4;
+  var RING_COLOR = "#9085e9";
+  var TOP_RING_WIDTH = 2, SEARCH_RING_WIDTH = 3.2;
+  var DIM_OPACITY = 0.18;
+  var topSet = {{}};
   var current = {json.dumps(default_season)};
 
   var filterOn = false;
   var FILTER_KEY = {json.dumps((point_filter or {}).get("col", ""))};
   var FILTER_ESTADO = {json.dumps((point_filter or {}).get("estado", ""))};
 
-  var catSel = {_ALL_JSON};
-  var CAT_OPTIONS = {json.dumps((cat_filter or {}).get("options", []), ensure_ascii=False)};
-  var CAT_CLAVE = {json.dumps((cat_filter or {}).get("clave", "cat"), ensure_ascii=False)};
+  // Un estado por desplegable categórico. Con la lista vacía todo el código
+  // de abajo es un no-op, que es el caso de los gráficos sin ningún filtro.
+  var CAT_OPTIONS = {json.dumps([c["options"] for c in cats], ensure_ascii=False)};
+  var CAT_CLAVES = {json.dumps([c.get("clave", "cat") for c in cats], ensure_ascii=False)};
+  var catSels = CAT_CLAVES.map(function() {{ return {_ALL_JSON}; }});
 
   // La "vista" es lo que se está mostrando: la temporada elegida y, si hay
   // algún filtro por punto puesto, solo los que pasan. Se recalcula entera en
@@ -1086,16 +1229,26 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
   function computeView() {{
     var d = seasons[current];
     var usaFiltro = filterOn && !!d.f;
-    var usaCat = catSel !== {_ALL_JSON} && !!d.g;
-    if (!usaFiltro && !usaCat) return d;
-    var cat = usaCat ? CAT_OPTIONS.indexOf(catSel) : -1;
+    // Los índices de categoría pedidos, uno por filtro puesto; los que están
+    // en "todas" no entran en la lista y por lo tanto no filtran nada.
+    var pedidos = [];
+    if (d.g) {{
+      for (var k = 0; k < catSels.length; k++) {{
+        if (catSels[k] !== {_ALL_JSON})
+          pedidos.push([k, CAT_OPTIONS[k].indexOf(catSels[k])]);
+      }}
+    }}
+    if (!usaFiltro && !pedidos.length) return d;
     var v = {{names: [], x: [], y: [], ents: {{}}}};
     if (d.custom) v.custom = [];
     for (var t = 0; t < d.names.length; t++) {{
       var nn = [], xx = [], yy = [], cc = [];
       for (var i = 0; i < d.names[t].length; i++) {{
         if (usaFiltro && !d.f[t][i]) continue;
-        if (usaCat && d.g[t][i] !== cat) continue;
+        var fuera = false;
+        for (var k = 0; k < pedidos.length; k++)
+          if (d.g[pedidos[k][0]][t][i] !== pedidos[k][1]) {{ fuera = true; break; }}
+        if (fuera) continue;
         nn.push(d.names[t][i]); xx.push(d.x[t][i]); yy.push(d.y[t][i]);
         if (d.custom) cc.push(d.custom[t][i]);
         v.ents[d.names[t][i]] = d.ents[d.names[t][i]];
@@ -1112,6 +1265,13 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
 
   // Solo las trazas visibles: el filtro de liga esconde trazas enteras, así que
   // la lista tiene que preguntarle a la figura y no a los datos.
+  //
+  // Además de pintar las dos listas, `pintarTop` devuelve la unión de sus
+  // nombres — son los mismos que quedan marcados en el gráfico (`topSet`),
+  // así que "está en el Top 5" significa lo mismo en la lista de texto y en
+  // el punto que se ve más grande. Se llama con cada cambio de vista
+  // (temporada, liga, filtros) porque el Top 5 de un subconjunto no es el de
+  // otro.
   function refreshTop() {{
     if (typeof pintarTop !== 'function') return;
     var lg = document.getElementById('{div_id}_league');
@@ -1123,7 +1283,10 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
         nombres.push(V.names[t][i]); xs.push(V.x[t][i]); ys.push(V.y[t][i]);
       }}
     }}
-    pintarTop(TOP_LABELS[0], TOP_LABELS[1], nombres, xs, ys);
+    var destacados = pintarTop(TOP_LABELS[0], TOP_LABELS[1], nombres, xs, ys);
+    topSet = {{}};
+    (destacados || []).forEach(function(n) {{ topSet[n] = true; }});
+    applyMarkerStyle();
   }}
 {insight_js}
   // La caja de lectura depende de los DOS controles, así que se recalcula
@@ -1137,29 +1300,73 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     // que la caja describe siempre la población que se está viendo. El orden de
     // los segmentos es fijo (categoría antes que casilla) porque tiene que dar
     // exactamente la misma cadena que arma Python al generar las claves.
-    var conCat = catSel !== {_ALL_JSON};
-    var clave = current + '|' + liga + (conCat ? '|' + CAT_CLAVE + ':' + catSel : '')
-                + (filterOn ? '|' + FILTER_KEY : '');
-    var etiqueta = [current, liga === {_ALL_JSON} ? 'Todas las ligas' : liga,
-                    conCat ? catSel : null, filterOn ? FILTER_ESTADO : null]
+    var clave = current + '|' + liga, puestos = [];
+    for (var k = 0; k < catSels.length; k++) {{
+      if (catSels[k] === {_ALL_JSON}) continue;
+      clave += '|' + CAT_CLAVES[k] + ':' + catSels[k];
+      puestos.push(catSels[k]);
+    }}
+    clave += (filterOn ? '|' + FILTER_KEY : '');
+    var etiqueta = [current, liga === {_ALL_JSON} ? 'Todas las ligas' : liga]
+      .concat(puestos, [filterOn ? FILTER_ESTADO : null])
       .filter(Boolean).join(' · ');
     setInsight(clave, etiqueta);
   }}
 
-  // Los tamaños se calculan acá y no vienen precalculados desde Python: uno
-  // por entidad sería O(N²) (ver el comentario en sidebar_chart_html).
-  // Resaltar por nombre, no por índice, mantiene el comportamiento anterior
-  // en el caso de nombres repetidos (dos jugadores homónimos se resaltan los
-  // dos, igual que antes).
-  function sizesFor(name) {{
-    return traceNames().map(function(names) {{
-      return names.map(function(n) {{ return n === name ? HIGHLIGHT_SIZE : BASE_SIZE; }});
+  // El estilo del marcador de cada punto sale de acá y no viene precalculado
+  // desde Python: uno por entidad sería O(N²) (ver el comentario en
+  // sidebar_chart_html). Resaltar por nombre, no por índice, mantiene el
+  // comportamiento anterior en el caso de nombres repetidos (dos jugadores
+  // homónimos se resaltan los dos, igual que antes).
+  //
+  // Es UNA sola función y no una por resaltado (Top 5, búsqueda) porque los
+  // dos pueden coincidir en el mismo punto: dos restyles independientes sobre
+  // el mismo atributo (`marker.size`, por ejemplo) se pisarían entre sí en
+  // vez de combinarse — el segundo en llamarse borraría al primero. Acá se
+  // decide el estilo final de cada punto viendo los dos estados a la vez, y
+  // tanto `applySearch` como `refreshTop` la llaman después de actualizar el
+  // suyo.
+  //
+  // El color del anillo es FIJO y no depende del tema (a diferencia de la
+  // anotación de búsqueda) a propósito: repintar `marker.line.color` es un
+  // restyle sobre los ~N puntos de las 5 trazas, el mismo que costaba ~460ms
+  // en el cambio de tema (ver bitácora, "Acelera el cambio de tema...") — con
+  // un color fijo, el listener de `futviz-theme-change` no tiene que tocar el
+  // marcador para nada, solo la anotación (que es una forma sola, barata).
+  function applyMarkerStyle() {{
+    var buscado = document.getElementById('{div_id}_search').value;
+    var enMapa = !!buscado && clubMap().hasOwnProperty(buscado);
+    var size = [], opacity = [], lineWidth = [], lineColor = [];
+    traceNames().forEach(function(names, t) {{
+      var sz = [], op = [], lw = [], lc = [];
+      names.forEach(function(n) {{
+        var esBuscado = enMapa && n === buscado;
+        var esTop = !!topSet[n];
+        sz.push(esBuscado ? HIGHLIGHT_SIZE : (esTop ? TOP_SIZE : BASE_SIZE));
+        op.push(enMapa ? (esBuscado ? 1 : DIM_OPACITY) : BASE_OPACITY[t]);
+        lw.push(esBuscado ? SEARCH_RING_WIDTH : (esTop ? TOP_RING_WIDTH : BASE_LINE_WIDTH[t]));
+        lc.push((esBuscado || esTop) ? RING_COLOR : BASE_LINE_COLOR[t]);
+      }});
+      size.push(sz); opacity.push(op); lineWidth.push(lw); lineColor.push(lc);
     }});
+    Plotly.restyle('{div_id}', {{'marker.size': size, 'marker.opacity': opacity,
+      'marker.line.width': lineWidth, 'marker.line.color': lineColor}}, traceIndices);
   }}
-  function baseSizes() {{
-    return traceNames().map(function(names) {{
-      return names.map(function() {{ return BASE_SIZE; }});
+
+  // Placeholder "de reposo", del mismo largo que los datos NUEVOS: lo usa
+  // `applyData` en el mismo restyle que cambia x/y, para que Plotly nunca
+  // reciba un arreglo de marcador con el largo de la temporada anterior (ver
+  // el comentario ahí).
+  function restMarkerStyle() {{
+    var size = [], opacity = [], lineWidth = [], lineColor = [];
+    traceNames().forEach(function(names, t) {{
+      size.push(names.map(function() {{ return BASE_SIZE; }}));
+      opacity.push(names.map(function() {{ return BASE_OPACITY[t]; }}));
+      lineWidth.push(names.map(function() {{ return BASE_LINE_WIDTH[t]; }}));
+      lineColor.push(names.map(function() {{ return BASE_LINE_COLOR[t]; }}));
     }});
+    return {{'marker.size': size, 'marker.opacity': opacity,
+      'marker.line.width': lineWidth, 'marker.line.color': lineColor}};
   }}
 
   function updateLegendLayout() {{
@@ -1181,22 +1388,32 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
   // el bug de la anotación que se quedaba en negro sobre fondo oscuro. Se
   // vuelve a llamar cada vez que cambia el tema (listener de
   // 'futviz-theme-change' más abajo), no solo al tipear.
+  //
+  // Lleva fondo y borde (antes era texto suelto) porque sin el anillo del
+  // marcador —agregado junto con esto— un texto flotando sobre una nube
+  // densa de puntos del mismo color se perdía: no quedaba claro a cuál de
+  // los puntos amontonados apuntaba la flecha. Con el punto atenuado y
+  // agrandado (`applyMarkerStyle`) más una etiqueta opaca, el punto exacto
+  // deja de depender de que la flecha caiga pixel-perfecta.
   function themedAnnotation(name, info) {{
     var dark = document.documentElement.getAttribute('data-theme') === 'dark';
     return {{
-      x: info.x, y: info.y, text: name, showarrow: true, arrowhead: 2, ax: 0, ay: -32,
-      arrowcolor: dark ? '#3A4A4E' : {json.dumps(INK["axis"])},
-      font: {{size: 11, color: dark ? '#D7E4E7' : {json.dumps(INK["primary"])}}},
+      x: info.x, y: info.y, text: name, showarrow: true, arrowhead: 2,
+      arrowsize: 1, arrowwidth: 1.6, ax: 0, ay: -30,
+      arrowcolor: RING_COLOR,
+      font: {{size: 11.5, color: dark ? '#D7E4E7' : {json.dumps(INK["primary"])}}},
+      bgcolor: dark ? '#1B2426' : {json.dumps(INK["surface"])},
+      bordercolor: RING_COLOR, borderwidth: 1.4, borderpad: 4,
     }};
   }}
 
   function applySearch(val) {{
     var map = clubMap();
     if (map.hasOwnProperty(val)) {{
-      Plotly.restyle('{div_id}', {{'marker.size': sizesFor(val)}}, traceIndices);
+      applyMarkerStyle();
       Plotly.relayout('{div_id}', {{annotations: baseAnnotations.concat([themedAnnotation(val, map[val])])}});
     }} else if (val === '') {{
-      Plotly.restyle('{div_id}', {{'marker.size': baseSizes()}}, traceIndices);
+      applyMarkerStyle();
       Plotly.relayout('{div_id}', {{annotations: baseAnnotations}});
     }}
   }}
@@ -1215,12 +1432,18 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     applySearch(e.target.value);
   }});
   document.addEventListener('futviz-theme-change', function() {{
-    // Solo si hay algo buscado. Lo único que cambia de color con el tema es la
-    // anotación del buscador, y sin búsqueda no hay anotación: repintar igual
-    // costaba un restyle de los tamaños de los 1.900 marcadores más un
-    // relayout, ~460ms de los ~750 que tardaba el cambio de tema.
+    // Ya NO llama a applySearch/applyMarkerStyle: desde que el anillo de
+    // resaltado (Top 5 y búsqueda) es un color fijo, nada del marcador
+    // depende del tema, así que repintarlo sería el mismo restyle de los
+    // ~1.900 puntos que costaba ~460ms de los ~750 del cambio de tema (ver
+    // bitácora, "Acelera el cambio de tema..."). Lo único que sí cambia de
+    // color con el tema es la anotación de búsqueda, y eso es una forma
+    // sola — barata de repintar.
     var buscado = document.getElementById('{div_id}_search').value;
-    if (buscado) applySearch(buscado);
+    var map = clubMap();
+    if (map.hasOwnProperty(buscado)) {{
+      Plotly.relayout('{div_id}', {{annotations: baseAnnotations.concat([themedAnnotation(buscado, map[buscado])])}});
+    }}
   }});
 
   // Repinta las trazas con la vista actual. Lo llaman los dos controles que
@@ -1228,7 +1451,13 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
   // porque ese solo cambia la visibilidad de trazas ya pintadas.
   function applyData() {{
     V = computeView();
-    var update = {{x: V.x, y: V.y, 'marker.size': baseSizes()}};
+    // El placeholder "de reposo" va en el MISMO restyle que x/y (y no en uno
+    // aparte) para que Plotly nunca vea, ni por un instante, un marcador con
+    // el largo de la temporada anterior contra datos de la nueva — mismo
+    // motivo por el que ya iba `marker.size` acá antes de que hubiera
+    // resaltados que combinar.
+    var update = restMarkerStyle();
+    update.x = V.x; update.y = V.y;
     if (V.custom) update.customdata = V.custom;
     Plotly.restyle('{div_id}', update, traceIndices);
     fillDatalist();
@@ -1262,20 +1491,25 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     }});
   }}
 
-  var catSelect = document.getElementById('{div_id}_cat');
-  if (catSelect) {{
-    catSelect.value = catSel;  // el navegador recuerda el estado al recargar
+  catSels.forEach(function(_, k) {{
+    var catSelect = document.getElementById('{div_id}_cat' + k);
+    if (!catSelect) return;
+    catSelect.value = catSels[k];  // el navegador recuerda el estado al recargar
     catSelect.addEventListener('change', function(e) {{
-      catSel = e.target.value;
+      catSels[k] = e.target.value;
       applyData();
     }});
-  }}
+  }});
 
   document.getElementById('{div_id}_league').addEventListener('change', function(e) {{
     var val = e.target.value;
-    var vis = (val === {_ALL_JSON})
+    var ligaVis = (val === {_ALL_JSON})
       ? leagueOrder.map(function() {{ return true; }})
       : leagueOrder.map(function(lg) {{ return lg === val; }});
+    // El arreglo va sin lista de índices, así que tiene que cubrir TODAS las
+    // trazas y en orden: primero las de liga y después las fijas, que están
+    // siempre visibles.
+    var vis = ligaVis.slice();
     for (var i = 0; i < extraTraces; i++) vis.push(true);
     Plotly.restyle('{div_id}', {{visible: vis}});
 
@@ -1283,7 +1517,7 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     var searched = clubMap()[searchInput.value];
     if (searched && val !== {_ALL_JSON} && searched.l !== val) {{
       searchInput.value = '';
-      Plotly.restyle('{div_id}', {{'marker.size': baseSizes()}}, traceIndices);
+      applyMarkerStyle();
       Plotly.relayout('{div_id}', {{annotations: baseAnnotations}});
     }}
     refreshInsight();
@@ -1337,6 +1571,7 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
     import plotly.graph_objects as go
     import plotly.io as pio
 
+    cats = _cats(cat_filter)
     cols = [c for c, _, _, _ in variables]
     etiquetas = {c: e for c, e, _, _ in variables}
     decimales = {c: d for c, _, _, d in variables}
@@ -1368,12 +1603,8 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
         if point_filter:
             p["f"] = [sub[point_filter["col"]].fillna(False).astype(bool).tolist()
                       for _, sub in sd]
-        if cat_filter:
-            # Índice de la categoría, no su nombre (-1 = sin dato); mismo
-            # criterio de peso que en `sidebar_chart_html`.
-            codigo = {v: i for i, v in enumerate(cat_filter["options"])}
-            p["g"] = [[codigo.get(v, -1) for v in sub[cat_filter["col"]]]
-                       for _, sub in sd]
+        if cats:
+            p["g"] = _cat_codigos(cats, [s for _, s in sd], lambda d, c: d[c])
         return p
 
     datos = {s: _payload(sd) for s, sd in season_data.items()}
@@ -1422,25 +1653,17 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
     season_options = "".join(f'<option value="{s}">{s}</option>' for s in seasons)
     league_options = "".join(f'<option value="{lg}">{lg}</option>' for lg in league_order)
     filter_block = "" if not point_filter else f"""
-    <div class="block">{_rotulo(point_filter)}
+    <div class="block">{_rotulo(point_filter, div_id=div_id, clave="pf")}
       <div class="toggle">
         <input type="checkbox" id="{div_id}_pfilter">
         <label for="{div_id}_pfilter" style="display:inline; text-transform:none;
           letter-spacing:0; margin:0;"><span>{point_filter.get("text", "Filtrar")}</span></label>
+        {_info_icono(point_filter, div_id, "pf") if not point_filter.get("label") else ''}
       </div>
-      {f'<p class="hint">{point_filter["hint"]}</p>' if point_filter.get("hint") else ''}
+      {_hint_parrafo(point_filter)}
     </div>"""
 
-    cat_options = "" if not cat_filter else "".join(
-        f'<option value="{o}">{o}</option>' for o in cat_filter["options"])
-    cat_block = "" if not cat_filter else f"""
-    <div class="block">{_rotulo(cat_filter, "Categoría")}
-      <select id="{div_id}_cat">
-        <option value="{_ALL}">{cat_filter.get("all_label", "Todas")}</option>
-        {cat_options}
-      </select>
-      {f'<p class="hint">{cat_filter["hint"]}</p>' if cat_filter.get("hint") else ''}
-    </div>"""
+    cat_block = _cat_bloques(cats, div_id)
 
     ojo = _md_inline(
         "El r² mide **relación lineal, y nada más**. Dos variables pueden tener un r² "
@@ -1514,13 +1737,23 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
   var ENTIDAD = {json.dumps(entidad, ensure_ascii=False)};
   var TODAS = {json.dumps(_ALL)};
   var BASE = {base_size}, RESALTE = {highlight_size};
+  // Mismos valores "de reposo" que el marcador de más arriba (opacidad 0.75,
+  // borde blanco de 0.5) — acá sí se pueden hardcodear porque esta función es
+  // la única que arma esas trazas, a diferencia de `sidebar_chart_html` donde
+  // cada gráfico llega con los suyos.
+  var TOP_SIZE = BASE + 4;
+  var RING_COLOR = "#9085e9";
+  var TOP_RING_WIDTH = 2, SEARCH_RING_WIDTH = 3.2;
+  var DIM_OPACITY = 0.18;
+  var BASE_OPACITY = 0.75, BASE_LINE_WIDTH = 0.5, BASE_LINE_COLOR = "white";
+  var topSet = {{}};
   var CON_EQUIPO = {json.dumps(bool(team_col))};
   var FILTRO_ESTADO = {json.dumps((point_filter or {}).get("estado", ""), ensure_ascii=False)};
-  var CAT_OPCIONES = {json.dumps((cat_filter or {}).get("options", []), ensure_ascii=False)};
+  var CAT_OPCIONES = {json.dumps([c["options"] for c in cats], ensure_ascii=False)};
 
   var temporada = {json.dumps(default_season)};
   var filtroOn = false;
-  var categoria = TODAS;
+  var categorias = CAT_OPCIONES.map(function() {{ return TODAS; }});
   var IDX = [], NOMBRES = [], XS = [], YS = [];
 
   function el(sufijo) {{ return document.getElementById('{div_id}_' + sufijo); }}
@@ -1532,13 +1765,21 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
   // toca un control sería tirar trabajo, porque solo dos están en pantalla.
   function recalcularIndices() {{
     var d = DATOS[temporada];
-    var usaCat = categoria !== TODAS && !!d.g;
-    var cat = usaCat ? CAT_OPCIONES.indexOf(categoria) : -1;
+    var pedidos = [];
+    if (d.g) {{
+      for (var k = 0; k < categorias.length; k++) {{
+        if (categorias[k] !== TODAS)
+          pedidos.push([k, CAT_OPCIONES[k].indexOf(categorias[k])]);
+      }}
+    }}
     IDX = d.n.map(function(nombres, t) {{
       var idx = [];
       for (var i = 0; i < nombres.length; i++) {{
         if (filtroOn && d.f && !d.f[t][i]) continue;
-        if (usaCat && d.g[t][i] !== cat) continue;
+        var fuera = false;
+        for (var k = 0; k < pedidos.length; k++)
+          if (d.g[pedidos[k][0]][t][i] !== pedidos[k][1]) {{ fuera = true; break; }}
+        if (fuera) continue;
         idx.push(i);
       }}
       return idx;
@@ -1556,10 +1797,31 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
     if (!c) return null;
     return IDX.map(function(idx, t) {{ return idx.map(function(i) {{ return c[t][i]; }}); }});
   }}
-  function tamanos(nombre) {{
-    return NOMBRES.map(function(nn) {{
-      return nn.map(function(n) {{ return n === nombre ? RESALTE : BASE; }});
+  // Mismo criterio que `applyMarkerStyle` en `sidebar_chart_html` — una sola
+  // función que decide tamaño, opacidad y anillo de cada punto viendo a la
+  // vez el Top 5 (`topSet`) y la búsqueda activa, para que los dos
+  // resaltados se combinen en vez de pisarse entre restyles separados.
+  function estiloMarcadores() {{
+    var buscado = el('search').value;
+    var enMapa = !!buscado && NOMBRES.some(function(nn) {{ return nn.indexOf(buscado) !== -1; }});
+    var size = [], opacity = [], lineWidth = [], lineColor = [];
+    NOMBRES.forEach(function(nn) {{
+      var sz = [], op = [], lw = [], lc = [];
+      nn.forEach(function(n) {{
+        var esBuscado = enMapa && n === buscado;
+        var esTop = !!topSet[n];
+        sz.push(esBuscado ? RESALTE : (esTop ? TOP_SIZE : BASE));
+        op.push(enMapa ? (esBuscado ? 1 : DIM_OPACITY) : BASE_OPACITY);
+        lw.push(esBuscado ? SEARCH_RING_WIDTH : (esTop ? TOP_RING_WIDTH : BASE_LINE_WIDTH));
+        lc.push((esBuscado || esTop) ? RING_COLOR : BASE_LINE_COLOR);
+      }});
+      size.push(sz); opacity.push(op); lineWidth.push(lw); lineColor.push(lc);
     }});
+    return {{'marker.size': size, 'marker.opacity': opacity,
+      'marker.line.width': lineWidth, 'marker.line.color': lineColor}};
+  }}
+  function aplicarEstilo() {{
+    Plotly.restyle('{div_id}', estiloMarcadores(), TRAZAS);
   }}
 
   // --- r² sobre lo que se está viendo ---------------------------------------
@@ -1593,7 +1855,10 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
   function refreshTop() {{
     if (typeof pintarTop !== 'function') return;
     var p = puntosVisibles();
-    pintarTop(ETIQUETAS[ejeX()], ETIQUETAS[ejeY()], p[0], p[1], p[2]);
+    var destacados = pintarTop(ETIQUETAS[ejeX()], ETIQUETAS[ejeY()], p[0], p[1], p[2]);
+    topSet = {{}};
+    (destacados || []).forEach(function(n) {{ topSet[n] = true; }});
+    aplicarEstilo();
   }}
   // Devuelve el r, o por qué no hay r: 'pocos' (no alcanzan los puntos) y
   // 'plano' (alguno de los dos ejes no varía) se distinguen porque son cosas
@@ -1627,9 +1892,9 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
   function actualizarTexto() {{
     var liga = el('league').value;
     el('ins_estado').textContent =
-      [temporada, liga === TODAS ? 'Todas las ligas' : liga,
-       categoria !== TODAS ? categoria : null,
-       filtroOn ? FILTRO_ESTADO : null].filter(Boolean).join(' · ');
+      [temporada, liga === TODAS ? 'Todas las ligas' : liga]
+        .concat(categorias.filter(function(c) {{ return c !== TODAS; }}),
+                [filtroOn ? FILTRO_ESTADO : null]).filter(Boolean).join(' · ');
 
     var p = paresVisibles(), r = pearson(p[0], p[1]);
     var ex = ETIQUETAS[ejeX()], ey = ETIQUETAS[ejeY()];
@@ -1672,15 +1937,22 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
     }}).join('');
   }}
 
+  // Con fondo y borde (antes era texto suelto) por lo mismo que en
+  // `sidebar_chart_html`: sin el anillo del marcador y la nube atenuada
+  // (`estiloMarcadores`), una etiqueta flotando sobre puntos amontonados del
+  // mismo color no dejaba claro a cuál apuntaba la flecha.
   function anotacion(nombre) {{
     for (var t = 0; t < NOMBRES.length; t++) {{
       var i = NOMBRES[t].indexOf(nombre);
       if (i === -1 || XS[t][i] === null || YS[t][i] === null) continue;
       var oscuro = document.documentElement.getAttribute('data-theme') === 'dark';
       return {{
-        x: XS[t][i], y: YS[t][i], text: nombre, showarrow: true, arrowhead: 2, ax: 0, ay: -32,
-        arrowcolor: oscuro ? '#3A4A4E' : {json.dumps(INK["axis"])},
-        font: {{size: 11, color: oscuro ? '#D7E4E7' : {json.dumps(INK["primary"])}}}
+        x: XS[t][i], y: YS[t][i], text: nombre, showarrow: true, arrowhead: 2,
+        arrowsize: 1, arrowwidth: 1.6, ax: 0, ay: -30,
+        arrowcolor: RING_COLOR,
+        font: {{size: 11.5, color: oscuro ? '#D7E4E7' : {json.dumps(INK["primary"])}}},
+        bgcolor: oscuro ? '#1B2426' : {json.dumps(INK["surface"])},
+        bordercolor: RING_COLOR, borderwidth: 1.4, borderpad: 4,
       }};
     }}
     return null;
@@ -1688,7 +1960,7 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
 
   function aplicarBusqueda(valor) {{
     var an = valor ? anotacion(valor) : null;
-    Plotly.restyle('{div_id}', {{'marker.size': tamanos(an ? valor : null)}}, TRAZAS);
+    aplicarEstilo();
     Plotly.relayout('{div_id}', {{annotations: an ? [an] : []}});
   }}
 
@@ -1696,13 +1968,17 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
     recalcularIndices();
     XS = columna(ejeX()); YS = columna(ejeY());
     var eq = equipos();
-    Plotly.restyle('{div_id}', {{
-      x: XS, y: YS, 'marker.size': tamanos(null),
-      hovertemplate: TRAZAS.map(hoverTemplate),
-      customdata: CON_EQUIPO
+    // `estiloMarcadores()` ya sale del largo correcto porque NOMBRES se
+    // recalculó arriba: entra en el MISMO restyle que x/y para que Plotly
+    // nunca vea un marcador del largo de la vista anterior contra datos de
+    // la nueva.
+    var update = estiloMarcadores();
+    update.x = XS; update.y = YS;
+    update.hovertemplate = TRAZAS.map(hoverTemplate);
+    update.customdata = CON_EQUIPO
         ? NOMBRES.map(function(nn, t) {{ return nn.map(function(n, i) {{ return [n, eq[t][i]]; }}); }})
-        : NOMBRES
-    }}, TRAZAS);
+        : NOMBRES;
+    Plotly.restyle('{div_id}', update, TRAZAS);
     Plotly.relayout('{div_id}', {{
       'xaxis.title.text': ETIQUETAS[ejeX()], 'yaxis.title.text': ETIQUETAS[ejeY()],
       'xaxis.range': RANGOS[ejeX()], 'yaxis.range': RANGOS[ejeY()],
@@ -1752,16 +2028,22 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
     casilla.checked = false;   // el navegador recuerda el estado al recargar
     casilla.addEventListener('change', function(e) {{ filtroOn = e.target.checked; redibujar(); }});
   }}
-  var selectorCat = el('cat');
-  if (selectorCat) {{
-    selectorCat.value = categoria;   // ídem
-    selectorCat.addEventListener('change', function(e) {{ categoria = e.target.value; redibujar(); }});
-  }}
+  categorias.forEach(function(_, k) {{
+    var selectorCat = el('cat' + k);
+    if (!selectorCat) return;
+    selectorCat.value = categorias[k];   // ídem
+    selectorCat.addEventListener('change', function(e) {{
+      categorias[k] = e.target.value; redibujar();
+    }});
+  }});
   document.addEventListener('futviz-theme-change', function() {{
-    // Ídem que en sidebar_chart_html: sin búsqueda no hay anotación que
-    // recolorear, y repintar igual es lo más caro del cambio de tema.
+    // Ídem que en sidebar_chart_html: el anillo (Top 5 y búsqueda) es un
+    // color fijo que no depende del tema, así que no hace falta repintar el
+    // marcador — lo único que cambia es la tinta de la anotación, y eso es
+    // una forma sola, barata de repintar.
     var buscado = el('search').value;
-    if (buscado) aplicarBusqueda(buscado);
+    var an = buscado ? anotacion(buscado) : null;
+    if (an) Plotly.relayout('{div_id}', {{annotations: [an]}});
   }});
   window.addEventListener('resize', acomodarLeyenda);
 
@@ -1961,3 +2243,95 @@ def league_box_season_html(df, y_col, y_axis_title, seasons, hover_fmt=".1f",
                     "options": cat_options, "default": _ALL,
                     "labels": {_ALL: todas}}
     return fig, [season_control, cat_control], joint
+
+
+def radar_percentiles(df, group_cols, metric_cols):
+    """Percentil (0-1) de cada columna de `metric_cols`, calculado DENTRO de
+    cada grupo de `group_cols` — ej. `["temporada", "posicion"]` para el radar
+    de campo de la ficha de jugador (así un lateral se compara contra otros
+    defensas y no contra delanteros), o solo `["temporada"]` para el de
+    portero, que ya llega filtrado a esa posición.
+
+    Se calcula sobre TODO `df` y no sobre un subconjunto puntual (ej. el lote
+    chico de fichas que se publican): quien llama decide el universo (la
+    población con el filtro de minutos que corresponda), y el percentil de
+    alguien no debería cambiar según cuántas fichas termine habiendo."""
+    import pandas as pd
+
+    return pd.DataFrame(
+        {c: df.groupby(group_cols, observed=True)[c].rank(pct=True) for c in metric_cols},
+        index=df.index)
+
+
+def _radar_closed(values):
+    """Un radar cierra la figura repitiendo el primer punto al final. Mismo
+    helper que ya usan los radares de liga en `web/charts/teams.py` — se
+    repite acá (dos líneas) en vez de importarlo de un módulo que no
+    depende de éste."""
+    return list(values) + [values[0]]
+
+
+def entity_radar_figure(labels, r_valores, raw_valores, color, val_fmt=".2f", name=None):
+    """Radar de UNA sola entidad — a diferencia de los radares de liga
+    (`chart_radar_subplots`/`chart_radar_overlay` en `teams.py`), que están
+    armados a mano para exactamente 5 trazas (las ligas) y no son reusables
+    para "una entidad, N métricas". Pensado primero para la ficha de
+    jugador, pero sin nada específico de jugador en la firma — el día que
+    se diseñe un hub de equipos, sirve igual.
+
+    `r_valores` son los valores YA escalados a 0-1 (percentil u otra
+    normalización — la decide quien llama, típicamente `radar_percentiles`)
+    para la traza que se dibuja al abrir; `raw_valores` son los valores
+    reales que se muestran en el hover, en el mismo orden que `labels`.
+    `color` es un solo color (a diferencia del radar de liga, que tiene 5) —
+    normalmente el de la liga de la entidad, para que la ficha quede en la
+    misma paleta que el resto del sitio.
+
+    Lleva una segunda traza fija, un polígono punteado en r=0.5: no es dato,
+    es la referencia de "percentil 50" para que el lector no tenga que
+    adivinar dónde está el promedio — sin ella, un radar entero por encima
+    o por debajo del centro se lee igual si no se compara contra nada.
+
+    `name` es el nombre de la traza principal — si es el de una liga (ver
+    `LEAGUE_COLORS`), el script de tema del sitio (`PLOTLY_THEME_SCRIPT`) la
+    recolorea sola al cambiar a oscuro, igual que hace con cualquier otro
+    gráfico de liga; sin nombre, el color queda fijo en los dos temas (sigue
+    siendo legible, pero no sigue al toggle).
+
+    Devuelve una figura DESNUDA, sin su propio selector de temporada (a
+    diferencia de `select_chart_html`): la ficha de jugador tiene un solo
+    `<select>` para toda la página (header, tabla, radar y mapa de tiros a
+    la vez), así que el cambio de temporada lo hace `Plotly.restyle` sobre
+    esta figura desde afuera (ver `web/charts/player_hub.py`), no un control
+    propio acá."""
+    import plotly.graph_objects as go
+
+    theta = _radar_closed(labels)
+    n = len(labels)
+    fig = go.Figure()
+    fig.add_trace(go.Scatterpolar(
+        r=_radar_closed([0.5] * n), theta=theta, mode="lines",
+        line=dict(color=INK["axis"], width=1.2, dash="dot"),
+        hoverinfo="skip", showlegend=False, name="",
+    ))
+    fig.add_trace(go.Scatterpolar(
+        r=_radar_closed(r_valores), theta=theta, mode="lines+markers", fill="toself",
+        fillcolor=_rgba(color, 0.24), line=dict(color=color, width=2.6),
+        marker=dict(color=color, size=6.5, line=dict(color=INK["surface"], width=1)),
+        customdata=_radar_closed(raw_valores), showlegend=False,
+        name=name or "",
+        hovertemplate=("<b>%{theta}</b><br>percentil %{r:.0%}"
+                       "<br>valor: %{customdata:" + val_fmt + "}<extra></extra>"),
+    ))
+    fig.update_polars(radialaxis=dict(range=[0, 1], showticklabels=False, ticks="",
+                                       gridcolor=INK["grid"], linecolor=INK["axis"]),
+                       angularaxis=dict(tickfont=dict(size=11, color=INK["secondary"]),
+                                         gridcolor=INK["grid"], linecolor=INK["axis"]),
+                       bgcolor="rgba(0,0,0,0)")
+    fig.update_layout(margin=dict(t=30, b=30, l=70, r=70), showlegend=False)
+    return fig
+
+
+def _rgba(hex_color, alpha):
+    n = int(hex_color.lstrip("#"), 16)
+    return f"rgba({(n >> 16) & 255},{(n >> 8) & 255},{n & 255},{alpha})"

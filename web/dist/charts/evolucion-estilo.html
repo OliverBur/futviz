@@ -122,89 +122,119 @@
 </header>
 <main><div class="chart-scroll"><div style="max-width: 1100px; margin-inline: auto;">
 <style>
-  #chart_76a11dbe_layout { display:flex; flex-wrap: wrap; align-items:flex-start; gap:20px; max-width: 100%; }
-  #chart_76a11dbe_plotwrap { position: relative; flex: 1 1 280px; width: 100%; max-width: 820px;
+  #chart_87986b67_layout { display:flex; flex-wrap: wrap; align-items:flex-start; gap:20px; max-width: 100%; }
+  #chart_87986b67_plotwrap { position: relative; flex: 1 1 280px; width: 100%; max-width: 820px;
     aspect-ratio: 1.5185185185185186; min-width: 0; }
-  #chart_76a11dbe_plotwrap > div { position: absolute; inset: 0; }
-  #chart_76a11dbe_sidebar { font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  #chart_87986b67_plotwrap > div { position: absolute; inset: 0; }
+  #chart_87986b67_sidebar { font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     padding-top: 54px; flex: 1 1 190px; max-width: 260px; box-sizing: border-box; }
-  #chart_76a11dbe_sidebar .block { margin-bottom: 22px; }
-  #chart_76a11dbe_sidebar label { display: block; font-size: 11px; color: var(--color-muted, #898781);
+  #chart_87986b67_sidebar .block { margin-bottom: 22px; }
+  #chart_87986b67_sidebar label { display: block; font-size: 11px; color: var(--color-muted, #898781);
     text-transform: uppercase; letter-spacing: .03em; margin-bottom: 5px; }
-  #chart_76a11dbe_sidebar .hint { font-size: 11.5px; line-height: 1.45; color: var(--color-muted, #898781);
+  #chart_87986b67_sidebar .hint { font-size: 11.5px; line-height: 1.45; color: var(--color-muted, #898781);
     text-transform: none; letter-spacing: 0; margin-top: -14px; }
   /* Casilla de filtro por punto (ej. "solo sub-21"). Necesita anular el
      `width:100%` de los inputs de arriba, pensado para el buscador. */
-  #chart_76a11dbe_sidebar .toggle { display: flex; align-items: center; gap: 8px; }
-  #chart_76a11dbe_sidebar .toggle input { width: auto; flex: none; margin: 0; padding: 0;
+  #chart_87986b67_sidebar .toggle { display: flex; align-items: center; gap: 8px; }
+  #chart_87986b67_sidebar .toggle input { width: auto; flex: none; margin: 0; padding: 0;
     accent-color: var(--color-interactive, #c3c2b7); cursor: pointer; }
-  #chart_76a11dbe_sidebar .toggle span { font-size: 13px; cursor: pointer;
+  #chart_87986b67_sidebar .toggle span { font-size: 13px; cursor: pointer;
     color: var(--color-primary, #0b0b0b); }
-  #chart_76a11dbe_sidebar .toggle + .hint { margin-top: 7px; }
-  #chart_76a11dbe_sidebar select + .hint { margin-top: 7px; }
-  #chart_76a11dbe_sidebar input, #chart_76a11dbe_sidebar select { width: 100%; box-sizing: border-box;
+  #chart_87986b67_sidebar .toggle + .hint { margin-top: 7px; }
+  #chart_87986b67_sidebar select + .hint { margin-top: 7px; }
+  /* Nota larga dentro de una (i) al lado del rótulo, en vez de tres renglones
+     fijos de barra lateral. La ventanita se ancla al `.block` y no al icono:
+     la columna mide 260px y un globo colgado del icono —que está a la derecha
+     del rótulo— se saldría por el borde. Anclada al bloque ocupa exactamente
+     el ancho de la columna y aparece donde antes estaba el párrafo. Se abre
+     con el mouse Y con el tabulador; sin JS. */
+  #chart_87986b67_sidebar .block { position: relative; }
+  #chart_87986b67_sidebar .fv-info { display: inline-flex; align-items: center; justify-content: center;
+    width: 14px; height: 14px; margin-left: 5px; vertical-align: -2px; border-radius: 50%;
+    border: 1px solid var(--color-border, #c3c2b7); color: var(--color-muted, #898781);
+    font-size: 9.5px; font-weight: 700; font-style: italic; line-height: 1;
+    text-transform: none; letter-spacing: 0; cursor: help; user-select: none;
+    transition: border-color .15s ease, color .15s ease; }
+  #chart_87986b67_sidebar .fv-info:hover, #chart_87986b67_sidebar .fv-info:focus-visible {
+    border-color: var(--color-interactive, #c3c2b7);
+    color: var(--color-interactive, #0b0b0b); outline: none; }
+  #chart_87986b67_sidebar .fv-tip { position: absolute; left: 0; right: 0; top: 100%; z-index: 30;
+    margin-top: 5px; padding: 9px 11px; border-radius: 7px;
+    background: var(--color-surface, #fcfcfb);
+    border: 1px solid var(--color-border, #c3c2b7);
+    box-shadow: 0 4px 14px rgba(18, 24, 26, .13);
+    font-size: 11.5px; line-height: 1.45; font-weight: 400; font-style: normal;
+    text-transform: none; letter-spacing: 0; text-align: left;
+    color: var(--color-text-body, #52514e);
+    opacity: 0; visibility: hidden; transition: opacity .12s ease; }
+  #chart_87986b67_sidebar .fv-info:hover .fv-tip,
+  #chart_87986b67_sidebar .fv-info:focus-visible .fv-tip { opacity: 1; visibility: visible; }
+  @media (prefers-reduced-motion: reduce) {
+    #chart_87986b67_sidebar .fv-tip, #chart_87986b67_sidebar .fv-info { transition: none; }
+  }
+  #chart_87986b67_sidebar input, #chart_87986b67_sidebar select { width: 100%; box-sizing: border-box;
     padding: 7px 9px; font-size: 13px; font-family: inherit; color: var(--color-primary, #0b0b0b);
     background: var(--color-surface, #fcfcfb); border: 1px solid var(--color-border, #c3c2b7);
     border-radius: 6px; transition: border-color .15s ease; }
-  #chart_76a11dbe_sidebar input:focus, #chart_76a11dbe_sidebar select:focus {
+  #chart_87986b67_sidebar input:focus, #chart_87986b67_sidebar select:focus {
     outline: none; border-color: var(--color-interactive, #c3c2b7); }
   @media (max-width: 520px) {
-    #chart_76a11dbe_sidebar { padding-top: 4px; max-width: 100%; }
-    #chart_76a11dbe_plotwrap { aspect-ratio: 0.9111111111111111; }
+    #chart_87986b67_sidebar { padding-top: 4px; max-width: 100%; }
+    #chart_87986b67_plotwrap { aspect-ratio: 0.9111111111111111; }
   }
-  #chart_76a11dbe_insight { font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  #chart_87986b67_insight { font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     max-width: 820px; margin: 18px 0 4px; display: flex; flex-direction: column; gap: 14px;
     font-size: 13.5px; line-height: 1.58; color: var(--color-text-body, #52514e); }
-  #chart_76a11dbe_insight h4 { margin: 0 0 5px; font-size: 11px; font-weight: 700;
+  #chart_87986b67_insight h4 { margin: 0 0 5px; font-size: 11px; font-weight: 700;
     text-transform: uppercase; letter-spacing: .05em;
     color: var(--color-muted, #898781); }
-  #chart_76a11dbe_insight p { margin: 0 0 7px; }
-  #chart_76a11dbe_insight p:last-child { margin-bottom: 0; }
-  #chart_76a11dbe_insight strong { color: var(--color-primary, #0b0b0b); font-weight: 600; }
-  #chart_76a11dbe_insight code { font-size: 12.5px;
+  #chart_87986b67_insight p { margin: 0 0 7px; }
+  #chart_87986b67_insight p:last-child { margin-bottom: 0; }
+  #chart_87986b67_insight strong { color: var(--color-primary, #0b0b0b); font-weight: 600; }
+  #chart_87986b67_insight code { font-size: 12.5px;
     background: var(--color-bg, #e1e0d9); padding: 1px 4px; border-radius: 3px; }
-  #chart_76a11dbe_insight .fv-dyn { border-left: 3px solid var(--color-interactive, #c3c2b7);
+  #chart_87986b67_insight .fv-dyn { border-left: 3px solid var(--color-interactive, #c3c2b7);
     padding: 2px 0 2px 13px; }
-  #chart_76a11dbe_insight .fv-estado { color: var(--color-interactive, #c3c2b7);
+  #chart_87986b67_insight .fv-estado { color: var(--color-interactive, #c3c2b7);
     font-weight: 700; letter-spacing: .03em; }
-  #chart_76a11dbe_insight .fv-salta { margin-top: 6px; }
-  #chart_76a11dbe_insight details { border-top: 1px solid var(--color-border, #e1e0d9);
+  #chart_87986b67_insight .fv-salta { margin-top: 6px; }
+  #chart_87986b67_insight details { border-top: 1px solid var(--color-border, #e1e0d9);
     padding-top: 11px; }
-  #chart_76a11dbe_insight summary { cursor: pointer; font-size: 11px; font-weight: 700;
+  #chart_87986b67_insight summary { cursor: pointer; font-size: 11px; font-weight: 700;
     text-transform: uppercase; letter-spacing: .05em;
     color: var(--color-muted, #898781); list-style: none; }
-  #chart_76a11dbe_insight summary::-webkit-details-marker { display: none; }
-  #chart_76a11dbe_insight summary::after { content: " +"; }
-  #chart_76a11dbe_insight details[open] summary::after { content: " −"; }
-  #chart_76a11dbe_insight details[open] summary { margin-bottom: 9px; }
-  #chart_76a11dbe_insight summary:hover { color: var(--color-interactive, #0b0b0b); }
+  #chart_87986b67_insight summary::-webkit-details-marker { display: none; }
+  #chart_87986b67_insight summary::after { content: " +"; }
+  #chart_87986b67_insight details[open] summary::after { content: " −"; }
+  #chart_87986b67_insight details[open] summary { margin-bottom: 9px; }
+  #chart_87986b67_insight summary:hover { color: var(--color-interactive, #0b0b0b); }
 </style>
-<div id="chart_76a11dbe_layout">
-  <div id="chart_76a11dbe_plotwrap"><div style="height:100%; width:100%;">                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
-        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha256-jvTGqxNp8AGWEcvNLVuKr+8j5dGe9Yw51LQkmDH+IYA=" crossorigin="anonymous"></script>                <div id="chart_76a11dbe" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("chart_76a11dbe")) {                    Plotly.newPlot(                        "chart_76a11dbe",                        [{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003e%{y:.2f}\u003cextra\u003eBundesliga\u003c\u002fextra\u003e","line":{"color":"#e34948","width":2.6},"marker":{"color":"#e34948","line":{"color":"#fcfcfb","width":1},"size":8},"mode":"lines+markers","name":"Bundesliga","x":["2021-22","2022-23","2023-24","2024-25","2025-26"],"y":{"dtype":"f8","bdata":"gW9eTTwr+D91uf1Bhsr4PxhLfrHkF\u002fk\u002fvnk18axo+D+saCTgm1f5Pw=="},"type":"scatter"},{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003e%{y:.2f}\u003cextra\u003eSerie A\u003c\u002fextra\u003e","line":{"color":"#2a78d6","width":2.6},"marker":{"color":"#2a78d6","line":{"color":"#fcfcfb","width":1},"size":8},"mode":"lines+markers","name":"Serie A","x":["2021-22","2022-23","2023-24","2024-25","2025-26"],"y":{"dtype":"f8","bdata":"vp8aL90k9j8MAiuHFtnzP8ZLN4lBYPQ\u002fg8DKoUW28z+LbOf7qfHyPw=="},"type":"scatter"},{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003e%{y:.2f}\u003cextra\u003eLigue 1\u003c\u002fextra\u003e","line":{"color":"#2e413a","width":2.6},"marker":{"color":"#2e413a","line":{"color":"#fcfcfb","width":1},"size":8},"mode":"lines+markers","name":"Ligue 1","x":["2021-22","2022-23","2023-24","2024-25","2025-26"],"y":{"dtype":"f8","bdata":"TmIQWDm09T956SYxCKz1P1uwBVuwBfU\u002fJb9Y8osl9z+beFY0EvD1Pw=="},"type":"scatter"},{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003e%{y:.2f}\u003cextra\u003eLa Liga\u003c\u002fextra\u003e","line":{"color":"#eda100","width":2.6},"marker":{"color":"#eda100","line":{"color":"#fcfcfb","width":1},"size":8},"mode":"lines+markers","name":"La Liga","x":["2021-22","2022-23","2023-24","2024-25","2025-26"],"y":{"dtype":"f8","bdata":"UI2XbhKD8z\u002fb+X5qvHTzP8UgsHJokfQ\u002fMQisHFpk9D+0yHa+nxr1Pw=="},"type":"scatter"},{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003e%{y:.2f}\u003cextra\u003ePremier League\u003c\u002fextra\u003e","line":{"color":"#e87ba4","width":2.6},"marker":{"color":"#e87ba4","line":{"color":"#fcfcfb","width":1},"size":8},"mode":"lines+markers","name":"Premier League","x":["2021-22","2022-23","2023-24","2024-25","2025-26"],"y":{"dtype":"f8","bdata":"16NwPQrX9T92vp8aL931PzMzMzMzM\u002fk\u002fYhBYObTI9j++nxov3ST1Pw=="},"type":"scatter"}],                        {"template":{"layout":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12},"hoverlabel":{"bgcolor":"#fcfcfb","bordercolor":"#c3c2b7","font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11}},"margin":{"b":60,"l":70,"r":40,"t":90},"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(0,0,0,0)","title":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":18},"subtitle":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12.5}},"x":0.03,"xanchor":"left"},"xaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"},"yaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"}}},"title":{"subtitle":{"text":"Goles — promedio por equipo de cada liga, temporada a temporada"},"text":"Evolución del estilo por liga"},"xaxis":{"title":{"text":"Temporada"},"type":"category"},"yaxis":{"title":{"text":"Goles"},"range":[1.1360133333333333,1.6318755555555553]},"autosize":true},                        {"displaylogo": false, "responsive": true, "displayModeBar": false}                    )                };            </script>        </div></div>
-  <div id="chart_76a11dbe_sidebar">
+<div id="chart_87986b67_layout">
+  <div id="chart_87986b67_plotwrap"><div style="height:100%; width:100%;">                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha256-jvTGqxNp8AGWEcvNLVuKr+8j5dGe9Yw51LQkmDH+IYA=" crossorigin="anonymous"></script>                <div id="chart_87986b67" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("chart_87986b67")) {                    Plotly.newPlot(                        "chart_87986b67",                        [{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003e%{y:.2f}\u003cextra\u003eBundesliga\u003c\u002fextra\u003e","line":{"color":"#e34948","width":2.6},"marker":{"color":"#e34948","line":{"color":"#fcfcfb","width":1},"size":8},"mode":"lines+markers","name":"Bundesliga","x":["2021-22","2022-23","2023-24","2024-25","2025-26","2026-27"],"y":{"dtype":"f8","bdata":"gW9eTTwr+D91uf1Bhsr4PxhLfrHkF\u002fk\u002fvnk18axo+D+saCTgm1f5P+Q4juM4jv0\u002f"},"type":"scatter"},{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003e%{y:.2f}\u003cextra\u003eSerie A\u003c\u002fextra\u003e","line":{"color":"#2a78d6","width":2.6},"marker":{"color":"#2a78d6","line":{"color":"#fcfcfb","width":1},"size":8},"mode":"lines+markers","name":"Serie A","x":["2021-22","2022-23","2023-24","2024-25","2025-26","2026-27"],"y":{"dtype":"f8","bdata":"vp8aL90k9j8MAiuHFtnzP8ZLN4lBYPQ\u002fg8DKoUW28z+LbOf7qfHyPwrXo3A9Cvc\u002f"},"type":"scatter"},{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003e%{y:.2f}\u003cextra\u003eLigue 1\u003c\u002fextra\u003e","line":{"color":"#2e413a","width":2.6},"marker":{"color":"#2e413a","line":{"color":"#fcfcfb","width":1},"size":8},"mode":"lines+markers","name":"Ligue 1","x":["2021-22","2022-23","2023-24","2024-25","2025-26","2026-27"],"y":{"dtype":"f8","bdata":"TmIQWDm09T956SYxCKz1P1uwBVuwBfU\u002fJb9Y8osl9z+beFY0EvD1PwVbsAVbsPU\u002f"},"type":"scatter"},{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003e%{y:.2f}\u003cextra\u003eLa Liga\u003c\u002fextra\u003e","line":{"color":"#eda100","width":2.6},"marker":{"color":"#eda100","line":{"color":"#fcfcfb","width":1},"size":8},"mode":"lines+markers","name":"La Liga","x":["2021-22","2022-23","2023-24","2024-25","2025-26","2026-27"],"y":{"dtype":"f8","bdata":"UI2XbhKD8z\u002fb+X5qvHTzP8UgsHJokfQ\u002fMQisHFpk9D+0yHa+nxr1P1TjpZvEIPc\u002f"},"type":"scatter"},{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003e%{y:.2f}\u003cextra\u003ePremier League\u003c\u002fextra\u003e","line":{"color":"#e87ba4","width":2.6},"marker":{"color":"#e87ba4","line":{"color":"#fcfcfb","width":1},"size":8},"mode":"lines+markers","name":"Premier League","x":["2021-22","2022-23","2023-24","2024-25","2025-26","2026-27"],"y":{"dtype":"f8","bdata":"16NwPQrX9T92vp8aL931PzMzMzMzM\u002fk\u002fYhBYObTI9j++nxov3ST1P3E9CtejcPU\u002f"},"type":"scatter"}],                        {"template":{"layout":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12},"hoverlabel":{"bgcolor":"#fcfcfb","bordercolor":"#c3c2b7","font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11}},"margin":{"b":60,"l":70,"r":40,"t":90},"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(0,0,0,0)","title":{"font":{"color":"#0b0b0b","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":18},"subtitle":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12.5}},"x":0.03,"xanchor":"left"},"xaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"},"yaxis":{"gridcolor":"#e1e0d9","linecolor":"#c3c2b7","tickfont":{"color":"#898781","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":11},"title":{"font":{"color":"#52514e","family":"Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif","size":12}},"zerolinecolor":"#c3c2b7"}}},"title":{"subtitle":{"text":"Goles — promedio por equipo de cada liga, temporada a temporada"},"text":"Evolución del estilo por liga"},"xaxis":{"title":{"text":"Temporada"},"type":"category"},"yaxis":{"title":{"text":"Goles"},"range":[1.1044133333333332,1.926808888888889]},"autosize":true},                        {"displaylogo": false, "responsive": true, "displayModeBar": false}                    )                };            </script>        </div></div>
+  <div id="chart_87986b67_sidebar">
     <div class="block">
       <label>Métrica</label>
-      <select id="chart_76a11dbe_metric"><option value="sh_Standard_Sh/90">Tiros</option><option value="ov_Per 90 Minutes_Gls">Goles</option><option value="sh_Standard_G/Sh">G/Sh</option><option value="gk_Performance_CS%">CS%</option><option value="p90_TklW">Tackles</option><option value="p90_Int">Intercep.</option><option value="p90_Off">Offsides</option><option value="p90_Fls">Faltas</option></select>
+      <select id="chart_87986b67_metric"><option value="sh_Standard_Sh/90">Tiros</option><option value="ov_Per 90 Minutes_Gls">Goles</option><option value="sh_Standard_G/Sh">G/Sh</option><option value="gk_Performance_CS%">CS%</option><option value="p90_TklW">Tackles</option><option value="p90_Int">Intercep.</option><option value="p90_Off">Offsides</option><option value="p90_Fls">Faltas</option></select>
     </div>
     <div class="block"><div class="hint">Promedio por equipo de cada liga, temporada a temporada. Las métricas son las mismas 8 ejes del radar.</div></div>
   </div>
 </div>
 <style>
-  #chart_76a11dbe_fuente { font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  #chart_87986b67_fuente { font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     max-width: 820px; margin: 8px 0 0; text-align: right; font-size: 11.5px;
     color: var(--color-muted, #898781); }
 </style>
-<p id="chart_76a11dbe_fuente">Datos: FBref</p>
-<div id="chart_76a11dbe_insight">
+<p id="chart_87986b67_fuente">Datos: FBref</p>
+<div id="chart_87986b67_insight">
   <div>
     <h4>Qué mirar aquí</h4>
     <p>Cada línea es una liga a lo largo de las 5 temporadas. Lo que importa es si las líneas <strong>se mueven juntas</strong> —eso apunta a un cambio de la competición o del arbitraje, no de los equipos— o si una se separa del resto por su cuenta.</p>
   </div>
   <div class="fv-dyn">
-    <h4>En lo que estás viendo · <span class="fv-estado" id="chart_76a11dbe_ins_estado">Goles</span></h4>
-    <p id="chart_76a11dbe_ins_fija">En las 5 temporadas la media de <strong>Goles</strong> bajó de 1.37 a 1.36 (2 de las 5 ligas a la baja).</p>
-    <p class="fv-salta" id="chart_76a11dbe_ins_salta">La que más se movió es <strong>Serie A</strong>, que bajó de 1.38 a 1.18 (-14%), mientras las otras cuatro se movieron menos.</p>
+    <h4>En lo que estás viendo · <span class="fv-estado" id="chart_87986b67_ins_estado">Goles</span></h4>
+    <p id="chart_87986b67_ins_fija">En las 5 temporadas la media de <strong>Goles</strong> subió de 1.37 a 1.49 (2 de las 5 ligas a la baja).</p>
+    <p class="fv-salta" id="chart_87986b67_ins_salta">La que más se movió es <strong>Bundesliga</strong>, que subió de 1.51 a 1.85 (+23%), mientras las otras cuatro se movieron menos.</p>
   </div>
   <details>
     <summary>Por qué estas variables</summary>
@@ -213,21 +243,21 @@
 </div>
 <script>
 (function() {
-  var specs = [{"id": "metric", "default": "ov_Per 90 Minutes_Gls", "updates": {"sh_Standard_Sh/90": {"restyle": {"y": [[12.823333333333332, 12.574444444444445, 13.718333333333334, 12.878888888888888, 13.247222222222222], [12.8405, 12.5565, 12.592, 11.986, 12.316500000000001], [11.8345, 12.064, 12.59, 12.279444444444444, 12.43888888888889], [11.6145, 12.166500000000001, 12.106, 11.722, 12.478], [12.689499999999999, 12.5135, 13.66, 12.852, 12.495000000000001]]}, "relayout": {"yaxis.title.text": "Tiros", "yaxis.range": [11.36204, 13.970793333333333], "title.subtitle.text": "Tiros \u2014 promedio por equipo de cada liga, temporada a temporada"}}, "ov_Per 90 Minutes_Gls": {"restyle": {"y": [[1.5105555555555557, 1.5494444444444444, 1.5683333333333334, 1.5255555555555556, 1.5838888888888887], [1.384, 1.2405, 1.2734999999999999, 1.232, 1.184], [1.3565, 1.3545, 1.3138888888888889, 1.4466666666666665, 1.3711111111111112], [1.2195, 1.216, 1.2855, 1.2745, 1.319], [1.365, 1.3664999999999998, 1.575, 1.424, 1.3215]]}, "relayout": {"yaxis.title.text": "Goles", "yaxis.range": [1.1360133333333333, 1.6318755555555553], "title.subtitle.text": "Goles \u2014 promedio por equipo de cada liga, temporada a temporada"}}, "sh_Standard_G/Sh": {"restyle": {"y": [[0.10666666666666666, 0.11166666666666665, 0.10166666666666667, 0.11, 0.10722222222222223], [0.095, 0.0895, 0.09, 0.0915, 0.08549999999999999], [0.101, 0.0975, 0.09277777777777778, 0.10388888888888889, 0.09777777777777778], [0.0925, 0.0905, 0.0965, 0.0945, 0.0925], [0.0965, 0.0995, 0.10500000000000001, 0.10300000000000001, 0.0965]]}, "relayout": {"yaxis.title.text": "G/Sh", "yaxis.range": [0.08235999999999999, 0.11480666666666665], "title.subtitle.text": "G/Sh \u2014 promedio por equipo de cada liga, temporada a temporada"}}, "gk_Performance_CS%": {"restyle": {"y": [[22.22222222222222, 22.87222222222222, 21.244444444444444, 25.016666666666666, 21.072222222222223], [24.21, 27.5, 27.77, 27.895, 32.114999999999995], [25.525, 24.335, 27.444444444444443, 23.855555555555554, 28.344444444444445], [31.310000000000002, 28.28, 29.345, 25.665, 23.69], [27.905, 27.235000000000003, 20.665, 23.425, 25.525]]}, "relayout": {"yaxis.title.text": "CS%", "yaxis.range": [19.291, 33.489], "title.subtitle.text": "CS% \u2014 promedio por equipo de cada liga, temporada a temporada"}}, "p90_TklW": {"restyle": {"y": [[9.343137254901961, 9.62908496732026, 9.766339869281047, 9.305555555555555, 9.387254901960784], [8.775, 9.257894736842106, 9.028947368421052, 9.005263157894737, 9.075], [9.91842105263158, 10.384210526315789, 10.527777777777779, 11.125816993464051, 10.110120816003167], [8.985526315789475, 9.79342105263158, 9.963157894736842, 9.973684210526315, 9.93157894736842], [9.398684210526316, 9.91578947368421, 10.361842105263158, 10.513157894736842, 9.860526315789475]]}, "relayout": {"yaxis.title.text": "Tackles", "yaxis.range": [8.492901960784314, 11.407915032679737], "title.subtitle.text": "Tackles \u2014 promedio por equipo de cada liga, temporada a temporada"}}, "p90_Int": {"restyle": {"y": [[10.967320261437909, 9.204248366013072, 8.604575163398692, 8.563725490196079, 8.730392156862745], [9.610526315789475, 8.423684210526316, 7.353947368421052, 7.3618421052631575, 7.661842105263157], [10.878947368421052, 10.560526315789474, 9.553921568627452, 9.052287581699346, 8.864081996434939], [9.19342105263158, 8.132894736842106, 7.728947368421052, 8.028947368421052, 8.085526315789474], [9.619736842105263, 8.935526315789474, 8.3, 7.938157894736842, 7.981578947368421]]}, "relayout": {"yaxis.title.text": "Intercep.", "yaxis.range": [6.920342621259029, 11.40092500859993], "title.subtitle.text": "Intercep. \u2014 promedio por equipo de cada liga, temporada a temporada"}}, "p90_Off": {"restyle": {"y": [[1.957516339869281, 1.8954248366013071, 1.707516339869281, 1.8120915032679739, 1.7516339869281046], [1.7776315789473685, 1.6263157894736842, 1.5723684210526314, 1.5342105263157895, 1.556578947368421], [1.6105263157894736, 1.6039473684210528, 1.5833333333333333, 1.6127450980392157, 1.6100217864923747], [2.006578947368421, 2.211842105263158, 2.221052631578947, 1.9131578947368422, 1.8934210526315787], [1.6657894736842107, 1.7013157894736843, 1.9065789473684212, 1.6776315789473686, 1.5447368421052632]]}, "relayout": {"yaxis.title.text": "Offsides", "yaxis.range": [1.4517894736842105, 2.303473684210526], "title.subtitle.text": "Offsides \u2014 promedio por equipo de cada liga, temporada a temporada"}}, "p90_Fls": {"restyle": {"y": [[11.887254901960784, 11.82843137254902, 11.236928104575163, 10.69281045751634, 10.42483660130719], [13.317105263157895, 12.35657894736842, 12.048684210526316, 12.539473684210526, 12.667105263157895], [11.697368421052632, 12.414473684210526, 12.470588235294118, 12.12908496732026, 12.080213903743315], [13.23815789473684, 12.947368421052634, 12.938157894736841, 12.419736842105262, 12.580263157894738], [10.114473684210527, 10.782894736842106, 11.060526315789474, 11.05, 10.811842105263157]]}, "relayout": {"yaxis.title.text": "Faltas", "yaxis.range": [9.730157894736843, 13.701421052631579], "title.subtitle.text": "Faltas \u2014 promedio por equipo de cada liga, temporada a temporada"}}}, "labels": {"sh_Standard_Sh/90": "Tiros", "ov_Per 90 Minutes_Gls": "Goles", "sh_Standard_G/Sh": "G/Sh", "gk_Performance_CS%": "CS%", "p90_TklW": "Tackles", "p90_Int": "Intercep.", "p90_Off": "Offsides", "p90_Fls": "Faltas"}}];
+  var specs = [{"id": "metric", "default": "ov_Per 90 Minutes_Gls", "updates": {"sh_Standard_Sh/90": {"restyle": {"y": [[12.823333333333332, 12.574444444444445, 13.718333333333334, 12.878888888888888, 13.247222222222222, 15.51388888888889], [12.8405, 12.5565, 12.592, 11.986, 12.316500000000001, 14.569999999999999], [11.8345, 12.064, 12.59, 12.279444444444444, 12.43888888888889, 13.899999999999999], [11.6145, 12.166500000000001, 12.106, 11.722, 12.478, 13.232], [12.689499999999999, 12.5135, 13.66, 12.852, 12.495000000000001, 13.91]]}, "relayout": {"yaxis.title.text": "Tiros", "yaxis.range": [11.146573333333333, 15.981815555555556], "title.subtitle.text": "Tiros \u2014 promedio por equipo de cada liga, temporada a temporada"}}, "ov_Per 90 Minutes_Gls": {"restyle": {"y": [[1.5105555555555557, 1.5494444444444444, 1.5683333333333334, 1.5255555555555556, 1.5838888888888887, 1.8472222222222223], [1.384, 1.2405, 1.2734999999999999, 1.232, 1.184, 1.44], [1.3565, 1.3545, 1.3138888888888889, 1.4466666666666665, 1.3711111111111112, 1.3555555555555554], [1.2195, 1.216, 1.2855, 1.2745, 1.319, 1.4455], [1.365, 1.3664999999999998, 1.575, 1.424, 1.3215, 1.34]]}, "relayout": {"yaxis.title.text": "Goles", "yaxis.range": [1.1044133333333332, 1.926808888888889], "title.subtitle.text": "Goles \u2014 promedio por equipo de cada liga, temporada a temporada"}}, "sh_Standard_G/Sh": {"restyle": {"y": [[0.10666666666666666, 0.11166666666666665, 0.10166666666666667, 0.11, 0.10722222222222223, 0.11777777777777779], [0.095, 0.0895, 0.09, 0.0915, 0.08549999999999999, 0.098], [0.101, 0.0975, 0.09277777777777778, 0.10388888888888889, 0.09777777777777778, 0.10111111111111111], [0.0925, 0.0905, 0.0965, 0.0945, 0.0925, 0.1055], [0.0965, 0.0995, 0.10500000000000001, 0.10300000000000001, 0.0965, 0.097]]}, "relayout": {"yaxis.title.text": "G/Sh", "yaxis.range": [0.08162666666666665, 0.12165111111111113], "title.subtitle.text": "G/Sh \u2014 promedio por equipo de cada liga, temporada a temporada"}}, "gk_Performance_CS%": {"restyle": {"y": [[22.22222222222222, 22.87222222222222, 21.244444444444444, 25.016666666666666, 21.072222222222223, 25.0], [24.21, 27.5, 27.77, 27.895, 32.114999999999995, 21.0], [25.525, 24.335, 27.444444444444443, 23.855555555555554, 28.344444444444445, 24.444444444444443], [31.310000000000002, 28.28, 29.345, 25.665, 23.69, 24.895], [27.905, 27.235000000000003, 20.665, 23.425, 25.525, 30.0]]}, "relayout": {"yaxis.title.text": "CS%", "yaxis.range": [19.291, 33.489], "title.subtitle.text": "CS% \u2014 promedio por equipo de cada liga, temporada a temporada"}}, "p90_TklW": {"restyle": {"y": [[9.343137254901961, 9.62908496732026, 9.766339869281047, 9.305555555555555, 9.387254901960784, 9.791666666666666], [8.775, 9.257894736842106, 9.028947368421052, 9.005263157894737, 9.075, 9.68], [9.91842105263158, 10.384210526315789, 10.527777777777779, 11.125816993464051, 10.110120816003167, 10.066666666666666], [8.985526315789475, 9.79342105263158, 9.963157894736842, 9.973684210526315, 9.93157894736842, 10.275], [9.398684210526316, 9.91578947368421, 10.361842105263158, 10.513157894736842, 9.860526315789475, 9.03]]}, "relayout": {"yaxis.title.text": "Tackles", "yaxis.range": [8.492901960784314, 11.407915032679737], "title.subtitle.text": "Tackles \u2014 promedio por equipo de cada liga, temporada a temporada"}}, "p90_Int": {"restyle": {"y": [[10.967320261437909, 9.204248366013072, 8.604575163398692, 8.563725490196079, 8.730392156862745, 10.26388888888889], [9.610526315789475, 8.423684210526316, 7.353947368421052, 7.3618421052631575, 7.661842105263157, 8.5], [10.878947368421052, 10.560526315789474, 9.553921568627452, 9.052287581699346, 8.864081996434939, 10.455555555555556], [9.19342105263158, 8.132894736842106, 7.728947368421052, 8.028947368421052, 8.085526315789474, 8.958333333333332], [9.619736842105263, 8.935526315789474, 8.3, 7.938157894736842, 7.981578947368421, 8.52]]}, "relayout": {"yaxis.title.text": "Intercep.", "yaxis.range": [6.920342621259029, 11.40092500859993], "title.subtitle.text": "Intercep. \u2014 promedio por equipo de cada liga, temporada a temporada"}}, "p90_Off": {"restyle": {"y": [[1.957516339869281, 1.8954248366013071, 1.707516339869281, 1.8120915032679739, 1.7516339869281046, 1.5833333333333333], [1.7776315789473685, 1.6263157894736842, 1.5723684210526314, 1.5342105263157895, 1.556578947368421, 2.0300000000000002], [1.6105263157894736, 1.6039473684210528, 1.5833333333333333, 1.6127450980392157, 1.6100217864923747, 1.788888888888889], [2.006578947368421, 2.211842105263158, 2.221052631578947, 1.9131578947368422, 1.8934210526315787, 1.992857142857143], [1.6657894736842107, 1.7013157894736843, 1.9065789473684212, 1.6776315789473686, 1.5447368421052632, 1.85]]}, "relayout": {"yaxis.title.text": "Offsides", "yaxis.range": [1.4517894736842105, 2.303473684210526], "title.subtitle.text": "Offsides \u2014 promedio por equipo de cada liga, temporada a temporada"}}, "p90_Fls": {"restyle": {"y": [[11.887254901960784, 11.82843137254902, 11.236928104575163, 10.69281045751634, 10.42483660130719, 11.23611111111111], [13.317105263157895, 12.35657894736842, 12.048684210526316, 12.539473684210526, 12.667105263157895, 11.33], [11.697368421052632, 12.414473684210526, 12.470588235294118, 12.12908496732026, 12.080213903743315, 12.055555555555555], [13.23815789473684, 12.947368421052634, 12.938157894736841, 12.419736842105262, 12.580263157894738, 12.301190476190476], [10.114473684210527, 10.782894736842106, 11.060526315789474, 11.05, 10.811842105263157, 11.39]]}, "relayout": {"yaxis.title.text": "Faltas", "yaxis.range": [9.730157894736843, 13.701421052631579], "title.subtitle.text": "Faltas \u2014 promedio por equipo de cada liga, temporada a temporada"}}}, "labels": {"sh_Standard_Sh/90": "Tiros", "ov_Per 90 Minutes_Gls": "Goles", "sh_Standard_G/Sh": "G/Sh", "gk_Performance_CS%": "CS%", "p90_TklW": "Tackles", "p90_Int": "Intercep.", "p90_Off": "Offsides", "p90_Fls": "Faltas"}}];
   var joint = {};
   var useJoint = false;
   var driver = "metric";
-  var insights = {"sh_Standard_Sh/90": {"fija": "En las 5 temporadas la media de <strong>Tiros</strong> subió de 12.36 a 12.60 (2 de las 5 ligas a la baja).", "salta": "La que más se movió es <strong>La Liga</strong>, que subió de 11.61 a 12.48 (+7%), mientras las otras cuatro se movieron menos."}, "ov_Per 90 Minutes_Gls": {"fija": "En las 5 temporadas la media de <strong>Goles</strong> bajó de 1.37 a 1.36 (2 de las 5 ligas a la baja).", "salta": "La que más se movió es <strong>Serie A</strong>, que bajó de 1.38 a 1.18 (-14%), mientras las otras cuatro se movieron menos."}, "sh_Standard_G/Sh": {"fija": "En las 5 temporadas la media de <strong>G/Sh</strong> quedó igual de 0.10 a 0.10 (2 de las 5 ligas a la baja).", "salta": "La que más se movió es <strong>Serie A</strong>, que bajó de 0.10 a 0.09 (-10%), mientras las otras cuatro se movieron menos."}, "gk_Performance_CS%": {"fija": "En las 5 temporadas la media de <strong>CS%</strong> bajó de 26.23 a 26.15 (3 de las 5 ligas a la baja).", "salta": "La que más se movió es <strong>Serie A</strong>, que subió de 24.21 a 32.11 (+33%), mientras las otras cuatro se movieron menos."}, "p90_TklW": {"fija": "En las 5 temporadas la media de <strong>Tackles</strong> subió de 9.28 a 9.67 (0 de las 5 ligas a la baja).", "salta": "Se movieron <strong>las 5 ligas en la misma dirección</strong>, y eso es lo interesante: que 96 equipos cambien a la vez apunta a la competición o al criterio arbitral, no a una decisión táctica de cada club."}, "p90_Int": {"fija": "En las 5 temporadas la media de <strong>Intercep.</strong> bajó de 10.05 a 8.26 (5 de las 5 ligas a la baja).", "salta": "Se movieron <strong>las 5 ligas en la misma dirección</strong>, y eso es lo interesante: que 96 equipos cambien a la vez apunta a la competición o al criterio arbitral, no a una decisión táctica de cada club."}, "p90_Off": {"fija": "En las 5 temporadas la media de <strong>Offsides</strong> bajó de 1.80 a 1.67 (5 de las 5 ligas a la baja).", "salta": "Se movieron <strong>las 5 ligas en la misma dirección</strong>, y eso es lo interesante: que 96 equipos cambien a la vez apunta a la competición o al criterio arbitral, no a una decisión táctica de cada club."}, "p90_Fls": {"fija": "En las 5 temporadas la media de <strong>Faltas</strong> bajó de 12.05 a 11.71 (3 de las 5 ligas a la baja).", "salta": "La que más se movió es <strong>Bundesliga</strong>, que bajó de 11.89 a 10.42 (-12%), mientras las otras cuatro se movieron menos."}};
+  var insights = {"sh_Standard_Sh/90": {"fija": "En las 5 temporadas la media de <strong>Tiros</strong> subió de 12.36 a 14.23 (0 de las 5 ligas a la baja).", "salta": "Se movieron <strong>las 5 ligas en la misma dirección</strong>, y eso es lo interesante: que 96 equipos cambien a la vez apunta a la competición o al criterio arbitral, no a una decisión táctica de cada club."}, "ov_Per 90 Minutes_Gls": {"fija": "En las 5 temporadas la media de <strong>Goles</strong> subió de 1.37 a 1.49 (2 de las 5 ligas a la baja).", "salta": "La que más se movió es <strong>Bundesliga</strong>, que subió de 1.51 a 1.85 (+23%), mientras las otras cuatro se movieron menos."}, "sh_Standard_G/Sh": {"fija": "En las 5 temporadas la media de <strong>G/Sh</strong> subió de 0.10 a 0.10 (0 de las 5 ligas a la baja).", "salta": "Se movieron <strong>las 5 ligas en la misma dirección</strong>, y eso es lo interesante: que 96 equipos cambien a la vez apunta a la competición o al criterio arbitral, no a una decisión táctica de cada club."}, "gk_Performance_CS%": {"fija": "En las 5 temporadas la media de <strong>CS%</strong> bajó de 26.23 a 25.07 (3 de las 5 ligas a la baja).", "salta": "La que más se movió es <strong>La Liga</strong>, que bajó de 31.31 a 24.89 (-20%), mientras las otras cuatro se movieron menos."}, "p90_TklW": {"fija": "En las 5 temporadas la media de <strong>Tackles</strong> subió de 9.28 a 9.77 (1 de las 5 ligas a la baja).", "salta": "La que más se movió es <strong>La Liga</strong>, que subió de 8.99 a 10.28 (+14%), mientras las otras cuatro se movieron menos."}, "p90_Int": {"fija": "En las 5 temporadas la media de <strong>Intercep.</strong> bajó de 10.05 a 9.34 (5 de las 5 ligas a la baja).", "salta": "Se movieron <strong>las 5 ligas en la misma dirección</strong>, y eso es lo interesante: que 96 equipos cambien a la vez apunta a la competición o al criterio arbitral, no a una decisión táctica de cada club."}, "p90_Off": {"fija": "En las 5 temporadas la media de <strong>Offsides</strong> subió de 1.80 a 1.85 (2 de las 5 ligas a la baja).", "salta": "La que más se movió es <strong>Bundesliga</strong>, que bajó de 1.96 a 1.58 (-19%), mientras las otras cuatro se movieron menos."}, "p90_Fls": {"fija": "En las 5 temporadas la media de <strong>Faltas</strong> bajó de 12.05 a 11.66 (3 de las 5 ligas a la baja).", "salta": "La que más se movió es <strong>Serie A</strong>, que bajó de 13.32 a 11.33 (-15%), mientras las otras cuatro se movieron menos."}};
   function setInsight(key, estado) {
     var d = insights[key];
     if (!d) return;
-    document.getElementById('chart_76a11dbe_ins_estado').textContent = estado;
-    document.getElementById('chart_76a11dbe_ins_fija').innerHTML = d.fija;
-    var s = document.getElementById('chart_76a11dbe_ins_salta');
+    document.getElementById('chart_87986b67_ins_estado').textContent = estado;
+    document.getElementById('chart_87986b67_ins_fija').innerHTML = d.fija;
+    var s = document.getElementById('chart_87986b67_ins_salta');
     s.innerHTML = d.salta || '';
     s.style.display = d.salta ? '' : 'none';
   }
-  function valor(spec) { return document.getElementById('chart_76a11dbe_' + spec.id).value; }
+  function valor(spec) { return document.getElementById('chart_87986b67_' + spec.id).value; }
   function estado() { return specs.map(valor).join('|'); }
   function apply(u) {
     if (!u) return;
@@ -235,14 +265,14 @@
       // dict = todas las trazas; lista = pasos con sus propios índices
       var steps = Array.isArray(u.restyle) ? u.restyle : [{update: u.restyle}];
       steps.forEach(function(s) {
-        if (s.traces) Plotly.restyle('chart_76a11dbe', s.update, s.traces);
-        else Plotly.restyle('chart_76a11dbe', s.update);
+        if (s.traces) Plotly.restyle('chart_87986b67', s.update, s.traces);
+        else Plotly.restyle('chart_87986b67', s.update);
       });
     }
-    if (u.relayout) Plotly.relayout('chart_76a11dbe', u.relayout);
+    if (u.relayout) Plotly.relayout('chart_87986b67', u.relayout);
   }
   specs.forEach(function(spec) {
-    var el = document.getElementById('chart_76a11dbe_' + spec.id);
+    var el = document.getElementById('chart_87986b67_' + spec.id);
     el.value = spec.default;
     el.addEventListener('change', function(e) {
       apply(spec.updates[e.target.value]);

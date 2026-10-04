@@ -10,7 +10,9 @@ from plotly.subplots import make_subplots
 from functools import partial
 
 import insights as ins
-from site_utils import PROCESSED_DIR, ChartPage
+from consolidate_data import ELO_TOP, NIVELES
+from site_utils import NIVEL_FILTER, PROCESSED_DIR, ChartPage
+from site_utils import nivel_filter as _nivel_filter
 from viz_theme import (
     LEAGUE_ORDER, SEQUENTIAL_BLUE, INK, FUENTE_FBREF,
     league_color, league_box_season_html,
@@ -77,6 +79,26 @@ RADAR_METRICS = [
     ("p90_TklW", "Tackles"), ("p90_Int", "Intercep."),
     ("p90_Off", "Offsides"), ("p90_Fls", "Faltas"),
 ]
+
+
+# El filtro de nivel de club (el desplegable "Clubes top / underground"). El
+# control y el porqué están en `site_utils.NIVEL_FILTER`; el umbral, en
+# `consolidate_data.ELO_TOP`. Acá solo queda lo propio de esta sección: qué
+# significa el filtro cuando cada punto ES un club.
+NIVEL_HINT = (f"Corte en {ELO_TOP} de ELO (clubelo) al arrancar la temporada: el "
+              f"20% más alto de las 5 ligas. Se mide antes de que empiece, así "
+              f"que una gran temporada de un club chico no lo saca del grupo.")
+
+
+def nivel_filter(df):
+    return _nivel_filter(df, NIVEL_HINT)
+
+
+def niveles_de(df):
+    """Las opciones que de verdad aparecen, en orden fijo (top primero)."""
+    if "nivel" not in df.columns:
+        return []
+    return [n for n in NIVELES if (df["nivel"] == n).any()]
 
 
 def load_data():
@@ -471,7 +493,8 @@ def chart_def_efficiency(df, seasons, season_data):
                                    "que_mirar": ins.definicion_que_mirar(),
                                    "por_que": ins.definicion_por_que(df),
                                    "dinamico": _por_temporada_y_liga(ins.definicion, df, seasons),
-                               })
+                               },
+                               cat_filter=nivel_filter(df))
     return ChartPage(
         slug="eficiencia-definicion", section=SECTION, title="Eficiencia de definición",
         subtitle="Precisión (SoT%) vs. definición (G/SoT) — un punto por equipo.",
@@ -479,12 +502,37 @@ def chart_def_efficiency(df, seasons, season_data):
     )
 
 
+def _entrada(generador, df, season, liga):
+    """El par (fija, salta) de una combinación, o un aviso si no queda nadie a
+    quien describir.
+
+    Hoy ninguna combinación queda vacía —la más chica es "Clubes top" en Ligue
+    1, que siempre tiene al menos al PSG—, pero los generadores piden el máximo
+    del subconjunto y sobre un DataFrame vacío eso revienta; subir `ELO_TOP`
+    bastaría para provocarlo."""
+    d = df[df["temporada"] == season]
+    if liga != ins.LIGA_TODAS:
+        d = d[d["liga"] == liga]
+    if d.empty:
+        return {"fija": "Ningún equipo cumple los filtros elegidos.", "salta": None}
+    return dict(zip(("fija", "salta"), generador(df, season, liga)))
+
+
 def _por_temporada_y_liga(generador, df, seasons):
-    """La caja de los scatters depende de los dos controles, así que hay que
+    """La caja de los scatters depende de los controles, así que hay que
     generar una entrada por cada combinación temporada x liga ("__all__" = sin
-    filtro). La clave tiene que coincidir con la que arma el JS."""
+    filtro), más una por cada opción del filtro de nivel encima de esas.
+
+    Las claves tienen que coincidir con las que arma el JS de la barra lateral:
+    `temporada|liga`, más `|nivel:<opción>` cuando el desplegable está puesto.
+    Se calculan acá, en el build, porque los textos salen de operar sobre los
+    datos y el sitio es estático: en el navegador no hay con qué rehacerlos."""
+    variantes = [("", df)]
+    variantes += [(f"|{NIVEL_FILTER['clave']}:{n}", df[df["nivel"] == n])
+                   for n in niveles_de(df)]
     return {
-        f"{s}|{liga}": dict(zip(("fija", "salta"), generador(df, s, liga)))
+        f"{s}|{liga}{sufijo}": _entrada(generador, datos, s, liga)
+        for sufijo, datos in variantes
         for s in seasons
         for liga in [ins.LIGA_TODAS] + list(LEAGUE_ORDER)
     }
@@ -526,7 +574,8 @@ def chart_gk_vs_result(df, seasons, season_data):
                                    "por_que": ins.porteria_por_que(df),
                                    "dinamico": _por_temporada_y_liga(
                                        ins.porteria, df, seasons),
-                               })
+                               },
+                               cat_filter=nivel_filter(df))
     return ChartPage(
         slug="porteria-vs-resultado", section=SECTION, title="Portería vs. resultado del equipo",
         subtitle="Porterías a cero (%) vs. puntos por partido — un punto por equipo.",
@@ -581,7 +630,8 @@ def chart_gk_demand(df, seasons, season_data):
                                    "por_que": ins.exigencia_por_que(df),
                                    "dinamico": _por_temporada_y_liga(
                                        ins.exigencia, df, seasons),
-                               })
+                               },
+                               cat_filter=nivel_filter(df))
     return ChartPage(
         slug="exigencia-rendimiento", section=SECTION, title="Exigencia vs. rendimiento",
         subtitle="Tiros a puerta enfrentados (SoTA) vs. tasa de atajadas (Save%) — un punto por equipo.",
@@ -671,7 +721,7 @@ def chart_explorer(df, seasons, season_data):
         body_html=explorer_chart_html(
             season_data, VARIABLES, name_col="Squad", search_label="club",
             entidad="equipos", default_x="ov_Poss", default_y="pt_Team Success_PPM",
-            base_size=11),
+            base_size=11, cat_filter=nivel_filter(df)),
         kind="explorer",
     )
 

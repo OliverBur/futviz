@@ -4,15 +4,21 @@ Entrada  — `data/<temporada>/` con los archivos tal cual se bajan:
              leagues_{overall,shoot,playtime,misc,gk}.csv  (fbref, equipos)
              {premier,laliga,seriea,bundes,ligue1}-players.csv  (Understat, jugadores)
              fbref-players.csv  (fbref, jugadores) — opcional, aporta el año de
-                                nacimiento y la posición principal, que
-                                Understat no publica
+                                nacimiento, la posición principal y lo único
+                                defensivo que existe a nivel jugador (entradas
+                                ganadas, intercepciones, faltas), nada de lo
+                                cual publica Understat
+             elo.csv            (clubelo, equipos) — opcional, el rating Elo de
+                                cada club en esa temporada (`fetch_elo.py`)
 
 Salida   — `data/processed/`:
              teams_all_seasons.{csv,xlsx}    una fila por equipo y temporada,
-                                             las 5 tablas de fbref unidas a lo ancho
+                                             las 5 tablas de fbref unidas a lo
+                                             ancho, más `elo_*` si estaba elo.csv
              players_all_seasons.{csv,xlsx}  una fila por jugador, liga y temporada,
-                                             con `born`, `sub21` y `posicion` si estaba
-                                             fbref-players.csv
+                                             con `born`, `sub21`, `posicion` y las
+                                             columnas defensivas (ver `MISC_COLS`)
+                                             si estaba fbref-players.csv
 
 Las temporadas que todavía no estén descargadas se saltan con un aviso, así que
 el script se puede correr hoy con una sola temporada y otra vez cuando estén las
@@ -30,7 +36,7 @@ import pandas as pd
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 OUT_DIR = DATA_DIR / "processed"
 
-SEASONS = ["2021-22", "2022-23", "2023-24", "2024-25", "2025-26"]
+SEASONS = ["2021-22", "2022-23", "2023-24", "2024-25", "2025-26", "2026-27"]
 
 # fbref concatena las 5 ligas en este orden, sin columna que las identifique
 LEAGUE_ORDER = ["Bundesliga", "Serie A", "Ligue 1", "La Liga", "Premier League"]
@@ -69,6 +75,72 @@ PLAYER_FILES = {
 # igual.
 FBREF_PLAYER_FILE = "fbref-players.csv"
 
+# Lo que se conserva de la tabla `misc` de fbref y cómo se llama en la tabla
+# consolidada. Es **todo lo defensivo que fbref sigue publicando** a nivel
+# jugador: las acciones avanzadas (entradas por tercio, regates enfrentados,
+# bloqueos, despejes, duelos aéreos, recuperaciones) desaparecieron del sitio
+# —ver `EXTRA_TABLAS` en `fetch_fbref_players.py`, donde está la verificación—
+# y Understat, que es shot-event-driven, no publica ninguna.
+#
+# Las tarjetas no entran aunque `misc` las traiga: Understat ya las da, y dos
+# columnas para el mismo hecho es justo lo que este proyecto evita.
+MISC_COLS = {
+    "msc_Performance_TklW": "tkl_w",
+    "msc_Performance_Int": "interceptions",
+    "msc_Performance_Fls": "fouls",
+    "msc_Performance_Fld": "fouled",
+    "msc_Performance_Crs": "crosses",
+    "msc_Performance_Off": "offsides",
+}
+
+# Tabla de ELO de clubelo (`fetch_elo.py`). Opcional como las `vs`: si no está,
+# `teams_all_seasons.csv` sale sin las columnas `elo_*` y todo lo demás igual.
+ELO_FILE = "elo.csv"
+ELO_COLS = ["elo_club", "elo_pre", "elo_medio", "elo_fin"]
+
+# Corte entre clubes "top" y "underground", que alimenta el filtro de nivel de
+# las gráficas de Equipos y de Jugadores. Vive acá y no en `web/charts/` para
+# que el umbral esté en UN solo lugar: las dos secciones tienen que clasificar
+# igual, si no un mismo club sería top en una gráfica y underground en la de al
+# lado.
+#
+# Las tres decisiones detrás del número (la versión larga está en la bitácora,
+# entrada del 2026-08-30):
+#
+#   · `elo_pre` y no `elo_medio`/`elo_fin` porque cuanto más tarde se mide el
+#     ELO, más contiene los resultados de esa misma temporada (r con los puntos
+#     0.70 / 0.82 / 0.87). El caso que decide es el Leverkusen 2023-24: llega
+#     con 1748 y hace la temporada invicta. Con `elo_medio` (1852) quedaría
+#     clasificado como club top y desaparecería del filtro underground, que es
+#     exactamente la historia que el filtro existe para mostrar.
+#   · Umbral ABSOLUTO y no un percentil por liga: la escala ELO ya es
+#     comparable entre ligas, así que cortarla en un valor fijo es lo honesto.
+#     Un percentil por liga fabricaría cuatro "grandes" en Ligue 1 los hubiera
+#     o no — el mismo defecto por el que se descartó el z-score en el radar.
+#     El precio, aceptado a sabiendas: el grupo top es ~40% Premier League y
+#     Ligue 1 aporta solo al PSG.
+#   · 1800 y no otro número: cae en el percentil 80 global (un 20/80 redondo),
+#     deja ~20 equipos en el grupo top y ~77 en el underground, y es el umbral
+#     más alto con el que **ninguna** de las 25 combinaciones liga×temporada
+#     queda vacía (a partir de 1850 sí las hay).
+#
+# La clasificación es POR TEMPORADA, no fija por club: 9 clubes son top en las
+# cinco, 23 cambian de lado y 98 no lo son nunca. Que el Newcastle sea
+# underground en 2021-22 y top en 2024-25 no es un defecto: es lo que pasó.
+ELO_TOP = 1800
+NIVEL_COL = "elo_pre"
+NIVEL_TOP = "Clubes top"
+NIVEL_UNDER = "Clubes underground"
+NIVELES = (NIVEL_TOP, NIVEL_UNDER)
+
+
+def nivel_de(elo):
+    """La etiqueta de nivel de un ELO, o nulo si no hay dato — un club sin ELO
+    no es ni top ni underground, igual que un jugador sin edad no es sub-21."""
+    if pd.isna(elo):
+        return pd.NA
+    return NIVEL_TOP if elo >= ELO_TOP else NIVEL_UNDER
+
 # Cuántos equipos tiene cada liga en cada temporada. Solo se usa como
 # verificación cruzada de la detección automática: si los dos métodos no
 # coinciden, el script para en vez de escribir una liga equivocada.
@@ -79,6 +151,7 @@ EXPECTED_SIZES = {
     "2023-24": [18, 20, 18, 20, 20],
     "2024-25": [18, 20, 18, 20, 20],
     "2025-26": [18, 20, 18, 20, 20],
+    "2026-27": [18, 20, 18, 20, 20],
 }
 
 
@@ -167,6 +240,115 @@ def load_teams_season(season_dir, season):
     df.insert(0, "temporada", season)
     df.insert(2, "liga", df.pop("liga"))
     return df
+
+
+def attach_elo(teams, season_dir, season):
+    """Le pega a los equipos sus columnas `elo_*`, si `elo.csv` está.
+
+    El cruce es por `Squad` y no por nombre normalizado como el de jugadores:
+    `fetch_elo.py` parte del mismo `leagues_overall.csv` que este archivo, así
+    que los nombres son idénticos por construcción. Que falte alguno sería un
+    error de verdad —el CSV se generó con otra temporada de fbref— y por eso
+    revienta en vez de dejar nulos en silencio.
+    """
+    f = season_dir / ELO_FILE
+    if not f.exists():
+        return teams, None
+
+    elo = pd.read_csv(f)
+    faltan = set(teams["Squad"]) - set(elo["Squad"])
+    if faltan:
+        raise ValueError(
+            f"{season}: {ELO_FILE} no trae ELO de {sorted(faltan)}. "
+            f"Vuelve a correr `python fetch_elo.py {season}`."
+        )
+    teams = teams.merge(elo[["Squad"] + ELO_COLS], on="Squad", how="left")
+    teams["nivel"] = [nivel_de(e) for e in teams[NIVEL_COL]]
+    return teams, elo
+
+
+def puente_understat_fbref(players, season_dir, season):
+    """Cómo se llama en fbref cada equipo de Understat, deducido de los datos.
+
+    Understat y fbref escriben los clubes distinto ('Borussia M.Gladbach' vs.
+    'Gladbach', 'Wolverhampton Wanderers' vs. 'Wolves'), así que hace falta un
+    puente. En vez de escribirlo a mano —una tercera tabla de alias que
+    mantener cada vez que asciende alguien— se **deduce**: los jugadores ya
+    cruzan por nombre con fbref (ver `attach_fbref`) y la tabla de fbref trae el
+    club, así que para cada equipo de Understat el club fbref que más se repite
+    entre sus jugadores cruzados es su equivalente.
+
+    Verificado sobre las 5 temporadas: los 25 conjuntos liga-temporada salen
+    biyectivos y completos, sin un solo alias escrito a mano.
+
+    Devuelve `(mapa, avisos)`. Los avisos son los casos en que la mayoría no
+    llega al 80% —señal de que el cruce por nombre falló para ese equipo— y se
+    imprimen en vez de romper, porque un puente imperfecto deja sin `nivel` a un
+    equipo pero no invalida el resto de la consolidación.
+    """
+    path = season_dir / FBREF_PLAYER_FILE
+    if not path.exists():
+        return {}, []
+
+    fb = pd.read_csv(path, encoding="utf-8-sig")
+    # El club donde más jugó, para quien cambió a mitad de temporada: es la
+    # misma fila que elige `attach_fbref` y por el mismo motivo.
+    fb = fb.sort_values("min", ascending=False).copy()
+    fb["key"] = [_key(l, n) for l, n in zip(fb["liga"], fb["player"])]
+    club_de = dict(zip(fb.drop_duplicates("key")["key"],
+                        fb.drop_duplicates("key")["team"]))
+
+    d = players.copy()
+    d["key"] = [_key(l, n) for l, n in zip(d["liga"], d["player"])]
+    d["fb_team"] = d["key"].map(club_de)
+    d = d[d["fb_team"].notna()]
+
+    mapa, avisos = {}, []
+    for (liga, us_team), g in d.groupby(["liga", ultimo_club_col(d)]):
+        cuenta = Counter(g["fb_team"])
+        ganador, n = cuenta.most_common(1)[0]
+        confianza = n / sum(cuenta.values())
+        mapa[(liga, us_team)] = ganador
+        if confianza < 0.80:
+            avisos.append(f"{season} {liga}: '{us_team}' -> '{ganador}' con solo "
+                          f"{confianza:.0%} de acuerdo ({dict(cuenta)})")
+    return mapa, avisos
+
+
+def ultimo_club_col(d):
+    """El último club del campo `team` de Understat, como Serie.
+
+    `load_players_season` deja `team` tal cual viene ('Bournemouth,Manchester
+    City' para quien se fue en enero) porque quedarse con uno es decisión de
+    análisis. Acá se toma el último, que es **la misma decisión que toma
+    `web/charts/players.py` para mostrarlo**: si el hover dice "Manchester
+    City", el filtro de nivel tiene que clasificarlo por Manchester City y no
+    por el club que dejó."""
+    return d["team"].str.split(",").str[-1].str.strip()
+
+
+def attach_elo_players(players, teams, season_dir, season):
+    """Le pega a cada jugador el `nivel` del club en el que jugó esa temporada.
+
+    Devuelve `(df, avisos)`. Sin ELO en `teams` —o sin `fbref-players.csv`, que
+    es de donde sale el puente— la columna queda entera en nulo y el filtro
+    simplemente no se dibuja en el sitio."""
+    players = players.copy()
+    if teams is None or "nivel" not in teams.columns:
+        players["nivel"] = pd.NA
+        return players, []
+
+    mapa, avisos = puente_understat_fbref(players, season_dir, season)
+    nivel_de_club = {(l, s): n for l, s, n in
+                     zip(teams["liga"], teams["Squad"], teams["nivel"])}
+
+    def nivel(liga, us_team):
+        squad = mapa.get((liga, us_team))
+        return pd.NA if squad is None else nivel_de_club.get((liga, squad), pd.NA)
+
+    players["nivel"] = [nivel(l, t) for l, t
+                        in zip(players["liga"], ultimo_club_col(players))]
+    return players, avisos
 
 
 def load_players_season(season_dir, season):
@@ -278,22 +460,23 @@ def _por_subconjunto(players, fb):
     ambiguo, y ante la duda se prefiere dejarlo sin edad antes que asignarle la
     de otro.
 
-    Trae `born` y `pos` de una sola pasada: son dos columnas de la MISMA fila de
-    fbref, y resolver el cruce dos veces para llegar a ella sería hacer el
-    doble de trabajo para el mismo resultado. La unicidad se sigue evaluando
-    sobre `born` porque es el dato que distingue a dos personas — dos filas del
-    mismo jugador (cambió de club dentro de la liga) comparten `born` pero
-    pueden traer distinto `pos`."""
-    born, pos = players["born"].copy(), players["fb_pos"].copy()
-    faltan = players.index[players["born"].isna()]
+    Devuelve la **clave** de la fila de fbref que le toca a cada jugador, no
+    los datos en sí: de esa clave cuelgan `born`, `pos` y las columnas
+    defensivas, y resolver el cruce una vez para traer todo junto es lo que
+    evita repetir este trabajo por cada columna nueva. La unicidad se sigue
+    evaluando sobre `born` porque es el dato que distingue a dos personas —
+    dos filas del mismo jugador (cambió de club dentro de la liga) comparten
+    `born` pero pueden traer distinto `pos`."""
+    clave = players["fb_key"].copy()
+    faltan = players.index[clave.isna()]
     if not len(faltan):
-        return born, pos
+        return clave
 
     # candidatos agrupados por liga: cruzar entre ligas no tendría sentido y
     # además multiplicaría las coincidencias espurias
     por_liga = {}
     for fila in fb.itertuples(index=False):
-        por_liga.setdefault(fila.liga, []).append((set(fila.tokens), fila.born, fila.pos))
+        por_liga.setdefault(fila.liga, []).append((set(fila.tokens), fila.born, fila.key))
 
     propuestas = {}
     for i in faltan:
@@ -301,8 +484,8 @@ def _por_subconjunto(players, fb):
         if not tokens:
             continue
         candidatos = [
-            (frozenset(cand), b, p)
-            for cand, b, p in por_liga.get(players.at[i, "liga"], [])
+            (frozenset(cand), b, k)
+            for cand, b, k in por_liga.get(players.at[i, "liga"], [])
             if tokens <= cand or cand <= tokens
         ]
         # varios candidatos con el MISMO born no son ambiguos para lo que
@@ -313,11 +496,10 @@ def _por_subconjunto(players, fb):
     # que dos jugadores distintos reclamen la misma fila de fbref significa que
     # el nombre corto no alcanza para distinguirlos: se descartan los dos
     veces = Counter(cand for cand, _, _ in propuestas.values())
-    for i, (cand, b, p) in propuestas.items():
+    for i, (cand, _, k) in propuestas.items():
         if veces[cand] == 1:
-            born.at[i] = b
-            pos.at[i] = p
-    return born, pos
+            clave.at[i] = k
+    return clave
 
 
 def edad_en_temporada(born, season):
@@ -331,9 +513,15 @@ def edad_en_temporada(born, season):
 
 
 def attach_fbref(players, season_dir, season):
-    """Agrega `born`, `sub21` y `posicion` cruzando por nombre con la tabla de
-    fbref. Los tres salen del mismo cruce: Understat no publica ni la edad ni
-    una posición que diga cuál es la principal (ver `posicion_understat`).
+    """Agrega `born`, `sub21`, `posicion`, `nation` y las columnas defensivas
+    cruzando por nombre con la tabla de fbref. Todas salen del mismo cruce:
+    Understat no publica ni la edad, ni una posición que diga cuál es la
+    principal (ver `posicion_understat`), ni nacionalidad, ni una sola acción
+    defensiva.
+
+    `nation` es el código de país de 3 letras tal cual lo trae fbref (`ARG`,
+    `BRA`...) — se descartaba hasta ahora porque nada la usaba; la ficha de
+    jugador es la primera consumidora.
 
     Devuelve `(df, sin_match)`, donde `sin_match` son las filas de Understat que
     no encontraron par — se informan en pantalla para poder revisarlas, porque
@@ -345,6 +533,7 @@ def attach_fbref(players, season_dir, season):
         players["born"] = pd.NA
         players["sub21"] = pd.NA
         players["posicion"] = [posicion_understat(p) for p in players["position"]]
+        players["nation"] = pd.NA
         return players, None
 
     fb = pd.read_csv(path, encoding="utf-8-sig")
@@ -362,22 +551,62 @@ def attach_fbref(players, season_dir, season):
     # Ordenado por minutos, la fila que sobrevive al colapso es la del club
     # donde más jugó — indistinto para `born`, pero es la que corresponde para
     # `pos`: quien se fue en enero pudo jugar de otra cosa en el club nuevo.
-    fb = (fb[~fb["key"].isin(ambiguos)]
-            .sort_values("min", ascending=False).drop_duplicates("key").copy())
+    fb = fb[~fb["key"].isin(ambiguos)].copy()
+
+    # Los CONTEOS se suman antes de colapsar, y no se toman de la fila que
+    # sobrevive: fbref parte en dos a quien cambió de club dentro de la liga,
+    # así que quedarse con la del club donde más jugó le borraría media
+    # temporada de faltas y de entradas. `born` y `pos` sí salen de esa fila —
+    # son propiedades del jugador, no cuentas que sumar.
+    #
+    # `fb_min` son los minutos de fbref, y es el divisor que les corresponde a
+    # estas tasas: los de Understat cuentan otra cosa (los suyos), y dividir
+    # una cuenta de fbref por minutos de Understat mezcla dos fuentes en un
+    # solo número.
+    disponibles = {c: n for c, n in MISC_COLS.items() if c in fb.columns}
+    sumas = (fb.groupby("key")[["min"] + list(disponibles)].sum(min_count=1)
+               .rename(columns={**disponibles, "min": "fb_min"}))
+
+    fb = fb.sort_values("min", ascending=False).drop_duplicates("key").copy()
     fb["tokens"] = [norm_name(n) for n in fb["player"]]
 
     players["key"] = [_key(l, n) for l, n in zip(players["liga"], players["player"])]
-    players = players.merge(fb[["key", "born", "pos"]].rename(columns={"pos": "fb_pos"}),
-                             on="key", how="left")
-    players["born"], players["fb_pos"] = _por_subconjunto(players, fb)
+    # Primera pasada: el nombre normalizado coincide exacto. La segunda
+    # (`_por_subconjunto`) rellena lo que quede, y las dos devuelven lo mismo:
+    # la clave de la fila de fbref, de la que después cuelga todo.
+    players["fb_key"] = players["key"].where(players["key"].isin(set(fb["key"])))
+    players["fb_key"] = _por_subconjunto(players, fb)
+
+    por_clave = fb.set_index("key")
+    players["born"] = por_clave["born"].reindex(players["fb_key"]).to_numpy()
+    fb_pos = por_clave["pos"].reindex(players["fb_key"]).to_numpy()
+    players["nation"] = (por_clave["nation"].reindex(players["fb_key"]).to_numpy()
+                          if "nation" in por_clave.columns else pd.NA)
 
     sin_match = players.loc[players["born"].isna(), ["player", "team", "liga", "min"]]
     edad = edad_en_temporada(players["born"], season)
     players["sub21"] = (edad <= 20).where(players["born"].notna())
     players["born"] = players["born"].astype("Int64")
     players["posicion"] = [posicion_fbref(f) or posicion_understat(u)
-                            for f, u in zip(players["fb_pos"], players["position"])]
-    return players.drop(columns=["key", "fb_pos"]), sin_match
+                            for f, u in zip(fb_pos, players["position"])]
+
+    # Las defensivas van al final, ya con sus tasas por 90'. Quien no cruzó por
+    # nombre las tiene todas nulas, que es la misma regla que ya lo deja sin
+    # edad y sin posición de fbref.
+    defensivas = sumas.reindex(players["fb_key"]).reset_index(drop=True)
+    # Un 0 en los minutos de fbref daría tasas infinitas. Pasa con quien
+    # figura en la tabla sin haber jugado; queda sin tasa, que es lo correcto.
+    noventas = (defensivas.pop("fb_min") / 90).replace(0, pd.NA)
+    for col in defensivas.columns:
+        players[col] = defensivas[col].to_numpy()
+        players[f"{col}90"] = (defensivas[col] / noventas).to_numpy()
+    # Recuperaciones: las dos formas de quitar la pelota, sumadas. Va como
+    # columna propia y no calculada en cada gráfico porque es el eje de una de
+    # ellas y una variable de "Crea tu gráfico".
+    if {"tkl_w", "interceptions"} <= set(defensivas.columns):
+        players["recoveries"] = players["tkl_w"] + players["interceptions"]
+        players["recoveries90"] = players["tkl_w90"] + players["interceptions90"]
+    return players.drop(columns=["key", "fb_key"]), sin_match
 
 
 def load_shots_season(season_dir, season):
@@ -402,9 +631,12 @@ def write(df, stem, excel=True):
 
 def main():
     teams, players, shots, faltantes = [], [], [], []
+    t = None  # los equipos de la temporada en curso: los jugadores los usan
+              # para saber el nivel del club en el que jugaron
 
     for season in SEASONS:
         season_dir = DATA_DIR / season
+        t = None
         presentes = [f for f in list(TEAM_FILES.values()) + list(PLAYER_FILES)
                      if (season_dir / f).exists()]
         if not presentes:
@@ -414,18 +646,29 @@ def main():
         print(f"{season}:")
         if all((season_dir / f).exists() for f in TEAM_FILES.values()):
             t = load_teams_season(season_dir, season)
+            t, elo = attach_elo(t, season_dir, season)
             teams.append(t)
             con_vs = sum((season_dir / f).exists() for f in VS_FILES.values())
             print(f"  equipos   {len(t):4d}  " +
                   " · ".join(f"{k} {v}" for k, v in t['liga'].value_counts()[LEAGUE_ORDER].items()) +
                   (f"  (+{con_vs} tablas vs)" if con_vs else "  (sin tablas vs)"))
+            if elo is None:
+                print("    sin elo.csv: no hay columnas elo_*")
+            else:
+                print(f"    ELO {t['elo_medio'].notna().sum()}/{len(t)}"
+                      f" · rango {t['elo_medio'].min():.0f}–{t['elo_medio'].max():.0f}"
+                      f" · top {(t['nivel'] == NIVEL_TOP).sum()}"
+                      f" / underground {(t['nivel'] == NIVEL_UNDER).sum()}")
         else:
             print("  equipos   faltan archivos leagues_*.csv, se salta")
 
         if all((season_dir / f).exists() for f in PLAYER_FILES):
             p = load_players_season(season_dir, season)
             p, sin_match = attach_fbref(p, season_dir, season)
+            p, avisos_elo = attach_elo_players(p, t, season_dir, season)
             players.append(p)
+            for a in avisos_elo:
+                print(f"    ojo, puente Understat→fbref: {a}")
             con_pos = int(p["posicion"].notna().sum())
             print(f"  jugadores {len(p):4d}", end="")
             if sin_match is None:
@@ -435,9 +678,11 @@ def main():
             else:
                 con_born = len(p) - len(sin_match)
                 sub21 = int((p["sub21"] == True).sum())
+                con_nivel = int(p["nivel"].notna().sum())
                 print(f"  · edad {con_born}/{len(p)} ({con_born / len(p):.1%})"
                       f" · sub-21 {sub21}"
-                      f" · posición {con_pos}/{len(p)} ({con_pos / len(p):.1%})")
+                      f" · posición {con_pos}/{len(p)} ({con_pos / len(p):.1%})"
+                      f" · nivel de club {con_nivel}/{len(p)} ({con_nivel / len(p):.1%})")
                 # Los que no cruzaron se listan por minutos: un titular sin edad
                 # importa mucho más que un suplente, y es el que hay que ir a
                 # revisar a mano si el porcentaje baja.

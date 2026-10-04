@@ -25,9 +25,20 @@ Lo que NO se calcula acá, a propósito, porque son decisiones de análisis y no
 descarga: distancia a puerta (depende de qué dimensiones de cancha asumas) y
 cualquier agregado por equipo.
 
-Tarda ~5 min por liga-temporada (~2 h las 25). Va escribiendo temporada por
-temporada, así que si se corta, lo ya bajado queda; y soccerdata cachea, o sea
-que volver a correrlo no re-descarga nada.
+Por qué acá NO se usa `soccerdata` (a diferencia de como se usó hasta la
+temporada 2025-26): el 26-09-2026 se detectó que understat.com movió los datos
+de sus páginas de liga y de partido de JSON embebido en el HTML a llamadas AJAX
+propias — ver `fetch_understat.py` para el detalle completo. `soccerdata.
+Understat.read_shot_events()` solo sabe leer el formato viejo, así que quedó
+inútil para bajar partidos nuevos (no solo los de 2026-27). Acá se pide
+directo:
+
+    GET  getLeagueData/<liga>/<temporada>   lista de partidos jugados (`dates`,
+                                             con `isResult`) + `teams` (id<->nombre)
+    GET  getMatchData/<id_partido>          `shots.h` / `shots.a`, un dict por tiro
+
+Sin Cloudflare ni sesión especial de por medio — un `requests.get()` sencillo
+alcanza para las dos, igual que ya se comprobó para `getPlayersStats`.
 
 Uso:
     python fetch_shots.py                 # todas las temporadas que falten
@@ -41,20 +52,25 @@ import warnings
 from pathlib import Path
 
 import pandas as pd
+import requests
 
 warnings.filterwarnings("ignore")
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
-SEASONS = ["2021-22", "2022-23", "2023-24", "2024-25", "2025-26"]
+SEASONS = ["2021-22", "2022-23", "2023-24", "2024-25", "2025-26", "2026-27"]
 
-# liga en soccerdata -> nombre que usa el resto del proyecto
+API = "https://understat.com"
+DELAY_SECONDS = 0.3  # entre partidos; son ~50-380 pedidos por liga-temporada
+REINTENTOS = 4
+
+# liga -> código de Understat en la URL
 LEAGUES = {
-    "GER-Bundesliga": "Bundesliga",
-    "ITA-Serie A": "Serie A",
-    "FRA-Ligue 1": "Ligue 1",
-    "ESP-La Liga": "La Liga",
-    "ENG-Premier League": "Premier League",
+    "Bundesliga": "Bundesliga",
+    "Serie A": "Serie_A",
+    "Ligue 1": "Ligue_1",
+    "La Liga": "La_liga",
+    "Premier League": "EPL",
 }
 
 COLUMNS = [
@@ -63,11 +79,89 @@ COLUMNS = [
     "xg", "location_x", "location_y", "shot_id", "player_id", "team_id",
 ]
 
+# JSON de Understat -> mismos rótulos que ya usan los notebooks y el resto del
+# sitio (el patch de `Head`/`OtherBodyPart` que hacía falta contra soccerdata
+# 1.9.0 ya está incorporado acá directo, no hace falta parchear nada).
+RESULTS = {
+    "Goal": "Goal", "OwnGoal": "Own Goal", "BlockedShot": "Blocked Shot",
+    "SavedShot": "Saved Shot", "MissedShots": "Missed Shot", "ShotOnPost": "Shot On Post",
+}
+SITUATIONS = {
+    "OpenPlay": "Open Play", "FromCorner": "From Corner",
+    "SetPiece": "Set Piece", "DirectFreekick": "Direct Freekick", "Penalty": "Penalty",
+}
+BODY_PARTS = {"RightFoot": "Right Foot", "LeftFoot": "Left Foot", "OtherBodyPart": "Other", "Head": "Head"}
 
-def season_to_understat(season):
-    """'2024-25' -> '2024-2025'."""
-    inicio, fin = season.split("-")
-    return f"{inicio}-{inicio[:2]}{fin}"
+# Partidos que no se pudieron leer, acumulados durante la corrida.
+PARTIDOS_SALTADOS = []
+
+
+def season_code(season):
+    """'2024-25' -> '2024', el año de arranque que espera Understat."""
+    return season.split("-")[0]
+
+
+# Sin esto, understat.com devuelve 404 — el endpoint solo responde a
+# requests que se parezcan a las que dispara su propio JS (ver `Referer` y
+# `X-Requested-With` en `main/getPlayersStats/`, comprobado en `fetch_understat.py`).
+HEADERS = {"User-Agent": "Mozilla/5.0", "X-Requested-With": "XMLHttpRequest",
+           "Referer": "https://understat.com/"}
+
+
+def pedir(url, **kwargs):
+    """GET con reintentos — los timeouts contra understat son frecuentes y
+    transitorios, sobre todo pidiendo cientos de partidos seguidos."""
+    for intento in range(1, REINTENTOS + 1):
+        try:
+            r = requests.get(url, headers=HEADERS, timeout=30, **kwargs)
+            r.raise_for_status()
+            return r.json()
+        except (requests.RequestException, ValueError) as e:
+            if intento == REINTENTOS:
+                raise
+            time.sleep(DELAY_SECONDS * 4 * intento)
+
+
+def partidos_jugados(liga_code, temporada_code):
+    """(dict id->nombre de equipo, [ids de partido ya jugados]) de una
+    liga-temporada."""
+    data = pedir(f"{API}/getLeagueData/{liga_code}/{temporada_code}")
+    equipos = {int(t["id"]): t["title"] for t in data.get("teams", {}).values()}
+    ids = [d["id"] for d in data.get("dates", []) if d.get("isResult")]
+    return equipos, ids
+
+
+def tiros_de(game_id, equipos):
+    """Los tiros de un partido, en el formato final. `None` si el partido
+    viene malformado (sin `shots`, o sin los dos lados)."""
+    data = pedir(f"{API}/getMatchData/{game_id}")
+    shots = data.get("shots")
+    if not shots or not shots.get("h") or not shots.get("a"):
+        return None
+
+    nombre_a_id = {v: k for k, v in equipos.items()}
+    filas = []
+    for lado in ("h", "a"):
+        for s in shots[lado]:
+            equipo = s["h_team"] if s["h_a"] == "h" else s["a_team"]
+            filas.append({
+                "game_id": int(game_id),
+                "date": s["date"],
+                "team": equipo,
+                "player": s["player"],
+                "assist_player": s.get("player_assisted") or None,
+                "minute": int(s["minute"]),
+                "situation": SITUATIONS.get(s["situation"], s["situation"]),
+                "body_part": BODY_PARTS.get(s["shotType"], s["shotType"]),
+                "result": RESULTS.get(s["result"], s["result"]),
+                "xg": float(s["xG"]),
+                "location_x": float(s["X"]),
+                "location_y": float(s["Y"]),
+                "shot_id": int(s["id"]),
+                "player_id": int(s["player_id"]),
+                "team_id": nombre_a_id.get(equipo),
+            })
+    return filas
 
 
 def add_rival(df):
@@ -84,78 +178,21 @@ def add_rival(df):
     return df
 
 
-INTENTOS = 3  # los timeouts contra understat son frecuentes y transitorios
-
-# Partidos que Understat sirve malformados, acumulados durante la corrida.
-PARTIDOS_SALTADOS = []
-
-
-def parchear_mapeos():
-    """Recupera cabezazos y penales, que soccerdata 1.9.0 tira a nulo.
-
-    Sus diccionarios de traducción están incompletos frente a lo que sirve
-    Understat: `SHOT_BODY_PARTS` no contempla `Head` y escribe `OtherBodyParts`
-    donde la API manda `OtherBodyPart` (singular), y `SHOT_SITUATIONS` no
-    contempla `Penalty`. Todo lo que no está en el diccionario se convierte en
-    `pd.NA`, así que ~17% de los tiros perdían la parte del cuerpo y los penales
-    perdían la situación — dos features de primer orden para un modelo de xG.
-    """
-    from soccerdata import understat as us_mod
-
-    us_mod.SHOT_BODY_PARTS.update({"Head": "Head", "OtherBodyPart": "Other"})
-    us_mod.SHOT_SITUATIONS.update({"Penalty": "Penalty"})
-
-
-def parchear_soccerdata():
-    """Evita que un partido malformado tumbe la liga-temporada entera.
-
-    Para algunos partidos Understat devuelve el roster como lista vacía (`[]`)
-    en vez de diccionario — es cómo PHP serializa un array asociativo vacío. El
-    parser de soccerdata hace `rosters["h"].values()` sin comprobarlo y revienta
-    con `AttributeError`, perdiendo las ~300 jornadas restantes por un partido.
-
-    `_read_match` ya tiene un contrato para "este partido no se puede leer":
-    devolver `None`, que el llamador saltea con `if data is None: continue`. El
-    parche solo traduce la excepción a ese contrato, y anota cuál fue para que
-    el hueco quede reportado y no silencioso.
-    """
-    from soccerdata.understat import Understat
-
-    if getattr(Understat._read_match, "_parcheado", False):
-        return
-    original = Understat._read_match
-
-    def _read_match(self, url, match_id, *args, **kwargs):
+def fetch_league_season(liga_code, temporada_code, liga):
+    """Todos los tiros de una liga-temporada."""
+    equipos, ids = partidos_jugados(liga_code, temporada_code)
+    filas = []
+    for game_id in ids:
         try:
-            return original(self, url, match_id, *args, **kwargs)
-        except AttributeError:
-            PARTIDOS_SALTADOS.append(match_id)
-            return None
-
-    _read_match._parcheado = True
-    Understat._read_match = _read_match
-
-
-def fetch_league_season(liga_sd, season):
-    """Una liga-temporada, reintentando ante fallos de red.
-
-    soccerdata cachea partido por partido, así que un reintento no vuelve a
-    pedir lo ya bajado: retoma donde se cortó.
-    """
-    import soccerdata as sd
-
-    parchear_mapeos()
-    parchear_soccerdata()
-    for intento in range(1, INTENTOS + 1):
-        try:
-            us = sd.Understat(leagues=liga_sd, seasons=season_to_understat(season))
-            return us.read_shot_events().reset_index()
-        except Exception as exc:
-            if intento == INTENTOS:
-                raise
-            print(f"      intento {intento}/{INTENTOS} falló ({type(exc).__name__}), "
-                  f"reintentando...", flush=True)
-            time.sleep(10 * intento)
+            del_partido = tiros_de(game_id, equipos)
+        except Exception:
+            del_partido = None
+        if del_partido is None:
+            PARTIDOS_SALTADOS.append(game_id)
+            continue
+        filas.extend(del_partido)
+        time.sleep(DELAY_SECONDS)
+    return pd.DataFrame(filas)
 
 
 def build_season(season, force=False):
@@ -166,29 +203,34 @@ def build_season(season, force=False):
     archivo existía, y dejaba el hueco ahí para siempre.
     """
     out_path = DATA_DIR / season / "shots.csv"
+    temporada_code = season_code(season)
 
     previo = None
     if out_path.exists() and not force:
         previo = pd.read_csv(out_path, encoding="utf-8-sig")
         ya = set(previo["liga"])
-        pendientes = {sd_: l for sd_, l in LEAGUES.items() if l not in ya}
+        pendientes = {code: l for l, code in LEAGUES.items() if l not in ya}
         if not pendientes:
             print(f"  completa ({len(previo)} tiros, 5/5 ligas), se salta")
             return 0
         print(f"  incompleta: faltan {sorted(pendientes.values())}", flush=True)
     else:
-        pendientes = dict(LEAGUES)
+        pendientes = {code: l for l, code in LEAGUES.items()}
 
     bloques = [previo] if previo is not None else []
     fallidas = []
-    for liga_sd, liga in pendientes.items():
+    for liga_code, liga in pendientes.items():
         t0 = time.time()
         n_saltados_antes = len(PARTIDOS_SALTADOS)
         try:
-            df = fetch_league_season(liga_sd, season)
+            df = fetch_league_season(liga_code, temporada_code, liga)
         except Exception as exc:  # una liga caída no debe tumbar la corrida
             print(f"    {liga:15s} FALLÓ: {type(exc).__name__}: {exc}", flush=True)
             fallidas.append(liga)
+            continue
+
+        if df.empty:
+            print(f"    {liga:15s} sin partidos jugados todavía", flush=True)
             continue
 
         df["temporada"] = season
@@ -234,7 +276,9 @@ def main():
         print(f"\n{season}", flush=True)
         total += build_season(season, force=force)
 
-    print(f"\n{total} tiros bajados en esta corrida, en {(time.time()-t_inicio)/60:.0f} min.")
+    print(f"\n{total} tiros bajados en esta corrida, en {(time.time()-t_inicio)/60:.1f} min.")
+    if PARTIDOS_SALTADOS:
+        print(f"Partidos omitidos (malformados): {PARTIDOS_SALTADOS}")
 
     # estado final de TODAS las temporadas, no solo las de esta corrida: un
     # hueco por un timeout es silencioso y envenena cualquier análisis después
@@ -245,7 +289,7 @@ def main():
         if not p.exists():
             print(f"  {s}: sin descargar"); incompletas.append(s); continue
         d = pd.read_csv(p, encoding="utf-8-sig")
-        faltan = sorted(set(LEAGUES.values()) - set(d["liga"]))
+        faltan = sorted(set(LEAGUES) - set(d["liga"]))
         print(f"  {s}: {len(d):6d} tiros · {d['liga'].nunique()}/5 ligas"
               + (f"  FALTAN {faltan}" if faltan else ""))
         if faltan:

@@ -693,64 +693,337 @@ def perfil(df, season, liga=None):
              f"({_fmt(completo['xG90'])} xG90 y {_fmt(completo['xA90'])} xA90). Solo "
              f"{n_ambos} de {len(d)} jugadores superan el promedio en los dos ejes a "
              f"la vez: hacer las dos cosas es raro.")
+    entre_ligas = _perfil_entre_ligas(d) if liga in (None, LIGA_TODAS) else ""
+    if entre_ligas:
+        salta += " " + entre_ligas
+    return fija, salta
+
+
+def _perfil_entre_ligas(d):
+    """Qué tan distintas son las cinco ligas entre sí, comparado con lo que se
+    estiran por dentro.
+
+    Es lo que decían los dos boxplots por liga que hasta el 2026-09-01 fueron
+    página aparte ("Nivel goleador / de creación esperado por liga") y hasta el
+    2026-09-08, las cajas de los márgenes. Sin ellas la conclusión sigue en pie
+    —se ve en cómo se mezclan los cinco colores de la nube—, así que se dice acá
+    con números. Solo tiene sentido con más de una liga a la vista, así que
+    quien llama la saltea cuando hay una sola elegida."""
+    frases = []
+    for col, nombre in (("xG90", "xG90"), ("xA90", "xA90")):
+        med = d.groupby("liga", observed=True)[col].median().dropna()
+        if len(med) < 2:
+            continue
+        lo, hi = _fmt(med.min()), _fmt(med.max())
+        # Con un subconjunto chico (o de porteros, donde las cinco medianas son
+        # 0.00) un "van de 0.00 a 0.00" se lee como un error; ahí lo que hay que
+        # decir es que son la misma.
+        frases.append(f"las de {nombre} son las cinco {lo}" if lo == hi
+                       else f"las de {nombre} van de {lo} a {hi}")
+    if not frases:
+        return ""
+    return (f"Y los cinco colores se mezclan más de lo que parece — las medianas "
+            f"por liga: {' y '.join(frases)}. La diferencia **entre** ligas es mucho "
+            f"más chica que la que hay **dentro** de cada una.")
+
+
+# --------------------------------------------------------------------------
+# Las dos gráficas defensivas (fbref)
+# --------------------------------------------------------------------------
+#
+# Son las únicas de la sección que no salen de Understat: cada número es una
+# cuenta de fbref dividida por minutos de fbref. Y son las únicas defensivas
+# que se pueden hacer — de la página de acciones defensivas de fbref solo
+# sobreviven entradas ganadas e intercepciones (el resto llega con las celdas
+# vacías, verificado el 2026-09-01; está documentado en
+# `fetch_fbref_players.EXTRA_TABLAS`), y Understat no publica ninguna.
+#
+# El aviso que las dos tienen que dar, y que no es un detalle: **el volumen
+# defensivo lo manda el equipo**. Quien juega en un club que no tiene la pelota
+# defiende más, y las tasas por 90' no lo arreglan. Por eso los dos textos
+# mandan a los filtros de posición y de nivel de club, que es lo único que
+# convierte la comparación en una comparación entre iguales.
+
+def _parrafo(texto):
+    """Un párrafo más, o nada. Sirve para enganchar avisos que solo aparecen
+    cuando los datos los justifican, sin dejar el salto de línea colgando."""
+    return f"\n\n{texto}" if texto else ""
+
+
+def _quiebre_intercepciones(df):
+    """El aviso de que las intercepciones NO son comparables entre temporadas.
+
+    Al bajar los datos (2026-09-01) apareció esto: la media de intercepciones
+    por 90' cae ~19% entre la primera temporada y las últimas, **en las cinco
+    ligas a la vez**, mientras las entradas ganadas se quedan planas. Cinco
+    competiciones independientes no cambian igual el mismo año por razones de
+    fútbol, y un cambio real de estilo no dejaría intacta la otra mitad de la
+    acción defensiva: es un cambio de criterio de quien cuenta.
+
+    Importa decirlo porque el eje va fijado sobre las 5 temporadas —para que
+    cambiar de temporada sea una comparación honesta— y en esta columna esa
+    promesa no se cumple. Se calcula en vez de escribirse a mano para que el
+    día que se rebajen los datos la frase siga diciendo la verdad, o desaparezca
+    si el quiebre desaparece."""
+    por_temp = df.groupby("temporada")[["interceptions90", "tkl_w90"]].mean()
+    if len(por_temp) < 3:
+        return ""
+    inter, tkl = por_temp["interceptions90"], por_temp["tkl_w90"]
+    caida = (1 - inter.min() / inter.max()) * 100
+    tkl_var = abs(1 - tkl.min() / tkl.max()) * 100
+    if caida < 10 or caida < tkl_var * 2:
+        return ""
+    return (
+        f"**Las intercepciones no son comparables entre temporadas.** Su media "
+        f"por 90' cae un {caida:.0f}% entre {inter.idxmax()} y {inter.idxmin()} "
+        f"—de {_fmt(inter.max())} a {_fmt(inter.min())}— y lo hace en **las cinco "
+        f"ligas a la vez**, mientras las entradas ganadas se mueven un "
+        f"{tkl_var:.0f}% en el mismo período. Cinco competiciones independientes "
+        f"no cambian igual el mismo año por fútbol, y un cambio de estilo real no "
+        f"dejaría quieta la otra mitad de la acción defensiva: es quien cuenta el "
+        f"dato el que cambió de criterio. Dentro de una temporada la comparación "
+        f"entre jugadores se sostiene; entre temporadas, no."
+    )
+
+
+def _defensa_ambito(df, season, liga):
+    d = df[df["temporada"] == season]
+    ambito = "las 5 ligas"
+    if liga and liga != LIGA_TODAS:
+        d = d[d["liga"] == liga]
+        ambito = liga
+    return d[d["recoveries90"].notna()], ambito
+
+
+def recuperar_que_mirar():
+    return ("Cada punto es un jugador. El eje horizontal es **cuánta pelota "
+            "recupera** —entradas ganadas más intercepciones por 90 minutos— y el "
+            "vertical, **lo que le cuesta**: faltas cometidas por 90'. Las líneas "
+            "punteadas son el promedio de cada eje.\n\n"
+            "Abajo a la derecha están los que roban mucho y limpio, que es el mejor "
+            "sitio del gráfico; arriba a la izquierda, los que hacen faltas sin "
+            "recuperar a cambio. La diagonal imaginaria entre esas dos esquinas es "
+            "lo interesante: dos jugadores con el mismo volumen de recuperación "
+            "pueden estar separadísimos en verticalidad.\n\n"
+            "Dos avisos antes de sacar conclusiones. **La posición manda**: un "
+            "central y un extremo no compiten por lo mismo. Y **el equipo también**: "
+            "quien juega en un club que no tiene la pelota defiende más, sin que eso "
+            "diga nada de él. Los filtros de posición y de nivel del club son los "
+            "que dejan la comparación entre iguales.")
+
+
+def recuperar_por_que(df):
+    d = df[df["recoveries90"].notna()]
+    r = d["recoveries90"].corr(d["fouls90"])
+    por_falta = d["recoveries"].sum() / d["fouls"].sum()
+    return (
+        f"Las dos maneras de quitar la pelota van **sumadas** en el eje X porque "
+        f"acá la pregunta no es cómo la recupera sino cuánta: entrar a disputar y "
+        f"leer el pase terminan en lo mismo, la posesión cambia de dueño. Separarlas "
+        f"es la otra gráfica.\n\n"
+        f"La falta entra como **precio y no como falta de disciplina**. Cortar una "
+        f"jugada con falta es una decisión defensiva legítima —a veces la correcta— "
+        f"pero cuesta un balón parado en contra y acerca la tarjeta. En estos datos "
+        f"se cometen {_fmt(1 / por_falta)} faltas por cada recuperación, y los dos "
+        f"ejes correlacionan {_fmt(r)}: quien más defiende más falta, así que lo que "
+        f"distingue a un jugador no es su altura en el gráfico sino cuánto se aparta "
+        f"de esa tendencia.\n\n"
+        f"Las tres columnas son de **FBref y no de Understat**, que es "
+        f"shot-event-driven y no publica ninguna acción defensiva. Van divididas por "
+        f"los minutos de FBref y no por los de Understat: son cuentas de una fuente, "
+        f"y su divisor tiene que ser de la misma. El corte de {MIN_MINUTOS} minutos "
+        f"sí es el de Understat, como en el resto de la sección."
+        + _parrafo(_quiebre_intercepciones(d))
+    )
+
+
+def recuperar(df, season, liga=None):
+    d, ambito = _defensa_ambito(df, season, liga)
+    if d.empty:
+        return "Ningún jugador con datos defensivos de FBref cumple los filtros.", None
+
+    top = d.loc[d["recoveries90"].idxmax()]
+    fija = (f"En {ambito}, el que más pelota recupera es **{top['player']}** "
+            f"({top['team']}) con {_fmt(top['recoveries90'])} por 90', contra una "
+            f"media de {_fmt(d['recoveries90'].mean())}.")
+
+    # El dato que salta: el mayor desajuste entre lo mucho que recupera y lo poco
+    # que falta. Se compara por percentil dentro del ámbito —no por el cociente
+    # recuperaciones/faltas— porque ese cociente se dispara con quien casi no
+    # falta, y premiaría a un delantero que ni recupera ni comete faltas.
+    if len(d) < 5:
+        return fija, None
+    limpio = (d["recoveries90"].rank(pct=True) - d["fouls90"].rank(pct=True))
+    i = limpio.idxmax()
+    e = d.loc[i]
+    salta = (f"El que mejor combina las dos cosas es **{e['player']}** "
+             f"({e['team']}): {_fmt(e['recoveries90'])} recuperaciones por 90' con "
+             f"solo {_fmt(e['fouls90'])} faltas.")
+    j = limpio.idxmin()
+    o = d.loc[j]
+    salta += (f" En el extremo opuesto, **{o['player']}** ({o['team']}) comete "
+              f"{_fmt(o['fouls90'])} faltas por 90' y recupera "
+              f"{_fmt(o['recoveries90'])}.")
+    return fija, salta
+
+
+def disputar_que_mirar():
+    return ("Las dos formas de quitar la pelota, una en cada eje: **entrar a "
+            "disputarla** (entradas ganadas) contra **leer el pase antes de que "
+            "llegue** (intercepciones), las dos por 90 minutos.\n\n"
+            "A la derecha, los que van al choque; arriba, los que se anticipan; "
+            "arriba a la derecha, los que hacen las dos cosas — y esos suelen ser "
+            "los laterales y mediocentros que todo el mundo tiene fichados. Las "
+            "líneas punteadas marcan el promedio de cada eje.\n\n"
+            "Vale el mismo aviso que en la otra defensiva: buena parte de la "
+            "distancia entre dos puntos es **la posición y el equipo**, no el "
+            "jugador. Un central intercepta más que un extremo porque juega donde "
+            "llegan los pases, no porque lea mejor el juego.")
+
+
+def disputar_por_que(df):
+    d = df[df["tkl_w90"].notna()]
+    r = d["tkl_w90"].corr(d["interceptions90"])
+    return (
+        f"La pregunta que decide si esta gráfica vale la pena es si sus dos ejes no "
+        f"son la misma medida dos veces: los dos crecen con el volumen defensivo, "
+        f"así que podrían ser un solo eje disfrazado de dos. **Correlacionan "
+        f"{_fmt(r)}** sobre las {len(d)} observaciones, o sea que comparten un "
+        f"{r ** 2 * 100:.0f}% de su variación y dejan el resto para lo que sí las "
+        f"distingue. Por eso están cruzadas y no sumadas — sumadas son el eje X de "
+        f"\"Quitar vs. cortar con falta\", que es la otra pregunta.\n\n"
+        f"Se usan **entradas ganadas** y no entradas intentadas porque FBref dejó de "
+        f"publicar las segundas (y con ellas los duelos, los bloqueos y los despejes; "
+        f"ver la nota en `fetch_fbref_players.py`). Lo que queda mide una entrada que "
+        f"terminó con la pelota recuperada, que es la que cuenta.\n\n"
+        f"Como en la otra defensiva, las columnas son de **FBref** y van sobre "
+        f"minutos de FBref; el corte de {MIN_MINUTOS} minutos es el de Understat."
+        + _parrafo(_quiebre_intercepciones(d))
+    )
+
+
+def disputar(df, season, liga=None):
+    d, ambito = _defensa_ambito(df, season, liga)
+    if d.empty:
+        return "Ningún jugador con datos defensivos de FBref cumple los filtros.", None
+
+    entrador = d.loc[d["tkl_w90"].idxmax()]
+    lector = d.loc[d["interceptions90"].idxmax()]
+    fija = (f"En {ambito}, el que más entradas gana es **{entrador['player']}** "
+            f"({_fmt(entrador['tkl_w90'])} por 90') y el que más intercepta, "
+            f"**{lector['player']}** ({_fmt(lector['interceptions90'])} por 90').")
+
+    if len(d) < 5:
+        return fija, None
+    # Quién está más lejos de hacer las dos cosas por igual: el percentil de un
+    # eje menos el del otro. Es la misma regla que usa "Perfil ofensivo" para
+    # encontrar al más completo, mirando al revés.
+    rx, ry = d["tkl_w90"].rank(pct=True), d["interceptions90"].rank(pct=True)
+    completo = d.loc[(rx + ry).idxmax()]
+    n_ambos = int(((d["tkl_w90"] > d["tkl_w90"].mean()) &
+                    (d["interceptions90"] > d["interceptions90"].mean())).sum())
+    salta = (f"El más completo de los dos lados es **{completo['player']}** "
+             f"({completo['team']}), con {_fmt(completo['tkl_w90'])} entradas y "
+             f"{_fmt(completo['interceptions90'])} intercepciones por 90'. "
+             f"{n_ambos} de {len(d)} jugadores superan el promedio en los dos ejes.")
     return fija, salta
 
 
 # --------------------------------------------------------------------------
-# Nivel goleador / de creación por liga (boxplots)
+# Perfil de dos fases — producción esperada vs. recuperaciones
 # --------------------------------------------------------------------------
+#
+# La única gráfica de la sección con un eje de cada fuente: la producción sale
+# de Understat y las recuperaciones de FBref. Lo que la sostiene es que el
+# compromiso entre las dos fases NO es universal — vive en el mediocampo y
+# desaparece en la defensa— y eso solo se ve cruzándolas.
 
-def nivel_que_mirar(que):
-    return (f"Cada punto es un jugador y la caja marca dónde cae la mitad central de "
-            f"cada liga. Interesa comparar **la altura de las cajas** (si una liga "
-            f"genera más {que} que otra) y **los puntos sueltos de arriba**, que son "
-            f"los jugadores que se escapan de su propia liga.")
+def dos_fases_que_mirar():
+    return ("El eje horizontal es lo que un jugador **produce arriba** (xG más xA "
+            "por 90') y el vertical lo que **recupera atrás** (entradas ganadas más "
+            "intercepciones por 90'). Las líneas punteadas son el promedio de cada "
+            "eje.\n\n"
+            "Abajo a la derecha, el atacante puro: pesa en el área rival y no "
+            "aparece en la propia. Arriba a la izquierda, el recuperador puro. "
+            "**Arriba a la derecha están los raros**, los que hacen las dos cosas — "
+            "y suelen ser laterales ofensivos e interiores, no los nombres que uno "
+            "esperaría.\n\n"
+            "Acá el filtro de posición no es un adorno sino parte del análisis: la "
+            "nube entera está ordenada por puesto antes que por jugador, y la "
+            "relación entre los dos ejes **cambia de signo según el puesto** (los "
+            "números están en \"por qué estas variables\").")
 
 
-def nivel_por_que(col):
-    es_gol = col == "xG90"
-    cual = "xG por 90'" if es_gol else "xA por 90'"
-    if es_gol:
-        esperado = (
-            f"Y va sobre lo **esperado** y no sobre goles reales porque a nivel de "
-            f"jugador la muestra es chica: un delantero remata unas cien veces en una "
-            f"temporada, y sobre esa base los goles oscilan mucho por azar. El xG "
-            f"acumula la probabilidad de cada remate, así que da una lectura mucho "
-            f"más estable del nivel goleador de la liga."
-        )
-        filtro = ("un jugador con 150 minutos y una ocasión clara aparecería como el "
-                  "más peligroso de su liga.")
-    else:
-        esperado = (
-            f"Y va sobre lo **esperado** y no sobre asistencias reales porque una "
-            f"asistencia solo existe si otro la mete: mide al que remató tanto como "
-            f"al que dio el pase. El xA le pone a cada pase la probabilidad de gol "
-            f"del remate que habilitó, haya entrado o no, así que se queda con la "
-            f"parte que sí hizo el creador y da una lectura mucho más estable del "
-            f"nivel de creación de la liga."
-        )
-        filtro = ("un jugador con 150 minutos y un pase que dejó a un compañero solo "
-                  "aparecería como el más creador de su liga.")
+def dos_fases_por_que(df):
+    r = df["xga90"].corr(df["recoveries90"])
+    partes = []
+    if "posicion" in df.columns:
+        for pos, g in df.groupby("posicion", observed=True):
+            # Con pocos jugadores la correlación es ruido. Y un puesto que no
+            # participa de una de las dos fases no puede tener un compromiso
+            # entre ellas: los porteros producen 0.00 de xG+xA, así que su
+            # correlación es un número sin contenido. Se los descarta por el
+            # dato —producción prácticamente nula— y no por el nombre del
+            # puesto, que es lo que se mantiene solo si mañana cambia.
+            if len(g) < 100 or g["xga90"].mean() < 0.01:
+                continue
+            partes.append(f"**{pos.lower()}s** {_fmt(g['xga90'].corr(g['recoveries90']))}")
+    detalle = (f" Y no es igual en toda la cancha: {', '.join(partes)}." if partes else "")
     return (
-        f"Se grafica {cual} y no el total de la temporada porque el total mezcla dos "
-        f"cosas: lo bueno que es un jugador y cuánto jugó. La tasa aísla la primera.\n\n"
-        f"{esperado}\n\n"
-        f"El filtro de {MIN_MINUTOS} minutos deja fuera a quien jugó poco: sin él, "
-        f"{filtro}"
+        f"Los dos ejes suman lo que sus gráficas hermanas separan. El horizontal "
+        f"junta xG90 y xA90 —que \"Perfil ofensivo\" cruza— y el vertical, entradas "
+        f"e intercepciones, que \"Perfil defensivo\" cruza. Acá la pregunta no es "
+        f"qué tipo de aporte hace en cada área sino **en cuál de las dos pesa**, y "
+        f"para eso cada mitad tiene que ser un solo número.\n\n"
+        f"Sobre las {len(df)} observaciones los dos ejes correlacionan {_fmt(r)}: "
+        f"negativo, o sea que hay un compromiso real —producir más arriba va con "
+        f"recuperar menos atrás— pero flojo, apenas un {r ** 2 * 100:.0f}% de "
+        f"variación compartida, que es lo que deja sitio para los que se salen de "
+        f"la regla.{detalle} En la defensa el compromiso **no existe**: un central "
+        f"que aporta arriba no recupera menos por eso. Donde sí existe es en el "
+        f"mediocampo, que es exactamente donde se discute si un jugador \"llega\" o "
+        f"\"corre\".\n\n"
+        f"Es la única gráfica de la sección con **un eje de cada fuente**: la "
+        f"producción esperada la publica Understat y las recuperaciones, FBref. El "
+        f"corte de {MIN_MINUTOS} minutos es el de Understat."
+        # El eje vertical incluye intercepciones, así que le toca el mismo aviso
+        # que a las otras dos defensivas — atenuado, porque la otra mitad del eje
+        # (las entradas ganadas) sí se mantiene estable.
+        + _parrafo(_quiebre_intercepciones(df))
     )
 
 
-def nivel(df, col, season):
-    d = df[df["temporada"] == season]
-    med = d.groupby("liga", observed=True)[col].median().sort_values(ascending=False)
-    top = d.loc[d[col].idxmax()]
-    fija = (f"En {season} la liga con el nivel mediano más alto es **{med.index[0]}** "
-            f"({_fmt(med.iloc[0])}) y la más baja **{med.index[-1]}** "
-            f"({_fmt(med.iloc[-1])}).")
-    salta = (f"La diferencia entre ligas es chica comparada con la que hay **dentro** "
-             f"de cada una: el máximo de la temporada lo tiene **{top['player']}** "
-             f"({top['team']}) con {_fmt(top[col])}, unas "
-             f"{top[col] / med.iloc[0]:.0f} veces la mediana de su propia liga.")
+def dos_fases(df, season, liga=None):
+    d, ambito = _defensa_ambito(df, season, liga)
+    if d.empty:
+        return "Ningún jugador con datos de las dos fases cumple los filtros.", None
+
+    arriba = d.loc[d["xga90"].idxmax()]
+    atras = d.loc[d["recoveries90"].idxmax()]
+    fija = (f"En {ambito}, el que más produce arriba es **{arriba['player']}** "
+            f"({_fmt(arriba['xga90'])} de xG+xA por 90') y el que más recupera "
+            f"atrás, **{atras['player']}** ({_fmt(atras['recoveries90'])} por 90').")
+
+    if len(d) < 5:
+        return fija, None
+    # El más completo por suma de percentiles, misma regla que "Perfil ofensivo"
+    # usa para el todocampo.
+    rx, ry = d["xga90"].rank(pct=True), d["recoveries90"].rank(pct=True)
+    completo = d.loc[(rx + ry).idxmax()]
+    n_ambos = int(((d["xga90"] > d["xga90"].mean()) &
+                    (d["recoveries90"] > d["recoveries90"].mean())).sum())
+    # El puesto puede faltar (quien no cruzó por nombre con fbref). Se comprueba
+    # que sea texto en vez de con `pd.isna`: este módulo no importa pandas a
+    # propósito — recibe los datos ya calculados y solo arma frases.
+    puesto = completo.get("posicion")
+    quien = f"{completo['player']}** ({completo['team']}"
+    quien += f", {puesto.lower()})" if isinstance(puesto, str) and puesto else ")"
+    salta = (f"El que mejor pesa en las dos es **{quien}: "
+             f"{_fmt(completo['xga90'])} de producción y "
+             f"{_fmt(completo['recoveries90'])} recuperaciones por 90'. Solo "
+             f"{n_ambos} de {len(d)} jugadores superan el promedio en los dos ejes "
+             f"a la vez — el cuadrante de arriba a la derecha es el más vacío del "
+             f"gráfico, y por eso el interesante.")
     return fija, salta
 
 
