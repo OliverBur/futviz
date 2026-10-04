@@ -63,7 +63,7 @@ TABLES = {
     "leagues_gk_vs": "stats_squads_keeper_against",
 }
 
-SEASONS = ["2021-22", "2022-23", "2023-24", "2024-25", "2025-26"]
+SEASONS = ["2021-22", "2022-23", "2023-24", "2024-25", "2025-26", "2026-27"]
 
 DELAY_SECONDS = 4  # entre páginas nuevas; las cacheadas no esperan
 _reader = None

@@ -1,6 +1,11 @@
 __pycache__/
 *.pyc
 
+# Historia completa de cada club que cachea fetch_elo.py (~40 MB, 130 CSV que
+# se vuelven a bajar solos). Lo que sí se versiona es data/<temporada>/elo.csv,
+# que es el resumen por temporada que sale de esto.
+data/.clubelo/
+
 # HTML crudo que cachea fetch_fbref.py (~25 MB, se vuelve a bajar solo)
 data/.fbref_html/
 

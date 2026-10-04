@@ -152,19 +152,16 @@ def _subtitulo(temporada, tipo, n, seasons):
     return f"{etiqueta} · {ambito} · {ins.miles(n)} remates, sin penaltis"
 
 
-def _figura(z, custom, subtitulo):
-    """El mapa con la temporada y el tipo que se muestran al abrir. Los demás
-    estados se cambian con `restyle` sobre esta misma traza (ver `_frames`)."""
-    import plotly.graph_objects as go
+def _dibujar_cancha(fig):
+    """Área, área chica, punto de penal, arco y portería — la cancha que
+    comparten el mapa de calor agregado y el mapa individual de un jugador
+    (ver `player_shots_figure`). Fija también los ejes (invertidos, con el
+    aire de arriba) y el margen: los dos mapas dibujan la MISMA cancha a la
+    MISMA escala, así que conviene que salgan de un solo lugar y no de dos
+    copias que puedan desalinearse con el tiempo.
 
-    fig = go.Figure(go.Heatmap(
-        z=z, x=CENTROS_ANCHO, y=CENTROS_FONDO, customdata=custom,
-        colorscale=SEQUENTIAL_BLUE, zsmooth=False,
-        colorbar=dict(title=dict(text="% de los tiros", side="right"),
-                      thickness=14, outlinewidth=0),
-        hovertemplate="A %{y:.0f} m de la línea de fondo<br>"
-                      "%{customdata[0]} tiros (%{z:.2f}% del total)<br>"
-                      "%{customdata[1]} goles (%{customdata[2]}%)<extra></extra>"))
+    No pone título — cada mapa tiene el suyo, y sigue esta llamada."""
+    import plotly.graph_objects as go
 
     # La cancha se dibuja con la tinta clara de la superficie, no con la del
     # texto: va ENCIMA del mapa de calor, así que tiene que leerse sobre el
@@ -195,8 +192,6 @@ def _figura(z, custom, subtitulo):
     eje = dict(showgrid=False, zeroline=False, showticklabels=False, ticks="",
                showline=False, title=None, constrain="domain")
     fig.update_layout(
-        title=dict(text="Mapa de calor de los tiros",
-                   subtitle=dict(text=subtitulo)),
         # El eje vertical va invertido (la portería arriba) y con un margen de
         # AIRE metros por encima de la línea de fondo: sin él la línea de gol y
         # el borde del área chica caen justo en el borde del gráfico y se ven
@@ -205,6 +200,66 @@ def _figura(z, custom, subtitulo):
         yaxis=dict(**eje, range=[PROFUNDIDAD, -AIRE]),
         xaxis=dict(**eje, range=[0, ANCHO], scaleanchor="y", scaleratio=1),
         margin=dict(t=95, r=90, b=20, l=20))
+
+
+def _figura(z, custom, subtitulo):
+    """El mapa con la temporada y el tipo que se muestran al abrir. Los demás
+    estados se cambian con `restyle` sobre esta misma traza (ver `_frames`)."""
+    import plotly.graph_objects as go
+
+    fig = go.Figure(go.Heatmap(
+        z=z, x=CENTROS_ANCHO, y=CENTROS_FONDO, customdata=custom,
+        colorscale=SEQUENTIAL_BLUE, zsmooth=False,
+        colorbar=dict(title=dict(text="% de los tiros", side="right"),
+                      thickness=14, outlinewidth=0),
+        hovertemplate="A %{y:.0f} m de la línea de fondo<br>"
+                      "%{customdata[0]} tiros (%{z:.2f}% del total)<br>"
+                      "%{customdata[1]} goles (%{customdata[2]}%)<extra></extra>"))
+    _dibujar_cancha(fig)
+    fig.update_layout(title=dict(text="Mapa de calor de los tiros",
+                                  subtitle=dict(text=subtitulo)))
+    return fig
+
+
+def player_shots_figure(shots_jugador, color, titulo, subtitulo, liga=None):
+    """El mapa de UN jugador en una temporada: un punto por tiro, no bins —
+    un jugador tiene mediana 14 tiros por temporada (máximo 146), muy lejos de
+    los 220.720 agregados que sí llenan una grilla de 2×2 m; un heatmap ahí
+    sería una celda ocupada de vez en cuando, no una forma legible.
+
+    Tamaño del punto = xG de ESE tiro (cuánto valía la ocasión); color = si
+    entró o no, con el color de la liga del jugador para el gol (así la
+    página queda en la misma paleta que el resto del sitio) y tinta muted
+    para los que no. `shots_jugador` ya viene filtrado a un jugador y una
+    temporada, con las mismas columnas que devuelve `load()`.
+
+    `liga`, si se pasa, nombra la traza de goles como esa liga — el script de
+    tema del sitio la reconoce por nombre y la recolorea sola al pasar a
+    oscuro (mismo mecanismo que ya usa cualquier scatter de liga), así que
+    no hace falta escribir un listener de tema propio para esto."""
+    import plotly.graph_objects as go
+
+    d = shots_jugador
+    # Tamaño mínimo legible aunque el xG sea casi 0 (un remate lejano vale
+    # tanto como uno de gran ocasión a la hora de "hubo un intento acá").
+    tam = d["xg"].clip(lower=0) * 34 + 7
+
+    def _traza(sub, tamanos, nombre, color, hover_gol):
+        return go.Scatter(
+            x=sub["ancho"], y=sub["fondo"], mode="markers", name=nombre,
+            marker=dict(color=color, size=tamanos, opacity=0.85,
+                        line=dict(color=INK["surface"], width=0.8)),
+            customdata=sub[["result", "xg"]],
+            hovertemplate=(f"<b>{hover_gol}</b><br>" if hover_gol else "%{customdata[0]}<br>") +
+                          "xG %{customdata[1]:.2f}<extra></extra>",
+            showlegend=False)
+
+    fig = go.Figure()
+    no_gol = d["gol"] != True  # noqa: E712 — nulo cuenta como "no gol", no se descarta
+    fig.add_trace(_traza(d[no_gol], tam[no_gol], "Sin gol", INK["muted"], None))
+    fig.add_trace(_traza(d[~no_gol], tam[~no_gol], liga or "Gol", color, "Gol"))
+    _dibujar_cancha(fig)
+    fig.update_layout(title=dict(text=titulo, subtitle=dict(text=subtitulo)))
     return fig
 
 

@@ -32,6 +32,64 @@ SEASONS = sorted(d.name for d in DATA_DIR.iterdir()
 # Crédito de fuentes del pie de la landing. FBref publica las tablas de equipo;
 # Understat es de donde salen los jugadores (xG/xA, que FBref dejó de publicar
 # en la versión gratuita) y el detalle de tiros.
+# Filtro de nivel de club — el mismo control en las dos secciones que lo usan.
+#
+# Vive acá y no en `charts/teams.py` porque `charts/players.py` lo necesita
+# igual y una sección no debería importar de la otra. El umbral en sí no está
+# acá: lo define `consolidate_data.ELO_TOP`, que es quien calcula la columna
+# `nivel` para las dos tablas — así un club no puede salir top en una gráfica y
+# underground en la de al lado.
+#
+# --- Por qué existe ---
+# Casi todos los scatter del sitio tienen el mismo problema de fondo que salió
+# en el clustering: el eje que más separa a los equipos europeos no es cómo
+# juegan sino qué tan buenos son. Con los 96 equipos (o los ~1.600 jugadores)
+# en pantalla, la nube la ordena el nivel y las diferencias dentro del pelotón
+# quedan aplastadas contra el margen. Sacar a los grandes deja ver esa mitad de
+# la distribución; dejar solo a los grandes deja compararlos entre ellos.
+#
+# --- Por qué ELO y no una métrica que ya teníamos ---
+# El ELO de clubelo se calcula **solo con resultados** y es independiente de
+# FBref y de Understat. Segmentar con puntos por partido o con diferencia de
+# goles sería circular: se estaría filtrando por una variable que después
+# aparece en los ejes.
+#
+# --- Por qué un desplegable y no dos casillas ---
+# El pedido original era "dos botones como los de sub-21", pero los dos grupos
+# son complementarios, así que dos casillas independientes tendrían un estado
+# —las dos marcadas— que deja el gráfico vacío. El desplegable los hace
+# excluyentes por construcción.
+NIVEL_FILTER = {
+    "col": "nivel",
+    "label": "Nivel del club",
+    "all_label": "Todos los clubes",
+    "clave": "nivel",
+    # La nota va dentro de una (i) al lado del rótulo y no como párrafo debajo
+    # del desplegable: explicar el umbral toma tres renglones, y son tres
+    # renglones fijos de barra lateral para algo que se consulta una vez.
+    "info": True,
+}
+
+
+def nivel_filter(df, hint):
+    """El filtro de nivel, o None si los datos no traen la columna.
+
+    `elo.csv` es opcional en la consolidación —igual que las tablas `vs`— así
+    que el sitio se tiene que poder construir sin él: sin la columna, el
+    desplegable no se dibuja en vez de aparecer y no hacer nada al usarlo.
+    `options` sale de los valores que de verdad están, por el mismo motivo que
+    en el filtro de posición: un desplegable no debe ofrecer una opción que
+    deje el gráfico vacío."""
+    from consolidate_data import NIVELES
+
+    if "nivel" not in df.columns:
+        return None
+    opciones = [n for n in NIVELES if (df["nivel"] == n).any()]
+    if not opciones:
+        return None
+    return {**NIVEL_FILTER, "options": opciones, "hint": hint}
+
+
 FUENTES_SITIO = (f"Datos: FBref (equipos) y Understat (jugadores y tiros) · "
                  f"Las 5 grandes ligas de Europa, temporadas "
                  f"{SEASONS[0]} a {SEASONS[-1]}")
