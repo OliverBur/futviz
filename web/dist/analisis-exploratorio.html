@@ -88,7 +88,10 @@
   /* Control segmentado. Los grupos tienen rótulo propio porque son familias de
      preguntas distintas (qué tan bien define, cómo defiende...) y ocho pestañas
      seguidas, sin agrupar, se leen como una lista de nombres sin orden. */
-  .seg-nav { display: flex; flex-wrap: wrap; gap: 14px 26px; margin-bottom: 14px; }
+  /* flex-end: un grupo sin rótulo (Crea tu gráfico) no tiene el texto de arriba que
+     tienen los demás; alineado al borde inferior su botón queda a la altura de los
+     botones vecinos en vez de subir hasta la altura de los rótulos. */
+  .seg-nav { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px 26px; margin-bottom: 14px; }
   .seg-group { min-width: 0; max-width: 100%; }
   /* Fila de arriba: qué se analiza (jugadores o equipos). Más grande que la de las
      vistas para que se lea como el primer nivel de navegación. */
