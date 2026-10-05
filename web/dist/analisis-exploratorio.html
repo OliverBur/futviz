@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Análisis exploratorio · FutViz</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<script>
+(function() {
+  try {
+    var stored = localStorage.getItem('futviz-theme');
+    var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch (e) {}
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sansita:wght@700;800&display=swap" rel="stylesheet">
+<script src="react/futviz-react.js" defer></script>
+<link rel="preload" as="script" href="vistas/jugadores/goles-vs-xg.js">
+<style>
+
+  :root {
+    --color-bg: #EFEDF7;
+    --color-surface: #FFFFFF;
+    --color-primary: #2C4C54;
+    --color-brand-accent: #399906;
+    --color-brand-accent-soft: rgba(57, 153, 6, 0.12);
+    --color-interactive: #2E7A06;
+    --color-interactive-soft: rgba(46, 122, 6, 0.10);
+    --color-text-body: #1A2E33;
+    --color-muted: #57707A;
+    --color-border: #DEDBEA;
+  }
+  /* Modo oscuro: mismos nombres de variable, valores nuevos — todo lo que
+     ya usa var(--color-x) se adapta solo, sin tocar cada regla. Verificado
+     que las 5 pasan AA sobre --color-bg/--color-surface oscuros (6.6:1 a
+     13.8:1). html[data-theme="dark"] pisa a :root por especificidad
+     (selector de atributo sobre elemento > pseudo-clase :root). */
+  html[data-theme="dark"] {
+    --color-bg: #12181A;
+    --color-surface: #1B2426;
+    --color-primary: #D7E4E7;
+    --color-brand-accent: #5CC22A;
+    --color-brand-accent-soft: rgba(92, 194, 42, 0.16);
+    --color-interactive: #6FDB3B;
+    --color-interactive-soft: rgba(111, 219, 59, 0.14);
+    --color-text-body: #C7D3D6;
+    --color-muted: #8CA0A5;
+    --color-border: #2C393C;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; background: var(--color-bg); }
+  body { margin: 0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--color-bg); color: var(--color-text-body);
+    animation: futviz-fade-in .2s ease-out;
+    transition: background-color .15s ease, color .15s ease; }
+  .wordmark { font-family: "Sansita", "Inter", system-ui, sans-serif; }
+  @keyframes futviz-fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { body { animation: none; } }
+
+  .theme-toggle { flex: none; display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--color-border);
+    background: var(--color-surface); color: var(--color-primary); cursor: pointer; padding: 0;
+    transition: border-color .15s ease, background-color .15s ease, color .15s ease; }
+  .theme-toggle:hover { border-color: var(--color-interactive); }
+  .theme-toggle:focus-visible { outline: 2px solid var(--color-interactive); outline-offset: 2px; }
+  .theme-toggle svg { width: 18px; height: 18px; }
+  .theme-toggle .icon-sun { display: none; }
+  html[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
+  html[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+
+  header { display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 14px 32px; border-bottom: 1px solid var(--color-border); }
+  .crumb { color: var(--color-muted); text-decoration: none; font-size: 13px; font-weight: 500; }
+  .crumb:hover { color: var(--color-interactive); }
+  .header-right { display: flex; align-items: center; gap: 14px; }
+  .site-logo-link { flex: none; line-height: 0; }
+  .site-logo { height: 30px; width: auto; display: block; }
+  main { padding: 26px 32px 60px; max-width: 1400px; margin: 0 auto; }
+  h1 { position: relative; font-size: 26px; font-weight: 700; letter-spacing: -0.01em;
+    color: var(--color-primary); margin: 0 0 6px; padding-left: 14px; }
+  h1::before { content: ""; position: absolute; left: 0; top: 4px; bottom: 4px; width: 4px;
+    border-radius: 2px; background: var(--color-brand-accent); }
+  .lead { color: var(--color-muted); font-size: 14px; line-height: 1.5; max-width: 760px; margin: 0 0 22px 14px; }
+
+  /* Control segmentado. Los grupos tienen rótulo propio porque son familias de
+     preguntas distintas (qué tan bien define, cómo defiende...) y ocho pestañas
+     seguidas, sin agrupar, se leen como una lista de nombres sin orden. */
+  .seg-nav { display: flex; flex-wrap: wrap; gap: 14px 26px; margin-bottom: 14px; }
+  .seg-group { min-width: 0; max-width: 100%; }
+  /* Fila de arriba: qué se analiza (jugadores o equipos). Más grande que la de las
+     vistas para que se lea como el primer nivel de navegación. */
+  .ent-nav { margin: 0 0 18px; }
+  .ent-nav .seg { padding: 4px; border-radius: 13px; }
+  .ent-nav .seg button { font-size: 14.5px; padding: 9px 22px; border-radius: 10px; }
+  .seg-nav[hidden] { display: none; }
+  .seg-label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+    color: var(--color-muted); margin: 0 0 6px 4px; }
+  .seg { display: inline-flex; gap: 2px; padding: 3px; border-radius: 11px; background: var(--color-surface);
+    border: 1px solid var(--color-border); max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+  .seg::-webkit-scrollbar { display: none; }
+  .seg button { font: 600 13px "Inter", system-ui, sans-serif; white-space: nowrap; cursor: pointer;
+    padding: 8px 14px; border: 0; border-radius: 8px; background: transparent; color: var(--color-muted);
+    transition: background-color .16s ease, color .16s ease, transform .1s ease; }
+  .seg button:hover { color: var(--color-primary); background: var(--color-interactive-soft); }
+  .seg button:active { transform: scale(.97); }
+  .seg button[aria-selected="true"] { background: var(--color-primary); color: var(--color-bg); }
+  .seg button:focus-visible { outline: 2px solid var(--color-interactive); outline-offset: 1px; }
+
+  .view-desc { color: var(--color-text-body); font-size: 14px; line-height: 1.5; margin: 0 0 14px 4px; min-height: 21px; }
+  .chart-scroll { max-width: 100%; overflow-x: auto; background: var(--color-bg);
+    border: 1px solid var(--color-border); border-radius: 14px; padding: 20px; }
+  .view { animation: view-in .24s ease-out; }
+  .view[hidden] { display: none; }
+  @keyframes view-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .view-loading { min-height: 460px; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 14px; color: var(--color-muted); font-size: 13.5px; }
+  .view-loading i { width: 30px; height: 30px; border-radius: 50%; border: 3px solid var(--color-border);
+    border-top-color: var(--color-interactive); animation: spin .8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .view-error button { font: 600 13px "Inter", system-ui, sans-serif; padding: 8px 16px; border-radius: 8px; cursor: pointer;
+    border: 1px solid var(--color-interactive); background: var(--color-surface); color: var(--color-primary); }
+  @media (prefers-reduced-motion: reduce) { .view { animation: none; } .view-loading i { animation-duration: 2s; } }
+  @media (max-width: 640px) {
+    header { padding: 12px 16px; }
+    main { padding: 20px 16px 40px; }
+    .chart-scroll { padding: 12px; }
+    .site-logo { height: 24px; }
+    .lead { margin-left: 0; }
+    .seg-nav { gap: 12px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <a class="crumb" href="index.html">&larr; Inicio</a>
+  <div class="header-right">
+    <a class="site-logo-link" href="index.html">
+      <img class="site-logo" src="assets/logo.png" alt="FutViz — volver al inicio">
+    </a>
+    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Cambiar entre modo claro y oscuro">
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
+  </svg>
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/>
+  </svg>
+</button>
+  </div>
+</header>
+<main>
+  <h1>Análisis exploratorio</h1>
+  <p class="lead">Rendimiento, estilo y nivel de jugadores y equipos de las 5 grandes ligas, con filtros y un explorador para cruzar cualquier par de variables.</p>
+  <div class="ent-nav"><div class="seg" role="tablist" aria-label="Qué analizar"><button type="button" role="tab" data-entity="Jugadores" aria-selected="false" tabindex="-1">Jugadores</button><button type="button" role="tab" data-entity="Equipos" aria-selected="false" tabindex="-1">Equipos</button></div></div>
+  <nav class="seg-nav" role="tablist" data-entity="Jugadores" aria-label="Vistas de Jugadores" hidden><div class="seg-group" role="presentation"><div class="seg-label">Ataque</div><div class="seg" role="presentation"><button type="button" role="tab" id="t-goles-vs-xg" data-slug="goles-vs-xg" aria-controls="v-goles-vs-xg" aria-selected="false" tabindex="-1">Goles vs. xG</button><button type="button" role="tab" id="t-perfil-ofensivo" data-slug="perfil-ofensivo" aria-controls="v-perfil-ofensivo" aria-selected="false" tabindex="-1">Perfil xG90 / xA90</button><button type="button" role="tab" id="t-mapa-tiros" data-slug="mapa-tiros" aria-controls="v-mapa-tiros" aria-selected="false" tabindex="-1">Mapa de tiros</button></div></div><div class="seg-group" role="presentation"><div class="seg-label">Creación</div><div class="seg" role="presentation"><button type="button" role="tab" id="t-asistencias-vs-xa" data-slug="asistencias-vs-xa" aria-controls="v-asistencias-vs-xa" aria-selected="false" tabindex="-1">Asist. vs. xA</button><button type="button" role="tab" id="t-pases-clave-vs-xa" data-slug="pases-clave-vs-xa" aria-controls="v-pases-clave-vs-xa" aria-selected="false" tabindex="-1">Pases clave vs. xA</button><button type="button" role="tab" id="t-construir-vs-producir" data-slug="construir-vs-producir" aria-controls="v-construir-vs-producir" aria-selected="false" tabindex="-1">Construir vs. producir</button><button type="button" role="tab" id="t-centros-vs-xa" data-slug="centros-vs-xa" aria-controls="v-centros-vs-xa" aria-selected="false" tabindex="-1">Centros vs. xA</button></div></div><div class="seg-group" role="presentation"><div class="seg-label">Defensa</div><div class="seg" role="presentation"><button type="button" role="tab" id="t-recuperacion-vs-faltas" data-slug="recuperacion-vs-faltas" aria-controls="v-recuperacion-vs-faltas" aria-selected="false" tabindex="-1">Quitar vs. faltas</button><button type="button" role="tab" id="t-perfil-defensivo" data-slug="perfil-defensivo" aria-controls="v-perfil-defensivo" aria-selected="false" tabindex="-1">Perfil defensivo</button></div></div><div class="seg-group" role="presentation"><div class="seg-label">Ataque + defensa</div><div class="seg" role="presentation"><button type="button" role="tab" id="t-perfil-dos-fases" data-slug="perfil-dos-fases" aria-controls="v-perfil-dos-fases" aria-selected="false" tabindex="-1">Producción vs. recuperación</button></div></div><div class="seg-group" role="presentation"><div class="seg" role="presentation"><button type="button" role="tab" id="t-crea-tu-grafico-jugadores" data-slug="crea-tu-grafico-jugadores" aria-controls="v-crea-tu-grafico-jugadores" aria-selected="false" tabindex="-1">Crea tu gráfico</button></div></div></nav><nav class="seg-nav" role="tablist" data-entity="Equipos" aria-label="Vistas de Equipos" hidden><div class="seg-group" role="presentation"><div class="seg-label">Ataque</div><div class="seg" role="presentation"><button type="button" role="tab" id="t-eficiencia-definicion" data-slug="eficiencia-definicion" aria-controls="v-eficiencia-definicion" aria-selected="false" tabindex="-1">Eficiencia de definición</button></div></div><div class="seg-group" role="presentation"><div class="seg-label">Creación</div><div class="seg" role="presentation"><button type="button" role="tab" id="t-creacion" data-slug="creacion" aria-controls="v-creacion" aria-selected="false" tabindex="-1">Creación</button></div></div><div class="seg-group" role="presentation"><div class="seg-label">Defensa</div><div class="seg" role="presentation"><button type="button" role="tab" id="t-defensa" data-slug="defensa" aria-controls="v-defensa" aria-selected="false" tabindex="-1">Defensa</button></div></div><div class="seg-group" role="presentation"><div class="seg-label">Comparar</div><div class="seg" role="presentation"><button type="button" role="tab" id="t-nivel-por-liga-equipos" data-slug="nivel-por-liga-equipos" aria-controls="v-nivel-por-liga-equipos" aria-selected="false" tabindex="-1">Nivel por liga</button><button type="button" role="tab" id="t-crea-tu-grafico-equipos" data-slug="crea-tu-grafico-equipos" aria-controls="v-crea-tu-grafico-equipos" aria-selected="false" tabindex="-1">Crea tu gráfico</button></div></div></nav>
+  <p class="view-desc" id="view-desc" aria-live="polite"></p>
+  <div class="chart-scroll"><div class="view" id="v-goles-vs-xg" role="tabpanel" aria-labelledby="t-goles-vs-xg" hidden></div><div class="view" id="v-perfil-ofensivo" role="tabpanel" aria-labelledby="t-perfil-ofensivo" hidden></div><div class="view" id="v-mapa-tiros" role="tabpanel" aria-labelledby="t-mapa-tiros" hidden></div><div class="view" id="v-asistencias-vs-xa" role="tabpanel" aria-labelledby="t-asistencias-vs-xa" hidden></div><div class="view" id="v-pases-clave-vs-xa" role="tabpanel" aria-labelledby="t-pases-clave-vs-xa" hidden></div><div class="view" id="v-construir-vs-producir" role="tabpanel" aria-labelledby="t-construir-vs-producir" hidden></div><div class="view" id="v-centros-vs-xa" role="tabpanel" aria-labelledby="t-centros-vs-xa" hidden></div><div class="view" id="v-recuperacion-vs-faltas" role="tabpanel" aria-labelledby="t-recuperacion-vs-faltas" hidden></div><div class="view" id="v-perfil-defensivo" role="tabpanel" aria-labelledby="t-perfil-defensivo" hidden></div><div class="view" id="v-perfil-dos-fases" role="tabpanel" aria-labelledby="t-perfil-dos-fases" hidden></div><div class="view" id="v-crea-tu-grafico-jugadores" role="tabpanel" aria-labelledby="t-crea-tu-grafico-jugadores" hidden></div><div class="view" id="v-eficiencia-definicion" role="tabpanel" aria-labelledby="t-eficiencia-definicion" hidden></div><div class="view" id="v-creacion" role="tabpanel" aria-labelledby="t-creacion" hidden></div><div class="view" id="v-defensa" role="tabpanel" aria-labelledby="t-defensa" hidden></div><div class="view" id="v-nivel-por-liga-equipos" role="tabpanel" aria-labelledby="t-nivel-por-liga-equipos" hidden></div><div class="view" id="v-crea-tu-grafico-equipos" role="tabpanel" aria-labelledby="t-crea-tu-grafico-equipos" hidden></div></div>
+</main>
+<script>
+(function() {
+  var VIEWS = [{"slug": "goles-vs-xg", "tab": "Goles vs. xG", "subtitle": "Sobre/bajo-rendimiento de definición — un punto por jugador.", "entity": "Jugadores", "src": "vistas/jugadores/goles-vs-xg.js"}, {"slug": "perfil-ofensivo", "tab": "Perfil xG90 / xA90", "subtitle": "Tasas por 90' — killer puro, creador puro o todocampo, un punto por jugador.", "entity": "Jugadores", "src": "vistas/jugadores/perfil-ofensivo.js"}, {"slug": "mapa-tiros", "tab": "Mapa de tiros", "subtitle": "Desde dónde se remata, con filtro de temporada y tipo de tiro.", "entity": "Jugadores", "src": "vistas/jugadores/mapa-tiros.js"}, {"slug": "asistencias-vs-xa", "tab": "Asist. vs. xA", "subtitle": "Sobre/bajo-rendimiento de creación — un punto por jugador.", "entity": "Jugadores", "src": "vistas/jugadores/asistencias-vs-xa.js"}, {"slug": "pases-clave-vs-xa", "tab": "Pases clave vs. xA", "subtitle": "Cuántos pases clave da cada jugador y cuánta ocasión de gol valen — un punto por jugador.", "entity": "Jugadores", "src": "vistas/jugadores/pases-clave-vs-xa.js"}, {"slug": "construir-vs-producir", "tab": "Construir vs. producir", "subtitle": "El que mueve el balón antes del último pase contra el que produce el tiro o el pase final.", "entity": "Jugadores", "src": "vistas/jugadores/construir-vs-producir.js"}, {"slug": "centros-vs-xa", "tab": "Centros vs. xA", "subtitle": "Volumen de centros contra la ocasión que crea cada jugador.", "entity": "Jugadores", "src": "vistas/jugadores/centros-vs-xa.js"}, {"slug": "recuperacion-vs-faltas", "tab": "Quitar vs. faltas", "subtitle": "Cuánta pelota recupera cada jugador y a qué precio — un punto por jugador.", "entity": "Jugadores", "src": "vistas/jugadores/recuperacion-vs-faltas.js"}, {"slug": "perfil-defensivo", "tab": "Perfil defensivo", "subtitle": "Tasas por 90' — el que va al choque, el que lee el pase o las dos cosas, un punto por jugador.", "entity": "Jugadores", "src": "vistas/jugadores/perfil-defensivo.js"}, {"slug": "perfil-dos-fases", "tab": "Producción vs. recuperación", "subtitle": "Lo que produce arriba contra lo que recupera atrás — el atacante puro, el recuperador puro y los raros que hacen las dos.", "entity": "Jugadores", "src": "vistas/jugadores/perfil-dos-fases.js"}, {"slug": "crea-tu-grafico-jugadores", "tab": "Crea tu gráfico", "subtitle": "Cruza cualquier par de las 31 variables de jugador — y el r² te dice si de verdad son dos cosas distintas o la misma medida dos veces.", "entity": "Jugadores", "src": "vistas/jugadores/crea-tu-grafico-jugadores.js"}, {"slug": "eficiencia-definicion", "tab": "Eficiencia de definición", "subtitle": "Precisión (SoT%) vs. definición (G/SoT) — un punto por equipo.", "entity": "Equipos", "src": "vistas/equipos/eficiencia-definicion.js"}, {"slug": "creacion", "tab": "Creación", "subtitle": "Cuánto balón tiene cada equipo contra cuántas asistencias genera — un punto por equipo.", "entity": "Equipos", "src": "vistas/equipos/creacion.js"}, {"slug": "defensa", "tab": "Defensa", "subtitle": "Tiros a puerta que recibe cada equipo contra los goles que le entran — un punto por equipo.", "entity": "Equipos", "src": "vistas/equipos/defensa.js"}, {"slug": "nivel-por-liga-equipos", "tab": "Nivel por liga", "subtitle": "Cómo se reparten los equipos de cada liga en la variable que elijas.", "entity": "Equipos", "src": "vistas/equipos/nivel-por-liga-equipos.js"}, {"slug": "crea-tu-grafico-equipos", "tab": "Crea tu gráfico", "subtitle": "Cruza cualquier par de las 23 variables de equipo — y el r² te dice si de verdad son dos cosas distintas o la misma medida dos veces.", "entity": "Equipos", "src": "vistas/equipos/crea-tu-grafico-equipos.js"}];
+  var DEFECTO = VIEWS[0].slug;
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.seg-nav [role="tab"]'));
+  var entTabs = Array.prototype.slice.call(document.querySelectorAll('.ent-nav [role="tab"]'));
+  var navs = Array.prototype.slice.call(document.querySelectorAll('.seg-nav'));
+  var ultima = {};  // entidad -> última vista que se miró, para volver a ella
+  var desc = document.getElementById('view-desc');
+  var cargas = {};   // slug -> Promise del montaje (ya hecho o en curso)
+  var pedidos = {};  // slug -> Promise del texto del fragmento (también lo usa el prefetch)
+  var actual = null;
+
+  function vista(slug) { return VIEWS.filter(function(v) { return v.slug === slug; })[0]; }
+  function panel(slug) { return document.getElementById('v-' + slug); }
+
+  // Cada fragmento es un .js que se anuncia con futvizVista(slug, html). Se usa
+  // <script src> y no fetch para que funcione también desde file://.
+  var esperando = {};
+  window.futvizVista = function(slug, html) {
+    if (esperando[slug]) esperando[slug](html);
+  };
+  function pedir(slug) {
+    if (!pedidos[slug]) {
+      pedidos[slug] = new Promise(function(resolve, reject) {
+        esperando[slug] = resolve;
+        var tag = document.createElement('script');
+        tag.src = vista(slug).src;
+        tag.onerror = function() { tag.remove(); reject(new Error('carga')); };
+        document.head.appendChild(tag);
+      });
+      pedidos[slug].catch(function() { delete pedidos[slug]; delete esperando[slug]; });  // permite reintentar
+    }
+    return pedidos[slug];
+  }
+
+  // Los <script> que entran por innerHTML no se ejecutan: se sacan y se vuelven
+  // a crear, en orden, una vez que el resto del DOM ya está puesto. (Los de las vistas son
+  // inline: dejan su configuración en window.futvizVistas.)
+  function ejecutar(host, scripts) {
+    scripts.forEach(function(viejo) {
+      var s = document.createElement('script');
+      if (viejo.src) s.src = viejo.src;
+      else s.text = viejo.textContent;
+      host.appendChild(s);
+    });
+  }
+
+  function montar(slug) {
+    if (cargas[slug]) return cargas[slug];
+    var host = panel(slug);
+    host.innerHTML = '<div class="view-loading"><i></i><span>Cargando la vista…</span></div>';
+    cargas[slug] = pedir(slug).then(function(html) {
+      var t = document.createElement('template');
+      t.innerHTML = html;
+      var scripts = Array.prototype.slice.call(t.content.querySelectorAll('script'));
+      scripts.forEach(function(s) { s.remove(); });
+      host.innerHTML = '';
+      host.appendChild(t.content);
+      ejecutar(host, scripts);
+      // El bundle se carga con `defer`: si todavía no llegó, monta lo pendiente al arrancar él mismo.
+      if (window.futvizReact) window.futvizReact.montar();
+    }).catch(function() {
+      delete cargas[slug];
+      host.innerHTML = '<div class="view-loading view-error"><span>No se pudo cargar esta vista.</span>' +
+        '<button type="button">Reintentar</button></div>';
+      host.querySelector('button').addEventListener('click', function() { montar(slug); });
+    });
+    return cargas[slug];
+  }
+
+  function activar(slug, enfocar) {
+    if (!vista(slug)) slug = DEFECTO;
+    if (slug === actual) return;
+    actual = slug;
+    VIEWS.forEach(function(v) { panel(v.slug).hidden = v.slug !== slug; });
+    var ent = vista(slug).entity;
+    ultima[ent] = slug;
+    navs.forEach(function(n) { n.hidden = n.dataset.entity !== ent; });
+    entTabs.forEach(function(t) {
+      var on = t.dataset.entity === ent;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+    });
+    tabs.forEach(function(t) {
+      var on = t.dataset.slug === slug;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+      if (on && enfocar) t.focus();
+    });
+    desc.textContent = vista(slug).subtitle;
+    document.title = vista(slug).tab + ' · ' + ent + ' · FutViz';
+    // Una vista de React se vuelve a medir sola (ResizeObserver) y sigue el tema por su cuenta
+    // (observa data-theme), así que al volver a una pestaña ya montada no hay nada que rehacer.
+    montar(slug);
+  }
+
+  tabs.forEach(function(t) {
+    t.addEventListener('click', function() { location.hash = t.dataset.slug; });
+    // Pedir el fragmento al apuntar con el mouse o al enfocar: cuando llega el clic ya
+    // suele estar descargado.
+    t.addEventListener('pointerenter', function() { pedir(t.dataset.slug).catch(function() {}); });
+    t.addEventListener('focus', function() { pedir(t.dataset.slug).catch(function() {}); });
+    t.addEventListener('keydown', function(e) {
+      var salto = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : e.key === 'Home' ? -99 : e.key === 'End' ? 99 : 0;
+      if (!salto) return;
+      e.preventDefault();
+      var mias = tabs.filter(function(x) { return x.closest('.seg-nav') === t.closest('.seg-nav'); });
+      var i = mias.indexOf(t);
+      var j = Math.max(0, Math.min(mias.length - 1, Math.abs(salto) === 99 ? (salto < 0 ? 0 : mias.length - 1) : i + salto));
+      location.hash = mias[j].dataset.slug;
+      mias[j].focus();
+    });
+  });
+  entTabs.forEach(function(t) {
+    t.addEventListener('click', function() {
+      location.hash = ultima[t.dataset.entity] || VIEWS.filter(function(v) { return v.entity === t.dataset.entity; })[0].slug;
+    });
+    t.addEventListener('keydown', function(e) {
+      var i = entTabs.indexOf(t), j = e.key === 'ArrowRight' ? i + 1 : e.key === 'ArrowLeft' ? i - 1 : -1;
+      if (j < 0 || j >= entTabs.length) return;
+      e.preventDefault();
+      entTabs[j].click(); entTabs[j].focus();
+    });
+  });
+  window.addEventListener('hashchange', function() { activar(location.hash.slice(1)); });
+  activar(location.hash.slice(1) || DEFECTO);
+})();
+</script>
+<script>
+(function() {
+  var LIGHT = {primary:'#0b0b0b', secondary:'#52514e', muted:'#898781', grid:'#e1e0d9', axis:'#c3c2b7', surface:'#fcfcfb'};
+  var DARK = {primary:'#D7E4E7', secondary:'#C7D3D6', muted:'#8CA0A5', grid:'#2C393C', axis:'#3A4A4E', surface:'#1B2426'};
+
+  // Los colores de liga son [claro, oscuro] — mismo hue, distinta luminosidad
+  // y croma (ver LEAGUE_COLORS_DARK en viz_theme.py para por qué no alcanza
+  // con usar los mismos en los dos modos).
+  var LIGAS = {"Bundesliga": ["#e34948", "#dd1d2d"], "Serie A": ["#2a78d6", "#2878d7"], "Ligue 1": ["#2e413a", "#0c7b60"], "La Liga": ["#eda100", "#c28412"], "Premier League": ["#e87ba4", "#cc7193"]};
+
+  function conAlpha(hex, alpha) {
+    var n = parseInt(hex.slice(1), 16);
+    return 'rgba(' + [(n >> 16) & 255, (n >> 8) & 255, n & 255].join(',') + ',' + alpha + ')';
+  }
+  function alphaDe(css) {
+    var m = /rgba?\([^)]*,\s*([0-9.]+)\s*\)/.exec(css || '');
+    return m ? m[1] : null;
+  }
+
+  // Los colores de liga de un gráfico, listos para UNA sola llamada a Plotly.
+  //
+  // Se agrupan por el juego de propiedades que toca cambiar —un box no tiene lo
+  // mismo que un scatterpolar, y una propiedad ausente no se toca porque un
+  // restyle se la inventaría— y dentro de cada grupo los valores van como
+  // arreglo, uno por traza. En la práctica las 5 trazas de liga de un gráfico
+  // son del mismo tipo, así que sale un solo grupo. Repintarlas de a una era
+  // un redibujo por traza: en un scatter de 1.900 puntos, ~1.100ms de cambio
+  // de tema contra los ~60 que tarda así.
+  function ligasUpdate(gd, theme) {
+    var i = theme === 'dark' ? 1 : 0;
+    var grupos = [], porFirma = {};
+    (gd.data || []).forEach(function(t, idx) {
+      var par = LIGAS[t.name];
+      if (!par) return;
+      var color = par[i], props = {};
+      if (t.marker && t.marker.color) props['marker.color'] = color;
+      if (t.line && t.line.color) props['line.color'] = color;
+      var a = alphaDe(t.fillcolor);
+      if (a !== null) props.fillcolor = conAlpha(color, a);
+      var claves = Object.keys(props);
+      if (!claves.length) return;
+      var firma = claves.join('|');
+      var g = porFirma[firma];
+      if (!g) { g = porFirma[firma] = {idx: [], vals: {}}; grupos.push(g); }
+      g.idx.push(idx);
+      claves.forEach(function(p) { (g.vals[p] = g.vals[p] || []).push(props[p]); });
+    });
+
+    // Los títulos de cada subplot del radar son anotaciones pintadas con el
+    // color de su liga; se las reconoce justamente por eso. Van al patch del
+    // layout para que entren en la misma llamada.
+    var anns = (gd.layout && gd.layout.annotations) || [], lay = {};
+    anns.forEach(function(an, k) {
+      var col = ((an.font && an.font.color) || '').toLowerCase();
+      if (!col) return;
+      Object.keys(LIGAS).forEach(function(liga) {
+        if (LIGAS[liga].indexOf(col) !== -1) {
+          lay['annotations[' + k + '].font.color'] = LIGAS[liga][i];
+        }
+      });
+    });
+    return {grupos: grupos, layout: lay};
+  }
+
+  // Los ejes se descubren leyendo el layout real de cada gráfico en vez de
+  // listar 'xaxis'/'yaxis' a mano: un gráfico con subplots tiene xaxis2,
+  // yaxis2..., y un radar no tiene ejes cartesianos sino `polar`. Con la
+  // lista fija, esos se quedaban con la tinta clara sobre fondo oscuro.
+  function patchFor(gd, theme) {
+    var c = theme === 'dark' ? DARK : LIGHT;
+    var patch = {
+      'font.color': c.primary, 'title.font.color': c.primary,
+      'legend.font.color': c.secondary,
+      'hoverlabel.bgcolor': c.surface, 'hoverlabel.font.color': c.primary
+    };
+    Object.keys(gd._fullLayout || {}).forEach(function(k) {
+      if (/^[xy]axis\d*$/.test(k)) {
+        patch[k + '.tickfont.color'] = c.muted;
+        patch[k + '.title.font.color'] = c.secondary;
+        patch[k + '.gridcolor'] = c.grid;
+        patch[k + '.zerolinecolor'] = c.axis;
+        patch[k + '.linecolor'] = c.axis;
+      } else if (/^polar\d*$/.test(k)) {
+        patch[k + '.angularaxis.tickfont.color'] = c.secondary;
+        patch[k + '.angularaxis.gridcolor'] = c.grid;
+        patch[k + '.angularaxis.linecolor'] = c.axis;
+        patch[k + '.radialaxis.tickfont.color'] = c.muted;
+        patch[k + '.radialaxis.gridcolor'] = c.grid;
+        patch[k + '.radialaxis.linecolor'] = c.axis;
+      }
+    });
+    return patch;
+  }
+
+  // La barra de color de un mapa de calor no es un eje del layout, así que
+  // patchFor() no la ve: sus rótulos viven dentro de la traza y hay que
+  // recolorearlos con restyle o se quedan en tinta oscura sobre fondo oscuro.
+  function patchColorbars(gd, theme) {
+    var c = theme === 'dark' ? DARK : LIGHT;
+    var conBarra = [];
+    (gd.data || []).forEach(function(t, i) { if (t.colorbar) conBarra.push(i); });
+    if (conBarra.length) {
+      Plotly.restyle(gd, {'colorbar.tickfont.color': c.muted,
+                          'colorbar.title.font.color': c.secondary}, conBarra);
+    }
+  }
+
+  function syncPlotly() {
+    if (!window.Plotly) return;
+    var theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    document.querySelectorAll('.js-plotly-plot').forEach(function(gd) {
+      // Un gráfico en una pestaña oculta (display:none) no se toca: Plotly mide
+      // cero ahí y el relayout le descoloca título y subtítulo. Se recolorea al
+      // mostrarlo (section_views llama otra vez a esta función). `tema` recuerda
+      // con qué tinta quedó, así no se repinta lo que ya está bien.
+      if (!gd.getClientRects().length || gd.dataset.tema === theme) return;
+      gd.dataset.tema = theme;
+      var ligas = ligasUpdate(gd, theme);
+      var lay = patchFor(gd, theme);
+      Object.keys(ligas.layout).forEach(function(k) { lay[k] = ligas.layout[k]; });
+      // Un solo redibujo: `update` aplica trazas y layout de una pasada, en vez
+      // de un relayout más un restyle por traza.
+      if (ligas.grupos.length) {
+        Plotly.update(gd, ligas.grupos[0].vals, lay, ligas.grupos[0].idx);
+        for (var i = 1; i < ligas.grupos.length; i++) {
+          Plotly.restyle(gd, ligas.grupos[i].vals, ligas.grupos[i].idx);
+        }
+      } else {
+        Plotly.relayout(gd, lay);
+      }
+      patchColorbars(gd, theme);
+    });
+  }
+  syncPlotly();
+  // Las páginas con vistas montan gráficos DESPUÉS de cargar (ver section_views.py):
+  // al montarlos llaman a esto para que nazcan con la tinta del tema actual.
+  window.futvizSyncPlotly = syncPlotly;
+
+  var btn = document.getElementById('theme-toggle');
+  if (btn) {
+    btn.addEventListener('click', function() {
+      var current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      var next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('futviz-theme', next); } catch (e) {}
+      syncPlotly();
+      document.dispatchEvent(new CustomEvent('futviz-theme-change', {detail: {theme: next}}));
+    });
+  }
+})();
+</script>
+</body>
+</html>
