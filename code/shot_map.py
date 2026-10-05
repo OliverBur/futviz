@@ -121,6 +121,46 @@ def _subconjunto(df, temporada, tipo):
     return d if col is None else d[d[col] == valor]
 
 
+def tabla_agregada(df, descartes, seasons):
+    """Los tiros agregados por (temporada, jugada, parte del cuerpo, celda de 2×2 m), en columnas,
+    para que el navegador arme cualquier combinación del filtro sin recibir los 225.000 tiros.
+
+    Cada fila trae lo que hace falta para el mapa Y para los textos de lectura (`ins.tiros`), que
+    miran promedios por tiro: la suma de distancias (`sd`), cuántos son dentro del área (`na`) y de
+    ellos cuántos son gol (`ga`), dentro del área chica (`nc`) y desde la izquierda (`ni`). Los
+    indicadores se suman por TIRO y no por celda: el borde del área (16,5 m) no coincide con las
+    celdas de 2 m, así que no se pueden deducir del centro de la celda.
+
+    `n` y `g` son los tiros y los goles de la celda. La celda es `fila * NX + columna`, con la fila
+    contada desde la línea de fondo y la columna desde la izquierda del ataque."""
+    jugadas = [k for k, _, _, c, _, _ in TIPOS if c == "situation"]
+    partes = ["Head", "Right Foot", "Left Foot", "Other"]
+    d = df.copy()
+    d["t"] = d["temporada"].map({s: i for i, s in enumerate(seasons)})
+    d["s"] = d["situation"].map({k: i for i, k in enumerate(jugadas)})
+    d["b"] = d["body_part"].map({k: i for i, k in enumerate(partes)})
+    assert not d[["t", "s", "b"]].isna().any().any(), "tiro con jugada o parte del cuerpo desconocida"
+    cx = np.minimum((d["ancho"] // CELDA).astype(int), NX - 1)
+    cy = np.minimum((d["fondo"] // CELDA).astype(int), NY - 1)
+    d["celda"] = cy * NX + cx
+    d["ga"] = d["gol"] & d["en_area"]
+    g = d.groupby(["t", "s", "b", "celda"]).agg(
+        n=("gol", "size"), g=("gol", "sum"), sd=("dist", "sum"), na=("en_area", "sum"),
+        ga=("ga", "sum"), nc=("en_area_chica", "sum"), ni=("izquierda", "sum")).reset_index()
+    cols = {k: [int(v) for v in g[k]] for k in ("t", "s", "b", "celda", "n", "g", "na", "ga", "nc", "ni")}
+    cols["sd"] = [round(float(v), 3) for v in g["sd"]]
+    return {
+        "temporadas": list(seasons), "jugadas": jugadas, "partes": partes, "nx": NX, "ny": NY,
+        "celda": CELDA, "ancho": ANCHO, "profundidad": PROFUNDIDAD, "aire": AIRE,
+        "penal": PENAL, "porteria": PORTERIA,
+        "tipos": [{"id": k, "etiqueta": e, "grupo": gr, "col": c, "valor": v, "frase": f}
+                   for k, e, gr, c, v, f in TIPOS],
+        "hint": HINT, "descartes": descartes, "total": len(df),
+        "rampa": SEQUENTIAL_BLUE,
+        "f": cols,
+    }
+
+
 def _celdas(sub):
     """(porcentaje por celda, `customdata` con tiros, goles y conversión).
 

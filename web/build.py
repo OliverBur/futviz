@@ -16,8 +16,10 @@ import matplotlib
 matplotlib.use("Agg")
 
 from site_utils import (  # noqa: E402
-    write_article_page, write_chart_page, write_index, write_section_pages,
+    SECTION_META, write_article_page, write_chart_page, write_index, write_section_pages,
 )
+from section_views import write_section_views  # noqa: E402
+import react_views  # noqa: E402
 from viz_theme import apply_theme, apply_plotly_theme  # noqa: E402
 import teams as teams_charts  # noqa: E402
 import players as players_charts  # noqa: E402
@@ -113,13 +115,32 @@ def build_favicon():
 # gráfico dentro de esa página)`: las páginas de chart tienen uno solo,
 # pero un análisis tiene varios y hay que decir cuál representa mejor.
 PREVIEW_SOURCE_CHART = {
-    "equipos": ("charts/perfil-liga-overlay.html", 0),      # "Dónde se separa cada liga"
-    "jugadores": ("charts/perfil-ofensivo.html", 0),        # "Perfil ofensivo: xG90 vs. xA90"
+    # Es una página con vistas: el `#...` elige cuál se ve.
+    "analisis-exploratorio": ("analisis-exploratorio.html#perfil-ofensivo", 0),  # "Perfil ofensivo: xG90 vs. xA90"
     "machine-learning": ("analisis/modelo-xg.html", 3),     # el mapa de valor del tiro
 }
 
 
-def _screenshot_chart_card(source, dark=False):
+def _serve_dist():
+    """Sirve `dist/` por http en un puerto libre y devuelve `(servidor, base_url)`.
+
+    La captura va por http y no por `file://` para parecerse a como se ve el sitio
+    publicado."""
+    import functools
+    import http.server
+    import threading
+
+    class _Callado(http.server.SimpleHTTPRequestHandler):
+        def log_message(self, *args):
+            pass
+
+    servidor = http.server.ThreadingHTTPServer(
+        ("127.0.0.1", 0), functools.partial(_Callado, directory=str(DIST_DIR)))
+    threading.Thread(target=servidor.serve_forever, daemon=True).start()
+    return servidor, f"http://127.0.0.1:{servidor.server_address[1]}"
+
+
+def _screenshot_chart_card(source, base_url, dark=False):
     """Captura una tarjeta `.chart-scroll` (el gráfico ya renderizado, sin
     el header/breadcrumb) de una página ya generada en `dist/`, con
     Playwright. `source` es `(ruta relativa a dist/, índice del gráfico)`.
@@ -130,8 +151,7 @@ def _screenshot_chart_card(source, dark=False):
     import io
 
     rel_path, index = source
-    path = DIST_DIR / rel_path
-    if not path.exists():
+    if not (DIST_DIR / rel_path.split("#")[0]).exists():
         return None
 
     try:
@@ -141,8 +161,8 @@ def _screenshot_chart_card(source, dark=False):
         with sync_playwright() as p:
             browser = p.chromium.launch()
             page = browser.new_page(viewport={"width": 1100, "height": 900})
-            page.goto(path.resolve().as_uri())
-            page.wait_for_timeout(600)  # deja terminar de dibujar Plotly
+            page.goto(f"{base_url}/{rel_path}")
+            page.wait_for_timeout(600)
             if dark:
                 page.click("#theme-toggle")
                 page.wait_for_timeout(400)
@@ -152,14 +172,16 @@ def _screenshot_chart_card(source, dark=False):
             # Que el contenedor exista no significa que ya haya algo dibujado
             # dentro: los gráficos que están más abajo en un análisis largo
             # tardan varios segundos, y sin esperarlos el thumbnail sale en
-            # blanco. Qué esperar depende del tipo de gráfico — los de Plotly
-            # pintan un `.main-svg`, los de matplotlib son un `<img>` embebido.
+            # blanco. Qué esperar depende del tipo de gráfico — los de React
+            # pintan puntos (`.rx-chart svg circle`) o celdas, los de Plotly un
+            # `.main-svg` y los de matplotlib son un `<img>` embebido.
             # `:visible` importa en los de matplotlib: llevan dos <img>, una por
             # tema, y la del tema inactivo está oculta por CSS — sin filtrar,
             # la espera se queda mirando la que nunca se va a mostrar.
-            interior = ".main-svg" if locator.locator(".js-plotly-plot").count() else "img:visible"
-            locator.locator(interior).first.wait_for(state="visible", timeout=15000)
-            page.wait_for_timeout(400)
+            locator.locator(".main-svg, .rx-chart svg circle, img:visible").first.wait_for(
+                state="visible", timeout=20000)
+            # Las vistas de React entran con una animación (~1 s) y sus etiquetas aparecen al final.
+            page.wait_for_timeout(1600 if locator.locator(".rx-chart").count() else 400)
             png_bytes = locator.screenshot()
             browser.close()
         return Image.open(io.BytesIO(png_bytes)).convert("RGB")
@@ -223,8 +245,8 @@ def build_previews():
     (Plotly se recolorea en runtime, matplotlib tiene una segunda imagen
     pre-renderizada, ver viz_theme.dark_ink())."""
     SITE_ASSETS_DIR.mkdir(parents=True, exist_ok=True)
-    labels = {"equipos": "Equipos", "jugadores": "Jugadores",
-              "machine-learning": "Machine Learning"}
+    labels = {"analisis-exploratorio": "Análisis exploratorio", "machine-learning": "Machine Learning"}
+    servidor, base_url = _serve_dist()
 
     for slug, label in labels.items():
         dest_light = SITE_ASSETS_DIR / f"preview-{slug}.png"
@@ -238,7 +260,7 @@ def build_previews():
             print(f"  preview {slug} -> {dest_light.relative_to(DIST_DIR)} (fuente real)")
             continue
 
-        shot = _screenshot_chart_card(source)
+        shot = _screenshot_chart_card(source, base_url)
         if shot is not None:
             _fit_preview_canvas(shot).save(dest_light)
             print(f"  preview {slug} -> {dest_light.relative_to(DIST_DIR)} (captura de {source[0]})")
@@ -246,12 +268,14 @@ def build_previews():
             _placeholder_preview(label).save(dest_light)
             print(f"  preview {slug} -> {dest_light.relative_to(DIST_DIR)} (placeholder)")
 
-        shot_dark = _screenshot_chart_card(source, dark=True)
+        shot_dark = _screenshot_chart_card(source, base_url, dark=True)
         if shot_dark is not None:
             _fit_preview_canvas(shot_dark).save(dest_dark)
             print(f"  preview {slug} (oscuro) -> {dest_dark.relative_to(DIST_DIR)}")
         else:
             shutil.copy(dest_light, dest_dark)
+
+    servidor.shutdown()
 
 
 def main():
@@ -259,6 +283,11 @@ def main():
         shutil.rmtree(DIST_DIR)
     CHARTS_DIR.mkdir(parents=True)
     ASSETS_DIR.mkdir(parents=True)
+
+    # Todas las vistas del análisis exploratorio son de React: cargan un bundle que compila
+    # Vite aparte (`npm run build` en web/react); acá solo se copia a dist/.
+    react_views.exigir_bundle()
+    print(f"  react -> {react_views.copiar_bundle(DIST_DIR).relative_to(DIST_DIR)}")
 
     build_logo()
     build_favicon()
@@ -271,10 +300,24 @@ def main():
     pages += teams_charts.build(ASSETS_DIR)
     print("Generando gráficos de jugadores...")
     pages += players_charts.build(ASSETS_DIR)
+    # Las tablas de datos que comparten las vistas (una por entidad) las registraron los `build()`.
+    for ruta in react_views.escribir_datos(DIST_DIR):
+        print(f"  datos -> {ruta.relative_to(DIST_DIR)} ({ruta.stat().st_size / 1024:.0f} KB)")
 
+    # Equipos y Jugadores comparten UNA página con vistas (cascarón + un
+    # fragmento por gráfico); cualquier otra sección con páginas de chart sueltas
+    # seguiría el camino de siempre.
+    hubs = {}
     for page in pages:
-        out = write_chart_page(page, CHARTS_DIR)
-        print(f"  {page.slug} -> {out.relative_to(DIST_DIR)}")
+        hub = SECTION_META[page.section].get("hub")
+        if hub:
+            hubs.setdefault(hub, {}).setdefault(page.section, []).append(page)
+        else:
+            out = write_chart_page(page, CHARTS_DIR)
+            print(f"  {page.slug} -> {out.relative_to(DIST_DIR)}")
+    for hub, entidades in hubs.items():
+        outs = write_section_views(hub, entidades, DIST_DIR)
+        print(f"  {hub}: {sum(len(v) for v in entidades.values())} vistas -> {outs[0].relative_to(DIST_DIR)}")
 
     # Los análisis son otro tipo de página (prosa + gráficos, no un gráfico
     # suelto), pero entran a la misma lista: `write_section_pages` y
