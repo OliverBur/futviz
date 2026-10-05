@@ -633,6 +633,7 @@ def main():
     teams, players, shots, faltantes = [], [], [], []
     t = None  # los equipos de la temporada en curso: los jugadores los usan
               # para saber el nivel del club en el que jugaron
+    nivel_previo = {}  # (liga, club) -> nivel de la última temporada con dato
 
     for season in SEASONS:
         season_dir = DATA_DIR / season
@@ -647,6 +648,26 @@ def main():
         if all((season_dir / f).exists() for f in TEAM_FILES.values()):
             t = load_teams_season(season_dir, season)
             t, elo = attach_elo(t, season_dir, season)
+            # Mientras una temporada no tiene `elo.csv` (la recién empezada: clubelo
+            # se baja con el calendario cerrado), el nivel de cada club es el último
+            # que se le conoce, para que el filtro "Clubes top / underground" no
+            # deje las gráficas vacías. Un club sin ninguna temporada anterior en
+            # las 5 ligas (un ascendido) cuenta como underground: no se puede estar
+            # en el 20% más alto de las 5 ligas sin haber jugado en ellas. Cuando
+            # llegue el ELO de verdad (`python fetch_elo.py <temporada>`), esto deja
+            # de aplicarse solo.
+            if elo is None and nivel_previo:
+                t["nivel"] = [nivel_previo.get((l, sq), NIVEL_UNDER)
+                              for l, sq in zip(t["liga"], t["Squad"])]
+                nuevos = sum((l, sq) not in nivel_previo for l, sq in zip(t["liga"], t["Squad"]))
+                print(f"    sin elo.csv: nivel heredado de temporadas anteriores"
+                      f" ({len(t) - nuevos}/{len(t)} clubes; {nuevos} sin historial"
+                      f" → {NIVEL_UNDER})")
+            if "nivel" in t.columns:
+                # `update` y no reemplazo: un club que bajó y vuelve a subir conserva
+                # el nivel de la última vez que se lo midió.
+                nivel_previo.update({k: v for k, v in zip(zip(t["liga"], t["Squad"]), t["nivel"])
+                                     if pd.notna(v)})
             teams.append(t)
             con_vs = sum((season_dir / f).exists() for f in VS_FILES.values())
             print(f"  equipos   {len(t):4d}  " +

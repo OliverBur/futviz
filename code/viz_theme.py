@@ -5,6 +5,7 @@ los notebooks del proyecto para que cada gráfico se vea consistente.
 """
 
 import contextlib
+import json
 
 import matplotlib as mpl
 
@@ -508,6 +509,17 @@ def _sidebar_css(div_id, width, aspect_ratio, mobile_aspect=None):
   #{div_id}_plotwrap {{ position: relative; flex: 1 1 280px; width: 100%; max-width: {width}px;
     aspect-ratio: {aspect_ratio}; min-width: 0; }}
   #{div_id}_plotwrap > div {{ position: absolute; inset: 0; }}
+  #{div_id}_zoombar {{ position: absolute; right: 6px; top: 4px; z-index: 5; display: flex;
+    align-items: center; gap: 8px; font: 500 11.5px Inter, system-ui, sans-serif;
+    color: var(--color-muted, {INK["muted"]}); }}
+  #{div_id}_zoombar button {{ font: 600 12px Inter, system-ui, sans-serif; cursor: pointer;
+    padding: 5px 11px; border-radius: 999px; color: var(--color-primary, {INK["primary"]});
+    background: var(--color-surface, {INK["surface"]}); border: 1px solid var(--color-interactive, {INK["axis"]});
+    transition: background-color .15s ease; }}
+  #{div_id}_zoombar button:hover {{ background: var(--color-interactive-soft, rgba(46,122,6,.1)); }}
+  #{div_id}_zoombar button:focus-visible {{ outline: 2px solid var(--color-interactive, #2E7A06); outline-offset: 2px; }}
+  #{div_id}_zoombar.zoomed .fv-zoomhint {{ display: none; }}
+  @media (max-width: 520px) {{ #{div_id}_zoombar .fv-zoomhint {{ display: none; }} }}
   #{div_id}_sidebar {{ font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     padding-top: 54px; flex: 1 1 190px; max-width: 260px; box-sizing: border-box; }}
   #{div_id}_sidebar .block {{ margin-bottom: 22px; }}
@@ -688,10 +700,131 @@ def _cats(cat_filter):
     return [c for c in cat_filter if c]
 
 
+# Mini cancha como filtro de posición. Las zonas (en décimas de píxel de las
+# imágenes de referencia, viewBox 161x108) son las del mapa que dibujó el usuario:
+# la defensa y el medio se pisan a propósito (la línea de medios arranca antes de
+# que termine la de defensas), así que lo que se PINTA se pisa y lo que se TOCA
+# no — cada clic tiene que caer en una sola posición.
+#   clave: (valor del filtro, sigla, color, banda pintada, zona de clic)
+PITCH_ZONAS = (
+    ("Portero",   "POR", "#A57BFF", (13.3, 33.7),  (13.3, 33.7)),
+    ("Defensa",   "DEF", "#4A78C9", (33.5, 61.3),  (33.7, 56.0)),
+    ("Medio",     "MED", "#F59250", (51.8, 109.0), (56.0, 109.0)),
+    ("Delantero", "DEL", "#F76363", (108.8, 147.7), (109.0, 147.7)),
+)
+
+
+def _pitch_svg():
+    """Las marcas de la cancha, solas. Vectorial y sin imágenes externas: un PNG
+    habría obligado a resolver su ruta desde cada página que embeba el gráfico, y
+    el SVG se tiñe y escala sin pedir nada."""
+    franjas = "".join(
+        f'<rect x="{4.1 + i * 12.75:.2f}" y="2" width="12.75" height="104" '
+        f'fill="{"#8DC341" if i % 2 == 0 else "#3CAF4F"}"/>' for i in range(12))
+    marca = 'fill="none" stroke="#E3E5E8" stroke-width="1.6"'
+    return (
+        f'<rect x="0" y="0" width="161" height="108" fill="#E3E5E8"/>{franjas}'
+        f'<rect x="13.7" y="4.4" width="133.6" height="99.2" {marca}/>'
+        f'<line x1="80.5" y1="4.4" x2="80.5" y2="103.6" {marca}/>'
+        f'<circle cx="80.5" cy="54" r="16.5" {marca}/>'
+        f'<rect x="13.7" y="26.3" width="22.5" height="55.4" {marca}/>'
+        f'<rect x="13.7" y="35" width="12.5" height="38" {marca}/>'
+        f'<rect x="124.8" y="26.3" width="22.5" height="55.4" {marca}/>'
+        f'<rect x="134.8" y="35" width="12.5" height="38" {marca}/>')
+
+
+def _pitch_block(cf, k, div_id):
+    """La cancha clicable de un filtro de posición. El `<select>` sigue
+    existiendo (un `<input hidden>`) porque es el que guarda el estado y el que
+    escucha el gráfico: la cancha solo cambia su valor y dispara `change`, así los
+    insights precalculados, las claves y el resto no se enteran de que el
+    control cambió de forma."""
+    valores = set(cf["options"])
+    zonas = [z for z in PITCH_ZONAS if z[0] in valores]
+    pintadas = "".join(
+        f'<g class="fvp-glow" data-v="{v}"><rect x="{b[0]}" y="2" width="{b[1] - b[0]:.1f}" '
+        f'height="104" fill="{c}"/><text x="{(b[0] + b[1]) / 2:.1f}" y="58" text-anchor="middle">{s}</text></g>'
+        for v, s, c, b, _ in zonas)
+    clics = "".join(
+        f'<rect class="fvp-hit" data-v="{v}" x="{h[0]}" y="2" width="{h[1] - h[0]:.1f}" height="104" '
+        f'tabindex="0" role="button" aria-pressed="false" aria-label="{v}" fill="transparent"/>'
+        for v, _, _, _, h in zonas)
+    opciones = "".join(f'<option value="{o}">{o}</option>' for o in cf["options"])
+    pid = f"{div_id}_cat{k}"
+    return f"""
+    <div class="block">{_rotulo(cf, "Posición", div_id, f"cat{k}")}
+      <div class="fvp" id="{pid}_pitch">
+        <svg viewBox="0 0 161 108" role="group" aria-label="Filtrar por posición" shape-rendering="crispEdges">
+          {_pitch_svg()}{pintadas}{clics}
+        </svg>
+        <p class="fvp-cap" id="{pid}_cap" aria-live="polite">{cf.get("all_label", "Todas")}</p>
+      </div>
+      <input type="hidden" id="{pid}" value="{_ALL}">
+      <style>
+        #{pid}_pitch svg {{ display:block; width:100%; height:auto; border-radius:8px;
+          border:1px solid var(--color-border, {INK["axis"]}); }}
+        #{pid}_pitch .fvp-glow {{ opacity:0; pointer-events:none; transition: opacity .18s ease; }}
+        #{pid}_pitch .fvp-glow text {{ fill:#fff; font:700 9px Inter,system-ui,sans-serif;
+          paint-order:stroke; stroke:rgba(0,0,0,.55); stroke-width:1.6px; stroke-linejoin:round; }}
+        #{pid}_pitch .fvp-glow rect {{ opacity:.78; }}
+        #{pid}_pitch .fvp-hit {{ cursor:pointer; outline:none; }}
+        #{pid}_pitch .fvp-hit:focus-visible {{ stroke:var(--color-interactive, #2E7A06); stroke-width:1.6; }}
+        #{pid}_pitch .fvp-cap {{ margin:6px 0 0; font-size:12.5px; font-weight:600;
+          color:var(--color-primary, {INK["primary"]}); text-transform:none; letter-spacing:0; }}
+        @media (prefers-reduced-motion: reduce) {{ #{pid}_pitch .fvp-glow {{ transition:none; }} }}
+      </style>
+      <script>
+      (function() {{
+        // El valor es la cadena de las zonas elegidas en orden de cancha
+        // ("Medio+Delantero"); el resto del gráfico la parte por '+'. Con las
+        // cuatro elegidas o con ninguna es "todas": filtrar por todo no filtra.
+        var root = document.getElementById('{pid}_pitch'), campo = document.getElementById('{pid}'),
+            cap = document.getElementById('{pid}_cap'), ALL = {json.dumps(_ALL)},
+            TODAS = {json.dumps(cf.get("all_label", "Todas"))},
+            ORDEN = {json.dumps([z[0] for z in zonas])};
+        var glows = root.querySelectorAll('.fvp-glow'), hits = root.querySelectorAll('.fvp-hit');
+        function elegidas() {{ return campo.value === ALL ? [] : campo.value.split('+'); }}
+        function pintar() {{
+          var el = elegidas();
+          glows.forEach(function(g) {{ g.style.opacity = el.indexOf(g.dataset.v) !== -1 ? 1 : ''; }});
+          hits.forEach(function(h) {{ h.setAttribute('aria-pressed', el.indexOf(h.dataset.v) !== -1 ? 'true' : 'false'); }});
+          cap.textContent = el.length ? el.join(' + ') : TODAS;
+        }}
+        function alternar(v) {{
+          var el = elegidas(), i = el.indexOf(v);
+          if (i === -1) el.push(v); else el.splice(i, 1);  // tocar de nuevo una zona la quita
+          el = ORDEN.filter(function(o) {{ return el.indexOf(o) !== -1; }});
+          campo.value = (el.length === 0 || el.length === ORDEN.length) ? ALL : el.join('+');
+          campo.dispatchEvent(new Event('change', {{bubbles: true}}));
+          pintar();
+        }}
+        hits.forEach(function(h) {{
+          h.addEventListener('click', function() {{ alternar(h.dataset.v); }});
+          h.addEventListener('keydown', function(e) {{
+            if (e.key === 'Enter' || e.key === ' ') {{ e.preventDefault(); alternar(h.dataset.v); }}
+          }});
+          h.addEventListener('mouseenter', function() {{
+            glows.forEach(function(g) {{
+              if (g.dataset.v === h.dataset.v && elegidas().indexOf(g.dataset.v) === -1) g.style.opacity = .5;
+            }});
+          }});
+          h.addEventListener('mouseleave', pintar);
+        }});
+        campo.addEventListener('change', pintar);
+        pintar();
+      }})();
+      </script>
+    </div>"""
+
+
 def _cat_bloques(cats, div_id):
-    """El HTML de los `<select>`, uno por filtro categórico."""
+    """El HTML de los `<select>`, uno por filtro categórico (o la cancha, si el
+    filtro la pide con `"widget": "pitch"`)."""
     bloques = []
     for k, cf in enumerate(cats):
+        if cf.get("widget") == "pitch":
+            bloques.append(_pitch_block(cf, k, div_id))
+            continue
         opciones = "".join(f'<option value="{o}">{o}</option>' for o in cf["options"])
         bloques.append(f"""
     <div class="block">{_rotulo(cf, "Categoría", div_id, f"cat{k}")}
@@ -832,7 +965,7 @@ def select_chart_html(fig, controls, width=760, height=560, hint=None, min_width
     div_id = _div_id(fig, controls, joint_updates)
     fig.update_layout(autosize=True)
     plot_html = pio.to_html(fig, full_html=False, include_plotlyjs="cdn",
-                             div_id=div_id, config={"displaylogo": False, "responsive": True, "displayModeBar": False},
+                             div_id=div_id, config={"displaylogo": False, "responsive": True, "displayModeBar": False, "showTips": False},
                              default_width="100%", default_height="100%")
 
     blocks, specs = [], []
@@ -948,7 +1081,7 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
                         width=680, height=560, name_col="Squad", search_label="club",
                         season_data=None, custom_cols=None, subtitle_template=None,
                         insights=None, point_filter=None, cat_filter=None, fuente=None,
-                        top_n=5, top_labels=None):
+                        top_n=5, top_labels=None, outliers=None):
     """Arma el HTML/JS de un gráfico Plotly con una barra lateral genuina a
     la derecha (no superpuesta, es un elemento aparte en un layout flex). Los
     controles van **de lo que acota la población a lo que busca dentro de
@@ -1037,7 +1170,7 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     div_id = _div_id(fig, x_col, y_col, name_col, sorted(season_data or ()))
     fig.update_layout(autosize=True)
     plot_html = pio.to_html(fig, full_html=False, include_plotlyjs="cdn",
-                             div_id=div_id, config={"displaylogo": False, "responsive": True, "displayModeBar": False},
+                             div_id=div_id, config={"displaylogo": False, "responsive": True, "displayModeBar": False, "showTips": False},
                              default_width="100%", default_height="100%")
     aspect_ratio = width / height
     _ALL_JSON = json.dumps(_ALL)
@@ -1171,7 +1304,7 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
 <style>{_sidebar_css(div_id, width, aspect_ratio)}{insight_css}{top_css}
 </style>""" + f"""
 <div id="{div_id}_layout">
-  <div id="{div_id}_plotwrap">{plot_html}</div>
+  <div id="{div_id}_plotwrap">{plot_html}<span id="{div_id}_zoombar" class="fv-zoombar"><span class="fv-zoomhint">Arrastra sobre el gráfico para hacer zoom</span><button type="button" id="{div_id}_zoomreset" hidden>Restablecer zoom</button></span></div>
   <div id="{div_id}_sidebar">{season_block}
     <div class="block">
       <label>Filtrar por liga</label>
@@ -1235,7 +1368,7 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     if (d.g) {{
       for (var k = 0; k < catSels.length; k++) {{
         if (catSels[k] !== {_ALL_JSON})
-          pedidos.push([k, CAT_OPTIONS[k].indexOf(catSels[k])]);
+          pedidos.push([k, catSels[k].split('+').map(function(o) {{ return CAT_OPTIONS[k].indexOf(o); }})]);
       }}
     }}
     if (!usaFiltro && !pedidos.length) return d;
@@ -1247,7 +1380,7 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
         if (usaFiltro && !d.f[t][i]) continue;
         var fuera = false;
         for (var k = 0; k < pedidos.length; k++)
-          if (d.g[pedidos[k][0]][t][i] !== pedidos[k][1]) {{ fuera = true; break; }}
+          if (pedidos[k][1].indexOf(d.g[pedidos[k][0]][t][i]) === -1) {{ fuera = true; break; }}
         if (fuera) continue;
         nn.push(d.names[t][i]); xx.push(d.x[t][i]); yy.push(d.y[t][i]);
         if (d.custom) cc.push(d.custom[t][i]);
@@ -1304,7 +1437,7 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     for (var k = 0; k < catSels.length; k++) {{
       if (catSels[k] === {_ALL_JSON}) continue;
       clave += '|' + CAT_CLAVES[k] + ':' + catSels[k];
-      puestos.push(catSels[k]);
+      puestos.push(catSels[k].split('+').join(' + '));
     }}
     clave += (filterOn ? '|' + FILTER_KEY : '');
     var etiqueta = [current, liga === {_ALL_JSON} ? 'Todas las ligas' : liga]
@@ -1407,16 +1540,147 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     }};
   }}
 
-  function applySearch(val) {{
-    var map = clubMap();
-    if (map.hasOwnProperty(val)) {{
-      applyMarkerStyle();
-      Plotly.relayout('{div_id}', {{annotations: baseAnnotations.concat([themedAnnotation(val, map[val])])}});
-    }} else if (val === '') {{
-      applyMarkerStyle();
-      Plotly.relayout('{div_id}', {{annotations: baseAnnotations}});
+  // Etiquetas directas a los outliers. Se eligen entre los puntos que se VEN
+  // —liga elegida, filtros puestos y dentro del recuadro del zoom— y no entre
+  // todos: al acercar la vista aparecen los siguientes, que es justo para lo que
+  // sirve el zoom. `score` decide qué es "raro": la distancia a la diagonal
+  // (`diff`, para los gráficos de rendimiento contra lo esperado) o qué tan lejos
+  // queda del centro de la nube en desviaciones estándar (`dist`). Se evita que
+  // una etiqueta pise a otra comparando cajas en píxeles, así que a veces salen
+  // menos de N: es preferible a un manchón ilegible.
+  var OUTLIERS = {json.dumps(outliers) if outliers else "null"};
+  var outAnns = [];
+  function computeOutliers() {{
+    outAnns = [];
+    var gd = document.getElementById('{div_id}');
+    var fl = gd && gd._fullLayout;
+    if (!OUTLIERS || !fl || !fl.xaxis || !fl.xaxis._length || !fl.xaxis.range) return;
+    var xa = fl.xaxis, ya = fl.yaxis, xr = xa.range, yr = ya.range;
+    var lx = Math.min(xr[0], xr[1]), hx = Math.max(xr[0], xr[1]);
+    var ly = Math.min(yr[0], yr[1]), hy = Math.max(yr[0], yr[1]);
+    var lg = document.getElementById('{div_id}_league');
+    var liga = lg ? lg.value : {_ALL_JSON};
+    var pts = [];
+    for (var t = 0; t < V.names.length; t++) {{
+      if (liga !== {_ALL_JSON} && leagueOrder[t] !== liga) continue;
+      for (var i = 0; i < V.names[t].length; i++) {{
+        var x = V.x[t][i], y = V.y[t][i];
+        if (x < lx || x > hx || y < ly || y > hy) continue;
+        pts.push({{n: V.names[t][i], x: x, y: y}});
+      }}
+    }}
+    if (pts.length < 3) return;
+    if (OUTLIERS.score === 'diff') {{
+      pts.forEach(function(p) {{ p.s = Math.abs(p.y - p.x); }});
+    }} else {{
+      var mx = 0, my = 0;
+      pts.forEach(function(p) {{ mx += p.x; my += p.y; }});
+      mx /= pts.length; my /= pts.length;
+      var sx = 0, sy = 0;
+      pts.forEach(function(p) {{ sx += (p.x - mx) * (p.x - mx); sy += (p.y - my) * (p.y - my); }});
+      sx = Math.sqrt(sx / pts.length) || 1; sy = Math.sqrt(sy / pts.length) || 1;
+      pts.forEach(function(p) {{ p.s = Math.hypot((p.x - mx) / sx, (p.y - my) / sy); }});
+    }}
+    pts.sort(function(a, b) {{ return b.s - a.s; }});
+    var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    var tinta = dark ? '#D7E4E7' : {json.dumps(INK["primary"])};
+    var fondo = dark ? 'rgba(27,36,38,.82)' : 'rgba(252,252,251,.82)';
+    var cajas = [], vistos = {{}};
+    var tope = xa._length < 380 ? Math.min(OUTLIERS.n, 4) : OUTLIERS.n;
+    for (var k = 0; k < pts.length && outAnns.length < tope; k++) {{
+      var p = pts[k];
+      if (vistos[p.n]) continue;
+      var texto = p.n;
+      if (OUTLIERS.score === 'diff') texto += ' ' + (p.y - p.x >= 0 ? '+' : '\u2212') + Math.abs(p.y - p.x).toFixed(1);
+      var w = 6.4 * texto.length + 14, h = 18;
+      var px = xa._offset + xa.l2p(p.x), py = ya._offset + ya.l2p(p.y);
+      var aDerecha = px + 10 + w > xa._offset + xa._length;
+      var caja = aDerecha ? [px - 10 - w, py - h / 2, px - 10, py + h / 2]
+                          : [px + 10, py - h / 2, px + 10 + w, py + h / 2];
+      // Una etiqueta que se sale del recuadro del gráfico se corta contra el
+      // borde (pasa en pantallas angostas): mejor omitirla.
+      if (caja[0] < xa._offset || caja[2] > xa._offset + xa._length) continue;
+      var choca = cajas.some(function(c) {{
+        return caja[0] < c[2] && caja[2] > c[0] && caja[1] < c[3] && caja[3] > c[1];
+      }});
+      if (choca) continue;
+      cajas.push(caja); vistos[p.n] = true;
+      outAnns.push({{x: p.x, y: p.y, text: texto, showarrow: false, name: 'fv-out',
+        xanchor: aDerecha ? 'right' : 'left', yanchor: 'middle', xshift: aDerecha ? -9 : 9,
+        font: {{size: 11, color: tinta}}, bgcolor: fondo, borderpad: 2}});
     }}
   }}
+
+  // TODAS las anotaciones salen de acá (fijas del gráfico + outliers + la del
+  // buscador): un relayout reemplaza el arreglo entero, así que si cada función
+  // armara el suyo, la última en llamarse borraría las de las demás.
+  function currentAnnotations() {{
+    var anns = baseAnnotations.concat(outAnns);
+    var map = clubMap(), val = document.getElementById('{div_id}_search').value;
+    if (map.hasOwnProperty(val)) anns.push(themedAnnotation(val, map[val]));
+    return anns;
+  }}
+  function refreshAnnotations() {{
+    computeOutliers();
+    Plotly.relayout('{div_id}', {{annotations: currentAnnotations()}});
+  }}
+
+  function applySearch(val) {{
+    var map = clubMap();
+    if (map.hasOwnProperty(val) || val === '') {{
+      applyMarkerStyle();
+      refreshAnnotations();
+    }}
+  }}
+
+  // Zoom: el arrastre es el de Plotly; acá solo se muestra el botón de volver y
+  // se recalculan las etiquetas para lo que quedó a la vista.
+  var gdZoom = document.getElementById('{div_id}');
+  var zoomBar = document.getElementById('{div_id}_zoombar'), zoomBtn = document.getElementById('{div_id}_zoomreset');
+  var rangoInicial = null;
+  function guardarRangoInicial() {{
+    var l = gdZoom._fullLayout;
+    if (rangoInicial || !l || !l.xaxis || !l.xaxis.range) return;
+    rangoInicial = {{x: l.xaxis.range.slice(), y: l.yaxis.range.slice()}};
+  }}
+  function hayZoom() {{
+    var l = gdZoom._fullLayout;
+    if (!rangoInicial || !l || !l.xaxis) return false;
+    return Math.abs(l.xaxis.range[0] - rangoInicial.x[0]) > 1e-9 || Math.abs(l.xaxis.range[1] - rangoInicial.x[1]) > 1e-9
+        || Math.abs(l.yaxis.range[0] - rangoInicial.y[0]) > 1e-9 || Math.abs(l.yaxis.range[1] - rangoInicial.y[1]) > 1e-9;
+  }}
+  function pintarZoom() {{
+    var z = hayZoom();
+    zoomBtn.hidden = !z;
+    zoomBar.classList.toggle('zoomed', z);
+  }}
+  zoomBtn.addEventListener('click', function() {{
+    Plotly.relayout('{div_id}', {{'xaxis.range': rangoInicial.x, 'yaxis.range': rangoInicial.y}});
+  }});
+  var _rl = null;
+  function alCambiarVista() {{
+    clearTimeout(_rl);
+    // Un gráfico en una pestaña oculta no se toca (ver PLOTLY_THEME_SCRIPT): el
+    // evento resize llega a todos los de la página, también a los ocultos.
+    _rl = setTimeout(function() {{
+      if (!gdZoom.getClientRects().length) return;
+      guardarRangoInicial(); pintarZoom(); refreshAnnotations();
+    }}, 80);
+  }}
+  window.addEventListener('resize', alCambiarVista);
+  // Esperar a que Plotly termine de dibujar: antes no hay ejes que consultar.
+  (function esperar(intentos) {{
+    var l = gdZoom._fullLayout;
+    if (l && l.xaxis && l.xaxis._length && gdZoom.on) {{
+      guardarRangoInicial();
+      gdZoom.on('plotly_relayout', function(ev) {{
+        if (Object.keys(ev).some(function(k) {{ return /^[xy]axis\\.(range|autorange)/.test(k); }})) alCambiarVista();
+      }});
+      refreshAnnotations();
+    }} else if (intentos > 0) {{
+      setTimeout(function() {{ esperar(intentos - 1); }}, 80);
+    }}
+  }})(40);
 
   // El datalist se llena desde JS y no desde el HTML porque las entidades
   // cambian con la temporada (un jugador puede no estar en otra, un club
@@ -1439,11 +1703,7 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     // bitácora, "Acelera el cambio de tema..."). Lo único que sí cambia de
     // color con el tema es la anotación de búsqueda, y eso es una forma
     // sola — barata de repintar.
-    var buscado = document.getElementById('{div_id}_search').value;
-    var map = clubMap();
-    if (map.hasOwnProperty(buscado)) {{
-      Plotly.relayout('{div_id}', {{annotations: baseAnnotations.concat([themedAnnotation(buscado, map[buscado])])}});
-    }}
+    refreshAnnotations();
   }});
 
   // Repinta las trazas con la vista actual. Lo llaman los dos controles que
@@ -1497,9 +1757,36 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     catSelect.value = catSels[k];  // el navegador recuerda el estado al recargar
     catSelect.addEventListener('change', function(e) {{
       catSels[k] = e.target.value;
-      applyData();
+      applyDataAnimated();
     }});
   }});
+
+  // Cambiar de posición cambia QUÉ puntos hay, no a dónde se mueven los mismos:
+  // animar las trazas dato por dato (Plotly empareja por índice) haría deslizarse
+  // a un jugador hacia el lugar de otro, que es una mentira visual. Lo honesto es
+  // atenuar la nube, cambiar los datos y volver a encenderla. `mode: 'immediate'`
+  // corta la animación anterior si se hacen clics seguidos, y con
+  // `prefers-reduced-motion` se cambia de golpe.
+  var animSeq = 0;
+  function applyDataAnimated() {{
+    var gd = document.getElementById('{div_id}');
+    var quieto = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (quieto || !window.Plotly || !gd || !gd._fullData) {{ applyData(); return; }}
+    var yo = ++animSeq;
+    var frame = function(op, ms) {{
+      return [{{data: traceIndices.map(function() {{ return {{opacity: op}}; }}), traces: traceIndices}},
+              {{mode: 'immediate', transition: {{duration: ms, easing: 'cubic-in-out'}}, frame: {{duration: ms, redraw: false}}}}];
+    }};
+    Plotly.animate.apply(Plotly, [gd].concat(frame(0.08, 150))).then(function() {{
+      if (yo !== animSeq) return;
+      applyData();
+      return Plotly.animate.apply(Plotly, [gd].concat(frame(1, 260))).then(function() {{
+        // animate con redraw:false no repinta la leyenda, que se queda en el
+        // opacity intermedio; este restyle la sincroniza (el valor ya es 1).
+        if (yo === animSeq) Plotly.restyle(gd, {{opacity: 1}}, traceIndices);
+      }});
+    }}).catch(function() {{ if (yo === animSeq) {{ applyData(); }} }});
+  }}
 
   document.getElementById('{div_id}_league').addEventListener('change', function(e) {{
     var val = e.target.value;
@@ -1518,8 +1805,8 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     if (searched && val !== {_ALL_JSON} && searched.l !== val) {{
       searchInput.value = '';
       applyMarkerStyle();
-      Plotly.relayout('{div_id}', {{annotations: baseAnnotations}});
     }}
+    refreshAnnotations();
     refreshInsight();
     refreshTop();
   }});
@@ -1638,7 +1925,7 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
     fig.update_layout(autosize=True)
     grafico = pio.to_html(
         fig, full_html=False, include_plotlyjs="cdn", div_id=div_id,
-        config={"displaylogo": False, "responsive": True, "displayModeBar": False},
+        config={"displaylogo": False, "responsive": True, "displayModeBar": False, "showTips": False},
         default_width="100%", default_height="100%")
 
     def _opciones(elegida):
@@ -1769,7 +2056,7 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
     if (d.g) {{
       for (var k = 0; k < categorias.length; k++) {{
         if (categorias[k] !== TODAS)
-          pedidos.push([k, CAT_OPCIONES[k].indexOf(categorias[k])]);
+          pedidos.push([k, categorias[k].split('+').map(function(o) {{ return CAT_OPCIONES[k].indexOf(o); }})]);
       }}
     }}
     IDX = d.n.map(function(nombres, t) {{
@@ -1778,7 +2065,7 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
         if (filtroOn && d.f && !d.f[t][i]) continue;
         var fuera = false;
         for (var k = 0; k < pedidos.length; k++)
-          if (d.g[pedidos[k][0]][t][i] !== pedidos[k][1]) {{ fuera = true; break; }}
+          if (pedidos[k][1].indexOf(d.g[pedidos[k][0]][t][i]) === -1) {{ fuera = true; break; }}
         if (fuera) continue;
         idx.push(i);
       }}
@@ -2082,7 +2369,7 @@ def plot_html(fig, width=680, height=480, fuente=None):
     div_id = _div_id(fig)
     fig.update_layout(autosize=True)
     inner = pio.to_html(fig, full_html=False, include_plotlyjs="cdn",
-                         div_id=div_id, config={"displaylogo": False, "responsive": True, "displayModeBar": False},
+                         div_id=div_id, config={"displaylogo": False, "responsive": True, "displayModeBar": False, "showTips": False},
                          default_width="100%", default_height="100%")
     aspect_ratio = width / height
     return f"""

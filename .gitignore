@@ -22,3 +22,9 @@ downloaded_files/
 .claude/
 BITACORA.md
 img/
+
+# Vistas en React (web/react): dependencias de Node. El bundle compilado
+# (web/react/build/) SI se versiona: build.py lo copia a dist/react/ sin necesitar Node.
+web/react/node_modules/
+# Fixtures de la prueba de paridad JS/Python (se regeneran con web/react/test/gen_paridad.py)
+web/react/test/fixtures/

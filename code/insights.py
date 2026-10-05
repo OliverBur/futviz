@@ -1145,3 +1145,274 @@ def tiros(sub, base, frase, ambito):
                  f"tiro medio de {ambito}, aun rematando desde "
                  f"{_verbo(dist, dist_base, 'más cerca', 'más lejos', igual='la misma distancia')}.")
     return fija, salta
+
+
+# --------------------------------------------------------------------------
+# Creación de juego (Jugadores): pases clave, construcción y centros
+# --------------------------------------------------------------------------
+
+def _ambito(df, season, liga):
+    """La temporada elegida, filtrada por liga si hay una, y cómo nombrarla."""
+    d = df[df["temporada"] == season]
+    if liga and liga != LIGA_TODAS:
+        return d[d["liga"] == liga], liga
+    return d, "las 5 ligas"
+
+
+def _lideres(d, col_a, col_b, nombre, fmt_a, fmt_b, que_a, que_b, equipo="team"):
+    """La frase fija de las vistas de dos tasas: quién lidera cada eje, o quién
+    lidera los dos si es la misma persona."""
+    a, b = d.loc[d[col_a].idxmax()], d.loc[d[col_b].idxmax()]
+    if a[nombre] == b[nombre]:
+        return (f"**{a[nombre]}** ({a[equipo]}) lidera los dos ejes: {que_a} "
+                f"({fmt_a(a[col_a])}) y {que_b} ({fmt_b(a[col_b])}).")
+    # No `.capitalize()`: pondría el resto en minúscula y "xG" saldría "xg".
+    mayus = lambda t: t[0].upper() + t[1:]
+    return (f"{mayus(que_a)}: **{a[nombre]}** ({a[equipo]}, {fmt_a(a[col_a])}). "
+            f"{mayus(que_b)}: **{b[nombre]}** ({b[equipo]}, {fmt_b(b[col_b])}).")
+
+
+def pases_clave_que_mirar():
+    return ("Cada punto es un jugador. A la derecha, quien da más pases clave por 90' "
+            "(los que terminan en tiro); arriba, quien genera más ocasión de gol, "
+            "medida en xA. Las líneas punteadas son el promedio de cada eje.\n\n"
+            "Lo que enseña es la **calidad** y no solo el volumen: por debajo de la "
+            "nube están los que dan muchos pases clave de poco peligro (pases "
+            "largos, tiros de lejos de sus compañeros); por encima, los que dan "
+            "pocos pero que acaban en ocasiones claras. Como casi siempre, la "
+            "posición pesa: el filtro de la cancha deja comparar entre iguales.")
+
+
+def pases_clave_por_que(df):
+    r = df["kp90"].corr(df["xA90"])
+    return (
+        f"El **pase clave** cuenta cuántos pases terminaron en un tiro, sin importar "
+        f"qué tan bueno fue ese tiro; el **xA** le pone precio a cada uno según la "
+        f"probabilidad de gol del remate que habilitó. Son dos preguntas distintas: "
+        f"cuánto crea y qué tan peligroso es lo que crea.\n\n"
+        f"Correlacionan {_fmt(r)}, o sea que se parecen pero dejan mucho margen: "
+        f"comparten el {r ** 2 * 100:.0f}% de su variación y el resto es justamente "
+        f"la calidad. Ambos van por 90 minutos para que el suplente que rinde en "
+        f"poco tiempo no quede enterrado, y con el filtro de {MIN_MINUTOS} minutos "
+        f"para que unos pocos minutos con un pase afortunado no den una tasa "
+        f"imposible."
+    )
+
+
+def pases_clave(df, season, liga=None):
+    d, ambito = _ambito(df, season, liga)
+    fija = f"En {ambito}: " + _lideres(
+        d, "kp90", "xA90", "player", lambda v: _fmt(v, 1), _fmt,
+        "más pases clave por 90'", "más xA por 90'")
+    if len(d) < 5:
+        return fija, None
+    # Peligro por pase clave: solo entre quienes dan pases clave seguido, porque
+    # con uno cada tanto el cociente es ruido puro.
+    frecuentes = d[(d["kp90"] >= d["kp90"].median()) & (d["kp90"] > 0)].copy()
+    if len(frecuentes) < 3:  # p. ej. solo porteros: casi nadie da pases clave
+        return fija, None
+    frecuentes["por_pase"] = frecuentes["xA90"] / frecuentes["kp90"]
+    mejor = frecuentes.loc[frecuentes["por_pase"].idxmax()]
+    salta = (f"Entre los que dan pases clave seguido, el que más peligro saca de cada "
+             f"uno es **{mejor['player']}**: {_fmt(mejor['por_pase'])} de xA por pase "
+             f"clave, contra {_fmt(frecuentes['por_pase'].mean())} del grupo.")
+    return fija, salta
+
+
+def construir_que_mirar():
+    return ("A la derecha, quien participa más en jugadas de tiro **sin ser quien "
+            "tira ni quien da el último pase** (el xG de construcción); arriba, quien "
+            "produce más directo (xG + xA). Las líneas son el promedio.\n\n"
+            "Abajo a la derecha están los constructores puros: centrales, pivotes y "
+            "laterales que mueven al equipo pero casi nunca acaban la jugada. Arriba "
+            "a la izquierda, los finalizadores que reciben el balón ya listo. Arriba "
+            "a la derecha, los pocos que construyen y también terminan.")
+
+
+def construir_por_que(df):
+    r = df["xgbuild90"].corr(df["xga90"])
+    return (
+        f"El **xG de construcción** suma el valor de las jugadas que acabaron en "
+        f"tiro y en las que el jugador participó, **sin contar** cuando él mismo "
+        f"tiró o dio el último pase. Es lo más cercano a \"jugó la pelota antes de "
+        f"la ocasión\" que se puede medir con estos datos, sin pases ni "
+        f"progresiones de por medio.\n\n"
+        f"Ojo: **depende del equipo**. Quien juega en un equipo que genera mucho "
+        f"xG participa en más jugadas con xG, juegue como juegue. Por eso se "
+        f"compara contra la producción directa (xG + xA) y no contra un valor "
+        f"fijo. Los dos ejes correlacionan {_fmt(r)}: hay relación, pero el "
+        f"gráfico vive de las diferencias."
+    )
+
+
+def construir(df, season, liga=None):
+    d, ambito = _ambito(df, season, liga)
+    fija = f"En {ambito}: " + _lideres(
+        d, "xgbuild90", "xga90", "player", _fmt, _fmt,
+        "más construcción por 90'", "más producción directa (xG + xA) por 90'")
+    if len(d) < 5:
+        return fija, None
+    poco = d[d["xga90"] <= d["xga90"].median()]
+    c = poco.loc[poco["xgbuild90"].idxmax()]
+    salta = (f"El constructor más puro es **{c['player']}**: {_fmt(c['xgbuild90'])} "
+             f"de xG de construcción por 90' y solo {_fmt(c['xga90'])} de producción "
+             f"directa — está en la mayoría de las jugadas peligrosas de su equipo "
+             f"sin que el tiro o el último pase sean suyos.")
+    return fija, salta
+
+
+def centros_que_mirar():
+    return ("A la derecha, quien más centra por 90'; arriba, quien más ocasión de "
+            "gol genera (xA). Las líneas son el promedio de cada eje.\n\n"
+            "**Centrar mucho no es crear mucho.** La nube sube con el volumen pero "
+            "con mucha dispersión: abajo a la derecha están los que centran de "
+            "forma constante con poco peligro (la mayoría de los centros no "
+            "encuentra a nadie); arriba, los que generan ocasión por otras vías "
+            "además del centro. Casi todo lo de la derecha son laterales y "
+            "extremos, así que conviene filtrar por posición.")
+
+
+def centros_por_que(df):
+    r = df["crosses90"].corr(df["xA90"])
+    return (
+        f"Los **centros** vienen de FBref (que sigue publicándolos) y el **xA** de "
+        f"Understat, así que son dos fuentes independientes midiendo cosas "
+        f"cercanas. Correlacionan {_fmt(r)}: el centro es una de las formas de "
+        f"crear ocasión, no la única.\n\n"
+        f"Un centro cuenta igual salga bien o mal, y el xA solo cuenta los pases "
+        f"que terminaron en tiro; por eso un jugador puede estar muy a la derecha "
+        f"y bajo en el eje vertical sin que eso diga que centra mal — la "
+        f"diferencia es cuánto de su volumen encuentra rematador."
+    )
+
+
+def centros(df, season, liga=None):
+    d, ambito = _ambito(df, season, liga)
+    fija = f"En {ambito}: " + _lideres(
+        d, "crosses90", "xA90", "player", lambda v: _fmt(v, 1), _fmt,
+        "quien más centra por 90'", "quien más xA por 90'")
+    if len(d) < 5:
+        return fija, None
+    muchos = d[d["crosses90"] >= d["crosses90"].quantile(0.75)]
+    if muchos.empty:
+        return fija, None
+    p = muchos.loc[muchos["xA90"].idxmin()]
+    salta = (f"Entre los que más centran, el que menos peligro genera es "
+             f"**{p['player']}**: {_fmt(p['crosses90'], 1)} centros por 90' y "
+             f"{_fmt(p['xA90'])} de xA — volumen que casi no se convierte en "
+             f"ocasión.")
+    return fija, salta
+
+
+# --------------------------------------------------------------------------
+# Equipos: creación (posesión vs. asistencias) y defensa
+# --------------------------------------------------------------------------
+
+POSESION, ASIST_90 = "ov_Poss", "ov_Per 90 Minutes_Ast"
+SOTA_90, GA_90 = "p90_SoTA", "gk_Performance_GA90"
+
+
+def creacion_que_mirar():
+    return ("A la derecha, los equipos que más tienen el balón; arriba, los que más "
+            "asistencias dan por 90'. Las líneas punteadas son el promedio.\n\n"
+            "La diagonal es la lectura \"normal\": más balón, más creación. Lo "
+            "interesante son las esquinas que no la siguen. **Abajo a la derecha**: "
+            "equipos con posesión que no se convierte en asistencias. **Arriba a la "
+            "izquierda**: equipos directos, que crean sin tener la pelota.")
+
+
+def creacion_por_que(df):
+    r = df[POSESION].corr(df[ASIST_90])
+    return (
+        f"Es la versión de equipo de \"cuánto se crea\", con lo que queda disponible: "
+        f"FBref ya no publica pases clave ni xA, así que la creación se mide por su "
+        f"**resultado** (asistencias), que además depende de que alguien remate "
+        f"bien. Por eso conviene mirarla como tendencia y no como dato fino.\n\n"
+        f"La posesión de una liga suma 100% por partido, así que su promedio es "
+        f"~50% en todas: sirve para comparar equipos dentro de una liga y poco para "
+        f"comparar ligas. Los dos ejes correlacionan {_fmt(r)}, o sea que tener el "
+        f"balón explica una parte de la creación pero deja sitio a estilos "
+        f"distintos."
+    )
+
+
+def creacion(df, season, liga=None):
+    d, ambito = _ambito(df, season, liga)
+    pos, ast = d.loc[d[POSESION].idxmax()], d.loc[d[ASIST_90].idxmax()]
+    fija = (f"En {ambito}, **{pos['Squad']}** es el que más balón tiene "
+            f"({_fmt(pos[POSESION], 1)}%) y **{ast['Squad']}** el que más asistencias "
+            f"da por 90' ({_fmt(ast[ASIST_90])}).")
+    if len(d) < 4:
+        return fija, None
+    brecha = d[POSESION].rank(pct=True) - d[ASIST_90].rank(pct=True)
+    i_alto, i_bajo = brecha.idxmax(), brecha.idxmin()
+    if abs(brecha[i_alto]) >= abs(brecha[i_bajo]):
+        e = d.loc[i_alto]
+        salta = (f"El caso de posesión que no crea es **{e['Squad']}**: de los que más "
+                 f"balón tienen ({_fmt(e[POSESION], 1)}%) y de los que menos "
+                 f"asistencias dan ({_fmt(e[ASIST_90])} por 90').")
+    else:
+        e = d.loc[i_bajo]
+        salta = (f"El más directo es **{e['Squad']}**: tiene poco el balón "
+                 f"({_fmt(e[POSESION], 1)}%) y aun así da {_fmt(e[ASIST_90])} "
+                 f"asistencias por 90', de lo más alto.")
+    return fija, salta
+
+
+def defensa_que_mirar():
+    return ("Los dos ejes son \"menos es mejor\": a la izquierda, equipos a los que "
+            "tiran poco a puerta; abajo, a los que les entran pocos goles. Las "
+            "líneas son el promedio.\n\n"
+            "**Abajo a la izquierda** están los sólidos. Las esquinas que cuentan "
+            "algo son las otras: **arriba a la izquierda**, reciben pocos tiros y "
+            "aun así encajan (portería floja o mala suerte); **abajo a la "
+            "derecha**, aguantan muchos tiros sin que les entre (portería estelar "
+            "o defensa que bloquea bien).")
+
+
+def defensa_por_que(df):
+    r = df[SOTA_90].corr(df[GA_90])
+    return (
+        f"Separa lo que llega de lo que entra. Los goles recibidos mezclan dos "
+        f"cosas: **cuánto deja tirar el equipo** y **qué tan bien ataja su "
+        f"portero**. Con los dos ejes por separado se ve cuál de las dos explica "
+        f"un número malo o bueno.\n\n"
+        f"Correlacionan {_fmt(r)}, como era de esperar: a más tiros, más goles. "
+        f"La distancia a la tendencia es lo que importa, y es en buena parte "
+        f"portería y suerte — con 38 partidos, una racha de paradas o de remates "
+        f"que entran mueve mucho el resultado. No se puede separar la defensa de "
+        f"la portería con estos datos."
+    )
+
+
+def defensa(df, season, liga=None):
+    import numpy as np
+
+    d, ambito = _ambito(df, season, liga)
+    menos_goles, menos_tiros = d.loc[d[GA_90].idxmin()], d.loc[d[SOTA_90].idxmin()]
+    fija = (f"En {ambito}, **{menos_goles['Squad']}** es el que menos goles encaja "
+            f"({_fmt(menos_goles[GA_90])} por 90') y **{menos_tiros['Squad']}** el que "
+            f"menos tiros a puerta recibe ({_fmt(menos_tiros[SOTA_90])} por 90').")
+    if len(d) < 4:
+        return fija, None
+    pendiente, base = np.polyfit(d[SOTA_90], d[GA_90], 1)
+    resto = d[GA_90] - (pendiente * d[SOTA_90] + base)
+    i = resto.abs().idxmax()
+    e, delta = d.loc[i], resto[i]
+    sentido = "más" if delta > 0 else "menos"
+    salta = (f"Respecto de lo que sus tiros recibidos hacían esperar, el que más se "
+             f"desvía es **{e['Squad']}**: recibe {_fmt(e[SOTA_90])} tiros a puerta "
+             f"por 90' y encaja {_fmt(e[GA_90])}, {_fmt(abs(delta))} goles {sentido} "
+             f"de lo normal para ese volumen.")
+    return fija, salta
+
+
+def nivel_liga_equipos_que_mirar():
+    return ("Cada caja resume una liga para la variable que elijas: la línea del "
+            "medio es la mediana, la caja contiene a la mitad central de los equipos "
+            "y cada punto es un equipo (pasa el mouse para ver cuál).\n\n"
+            "Mira **dos cosas distintas**: qué liga está más arriba (su nivel típico) "
+            "y qué tan ancha es la caja (qué tan parejos son sus equipos). Una liga "
+            "puede tener el mismo promedio que otra y mucha más distancia entre su "
+            "mejor y su peor. El filtro de nivel de club separa a los grandes del "
+            "resto, que casi siempre cuentan historias distintas.")

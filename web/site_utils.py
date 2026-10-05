@@ -264,6 +264,12 @@ PLOTLY_THEME_SCRIPT = """<script>
     if (!window.Plotly) return;
     var theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
     document.querySelectorAll('.js-plotly-plot').forEach(function(gd) {
+      // Un gráfico en una pestaña oculta (display:none) no se toca: Plotly mide
+      // cero ahí y el relayout le descoloca título y subtítulo. Se recolorea al
+      // mostrarlo (section_views llama otra vez a esta función). `tema` recuerda
+      // con qué tinta quedó, así no se repinta lo que ya está bien.
+      if (!gd.getClientRects().length || gd.dataset.tema === theme) return;
+      gd.dataset.tema = theme;
       var ligas = ligasUpdate(gd, theme);
       var lay = patchFor(gd, theme);
       Object.keys(ligas.layout).forEach(function(k) { lay[k] = ligas.layout[k]; });
@@ -281,6 +287,9 @@ PLOTLY_THEME_SCRIPT = """<script>
     });
   }
   syncPlotly();
+  // Las páginas con vistas montan gráficos DESPUÉS de cargar (ver section_views.py):
+  // al montarlos llaman a esto para que nazcan con la tinta del tema actual.
+  window.futvizSyncPlotly = syncPlotly;
 
   var btn = document.getElementById('theme-toggle');
   if (btn) {
@@ -314,6 +323,11 @@ class ChartPage:
     subtitle: str
     body_html: str
     kind: str = "scatter"  # scatter | radar | bar | box — qué ícono mostrar en la grilla de sección
+
+    # Para las secciones con vistas (`section_views.py`): el texto corto de la
+    # pestaña y la familia en que se agrupa. Si `tab` va vacío se usa `title`.
+    tab: str = ""
+    group: str = ""
 
     # Dónde vive el archivo respecto de dist/ — lo usa la card de la sección
     # para armar el href (ver `write_section_pages`).
@@ -406,15 +420,18 @@ CHART_ICONS = {
 # thumbnail que se genera en `build.py` (`build_previews()`) — real si
 # existe `img/preview-{slug}.png`, si no un placeholder generado.
 SECTION_META = {
-    "Equipos": {
-        "slug": "equipos",
-        "description": "Rendimiento, estilo de juego y disciplina a nivel de equipo.",
-        "preview": "preview-equipos.png",
-    },
-    "Jugadores": {
-        "slug": "jugadores",
-        "description": "Producción individual, eficiencia y perfiles ofensivos.",
-        "preview": "preview-jugadores.png",
+    # Equipos y Jugadores ya no tienen página propia: viven juntos en "Análisis exploratorio"
+    # (`section_views.py`). Siguen aquí porque `slug` nombra la carpeta de sus
+    # fragmentos y `hub` dice en qué página aparecen.
+    "Equipos": {"slug": "equipos", "hub": "Análisis exploratorio"},
+    "Jugadores": {"slug": "jugadores", "hub": "Análisis exploratorio"},
+    "Análisis exploratorio": {
+        "slug": "analisis-exploratorio",
+        "description": "Rendimiento, estilo y nivel de jugadores y equipos de las 5 grandes ligas, "
+                       "con filtros y un explorador para cruzar cualquier par de variables.",
+        "preview": "preview-analisis-exploratorio.png",
+        "views": True,
+        "entidades": ["Jugadores", "Equipos"],  # orden de la fila de arriba; la primera abre la página
     },
     # `noun` es lo que se cuenta en la card de la landing: las otras dos
     # secciones ofrecen gráficos sueltos para explorar, esta ofrece
@@ -1092,6 +1109,8 @@ def write_section_pages(pages: list[ChartPage], dist_dir: Path) -> list[Path]:
     out_paths = []
     for name, section_pages in sections.items():
         meta = SECTION_META[name]
+        if meta.get("views") or meta.get("hub"):
+            continue  # esas secciones son una sola página con vistas (section_views.py)
         cards = "".join(
             (TOOL_CARD_TEMPLATE if p.kind == "explorer" else CARD_TEMPLATE).format(
                 href=f"{p.href_prefix}{p.slug}.html", title=p.title,
@@ -1113,7 +1132,9 @@ def write_section_pages(pages: list[ChartPage], dist_dir: Path) -> list[Path]:
 def write_index(pages: list[ChartPage], dist_dir: Path) -> Path:
     counts: dict[str, int] = {}
     for page in pages:
-        counts[page.section] = counts.get(page.section, 0) + 1
+        # Las secciones con `hub` cuentan para la página que las reúne.
+        destino = SECTION_META.get(page.section, {}).get("hub", page.section)
+        counts[destino] = counts.get(destino, 0) + 1
 
     def _noun(meta, n):
         # "análisis" es invariable en plural, "gráfica" no — por eso el
