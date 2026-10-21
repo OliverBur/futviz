@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Machine Learning · FutViz</title>
+<meta name="description" content="Aplicación de modelos de Machine Learning para buscar patrones que no estén a simple vista.">
+<meta name="theme-color" content="#EFEDF7">
 <link rel="icon" type="image/png" href="favicon.png">
 <script>
 (function() {
@@ -17,6 +19,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sansita:wght@700;800&display=swap" rel="stylesheet">
+<script src="react/futviz-react.js" defer></script>
+<link rel="preload" as="script" href="vistas/ml/modelo-xg.js">
 <style>
 
   :root {
@@ -49,7 +53,8 @@
     --color-border: #2C393C;
   }
   * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; background: var(--color-bg); }
+  html { -webkit-text-size-adjust: 100%; background: var(--color-bg); color-scheme: light; }
+  html[data-theme="dark"] { color-scheme: dark; }
   body { margin: 0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     background: var(--color-bg); color: var(--color-text-body);
     animation: futviz-fade-in .2s ease-out;
@@ -69,90 +74,261 @@
   html[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
   html[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
 
-  /* Misma textura de puntos que la landing (opacidad ya subida ~10%),
-     pero acá solo en el header — no en toda la página. */
-  header { padding: 20px 20px 24px; border-bottom: 1px solid var(--color-border);
+  html { -webkit-tap-highlight-color: transparent; }
+  header { padding: 20px 20px 22px; border-bottom: 1px solid var(--color-border);
     background-image:
       radial-gradient(rgba(44, 76, 84, 0.077) 1.4px, transparent 1.6px),
       radial-gradient(rgba(57, 153, 6, 0.066) 1.4px, transparent 1.6px);
-    background-size: 22px 22px, 22px 22px;
-    background-position: 0 0, 11px 11px; }
+    background-size: 22px 22px, 22px 22px; background-position: 0 0, 11px 11px; }
   .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
   .crumb-current { color: var(--color-muted); font-size: 13px; font-weight: 500; }
   .crumb-current .wordmark { font-weight: 700; }
   .header-right { display: flex; align-items: center; gap: 14px; }
   .site-logo-link { flex: none; line-height: 0; }
   .site-logo { height: 30px; width: auto; display: block; }
-  h1 { position: relative; font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
+  h1.page-title { position: relative; font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
     color: var(--color-primary); margin: 16px 0 8px; padding-left: 14px; }
-  h1::before { content: ""; position: absolute; left: 0; top: 3px; bottom: 3px;
+  h1.page-title::before { content: ""; position: absolute; left: 0; top: 3px; bottom: 3px;
     width: 4px; border-radius: 2px; background: var(--color-brand-accent); }
-  /* 760px y no 640: la bajada de cada sección es UNA frase, y a 640 la más
-     larga (Machine Learning) partía en dos renglones dejando dos palabras
-     sueltas abajo. En pantallas angostas sigue partiendo, que es lo correcto. */
   .lead { color: var(--color-muted); font-size: 14px; line-height: 1.55; max-width: 760px; }
 
-  main { padding: 28px 20px 64px; max-width: 1180px; margin: 0 auto; }
-  .grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+  /* Barra de progreso de lectura del artículo abierto (no de la página: el encabezado y el
+     carrusel no cuentan). */
+  #progress { position: fixed; top: 0; left: 0; height: 3px; width: 100%; z-index: 30;
+    background: var(--color-brand-accent); transform: scaleX(0); transform-origin: left;
+    transition: transform .1s linear; }
 
-  a.card { display: flex; gap: 14px; align-items: flex-start; padding: 18px 20px; border-radius: 12px;
-    text-decoration: none; color: inherit; background: var(--color-surface);
-    border: 1px solid var(--color-border); box-shadow: 0 1px 2px rgba(44, 76, 84, 0.05);
-    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background-color .18s ease; }
-  a.card:hover, a.card:focus-visible {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 28px rgba(44, 76, 84, 0.14);
-    border-color: var(--color-interactive);
-    background: var(--color-interactive-soft);
+  .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+  .skip { position: absolute; left: 12px; top: -48px; z-index: 40; padding: 9px 14px; border-radius: 8px;
+    background: var(--color-primary); color: var(--color-bg); font-size: 13px; font-weight: 600; text-decoration: none;
+    transition: transform .15s ease; }
+  .skip:focus-visible { transform: translateY(60px); outline: 2px solid var(--color-interactive); outline-offset: 2px; }
+  .pane:focus { outline: none; }   /* destino del salto: se enfoca por código, no con el teclado */
+
+  /* Pantalla ancha: lista de artículos | lectura | índice, casi de borde a borde. */
+  .reader { display: grid; grid-template-columns: minmax(0, 1fr); max-width: 1880px; margin: 0 auto;
+    padding: 0 16px 80px; }
+  .pane { min-width: 0; }
+  .pane article p, .pane article li, .pane .deck { text-wrap: pretty; }
+
+  /* ---------- Lista de artículos ---------- */
+  .rail { padding: 20px 0 8px; min-width: 0; }
+  .rail-head { display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    margin: 0 0 10px 14px; }
+  .rail-label { font-size: 11px; font-weight: 600; color: var(--color-muted); }
+  .rail-label b { color: var(--color-primary); font-variant-numeric: tabular-nums; font-weight: 600; }
+  .rail-arrows { display: flex; gap: 4px; }
+  .rail-arrows button { width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;
+    padding: 0; border-radius: 8px; border: 0; background: transparent; color: var(--color-muted);
+    cursor: pointer; touch-action: manipulation; transition: background-color .15s ease, color .15s ease; }
+  .rail-arrows button svg { width: 15px; height: 15px; }
+  @media (hover: hover) {
+    .rail-arrows button:hover:not(:disabled) { background: var(--color-surface); color: var(--color-primary); }
   }
-  a.card:focus-visible { outline: 2px solid var(--color-interactive); outline-offset: 2px; }
-  .card-icon { flex: none; display: flex; align-items: center; justify-content: center;
-    width: 36px; height: 36px; border-radius: 10px; background: var(--color-brand-accent-soft);
-    color: var(--color-primary); }
-  .card-icon svg { width: 18px; height: 18px; }
-  a.card .card-title { font-size: 15.5px; font-weight: 600; color: var(--color-primary);
-    line-height: 1.35; margin-bottom: 6px; }
-  a.card .card-sub { font-size: 13px; font-weight: 400; color: var(--color-muted); line-height: 1.5; }
+  .rail-arrows button:disabled { opacity: .35; cursor: default; }
+  .rail-arrows button:focus-visible { outline: 2px solid var(--color-interactive); outline-offset: 1px; }
 
-  /* Variante "herramienta" (Crea tu gráfico). Ocupa la fila entera y va con
-     el fondo de acento porque no es una gráfica más de la grilla: las otras
-     son una lectura ya hecha y esta es un banco de trabajo. Va al final, así
-     que la fila completa además cierra la grilla en vez de dejar una card
-     suelta en la última fila. */
-  a.card--tool { grid-column: 1 / -1; position: relative; align-items: center;
-    gap: 18px; padding: 24px 26px 24px 30px; overflow: hidden;
-    background: var(--color-brand-accent-soft); border-color: rgba(57, 153, 6, 0.35); }
-  /* Misma barra de acento que el <h1> de la sección. */
-  a.card--tool::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0;
-    width: 4px; background: var(--color-brand-accent); }
-  a.card--tool .card-icon { width: 46px; height: 46px; border-radius: 12px;
-    background: var(--color-surface); }
-  a.card--tool .card-icon svg { width: 22px; height: 22px; }
-  a.card--tool .card-title { font-size: 18px; }
-  a.card--tool .card-sub { font-size: 13.5px; max-width: 66ch; }
-  .card-cta { display: none; }
+  /* Sin portadas, sombras ni colores de marca: una fila de texto por artículo. La seleccionada
+     se marca con fondo neutro y una barra del color del texto. */
+  .minis { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+  a.mini { display: block; text-decoration: none; color: inherit; padding: 12px 14px; border-radius: 10px;
+    touch-action: manipulation; transition: background-color .15s ease, box-shadow .15s ease; }
+  @media (hover: hover) { a.mini:hover { background: var(--color-surface); } }
+  a.mini:focus-visible { outline: 2px solid var(--color-interactive); outline-offset: -2px; }
+  a.mini[aria-current="page"] { background: var(--color-surface); box-shadow: inset 2px 0 0 var(--color-primary); }
+  .mini-meta { display: flex; gap: 8px; font-size: 11px; font-weight: 500; color: var(--color-muted);
+    font-variant-numeric: tabular-nums; margin-bottom: 5px; }
+  .mini-title { display: block; font-size: 14px; font-weight: 600; line-height: 1.35; color: var(--color-primary); }
+  .mini-sub { display: block; margin-top: 5px; font-size: 12.5px; line-height: 1.55; color: var(--color-muted); }
+  a.mini--soon .mini-title { color: var(--color-muted); }
+
+  /* Índice del artículo abierto: columna propia a la derecha, solo en pantalla ancha. */
+  .toc { display: none; }
+  .toc-label { font-size: 11px; font-weight: 600; color: var(--color-muted); margin: 0 0 10px 12px; }
+  .toc ol { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--color-border); }
+  .toc a { display: flex; gap: 10px; align-items: baseline; margin-left: -1px; padding: 6px 8px 6px 12px;
+    border-left: 1px solid transparent; font-size: 12.5px; line-height: 1.4; color: var(--color-muted);
+    text-decoration: none; touch-action: manipulation; transition: color .15s ease, border-color .15s ease; }
+  @media (hover: hover) { .toc a:hover { color: var(--color-primary); } }
+  .toc a:focus-visible { outline: 2px solid var(--color-interactive); outline-offset: -2px; }
+  .toc a[aria-current="true"] { color: var(--color-primary); font-weight: 600; border-left-color: var(--color-primary); }
+  .toc .n { flex: none; font-size: 10.5px; font-weight: 600; font-variant-numeric: tabular-nums; opacity: .7; }
+
+
+  /* ---------- Panel de lectura ---------- */
+  .view { animation: view-in .26s ease-out; }
+  .view[hidden] { display: none; }
+  @keyframes view-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .hero { padding-top: 28px; }
+  .hero h2.hero-title { font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em;
+    color: var(--color-primary); margin: 0 0 16px; text-wrap: balance; }
+  .soon-panel { max-width: 720px; margin: 0 auto; padding: 56px 0 24px; text-align: center; }
+  .soon-art { width: 84px; height: 84px; margin: 0 auto 22px; border-radius: 22px; display: flex;
+    align-items: center; justify-content: center; color: var(--color-muted);
+    border: 1px dashed var(--color-muted); }
+  .soon-art svg { width: 34px; height: 34px; }
+  .soon-panel h2 { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; color: var(--color-primary); margin: 0 0 10px; }
+  .soon-panel p { color: var(--color-muted); font-size: 15.5px; line-height: 1.6; margin: 0 auto 24px; max-width: 46ch; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; font: 600 13.5px "Inter", system-ui, sans-serif;
+    padding: 10px 16px; border-radius: 10px; text-decoration: none; color: var(--color-primary);
+    background: var(--color-surface); border: 1px solid var(--color-border); touch-action: manipulation;
+    transition: border-color .15s ease; }
+  @media (hover: hover) { .btn:hover { border-color: var(--color-muted); } }
+  .btn:focus-visible { outline: 2px solid var(--color-interactive); outline-offset: 2px; }
+  .btn svg { width: 16px; height: 16px; }
+
+  .view-loading { min-height: 460px; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 14px; color: var(--color-muted); font-size: 13.5px; }
+  .view-loading i { width: 30px; height: 30px; border-radius: 50%; border: 3px solid var(--color-border);
+    border-top-color: var(--color-interactive); animation: spin .8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .view-error button { font: 600 13px "Inter", system-ui, sans-serif; padding: 8px 16px; border-radius: 8px; cursor: pointer;
+    border: 1px solid var(--color-interactive); background: var(--color-surface); color: var(--color-primary); }
 
   @media (min-width: 640px) {
-    header { padding: 20px 32px 28px; }
-    h1 { font-size: 28px; }
+    header { padding: 20px 24px 26px; }
+    h1.page-title { font-size: 28px; }
     .lead { font-size: 15px; }
-    main { padding: 36px 32px 72px; }
-    .grid { grid-template-columns: repeat(2, 1fr); gap: 18px; }
-    .card-cta { display: flex; align-items: center; gap: 7px; flex: none; margin-left: auto;
-      font-size: 13.5px; font-weight: 600; color: var(--color-interactive); }
-    .card-cta svg { width: 16px; height: 16px; }
-    a.card--tool:hover .card-cta svg { transform: translateX(3px); }
-    .card-cta svg { transition: transform .18s ease; }
+    .reader { padding: 0 24px 80px; }
+  }
+
+  /* Hasta 960 px la lista es una tira horizontal con snap; la siguiente asoma para que se note
+     que se desliza. */
+  @media (max-width: 959px) {
+    .minis { flex-direction: row; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory;
+      scrollbar-width: none; overscroll-behavior-x: contain; padding: 0 0 10px; }
+    .minis::-webkit-scrollbar { display: none; }
+    .minis li { flex: 0 0 min(80%, 300px); scroll-snap-align: start; display: flex; }
+    a.mini { width: 100%; background: var(--color-surface); border: 1px solid var(--color-border); }
+    a.mini[aria-current="page"] { border-color: var(--color-primary); box-shadow: none; }
+    .rail-head { margin-left: 2px; }
+    .rail-arrows button { width: 40px; height: 40px; }
   }
   @media (min-width: 960px) {
-    .grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .reader { grid-template-columns: 260px minmax(0, 1fr); gap: 0 36px; align-items: start; }
+    .rail { position: sticky; top: 0; max-height: 100vh; max-height: 100dvh; overflow-y: auto; overscroll-behavior: contain;
+      padding: 24px 0; scrollbar-width: thin; scrollbar-color: var(--color-border) transparent; }
+    .hero { padding-top: 24px; }
   }
+  @media (min-width: 1360px) {
+    .reader { grid-template-columns: 260px minmax(0, 1fr) 210px; }
+    .toc:not([hidden]) { display: block; position: sticky; top: 0; max-height: 100vh; max-height: 100dvh;
+      overflow-y: auto; overscroll-behavior: contain; padding: 28px 0; scrollbar-width: thin; scrollbar-color: var(--color-border) transparent; }
+  }
+  @media (max-width: 640px) {
+    header { padding: 16px 16px 20px; }
+    .site-logo { height: 24px; }
+    .reader { padding: 0 16px 56px; }
+    .hero h2.hero-title { font-size: 25px; }
+    .soon-panel { padding-top: 36px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .view { animation: none; } .view-loading i { animation-duration: 2s; }
+    a.mini, #progress, .toc a { transition: none; }
+  }
+
+  /* Dos anchos: la prosa se lee en una columna angosta (~68 caracteres) y
+     los gráficos pueden respirar más. Ambos centrados sobre el mismo eje. */
+  .wrap { max-width: 720px; margin: 0 auto; }
+  .wrap-wide { max-width: 940px; margin: 0 auto; }
+
+  .hero { padding: 48px 0 28px; }
+  .kicker { display: inline-block; font-size: 12px; font-weight: 600; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--color-primary); background: var(--color-brand-accent-soft);
+    padding: 5px 11px; border-radius: 999px; margin-bottom: 18px; }
+  .hero h1 { font-size: 32px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em;
+    color: var(--color-primary); margin: 0 0 16px; }
+  .deck { font-size: 17px; line-height: 1.6; color: var(--color-muted); margin: 0; }
+  /* Rejilla de 2 columnas y no flex-wrap: con flex cada dato se dimensiona por
+     su contenido, así que se apilaban todos a la izquierda y la segunda columna
+     no coincidía entre filas (58px de diferencia), dejando medio ancho vacío.
+     Dos columnas porque el dato más largo mide ~300px: con cuatro se partiría
+     en dos líneas. */
+  .meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 32px; margin-top: 26px; padding-top: 20px;
+    border-top: 1px solid var(--color-border); }
+  .meta div { font-size: 12.5px; color: var(--color-muted); }
+  .meta b { display: block; font-size: 10.5px; font-weight: 600; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--color-primary); margin-bottom: 3px; }
+
+  article { font-size: 16.5px; line-height: 1.72; }
+  article h2 { font-size: 25px; line-height: 1.25; font-weight: 700; letter-spacing: -0.015em;
+    color: var(--color-primary); margin: 60px 0 6px; scroll-margin-top: 70px; }
+  article h2 .step { display: block; font-size: 12px; font-weight: 600; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--color-brand-accent); margin-bottom: 8px; }
+  article h3 { font-size: 18px; font-weight: 700; color: var(--color-primary); margin: 38px 0 4px; }
+  article p { margin: 16px 0; }
+  article ul { margin: 16px 0; padding-left: 22px; }
+  article li { margin: 9px 0; }
+  article strong { color: var(--color-primary); font-weight: 650; }
+  article a { color: var(--color-interactive); }
+  article code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .88em;
+    background: var(--color-brand-accent-soft); padding: 2px 6px; border-radius: 5px;
+    color: var(--color-primary); }
+
+  /* Bloque de gráfico: mismo tratamiento de tarjeta que las páginas de
+     chart (.chart-scroll) para que se sienta el mismo sitio. */
+  figure { margin: 34px auto; }
+  .chart-scroll { max-width: 100%; overflow-x: auto; background: var(--color-bg);
+    border: 1px solid var(--color-border); border-radius: 14px; padding: 18px; }
+  figcaption { font-size: 13px; line-height: 1.5; color: var(--color-muted); margin-top: 12px;
+    padding-left: 12px; border-left: 2px solid var(--color-border); }
+
+  .callout { margin: 34px 0; padding: 20px 22px; border-radius: 12px;
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-brand-accent); }
+  .callout.warn { border-left-color: #E0891C; }
+  .callout .callout-title { font-size: 12px; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--color-primary); margin-bottom: 8px; }
+  .callout p { margin: 8px 0 0; font-size: 15.5px; }
+  .callout p:first-of-type { margin-top: 0; }
+
+  /* Dato grande: para el número que sostiene el argumento. */
+  .stat { margin: 34px 0; padding: 26px 24px; border-radius: 14px; text-align: center;
+    background: var(--color-surface); border: 1px solid var(--color-border); }
+  .stat .stat-value { font-size: 46px; font-weight: 800; letter-spacing: -0.02em; line-height: 1;
+    color: var(--color-brand-accent); }
+  .stat .stat-label { font-size: 14px; color: var(--color-muted); margin-top: 12px; line-height: 1.5; }
+
+  .table-scroll { overflow-x: auto; margin: 30px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 520px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--color-border);
+    vertical-align: top; }
+  thead th { font-size: 11.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+    color: var(--color-primary); border-bottom-width: 2px; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tbody tr:hover { background: var(--color-interactive-soft); }
+
+  .article-end { margin: 56px 0 0; padding-top: 26px; border-top: 1px solid var(--color-border);
+    display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+  .article-end a { font-size: 14px; font-weight: 600; text-decoration: none;
+    color: var(--color-interactive); }
+  .article-end .note { font-size: 12.5px; color: var(--color-muted); }
+  @media (max-width: 640px) {
+    .hero { padding: 32px 0 22px; }
+    .hero h1 { font-size: 26px; }
+    .deck { font-size: 15.5px; }
+    /* en móvil dos columnas dejarían ~140px por dato: una sola y a lo alto */
+    .meta { grid-template-columns: 1fr; gap: 14px; }
+    article { font-size: 16px; }
+    article h2 { font-size: 21px; margin-top: 46px; }
+    .chart-scroll { padding: 12px; }
+    .stat .stat-value { font-size: 36px; }
+  }
+
+  .pane .wrap { max-width: 920px; }
+  .pane .wrap-wide { max-width: 1240px; }
 </style>
 </head>
 <body>
+<a class="skip" href="#pane" id="skip">Saltar al artículo</a>
+<div id="progress" role="presentation"></div>
+<div class="sr-only" id="anuncio" role="status" aria-live="polite"></div>
 <header>
   <div class="topbar">
-    <span class="crumb-current"><span class="wordmark">FutViz</span> / Machine Learning</span>
+    <span class="crumb-current"><span class="wordmark" translate="no">FutViz</span> / Machine Learning</span>
     <div class="header-right">
       <a class="site-logo-link" href="index.html">
         <img class="site-logo" src="assets/logo.png" alt="FutViz — volver al inicio">
@@ -167,28 +343,407 @@
 </button>
     </div>
   </div>
-  <h1>Machine Learning</h1>
+  <h1 class="page-title">Machine Learning</h1>
   <div class="lead">Aplicación de modelos de Machine Learning para buscar patrones que no estén a simple vista.</div>
 </header>
-<main><div class="grid"><a class="card" href="analisis/modelo-xg.html">
-  <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h9l5 5v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M14 3v5h5M8 13h8M8 17h5"/></svg></div>
-  <div>
-    <div class="card-title">Construyendo un modelo de xG</div>
-    <div class="card-sub">La idea es trasladar todos los datos (que tengo) alrededor de un tiro para construir un modelo que genere la estadística de goles esperados.</div>
-  </div>
-</a>
-</div></main>
+<div class="reader">
+  <nav class="rail" aria-label="Artículos de Machine Learning" id="rail">
+    <div class="rail-head">
+      <span class="rail-label">Artículos · <b id="rail-pos">1</b>/2</span>
+      <span class="rail-arrows">
+        <button type="button" id="prev" aria-label="Artículo anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+        <button type="button" id="next" aria-label="Artículo siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+      </span>
+    </div>
+    <ul class="minis" id="minis"><li><a class="mini" href="#modelo-xg" data-slug="modelo-xg"><span class="mini-meta"><span>01</span><span>7&nbsp;min de lectura</span></span><span class="mini-title">Construyendo un modelo de xG</span><span class="mini-sub">La idea es trasladar todos los datos (que tengo) alrededor de un tiro para construir un modelo que genere la estadística de goles esperados.</span></a></li><li><a class="mini mini--soon" href="#valores-jugadores" data-slug="valores-jugadores"><span class="mini-meta"><span>02</span><span>Próximamente</span></span><span class="mini-title">Valores de jugadores</span><span class="mini-sub">En preparación.</span></a></li></ul>
+  </nav>
+  <main class="pane" id="pane" tabindex="-1"><section class="view" id="v-modelo-xg" aria-label="Construyendo un modelo de xG" hidden></section><section class="view" id="v-valores-jugadores" aria-label="Valores de jugadores" hidden><div class="soon-panel"><div class="soon-art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12M6 21h12"/><path d="M7 3v3a5 5 0 0 0 2 4l3 2-3 2a5 5 0 0 0-2 4v3M17 3v3a5 5 0 0 1-2 4l-3 2 3 2a5 5 0 0 1 2 4v3"/></svg></div><span class="kicker">Próximamente</span><h2>Valores de jugadores</h2><p>Este artículo todavía está en preparación. Mientras tanto, hay otro listo para leer.</p><a class="btn" href="#modelo-xg">Leer «Construyendo un modelo de xG» <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div></section></main>
+  <aside class="toc" id="toc" aria-label="En este artículo" hidden>
+    <div class="toc-label">En este artículo</div>
+    <ol id="toc-list"></ol>
+  </aside>
+</div>
 <script>
 (function() {
-  var btn = document.getElementById('theme-toggle');
-  if (!btn) return;
-  btn.addEventListener('click', function() {
-    var current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-    var next = current === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
-    try { localStorage.setItem('futviz-theme', next); } catch (e) {}
-    document.dispatchEvent(new CustomEvent('futviz-theme-change', {detail: {theme: next}}));
+  var ARTICULOS = [{"slug": "modelo-xg", "title": "Construyendo un modelo de xG", "src": "vistas/ml/modelo-xg.js"}, {"slug": "valores-jugadores", "title": "Valores de jugadores", "src": ""}];
+  var DEFECTO = ARTICULOS[0].slug;
+  var cards = Array.prototype.slice.call(document.querySelectorAll('a.mini'));
+  var minis = document.getElementById('minis');
+  var rail = document.getElementById('rail');
+  var toc = document.getElementById('toc');
+  var tocList = document.getElementById('toc-list');
+  var pos = document.getElementById('rail-pos');
+  var barra = document.getElementById('progress');
+  var btnPrev = document.getElementById('prev');
+  var btnNext = document.getElementById('next');
+  var anuncio = document.getElementById('anuncio');
+  var pane = document.getElementById('pane');
+  var cargas = {};   // slug -> Promise del montaje (hecho o en curso)
+  var pedidos = {};  // slug -> Promise del texto del fragmento (también lo usa el prefetch)
+  var esperando = {};
+  var actual = null;
+  var secciones = [];  // h2 del artículo abierto, para el índice
+  var sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function articulo(slug) { return ARTICULOS.filter(function(a) { return a.slug === slug; })[0]; }
+  function panel(slug) { return document.getElementById('v-' + slug); }
+  function indice(slug) { return ARTICULOS.indexOf(articulo(slug)); }
+
+  // Cada fragmento se anuncia con futvizArticulo(slug, html). <script src> y no fetch para que
+  // funcione también desde file://.
+  window.futvizArticulo = function(slug, html) { if (esperando[slug]) esperando[slug](html); };
+  function pedir(slug) {
+    if (!pedidos[slug]) {
+      pedidos[slug] = new Promise(function(resolve, reject) {
+        esperando[slug] = resolve;
+        var tag = document.createElement('script');
+        tag.src = articulo(slug).src;
+        tag.onerror = function() { tag.remove(); reject(new Error('carga')); };
+        document.head.appendChild(tag);
+      });
+      pedidos[slug].catch(function() { delete pedidos[slug]; delete esperando[slug]; });  // permite reintentar
+    }
+    return pedidos[slug];
+  }
+
+  // Los <script> que entran por innerHTML no se ejecutan: se sacan y se vuelven a crear, en
+  // orden, con el DOM ya puesto. (Los de cada gráfico dejan su configuración en window.futvizVistas.)
+  function ejecutar(host, scripts) {
+    scripts.forEach(function(viejo) {
+      var s = document.createElement('script');
+      if (viejo.src) s.src = viejo.src; else s.text = viejo.textContent;
+      host.appendChild(s);
+    });
+  }
+
+  function montar(slug) {
+    if (cargas[slug]) return cargas[slug];
+    var host = panel(slug);
+    if (!articulo(slug).src) return Promise.resolve();   // "próximamente": el panel ya viene escrito
+    host.innerHTML = '<div class="view-loading"><i></i><span>Cargando el artículo…</span></div>';
+    cargas[slug] = pedir(slug).then(function(html) {
+      var t = document.createElement('template');
+      t.innerHTML = html;
+      var scripts = Array.prototype.slice.call(t.content.querySelectorAll('script'));
+      scripts.forEach(function(s) { s.remove(); });
+      host.innerHTML = '';
+      host.appendChild(t.content);
+      ejecutar(host, scripts);
+      // El bundle se carga con `defer`: si todavía no llegó, monta lo pendiente al arrancar él mismo.
+      if (window.futvizReact) window.futvizReact.montar();
+    }).catch(function() {
+      delete cargas[slug];
+      host.innerHTML = '<div class="view-loading view-error"><span>No se pudo cargar este artículo.</span>' +
+        '<button type="button">Reintentar</button></div>';
+      host.querySelector('button').addEventListener('click', function() { montar(slug).then(armarIndice); });
+    });
+    return cargas[slug];
+  }
+
+  /* ---- Carrusel ---- */
+  function centrarCard(card) {
+    // Horizontal (móvil): centra la card en la tira. Vertical (escritorio): solo la mantiene a la
+    // vista dentro del carrusel. Se mueve el contenedor, no la página (scrollIntoView la movería).
+    if (minis.scrollWidth > minis.clientWidth + 2) {
+      minis.scrollTo({left: card.parentNode.offsetLeft - (minis.clientWidth - card.parentNode.offsetWidth) / 2,
+                      behavior: sinMovimiento.matches ? 'auto' : 'smooth'});
+    } else if (rail.scrollHeight > rail.clientHeight) {
+      var r = card.getBoundingClientRect(), c = rail.getBoundingClientRect();
+      if (r.top < c.top) rail.scrollTop += r.top - c.top - 12;
+      else if (r.bottom > c.bottom) rail.scrollTop += r.bottom - c.bottom + 12;
+    }
+  }
+
+  /* ---- Índice del artículo + progreso ---- */
+  function armarIndice() {
+    tocList.innerHTML = '';
+    secciones = [];
+    var host = actual && panel(actual);
+    var hs = host ? Array.prototype.slice.call(host.querySelectorAll('article h2[id]')) : [];
+    hs.forEach(function(h) {
+      var paso = h.querySelector('.step');
+      var titulo = h.textContent.replace(paso ? paso.textContent : '', '').trim();
+      var li = document.createElement('li');
+      var a = document.createElement('a');
+      a.href = '#' + actual + '/' + h.id;   // enlazable: abre el artículo y baja a esa sección
+      a.innerHTML = '<span class="n"></span><span class="t"></span>';
+      a.querySelector('.n').textContent = paso ? paso.textContent : '';
+      a.querySelector('.t').textContent = titulo;
+      a.addEventListener('click', function(e) {
+        if (e.button || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;   // abrir en otra pestaña: normal
+        e.preventDefault();
+        if (location.hash !== a.hash) history.pushState(null, '', a.hash);
+        irASeccion(h.id);
+      });
+      li.appendChild(a);
+      tocList.appendChild(li);
+      secciones.push({h: h, a: a});
+    });
+    toc.hidden = !secciones.length;
+    marcar();
+  }
+
+  var pendiente = false;
+  function marcar() {
+    pendiente = false;
+    var host = actual && panel(actual);
+    if (host && !host.hidden && articulo(actual).src) {
+      var r = host.getBoundingClientRect();
+      var total = r.height - window.innerHeight;
+      var avance = total > 0 ? Math.min(1, Math.max(0, -r.top / total)) : 0;
+      barra.style.transform = 'scaleX(' + avance.toFixed(3) + ')';
+    } else {
+      barra.style.transform = 'scaleX(0)';
+    }
+    var activa = null;
+    secciones.forEach(function(s) { if (s.h.getBoundingClientRect().top <= 110) activa = s; });
+    var alFinal = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+    if (alFinal && secciones.length) activa = secciones[secciones.length - 1];
+    secciones.forEach(function(s) {
+      var on = s === activa;
+      if (on) s.a.setAttribute('aria-current', 'true'); else s.a.removeAttribute('aria-current');
+    });
+    if (activa && toc.scrollHeight > toc.clientHeight) {
+      var r2 = activa.a.getBoundingClientRect(), c = toc.getBoundingClientRect();
+      if (r2.top < c.top + 8 || r2.bottom > c.bottom - 8) toc.scrollTop += r2.top - c.top - c.height / 2;
+    }
+  }
+  function pedirMarcar() { if (!pendiente) { pendiente = true; requestAnimationFrame(marcar); } }
+  window.addEventListener('scroll', pedirMarcar, {passive: true});
+  window.addEventListener('resize', pedirMarcar);
+
+  /* ---- Navegación ---- */
+  // El hash es `#articulo` o `#articulo/seccion`: la URL dice qué se está leyendo y se puede compartir.
+  function ruta() {
+    var partes = decodeURIComponent(location.hash.slice(1)).split('/');
+    return {slug: partes[0], sec: partes[1] || ''};
+  }
+  function irASeccion(id, instantaneo) {
+    var host = actual && panel(actual);
+    var h = host && id && host.querySelector('[id="' + id.replace(/"/g, '') + '"]');
+    if (h) h.scrollIntoView({behavior: (instantaneo || sinMovimiento.matches) ? 'auto' : 'smooth', block: 'start'});
+  }
+  var movio = false;
+  ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(function(t) {
+    window.addEventListener(t, function() { movio = true; }, {passive: true});
   });
+  // Al abrir con `#articulo/seccion` las gráficas de arriba todavía no tienen su alto final:
+  // se vuelve a la sección un par de veces, salvo que la persona ya se haya movido.
+  function anclar(id) {
+    movio = false;
+    irASeccion(id, true);
+    [700, 1800].forEach(function(ms) { setTimeout(function() { if (!movio) irASeccion(id, true); }, ms); });
+  }
+  function irArriba() {
+    var tope = document.querySelector('.reader').getBoundingClientRect().top + window.scrollY;
+    if (window.scrollY > tope) window.scrollTo({top: Math.max(0, tope), behavior: 'auto'});
+  }
+
+  function activar(slug, sec) {
+    if (!articulo(slug)) slug = DEFECTO;
+    if (slug === actual) { if (sec) irASeccion(sec); else irArriba(); return; }
+    var primera = actual === null;
+    actual = slug;
+    ARTICULOS.forEach(function(a) { panel(a.slug).hidden = a.slug !== slug; });
+    cards.forEach(function(c) {
+      if (c.dataset.slug === slug) c.setAttribute('aria-current', 'page'); else c.removeAttribute('aria-current');
+    });
+    var i = indice(slug);
+    pos.textContent = i + 1;
+    btnPrev.disabled = i === 0;
+    btnNext.disabled = i === ARTICULOS.length - 1;
+    document.title = articulo(slug).title + ' · Machine Learning · FutViz';
+    tocList.innerHTML = ''; secciones = []; toc.hidden = true;
+    var carta = cards[i];
+    centrarCard(carta);
+    // Al cambiar de artículo se vuelve al inicio del panel; al abrir la página no se toca el scroll.
+    if (!primera) irArriba();
+    anuncio.textContent = articulo(slug).title;
+    barra.style.transform = 'scaleX(0)';
+    montar(slug).then(function() { if (actual === slug) { armarIndice(); if (sec) anclar(sec); } });
+    // Adelantar el siguiente mientras se lee este.
+    var sig = ARTICULOS[i + 1];
+    if (sig && sig.src) setTimeout(function() { pedir(sig.slug).catch(function() {}); }, 1200);
+  }
+
+  cards.forEach(function(c, i) {
+    // Pedir el fragmento al apuntar o enfocar: cuando llega el clic ya suele estar descargado.
+    function adelantar() { if (articulo(c.dataset.slug).src) pedir(c.dataset.slug).catch(function() {}); }
+    c.addEventListener('pointerenter', adelantar);
+    c.addEventListener('focus', adelantar);
+    c.addEventListener('keydown', function(e) {
+      var d = (e.key === 'ArrowDown' || e.key === 'ArrowRight') ? 1 : (e.key === 'ArrowUp' || e.key === 'ArrowLeft') ? -1 : 0;
+      if (!d || !cards[i + d]) return;
+      e.preventDefault();
+      cards[i + d].focus();
+      centrarCard(cards[i + d]);
+    });
+  });
+  function ir(d) { var j = indice(actual) + d; if (ARTICULOS[j]) location.hash = ARTICULOS[j].slug; }
+  btnPrev.addEventListener('click', function() { ir(-1); });
+  btnNext.addEventListener('click', function() { ir(1); });
+  function alHash() { var r = ruta(); activar(r.slug || DEFECTO, r.sec); }
+  window.addEventListener('hashchange', alHash);
+  document.getElementById('skip').addEventListener('click', function(e) { e.preventDefault(); pane.focus({preventScroll: false}); });
+
+  // El theme-color de la barra del navegador sigue al fondo de la página, también al cambiar de tema a mano.
+  var metaTema = document.querySelector('meta[name="theme-color"]');
+  function sincronizarTema() { metaTema.content = getComputedStyle(document.documentElement).getPropertyValue('--color-bg').trim(); }
+  document.addEventListener('futviz-theme-change', sincronizarTema);
+  sincronizarTema();
+
+  alHash();
+})();
+</script>
+<script>
+(function() {
+  var LIGHT = {primary:'#0b0b0b', secondary:'#52514e', muted:'#898781', grid:'#e1e0d9', axis:'#c3c2b7', surface:'#fcfcfb'};
+  var DARK = {primary:'#D7E4E7', secondary:'#C7D3D6', muted:'#8CA0A5', grid:'#2C393C', axis:'#3A4A4E', surface:'#1B2426'};
+
+  // Los colores de liga son [claro, oscuro] — mismo hue, distinta luminosidad
+  // y croma (ver LEAGUE_COLORS_DARK en viz_theme.py para por qué no alcanza
+  // con usar los mismos en los dos modos).
+  var LIGAS = {"Bundesliga": ["#e34948", "#dd1d2d"], "Serie A": ["#2a78d6", "#2878d7"], "Ligue 1": ["#2e413a", "#0c7b60"], "La Liga": ["#eda100", "#c28412"], "Premier League": ["#e87ba4", "#cc7193"]};
+
+  function conAlpha(hex, alpha) {
+    var n = parseInt(hex.slice(1), 16);
+    return 'rgba(' + [(n >> 16) & 255, (n >> 8) & 255, n & 255].join(',') + ',' + alpha + ')';
+  }
+  function alphaDe(css) {
+    var m = /rgba?\([^)]*,\s*([0-9.]+)\s*\)/.exec(css || '');
+    return m ? m[1] : null;
+  }
+
+  // Los colores de liga de un gráfico, listos para UNA sola llamada a Plotly.
+  //
+  // Se agrupan por el juego de propiedades que toca cambiar —un box no tiene lo
+  // mismo que un scatterpolar, y una propiedad ausente no se toca porque un
+  // restyle se la inventaría— y dentro de cada grupo los valores van como
+  // arreglo, uno por traza. En la práctica las 5 trazas de liga de un gráfico
+  // son del mismo tipo, así que sale un solo grupo. Repintarlas de a una era
+  // un redibujo por traza: en un scatter de 1.900 puntos, ~1.100ms de cambio
+  // de tema contra los ~60 que tarda así.
+  function ligasUpdate(gd, theme) {
+    var i = theme === 'dark' ? 1 : 0;
+    var grupos = [], porFirma = {};
+    (gd.data || []).forEach(function(t, idx) {
+      var par = LIGAS[t.name];
+      if (!par) return;
+      var color = par[i], props = {};
+      if (t.marker && t.marker.color) props['marker.color'] = color;
+      if (t.line && t.line.color) props['line.color'] = color;
+      var a = alphaDe(t.fillcolor);
+      if (a !== null) props.fillcolor = conAlpha(color, a);
+      var claves = Object.keys(props);
+      if (!claves.length) return;
+      var firma = claves.join('|');
+      var g = porFirma[firma];
+      if (!g) { g = porFirma[firma] = {idx: [], vals: {}}; grupos.push(g); }
+      g.idx.push(idx);
+      claves.forEach(function(p) { (g.vals[p] = g.vals[p] || []).push(props[p]); });
+    });
+
+    // Los títulos de cada subplot del radar son anotaciones pintadas con el
+    // color de su liga; se las reconoce justamente por eso. Van al patch del
+    // layout para que entren en la misma llamada.
+    var anns = (gd.layout && gd.layout.annotations) || [], lay = {};
+    anns.forEach(function(an, k) {
+      var col = ((an.font && an.font.color) || '').toLowerCase();
+      if (!col) return;
+      Object.keys(LIGAS).forEach(function(liga) {
+        if (LIGAS[liga].indexOf(col) !== -1) {
+          lay['annotations[' + k + '].font.color'] = LIGAS[liga][i];
+        }
+      });
+    });
+    return {grupos: grupos, layout: lay};
+  }
+
+  // Los ejes se descubren leyendo el layout real de cada gráfico en vez de
+  // listar 'xaxis'/'yaxis' a mano: un gráfico con subplots tiene xaxis2,
+  // yaxis2..., y un radar no tiene ejes cartesianos sino `polar`. Con la
+  // lista fija, esos se quedaban con la tinta clara sobre fondo oscuro.
+  function patchFor(gd, theme) {
+    var c = theme === 'dark' ? DARK : LIGHT;
+    var patch = {
+      'font.color': c.primary, 'title.font.color': c.primary,
+      'legend.font.color': c.secondary,
+      'hoverlabel.bgcolor': c.surface, 'hoverlabel.font.color': c.primary
+    };
+    Object.keys(gd._fullLayout || {}).forEach(function(k) {
+      if (/^[xy]axis\d*$/.test(k)) {
+        patch[k + '.tickfont.color'] = c.muted;
+        patch[k + '.title.font.color'] = c.secondary;
+        patch[k + '.gridcolor'] = c.grid;
+        patch[k + '.zerolinecolor'] = c.axis;
+        patch[k + '.linecolor'] = c.axis;
+      } else if (/^polar\d*$/.test(k)) {
+        patch[k + '.angularaxis.tickfont.color'] = c.secondary;
+        patch[k + '.angularaxis.gridcolor'] = c.grid;
+        patch[k + '.angularaxis.linecolor'] = c.axis;
+        patch[k + '.radialaxis.tickfont.color'] = c.muted;
+        patch[k + '.radialaxis.gridcolor'] = c.grid;
+        patch[k + '.radialaxis.linecolor'] = c.axis;
+      }
+    });
+    return patch;
+  }
+
+  // La barra de color de un mapa de calor no es un eje del layout, así que
+  // patchFor() no la ve: sus rótulos viven dentro de la traza y hay que
+  // recolorearlos con restyle o se quedan en tinta oscura sobre fondo oscuro.
+  function patchColorbars(gd, theme) {
+    var c = theme === 'dark' ? DARK : LIGHT;
+    var conBarra = [];
+    (gd.data || []).forEach(function(t, i) { if (t.colorbar) conBarra.push(i); });
+    if (conBarra.length) {
+      Plotly.restyle(gd, {'colorbar.tickfont.color': c.muted,
+                          'colorbar.title.font.color': c.secondary}, conBarra);
+    }
+  }
+
+  function syncPlotly() {
+    if (!window.Plotly) return;
+    var theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    document.querySelectorAll('.js-plotly-plot').forEach(function(gd) {
+      // Un gráfico en una pestaña oculta (display:none) no se toca: Plotly mide
+      // cero ahí y el relayout le descoloca título y subtítulo. Se recolorea al
+      // mostrarlo (section_views llama otra vez a esta función). `tema` recuerda
+      // con qué tinta quedó, así no se repinta lo que ya está bien.
+      if (!gd.getClientRects().length || gd.dataset.tema === theme) return;
+      gd.dataset.tema = theme;
+      var ligas = ligasUpdate(gd, theme);
+      var lay = patchFor(gd, theme);
+      Object.keys(ligas.layout).forEach(function(k) { lay[k] = ligas.layout[k]; });
+      // Un solo redibujo: `update` aplica trazas y layout de una pasada, en vez
+      // de un relayout más un restyle por traza.
+      if (ligas.grupos.length) {
+        Plotly.update(gd, ligas.grupos[0].vals, lay, ligas.grupos[0].idx);
+        for (var i = 1; i < ligas.grupos.length; i++) {
+          Plotly.restyle(gd, ligas.grupos[i].vals, ligas.grupos[i].idx);
+        }
+      } else {
+        Plotly.relayout(gd, lay);
+      }
+      patchColorbars(gd, theme);
+    });
+  }
+  syncPlotly();
+  // Las páginas con vistas montan gráficos DESPUÉS de cargar (ver section_views.py):
+  // al montarlos llaman a esto para que nazcan con la tinta del tema actual.
+  window.futvizSyncPlotly = syncPlotly;
+
+  var btn = document.getElementById('theme-toggle');
+  if (btn) {
+    btn.addEventListener('click', function() {
+      var current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      var next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('futviz-theme', next); } catch (e) {}
+      syncPlotly();
+      document.dispatchEvent(new CustomEvent('futviz-theme-change', {detail: {theme: next}}));
+    });
+  }
 })();
 </script>
 </body>

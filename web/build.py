@@ -19,6 +19,7 @@ from site_utils import (  # noqa: E402
     SECTION_META, write_article_page, write_chart_page, write_index, write_section_pages,
 )
 from section_views import write_section_views  # noqa: E402
+from ml_reader import write_ml_reader  # noqa: E402
 import react_views  # noqa: E402
 from viz_theme import apply_theme, apply_plotly_theme  # noqa: E402
 import teams as teams_charts  # noqa: E402
@@ -329,6 +330,9 @@ def main():
         out = write_article_page(page, DIST_DIR)
         print(f"  {page.slug} -> {out.relative_to(DIST_DIR)}")
     pages += articles
+    # La sección de ML es un lector: un artículo abierto y el carrusel de los demás a la izquierda.
+    outs = write_ml_reader("Machine Learning", articles, DIST_DIR)
+    print(f"  Machine Learning: {len(articles)} artículos -> {outs[0].relative_to(DIST_DIR)}")
     # Los análisis registran sus propias tablas para React (`datos-xg.js`): se escriben ahora.
     for ruta in react_views.escribir_datos(DIST_DIR):
         print(f"  datos -> {ruta.relative_to(DIST_DIR)} ({ruta.stat().st_size / 1024:.0f} KB)")

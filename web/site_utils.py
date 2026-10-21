@@ -445,6 +445,13 @@ SECTION_META = {
                         "que no estén a simple vista.",
         "preview": "preview-machine-learning.png",
         "noun": "análisis",
+        "reader": True,   # una sola página con lector (`ml_reader.py`), no una grilla de cards
+        # Artículos en preparación: salen en el carrusel como "Próximamente" y no cuentan en la
+        # landing. Cuando uno se publique, se borra de aquí y entra solo como `ArticlePage`.
+        "proximos": [
+            {"slug": "valores-jugadores", "title": "Valores de jugadores",
+             "subtitle": "En preparación."},
+        ],
     },
 }
 
@@ -553,7 +560,8 @@ BRAND_ROOT_CSS = """
     --color-border: #2C393C;
   }
   * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; background: var(--color-bg); }
+  html { -webkit-text-size-adjust: 100%; background: var(--color-bg); color-scheme: light; }
+  html[data-theme="dark"] { color-scheme: dark; }
   body { margin: 0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     background: var(--color-bg); color: var(--color-text-body);
     animation: futviz-fade-in .2s ease-out;
@@ -863,6 +871,102 @@ TOOL_CARD_TEMPLATE = """<a class="card card--tool" href="{href}">
 """
 
 
+# CSS de la lectura de un análisis (prosa, figuras, tablas, callouts). Lo comparten la página
+# suelta de cada artículo (`ARTICLE_PAGE_TEMPLATE`) y el lector de la sección de Machine
+# Learning (`ml_reader.py`): así los dos se ven igual sin mantener el CSS por duplicado.
+# Llaves simples a propósito: se inyecta como valor de `.format`, no dentro de la plantilla.
+ARTICLE_CSS = """
+  /* Dos anchos: la prosa se lee en una columna angosta (~68 caracteres) y
+     los gráficos pueden respirar más. Ambos centrados sobre el mismo eje. */
+  .wrap { max-width: 720px; margin: 0 auto; }
+  .wrap-wide { max-width: 940px; margin: 0 auto; }
+
+  .hero { padding: 48px 0 28px; }
+  .kicker { display: inline-block; font-size: 12px; font-weight: 600; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--color-primary); background: var(--color-brand-accent-soft);
+    padding: 5px 11px; border-radius: 999px; margin-bottom: 18px; }
+  .hero h1 { font-size: 32px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em;
+    color: var(--color-primary); margin: 0 0 16px; }
+  .deck { font-size: 17px; line-height: 1.6; color: var(--color-muted); margin: 0; }
+  /* Rejilla de 2 columnas y no flex-wrap: con flex cada dato se dimensiona por
+     su contenido, así que se apilaban todos a la izquierda y la segunda columna
+     no coincidía entre filas (58px de diferencia), dejando medio ancho vacío.
+     Dos columnas porque el dato más largo mide ~300px: con cuatro se partiría
+     en dos líneas. */
+  .meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 32px; margin-top: 26px; padding-top: 20px;
+    border-top: 1px solid var(--color-border); }
+  .meta div { font-size: 12.5px; color: var(--color-muted); }
+  .meta b { display: block; font-size: 10.5px; font-weight: 600; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--color-primary); margin-bottom: 3px; }
+
+  article { font-size: 16.5px; line-height: 1.72; }
+  article h2 { font-size: 25px; line-height: 1.25; font-weight: 700; letter-spacing: -0.015em;
+    color: var(--color-primary); margin: 60px 0 6px; scroll-margin-top: 70px; }
+  article h2 .step { display: block; font-size: 12px; font-weight: 600; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--color-brand-accent); margin-bottom: 8px; }
+  article h3 { font-size: 18px; font-weight: 700; color: var(--color-primary); margin: 38px 0 4px; }
+  article p { margin: 16px 0; }
+  article ul { margin: 16px 0; padding-left: 22px; }
+  article li { margin: 9px 0; }
+  article strong { color: var(--color-primary); font-weight: 650; }
+  article a { color: var(--color-interactive); }
+  article code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .88em;
+    background: var(--color-brand-accent-soft); padding: 2px 6px; border-radius: 5px;
+    color: var(--color-primary); }
+
+  /* Bloque de gráfico: mismo tratamiento de tarjeta que las páginas de
+     chart (.chart-scroll) para que se sienta el mismo sitio. */
+  figure { margin: 34px auto; }
+  .chart-scroll { max-width: 100%; overflow-x: auto; background: var(--color-bg);
+    border: 1px solid var(--color-border); border-radius: 14px; padding: 18px; }
+  figcaption { font-size: 13px; line-height: 1.5; color: var(--color-muted); margin-top: 12px;
+    padding-left: 12px; border-left: 2px solid var(--color-border); }
+
+  .callout { margin: 34px 0; padding: 20px 22px; border-radius: 12px;
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-brand-accent); }
+  .callout.warn { border-left-color: #E0891C; }
+  .callout .callout-title { font-size: 12px; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--color-primary); margin-bottom: 8px; }
+  .callout p { margin: 8px 0 0; font-size: 15.5px; }
+  .callout p:first-of-type { margin-top: 0; }
+
+  /* Dato grande: para el número que sostiene el argumento. */
+  .stat { margin: 34px 0; padding: 26px 24px; border-radius: 14px; text-align: center;
+    background: var(--color-surface); border: 1px solid var(--color-border); }
+  .stat .stat-value { font-size: 46px; font-weight: 800; letter-spacing: -0.02em; line-height: 1;
+    color: var(--color-brand-accent); }
+  .stat .stat-label { font-size: 14px; color: var(--color-muted); margin-top: 12px; line-height: 1.5; }
+
+  .table-scroll { overflow-x: auto; margin: 30px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 520px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--color-border);
+    vertical-align: top; }
+  thead th { font-size: 11.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+    color: var(--color-primary); border-bottom-width: 2px; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tbody tr:hover { background: var(--color-interactive-soft); }
+
+  .article-end { margin: 56px 0 0; padding-top: 26px; border-top: 1px solid var(--color-border);
+    display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+  .article-end a { font-size: 14px; font-weight: 600; text-decoration: none;
+    color: var(--color-interactive); }
+  .article-end .note { font-size: 12.5px; color: var(--color-muted); }
+  @media (max-width: 640px) {
+    .hero { padding: 32px 0 22px; }
+    .hero h1 { font-size: 26px; }
+    .deck { font-size: 15.5px; }
+    /* en móvil dos columnas dejarían ~140px por dato: una sola y a lo alto */
+    .meta { grid-template-columns: 1fr; gap: 14px; }
+    article { font-size: 16px; }
+    article h2 { font-size: 21px; margin-top: 46px; }
+    .chart-scroll { padding: 12px; }
+    .stat .stat-value { font-size: 36px; }
+  }
+"""
+
+
 ARTICLE_PAGE_TEMPLATE = """<!doctype html>
 <html lang="es">
 <head>
@@ -894,102 +998,16 @@ ARTICLE_PAGE_TEMPLATE = """<!doctype html>
 
   main {{ padding: 0 20px 80px; }}
 
-  /* Dos anchos: la prosa se lee en una columna angosta (~68 caracteres) y
-     los gráficos pueden respirar más. Ambos centrados sobre el mismo eje. */
-  .wrap {{ max-width: 720px; margin: 0 auto; }}
-  .wrap-wide {{ max-width: 940px; margin: 0 auto; }}
-
-  .hero {{ padding: 48px 0 28px; }}
-  .kicker {{ display: inline-block; font-size: 12px; font-weight: 600; letter-spacing: .06em;
-    text-transform: uppercase; color: var(--color-primary); background: var(--color-brand-accent-soft);
-    padding: 5px 11px; border-radius: 999px; margin-bottom: 18px; }}
-  .hero h1 {{ font-size: 32px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em;
-    color: var(--color-primary); margin: 0 0 16px; }}
-  .deck {{ font-size: 17px; line-height: 1.6; color: var(--color-muted); margin: 0; }}
-  /* Rejilla de 2 columnas y no flex-wrap: con flex cada dato se dimensiona por
-     su contenido, así que se apilaban todos a la izquierda y la segunda columna
-     no coincidía entre filas (58px de diferencia), dejando medio ancho vacío.
-     Dos columnas porque el dato más largo mide ~300px: con cuatro se partiría
-     en dos líneas. */
-  .meta {{ display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px 32px; margin-top: 26px; padding-top: 20px;
-    border-top: 1px solid var(--color-border); }}
-  .meta div {{ font-size: 12.5px; color: var(--color-muted); }}
-  .meta b {{ display: block; font-size: 10.5px; font-weight: 600; letter-spacing: .06em;
-    text-transform: uppercase; color: var(--color-primary); margin-bottom: 3px; }}
-
-  article {{ font-size: 16.5px; line-height: 1.72; }}
-  article h2 {{ font-size: 25px; line-height: 1.25; font-weight: 700; letter-spacing: -0.015em;
-    color: var(--color-primary); margin: 60px 0 6px; scroll-margin-top: 70px; }}
-  article h2 .step {{ display: block; font-size: 12px; font-weight: 600; letter-spacing: .06em;
-    text-transform: uppercase; color: var(--color-brand-accent); margin-bottom: 8px; }}
-  article h3 {{ font-size: 18px; font-weight: 700; color: var(--color-primary); margin: 38px 0 4px; }}
-  article p {{ margin: 16px 0; }}
-  article ul {{ margin: 16px 0; padding-left: 22px; }}
-  article li {{ margin: 9px 0; }}
-  article strong {{ color: var(--color-primary); font-weight: 650; }}
-  article a {{ color: var(--color-interactive); }}
-  article code {{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .88em;
-    background: var(--color-brand-accent-soft); padding: 2px 6px; border-radius: 5px;
-    color: var(--color-primary); }}
-
-  /* Bloque de gráfico: mismo tratamiento de tarjeta que las páginas de
-     chart (.chart-scroll) para que se sienta el mismo sitio. */
-  figure {{ margin: 34px auto; }}
-  .chart-scroll {{ max-width: 100%; overflow-x: auto; background: var(--color-bg);
-    border: 1px solid var(--color-border); border-radius: 14px; padding: 18px; }}
-  figcaption {{ font-size: 13px; line-height: 1.5; color: var(--color-muted); margin-top: 12px;
-    padding-left: 12px; border-left: 2px solid var(--color-border); }}
-
-  .callout {{ margin: 34px 0; padding: 20px 22px; border-radius: 12px;
-    background: var(--color-surface); border: 1px solid var(--color-border);
-    border-left: 4px solid var(--color-brand-accent); }}
-  .callout.warn {{ border-left-color: #E0891C; }}
-  .callout .callout-title {{ font-size: 12px; font-weight: 700; letter-spacing: .06em;
-    text-transform: uppercase; color: var(--color-primary); margin-bottom: 8px; }}
-  .callout p {{ margin: 8px 0 0; font-size: 15.5px; }}
-  .callout p:first-of-type {{ margin-top: 0; }}
-
-  /* Dato grande: para el número que sostiene el argumento. */
-  .stat {{ margin: 34px 0; padding: 26px 24px; border-radius: 14px; text-align: center;
-    background: var(--color-surface); border: 1px solid var(--color-border); }}
-  .stat .stat-value {{ font-size: 46px; font-weight: 800; letter-spacing: -0.02em; line-height: 1;
-    color: var(--color-brand-accent); }}
-  .stat .stat-label {{ font-size: 14px; color: var(--color-muted); margin-top: 12px; line-height: 1.5; }}
-
-  .table-scroll {{ overflow-x: auto; margin: 30px 0; }}
-  table {{ border-collapse: collapse; width: 100%; font-size: 14px; min-width: 520px; }}
-  th, td {{ text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--color-border);
-    vertical-align: top; }}
-  thead th {{ font-size: 11.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
-    color: var(--color-primary); border-bottom-width: 2px; }}
-  td.num {{ text-align: right; font-variant-numeric: tabular-nums; }}
-  tbody tr:hover {{ background: var(--color-interactive-soft); }}
-
-  .article-end {{ margin: 56px 0 0; padding-top: 26px; border-top: 1px solid var(--color-border);
-    display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }}
-  .article-end a {{ font-size: 14px; font-weight: 600; text-decoration: none;
-    color: var(--color-interactive); }}
-  .article-end .note {{ font-size: 12.5px; color: var(--color-muted); }}
-
+{article_css}
   @media (max-width: 640px) {{
     main {{ padding: 0 16px 56px; }}
-    .hero {{ padding: 32px 0 22px; }}
-    .hero h1 {{ font-size: 26px; }}
-    .deck {{ font-size: 15.5px; }}
-    /* en móvil dos columnas dejarían ~140px por dato: una sola y a lo alto */
-    .meta {{ grid-template-columns: 1fr; gap: 14px; }}
-    article {{ font-size: 16px; }}
-    article h2 {{ font-size: 21px; margin-top: 46px; }}
-    .chart-scroll {{ padding: 12px; }}
-    .stat .stat-value {{ font-size: 36px; }}
   }}
 </style>
 </head>
 <body>
 <div id="progress"></div>
 <header>
-  <a class="crumb" href="../{section_slug}.html">&larr; {section_name}</a>
+  <a class="crumb" href="../{section_slug}.html#{slug}">&larr; {section_name}</a>
   <div class="header-right">
     <a class="site-logo-link" href="../index.html">
       <img class="site-logo" src="../assets/logo.png" alt="FutViz — volver al inicio">
@@ -1006,7 +1024,7 @@ ARTICLE_PAGE_TEMPLATE = """<!doctype html>
   </div>
   <article>{body}</article>
   <div class="wrap article-end">
-    <a href="../{section_slug}.html">&larr; Volver a {section_name}</a>
+    <a href="../{section_slug}.html#{slug}">&larr; Volver a {section_name}</a>
     <span class="note">Datos: {fuente}</span>
   </div>
 </main>
@@ -1070,10 +1088,10 @@ def write_article_page(page: "ArticlePage", dist_dir: Path) -> Path:
     section_meta = SECTION_META.get(page.section, {})
 
     html = ARTICLE_PAGE_TEMPLATE.format(
-        title=page.title, subtitle=page.subtitle, deck=page.deck, body=page.body_html,
+        slug=page.slug, title=page.title, subtitle=page.subtitle, deck=page.deck, body=page.body_html,
         meta=meta_html, fuente=page.fuente, section_name=page.section,
         section_slug=section_meta.get("slug", "index"),
-        brand_root=BRAND_ROOT_CSS, font_links=FONT_LINKS,
+        brand_root=BRAND_ROOT_CSS, font_links=FONT_LINKS, article_css=ARTICLE_CSS,
         theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML,
         react_scripts=(
             '<script>window.futvizBase="../";</script>\n'
@@ -1116,8 +1134,8 @@ def write_section_pages(pages: list[ChartPage], dist_dir: Path) -> list[Path]:
     out_paths = []
     for name, section_pages in sections.items():
         meta = SECTION_META[name]
-        if meta.get("views") or meta.get("hub"):
-            continue  # esas secciones son una sola página con vistas (section_views.py)
+        if meta.get("views") or meta.get("hub") or meta.get("reader"):
+            continue  # esas secciones son una sola página (section_views.py, ml_reader.py)
         cards = "".join(
             (TOOL_CARD_TEMPLATE if p.kind == "explorer" else CARD_TEMPLATE).format(
                 href=f"{p.href_prefix}{p.slug}.html", title=p.title,
