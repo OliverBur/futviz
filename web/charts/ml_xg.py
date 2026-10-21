@@ -321,7 +321,7 @@ def build_xg_article() -> ArticlePage:
         "calidad de las ocasiones sin depender del marcador: permite ver si un equipo o un jugador rinde por encima o "
         "por debajo de lo esperado, y separar lo que fue juego de lo que fue suerte. Un xG, al final, no es más que "
         "eso: <strong>una probabilidad dada la situación en la que se tira</strong>.</p>"
-        "<p>Aquí construyo el xG desde cero con la metodología de un proyecto de ML con el fin de aprender el detrás de este numero que tan popular se ha vuelto."
+        "<p>Aquí construyo el xG desde cero con la metodología de un proyecto de ML con el fin de aprender lo que hay detrás de este número que tan popular se ha vuelto."
         "</p>"))
 
     # ================================================================ 2. los datos
@@ -383,12 +383,12 @@ def build_xg_article() -> ArticlePage:
     # ================================================================ 4. propuesta de modelo
     p.append(h("Propuesta de modelo", "modelo"))
     p.append(_prose(
-        f"<p>La tarea es clasificar la probabilidad que un tiro sea gol dado su contexto. "
+        f"<p>La tarea es clasificar la probabilidad de que un tiro sea gol dado su contexto. "
         f"La metodología se basa en un modelo <strong>XGBoost</strong> (árboles de decisión que se corrigen entre sí) con 3 puntos importantes:</p>"
         + _lista([
             "<strong>Split temporal:</strong> entreno con tres temporadas, decido con la siguiente y pruebo en una más. ",
             "<strong>Intervalos por partido:</strong> cada tiro es un dato, pero los tiros de un mismo partido no se mezclan entre entrenamiento y prueba. ",
-            "<strong>Validación cruzada:</strong> entreno y decido con todas las combinaciones posibles de tres temporadas, y promedia los resultados. ",])))
+            "<strong>Validación cruzada:</strong> entreno y decido con todas las combinaciones posibles de tres temporadas, y promedio los resultados. ",])))
     p.append(_grafica(
         "xg-ventanas", "ventanas", "ventanas", "Cómo parto el tiempo",
         "Cada fila es un experimento con su propio split temporal. ",
@@ -401,7 +401,7 @@ def build_xg_article() -> ArticlePage:
     ll_arbol = sum(_perdida(n[7], n[8], n[6] / n[5] if n[5] else 0.0) for n in hojas_arbol) / A["n_test"]
     p.append(_prose(
         f"<p>Un árbol de decisión es un modelo que toma decisiones basadas en preguntas de sí o no sobre las características del dato. Cada hoja representa una predicción final.</p>"
-        f"<p>En esta animación interactiva puedes ver cómo se construye un árbol de decisión para el xG, partiendo de una primer pregunta y creciendo dependiendo de la configuración de profundidad y el número de hojas.<p>Cada hoja tiene su propia tasa de gol, que es la predicción del xG para los tiros que llegan a esa hoja.</p>"))
+        f"<p>En esta animación interactiva puedes ver cómo se construye un árbol de decisión para el xG, partiendo de una primera pregunta y creciendo dependiendo de la configuración de profundidad y el número de hojas.<p>Cada hoja tiene su propia tasa de gol, que es la predicción del xG para los tiros que llegan a esa hoja.</p>"))
     p.append(_grafica(
         "xg-arbol", "arbol", "arbol", "Un árbol de decisión, abierto partición por partición",
         "Cada hoja es un xG: la tasa de gol de los tiros que llegan ahí", "Árbol de decisión interactivo del xG",
@@ -413,7 +413,7 @@ def build_xg_article() -> ArticlePage:
         "terminaron o no en gol. La probabilidad que recibe el tiro es la proporción de goles entre los tiros de "
         f"entrenamiento que cayeron en esa misma hoja. "
         f"<p>Al medir con muchos árboles, cada uno corrigiendo los errores de los anteriores, se obtiene un modelo más robusto y preciso "
-        f"hasta llegar a cientos de árboles chicos con un log-loss de {mx['ll']:.4f}"))
+        f"hasta llegar a cientos de árboles chicos con un log-loss de {mx['ll']:.4f}."))
     p.append(_grafica(
         "xg-boosting", "lineas", "boosting", "Árbol por árbol",
         "Log-loss al ir sumando árboles · punteado: entrenamiento; sólido: 2025-26 · "
@@ -556,11 +556,11 @@ def build_xg_article() -> ArticlePage:
     return ArticlePage(
         slug="modelo-xg",
         section=SECTION,
-        title="Constuyendo un modelo de xG",
+        title="Construyendo un modelo de xG",
         subtitle=SUBTITULO,
         deck=SUBTITULO,   # `deck` es obligatorio y el texto de arriba de la página es el que escribió el autor
         body_html="".join(p),
-        meta=[("Datos", f"+{_n(R['n']['cerradas'])} tiros · top 5 ligas · 10 temporadas"),
+        meta=[("Datos", f"+{_n(R['n']['cerradas'])} tiros · top 5 ligas · +10 temporadas"),
               ("Métodos", "XGBoost · LightGBM · bootstrap por partido")],
         fuente=f"{FUENTE} · temporadas {tray[0]['temporada']} a {tray[-1]['temporada']}",
         react=True,
