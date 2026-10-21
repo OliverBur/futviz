@@ -386,9 +386,9 @@ def build_xg_article() -> ArticlePage:
         f"<p>La tarea es clasificar la probabilidad de que un tiro sea gol dado su contexto. "
         f"La metodología se basa en un modelo <strong>XGBoost</strong> (árboles de decisión que se corrigen entre sí) con 3 puntos importantes:</p>"
         + _lista([
-            "<strong>Split temporal:</strong> entreno con tres temporadas, decido con la siguiente y pruebo en una más. ",
-            "<strong>Intervalos por partido:</strong> cada tiro es un dato, pero los tiros de un mismo partido no se mezclan entre entrenamiento y prueba. ",
-            "<strong>Validación cruzada:</strong> entreno y decido con todas las combinaciones posibles de tres temporadas, y promedio los resultados. ",])))
+            "<strong>Split temporal:</strong> entreno con tres temporadas, decido cuántos árboles con la siguiente y pruebo en una que el modelo nunca vio.",
+            "<strong>Intervalos por partido:</strong> los tiros de un mismo partido no son independientes, así que para calcular los intervalos de confianza remuestreo partidos, no tiros.",
+            "<strong>Validación hacia adelante:</strong> repito el experimento moviendo la ventana una temporada cada vez, siempre entrenando con el pasado y probando en el futuro (en la sección 7 se ve el resultado de cada una)."])))
     p.append(_grafica(
         "xg-ventanas", "ventanas", "ventanas", "Cómo parto el tiempo",
         "Cada fila es un experimento con su propio split temporal. ",
