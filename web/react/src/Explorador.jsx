@@ -55,10 +55,12 @@ function useTemporada(nombre) {
   return est.nombre === nombre ? est : { nombre, D: null, error: null };
 }
 
-export default function Explorador({ cfg, tk, pal, modo }) {
+export default function Explorador({ cfg, tk, pal, modo, alCargar }) {
   const [temp, setTemp] = useState(cfg.temporadas[cfg.temporadas.length - 1]);
   const [liga, setLiga] = useState(-1);
-  const [res, setRes] = useState("todos");
+  // Se abre solo con los goles de las cinco ligas: dibujar los ~45.000 tiros de la temporada pesa y
+  // no se lee. "Todos" y "Sin gol" quedan a un clic.
+  const [res, setRes] = useState("gol");
   const [equipo, setEquipo] = useState(null);       // índice en D.eq
   const [jugador, setJugador] = useState(null);     // índice en D.jug
   const [sel, setSel] = useState(null);
@@ -113,6 +115,7 @@ export default function Explorador({ cfg, tk, pal, modo }) {
   // al cambiar de temporada, de entrada se muestra el gol más improbable
   useEffect(() => {
     if (!c) return;
+    if (alCargar) alCargar();
     let mejor = null, v = Infinity;
     for (let i = 0; i < D.n; i += 1) {
       if (c.r[i] !== 0) continue;
@@ -121,7 +124,7 @@ export default function Explorador({ cfg, tk, pal, modo }) {
     }
     setSel(mejor);
     setHover(null); setTipPos(null);
-    setEquipo(null); setJugador(null); setLiga(-1); setRes("todos");
+    setEquipo(null); setJugador(null); setLiga(-1); setRes("gol");
   }, [D]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Un filtro nuevo que deja fuera al tiro elegido: se pasa al de más discrepancia entre los que quedan
@@ -140,7 +143,7 @@ export default function Explorador({ cfg, tk, pal, modo }) {
   }, [idx]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // --- el dibujo ---------------------------------------------------------------------------------
-  const W = Math.max(280, Math.min(ancho, 720));
+  const W = Math.max(280, Math.min(ancho, 880));
   const escala = W / (ANCHO + 2 * 1.5);
   const H = Math.round((PROF + MARGEN + 1.5) * escala);
   const aPx = useCallback((x, y) => [(y * ANCHO + 1.5) * escala, (((1 - x) * LARGO) + MARGEN) * escala], [escala]);

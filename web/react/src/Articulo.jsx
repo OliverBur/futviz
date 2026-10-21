@@ -73,6 +73,10 @@ function marcas(min, max, n = 5) {
   return out;
 }
 
+// Ancho máximo de un mapa de cancha. Crece con el cuadro, pero sin pasar de lo que cabe en alto en una
+// pantalla baja (el mapa mide ~0.7 de su ancho de alto).
+const MAPA_MAX = "min(880px, 130vh)";
+
 function useAncho() {
   const ref = useRef(null);
   const [ancho, setAncho] = useState(0);
@@ -676,7 +680,7 @@ function Superficie({ cfg, D, tk, modo }) {
       <Box sx={{ display: "grid", gap: 3, gridTemplateColumns: { xs: "minmax(0,1fr)", md: "minmax(0,1fr) 250px" }, alignItems: "start" }}>
         <Box sx={{ minWidth: 0 }}>
           <Box className="rx-chart" sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2, position: "relative" }}>
-            <Box sx={{ flex: 1, minWidth: 0, maxWidth: 640 }}>
+            <Box sx={{ flex: 1, minWidth: 0, maxWidth: MAPA_MAX }}>
               <svg ref={svgRef} role="img" aria-label={cfg.alt} viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`}
                 style={{ width: "100%", height: "auto", display: "block", touchAction: "pan-y" }}
                 onPointerMove={alMover} onPointerDown={alMover} onPointerLeave={() => setCel(null)}>
@@ -1083,8 +1087,8 @@ function Mapa({ cfg, D, tk, pal, modo }) {
           {S.opciones.map((o) => <ToggleButton key={o.id} value={o.id}>{o.etiqueta}</ToggleButton>)}
         </ToggleButtonGroup>
       </Box>
-      <Box className="rx-chart" sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2, position: "relative" }}>
-        <Box ref={ref} sx={{ flex: 1, minWidth: 0, maxWidth: 640 }}>
+      <Box className="rx-chart" sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, justifyContent: "center", gap: 2, position: "relative" }}>
+        <Box ref={ref} sx={{ flex: 1, minWidth: 0, maxWidth: MAPA_MAX }}>
           <svg ref={svgRef} role="img" aria-label={cfg.alt} viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`}
             style={{ width: "100%", height: "auto", display: "block", touchAction: "pan-y" }}
             onPointerMove={alMover} onPointerDown={alMover} onPointerLeave={salir}>
@@ -1184,24 +1188,33 @@ const GRAFICAS = { lineas: Lineas, forest: Forest, barras: Barras, dispersion: D
 
 export default function ArticuloVista({ id }) {
   const cfg = window.futvizVistas[id];
+  const raiz = useRef(null);
   const { theme, modo, t } = useSitioTema();
   const { D, error } = useDatos(cfg.tabla || "xg");
   const G = GRAFICAS[cfg.grafica];
   const pal = useMemo(() => paletaDe(modo, t), [modo, t]);
+  // El contenedor reserva un alto mínimo mientras carga (para que la página no salte); una vez que hay
+  // gráfica se suelta, o queda un hueco debajo de las que miden menos de lo reservado.
+  const soltarAlto = () => raiz.current?.closest(".rx-mount")?.style.removeProperty("min-height");
+  useEffect(() => { if (cfg.grafica !== "explorador" && (D || error || !G)) soltarAlto(); }, [D, error, G]); // eslint-disable-line react-hooks/exhaustive-deps
   // el explorador pide una tabla por temporada, cuando el lector la elige
   if (cfg.grafica === "explorador") {
     return (
       <ThemeProvider theme={theme}>
-        <Explorador cfg={cfg} tk={t} pal={pal} modo={modo} />
+        <Box ref={raiz} sx={{ display: "contents" }}>
+          <Explorador cfg={cfg} tk={t} pal={pal} modo={modo} alCargar={soltarAlto} />
+        </Box>
       </ThemeProvider>
     );
   }
   return (
     <ThemeProvider theme={theme}>
-      {!G ? <Aviso>Tipo de gráfica desconocido: {cfg.grafica}</Aviso>
-        : error ? <Aviso>No se pudieron cargar los datos de esta gráfica.</Aviso>
-          : !D ? <Cargando alto={cfg.alto || 380} />
-            : <G cfg={cfg} D={D} tk={t} pal={pal} modo={modo} />}
+      <Box ref={raiz} sx={{ display: "contents" }}>
+        {!G ? <Aviso>Tipo de gráfica desconocido: {cfg.grafica}</Aviso>
+          : error ? <Aviso>No se pudieron cargar los datos de esta gráfica.</Aviso>
+            : !D ? <Cargando alto={cfg.alto || 380} />
+              : <G cfg={cfg} D={D} tk={t} pal={pal} modo={modo} />}
+      </Box>
     </ThemeProvider>
   );
 }
