@@ -144,10 +144,17 @@ def registrar_payload(nombre, payload):
     return payload
 
 
+_ESCRITAS = set()
+
+
 def escribir_datos(dist_dir: Path):
-    """Vuelca cada tabla registrada a `dist/react/datos-<nombre>.js`. Devuelve las rutas."""
+    """Vuelca cada tabla registrada a `dist/react/datos-<nombre>.js`. Devuelve las rutas de las que
+    escribió ahora: se llama otra vez tras construir los análisis, que registran la suya."""
     salida = []
     for nombre, payload in _TABLAS.items():
+        if nombre in _ESCRITAS:
+            continue
+        _ESCRITAS.add(nombre)
         ruta = dist_dir / "react" / f"datos-{nombre}.js"
         ruta.parent.mkdir(parents=True, exist_ok=True)
         cuerpo = json.dumps(payload, separators=(",", ":"), allow_nan=False).replace("</", "<\\/")
@@ -160,10 +167,11 @@ def escribir_datos(dist_dir: Path):
 
 # --- vistas ------------------------------------------------------------------------------------
 
-def montar_html(tipo: str, vista_id: str, config: dict) -> str:
-    """El fragmento de una vista: contenedor y configuración (ver el contrato arriba)."""
+def montar_html(tipo: str, vista_id: str, config: dict, alto_min: int = 520) -> str:
+    """El fragmento de una vista: contenedor y configuración (ver el contrato arriba). `alto_min`
+    reserva el espacio mientras carga, para que la página no salte."""
     cuerpo = json.dumps(config, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     return (
-        f'<div class="rx-mount" data-rx="{tipo}" data-rx-id="{vista_id}" style="min-height:520px"></div>'
+        f'<div class="rx-mount" data-rx="{tipo}" data-rx-id="{vista_id}" style="min-height:{alto_min}px"></div>'
         f'<script>(window.futvizVistas=window.futvizVistas||{{}})[{json.dumps(vista_id)}]={cuerpo};</script>'
     )

@@ -12,7 +12,9 @@ export function cargarDatos(nombre) {
   if (!pedidas[nombre]) {
     pedidas[nombre] = new Promise((resolve, reject) => {
       const s = document.createElement("script");
-      s.src = `react/datos-${nombre}.js`;
+      // Las páginas que no cuelgan de la raíz (los análisis, en `analisis/`) fijan `window.futvizBase`
+      // ("../") para que la ruta relativa llegue al mismo `react/`.
+      s.src = `${window.futvizBase || ""}react/datos-${nombre}.js`;
       s.onload = () => (g[nombre] ? resolve(g[nombre]) : reject(new Error(`datos-${nombre}.js no define la tabla`)));
       s.onerror = () => { delete pedidas[nombre]; reject(new Error(`no se pudo cargar datos-${nombre}.js`)); };
       document.head.appendChild(s);

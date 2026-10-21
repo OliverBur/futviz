@@ -341,8 +341,8 @@ class ArticlePage:
     más texto — un chart page responde "¿cómo se ve X?" y se lee en
     cualquier orden; un artículo sostiene un argumento y el orden importa.
 
-    `body_html` lo arma el módulo del análisis (ver `web/charts/ml.py`)
-    con los helpers de ahí; acá solo se envuelve en la plantilla."""
+    `body_html` lo arma el módulo del análisis (ver `web/charts/ml_xg.py`)
+    con los helpers de `ml_comun.py`; acá solo se envuelve en la plantilla."""
 
     slug: str
     section: str
@@ -354,6 +354,9 @@ class ArticlePage:
     fuente: str        # origen de los datos, para el pie del artículo
     kind: str = "article"
     href_prefix: str = "analisis/"
+    # Con gráficas de React: la página carga el bundle (`../react/futviz-react.js`) y le dice dónde
+    # está `react/` (los análisis cuelgan de `analisis/`, no de la raíz).
+    react: bool = False
 
 
 # Ícono por tipo de gráfico, para que las cards de `equipos.html`/`jugadores.html`
@@ -870,6 +873,7 @@ ARTICLE_PAGE_TEMPLATE = """<!doctype html>
 <meta name="description" content="{subtitle}">
 {theme_init_script}
 {font_links}
+{react_scripts}
 <style>
 {brand_root}
   header {{ padding: 14px 20px; border-bottom: 1px solid var(--color-border);
@@ -1071,6 +1075,9 @@ def write_article_page(page: "ArticlePage", dist_dir: Path) -> Path:
         section_slug=section_meta.get("slug", "index"),
         brand_root=BRAND_ROOT_CSS, font_links=FONT_LINKS,
         theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML,
+        react_scripts=(
+            '<script>window.futvizBase="../";</script>\n'
+            '<script src="../react/futviz-react.js" defer></script>') if page.react else "",
         # Igual que en las páginas de chart: el toggle también recolorea los
         # gráficos Plotly ya renderizados (ver PLOTLY_THEME_SCRIPT).
         theme_toggle_script=PLOTLY_THEME_SCRIPT,
