@@ -23,7 +23,6 @@ import react_views  # noqa: E402
 from viz_theme import apply_theme, apply_plotly_theme  # noqa: E402
 import teams as teams_charts  # noqa: E402
 import players as players_charts  # noqa: E402
-import ml as ml_articles  # noqa: E402
 import ml_xg as ml_xg_articles  # noqa: E402
 
 WEB_DIR = Path(__file__).resolve().parent
@@ -117,7 +116,7 @@ def build_favicon():
 PREVIEW_SOURCE_CHART = {
     # Es una página con vistas: el `#...` elige cuál se ve.
     "analisis-exploratorio": ("analisis-exploratorio.html#perfil-ofensivo", 0),  # "Perfil ofensivo: xG90 vs. xA90"
-    "machine-learning": ("analisis/modelo-xg.html", 3),     # el mapa de valor del tiro
+    "machine-learning": ("analisis/modelo-xg.html", 8),     # el mapa de valor del tiro (9.ª figura)
 }
 
 
@@ -178,7 +177,7 @@ def _screenshot_chart_card(source, base_url, dark=False):
             # `:visible` importa en los de matplotlib: llevan dos <img>, una por
             # tema, y la del tema inactivo está oculta por CSS — sin filtrar,
             # la espera se queda mirando la que nunca se va a mostrar.
-            locator.locator(".main-svg, .rx-chart svg circle, img:visible").first.wait_for(
+            locator.locator(".main-svg, .rx-chart svg circle, .rx-chart svg rect[data-celda], img:visible").first.wait_for(
                 state="visible", timeout=20000)
             # Las vistas de React entran con una animación (~1 s) y sus etiquetas aparecen al final.
             page.wait_for_timeout(1600 if locator.locator(".rx-chart").count() else 400)
@@ -323,14 +322,16 @@ def main():
     # suelto), pero entran a la misma lista: `write_section_pages` y
     # `write_index` solo miran `.section` y arman el href con `.href_prefix`.
     print("Generando análisis de machine learning...")
-    # `ml_xg` entrena seis modelos de xG al construirse (uno principal más uno
-    # por temporada para el xG fuera de muestra), así que es el paso más lento
-    # del build — alrededor de un minuto.
-    articles = ml_articles.build(ASSETS_DIR) + ml_xg_articles.build(ASSETS_DIR)
+    # `ml_xg` entrena el modelo de xG al construirse (221.922 tiros, con
+    # early stopping), así que es de los pasos más lentos del build.
+    articles = ml_xg_articles.build(ASSETS_DIR)
     for page in articles:
         out = write_article_page(page, DIST_DIR)
         print(f"  {page.slug} -> {out.relative_to(DIST_DIR)}")
     pages += articles
+    # Los análisis registran sus propias tablas para React (`datos-xg.js`): se escriben ahora.
+    for ruta in react_views.escribir_datos(DIST_DIR):
+        print(f"  datos -> {ruta.relative_to(DIST_DIR)} ({ruta.stat().st_size / 1024:.0f} KB)")
 
     # Después de escribir las páginas de chart: los previews de la landing
     # capturan una de esas páginas ya generadas (ver PREVIEW_SOURCE_CHART).
