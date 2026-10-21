@@ -34,7 +34,10 @@ liga-temporada para siempre.
 Uso:
     python fetch_fbref_players.py                 # todo lo que falte
     python fetch_fbref_players.py 2023-24         # solo esa temporada
-    python fetch_fbref_players.py --force 2025-26 # re-baja aunque ya exista el CSV
+    python fetch_fbref_players.py --force 2025-26 # rehace el CSV desde el caché de HTML
+    python fetch_fbref_players.py --refrescar 2026-27  # vuelve a pedir las páginas a fbref
+                                                  # (temporada en curso); si una liga falla
+                                                  # conserva sus filas anteriores
     python fetch_fbref_players.py --intentos 6    # más reintentos por página
 """
 
@@ -135,15 +138,21 @@ def paginable(texto, table_id=TABLE_ID):
     return texto is not None and len(texto) > 500_000 and table_id in texto
 
 
-def fetch_page(liga, season, intentos=INTENTOS, tabla="stats"):
+def fetch_page(liga, season, intentos=INTENTOS, tabla="stats", refrescar=False):
     """HTML de la página de jugadores, cacheado en disco. None si no se pudo.
 
     Las temporadas cerradas no cambian, así que una vez bajada y validada no se
-    vuelve a pedir nunca."""
+    vuelve a pedir nunca. La temporada en curso sí: con `refrescar` se aparta la
+    copia vieja y se vuelve a pedir; si ninguno de los intentos da una página
+    válida, la vieja se restaura (un refresco fallido no debe dejar el caché
+    vacío)."""
     import fetch_fbref  # reusa el navegador que ya pasó Cloudflare
 
     table_id = TABLE_ID if tabla == "stats" else EXTRA_TABLAS[tabla][0]
     cached = _cache_file(liga, season, tabla)
+    respaldo = cached.with_name(cached.name + ".bak")
+    if refrescar and cached.exists():
+        cached.replace(respaldo)
     if cached.exists():
         texto = cached.read_text(encoding="utf-8", errors="replace")
         if paginable(texto, table_id):
@@ -164,6 +173,7 @@ def fetch_page(liga, season, intentos=INTENTOS, tabla="stats"):
             texto, motivo = None, f"{type(exc).__name__}: {str(exc)[:60]}"
 
         if paginable(texto, table_id):
+            respaldo.unlink(missing_ok=True)
             return texto
 
         # Sin esto el intento siguiente re-lee la basura del disco en vez de
@@ -171,7 +181,11 @@ def fetch_page(liga, season, intentos=INTENTOS, tabla="stats"):
         cached.unlink(missing_ok=True)
         print(f"      intento {intento}/{intentos} falló: {motivo}", flush=True)
         if intento < intentos:
+            # un navegador caído seguiría fallando igual: se levanta uno nuevo
+            fetch_fbref.reiniciar_reader()
             time.sleep(ESPERA)
+    if respaldo.exists():
+        respaldo.replace(cached)
     return None
 
 
@@ -280,6 +294,7 @@ def ligas_en_csv(path):
 def main():
     argv = sys.argv[1:]
     force = "--force" in argv
+    refrescar = "--refrescar" in argv
     intentos = INTENTOS
     if "--intentos" in argv:
         intentos = int(argv[argv.index("--intentos") + 1])
@@ -295,7 +310,7 @@ def main():
 
     for season in seasons:
         path = DATA_DIR / season / "fbref-players.csv"
-        ya = set() if force else ligas_en_csv(path)
+        ya = set() if (force or refrescar) else ligas_en_csv(path)
         faltan = [lg for lg in LEAGUES if lg not in ya]
         if not faltan:
             print(f"{season}: completa, se salta")
@@ -313,13 +328,13 @@ def main():
             print(f"    {liga:15s} ...", flush=True)
             contexto = f"{season} {liga}"
             fila = None
-            if previo is not None and not force:
+            if previo is not None and not force and not refrescar:
                 ya = previo[previo["liga"] == liga]
                 if len(ya) and ya[COLUMN_ORDER].notna().any().any():
                     fila = ya[COLUMN_ORDER].reset_index(drop=True)
                     print(f"      identidad del CSV ({len(fila)} jugadores)")
             if fila is None:
-                texto = fetch_page(liga, season, intentos)
+                texto = fetch_page(liga, season, intentos, refrescar=refrescar)
                 if texto is None:
                     print(f"      SIN DATOS tras {intentos} intentos")
                     continue
@@ -335,7 +350,7 @@ def main():
             # decidir qué falta, y una liga sin `msc_` la marcaría incompleta.
             completa = True
             for tabla in EXTRA_TABLAS:
-                extra_html = fetch_page(liga, season, intentos, tabla)
+                extra_html = fetch_page(liga, season, intentos, tabla, refrescar)
                 if extra_html is None:
                     print(f"      SIN '{tabla}' tras {intentos} intentos")
                     completa = False
@@ -369,18 +384,27 @@ def main():
         out.to_csv(path, index=False, encoding="utf-8-sig")
 
         presentes = set(out["liga"].dropna().unique())
+        # Al refrescar, una liga que no se pudo bajar conserva sus filas viejas
+        # (por eso sigue "presente"), pero la corrida tiene que contarla como
+        # incompleta: esos números son de una jornada anterior al resto.
+        if refrescar and (sin_refrescar := set(faltan) - hechas):
+            print(f"    NO SE PUDO REFRESCAR (se conservan las filas anteriores): "
+                  f"{', '.join(sorted(sin_refrescar))}")
+            incompletas.append(season)
         sin_born = int(out["born"].isna().sum())
         print(f"  {season}: {len(out):5d} jugadores, {len(presentes)}/5 ligas" +
               (f", {sin_born} sin año de nacimiento" if sin_born else ""))
         if presentes != todas:
             print(f"    faltan todavía: {', '.join(sorted(todas - presentes))}")
-            incompletas.append(season)
+            if season not in incompletas:
+                incompletas.append(season)
 
     if incompletas:
         print(f"\nIncompletas: {', '.join(incompletas)} — vuelve a correr el script "
               "para completarlas (lo ya bajado no se re-pide)")
-    else:
-        print("\nTodas las temporadas completas")
+        # código de salida != 0: lo usa `actualizar.py` para no publicar a medias
+        raise SystemExit(1)
+    print("\nTodas las temporadas completas")
 
 
 if __name__ == "__main__":

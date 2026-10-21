@@ -1,0 +1,1827 @@
+﻿temporada,liga,game_id,fecha,local,visita,goles_l,goles_v,xg_l,xg_v
+2015-16,Bundesliga,1021,2015-08-14 22:30:00,Bayern Munich,Hamburger SV,5,0,3.22904,0.154234
+2015-16,Bundesliga,1022,2015-08-15 17:30:00,Bayer Leverkusen,Hoffenheim,2,1,3.52773,0.483949
+2015-16,Bundesliga,1023,2015-08-15 17:30:00,Augsburg,Hertha Berlin,0,1,1.14869,1.23291
+2015-16,Bundesliga,1024,2015-08-15 17:30:00,Werder Bremen,Schalke 04,0,3,0.914717,1.4498
+2015-16,Bundesliga,1025,2015-08-15 17:30:00,Mainz 05,Ingolstadt,0,1,0.547769,0.577316
+2015-16,Bundesliga,1026,2015-08-15 17:30:00,Darmstadt,Hannover 96,2,2,1.80912,1.85731
+2015-16,Bundesliga,1027,2015-08-15 20:30:00,Borussia Dortmund,Borussia M.Gladbach,4,0,2.42013,0.18521
+2015-16,Bundesliga,1028,2015-08-16 17:30:00,Wolfsburg,Eintracht Frankfurt,2,1,0.740041,0.950098
+2015-16,Bundesliga,1029,2015-08-16 19:30:00,VfB Stuttgart,FC Cologne,1,3,2.98558,1.85087
+2015-16,Bundesliga,1030,2015-08-21 22:30:00,Hertha Berlin,Werder Bremen,1,1,0.494279,0.957641
+2015-16,Bundesliga,1031,2015-08-22 17:30:00,Hoffenheim,Bayern Munich,1,2,1.29953,2.53588
+2015-16,Bundesliga,1032,2015-08-22 17:30:00,Schalke 04,Darmstadt,1,1,1.05775,0.790379
+2015-16,Bundesliga,1033,2015-08-22 17:30:00,Eintracht Frankfurt,Augsburg,1,1,0.945278,1.26112
+2015-16,Bundesliga,1034,2015-08-22 17:30:00,FC Cologne,Wolfsburg,1,1,1.37825,2.14017
+2015-16,Bundesliga,1035,2015-08-22 17:30:00,Hannover 96,Bayer Leverkusen,0,1,0.0975496,1.37365
+2015-16,Bundesliga,1036,2015-08-22 20:30:00,Hamburger SV,VfB Stuttgart,3,2,1.32114,1.89549
+2015-16,Bundesliga,1037,2015-08-23 17:30:00,Ingolstadt,Borussia Dortmund,0,4,0.0514071,3.63386
+2015-16,Bundesliga,1038,2015-08-23 19:30:00,Borussia M.Gladbach,Mainz 05,1,2,1.22742,2.01071
+2015-16,Bundesliga,1039,2015-08-28 22:30:00,Wolfsburg,Schalke 04,3,0,1.52939,0.748153
+2015-16,Bundesliga,1040,2015-08-29 17:30:00,VfB Stuttgart,Eintracht Frankfurt,1,4,2.52237,1.9601
+2015-16,Bundesliga,1041,2015-08-29 17:30:00,Augsburg,Ingolstadt,0,1,0.832315,1.24787
+2015-16,Bundesliga,1042,2015-08-29 17:30:00,FC Cologne,Hamburger SV,2,1,1.67081,1.44461
+2015-16,Bundesliga,1043,2015-08-29 17:30:00,Mainz 05,Hannover 96,3,0,3.41346,0.373166
+2015-16,Bundesliga,1044,2015-08-29 17:30:00,Darmstadt,Hoffenheim,0,0,0.287238,1.3935
+2015-16,Bundesliga,1045,2015-08-29 20:30:00,Bayern Munich,Bayer Leverkusen,3,0,3.52476,0.420202
+2015-16,Bundesliga,1046,2015-08-30 17:30:00,Borussia Dortmund,Hertha Berlin,3,1,3.73248,0.633538
+2015-16,Bundesliga,1047,2015-08-30 19:30:00,Werder Bremen,Borussia M.Gladbach,2,1,3.23257,0.755739
+2015-16,Bundesliga,1048,2015-09-11 22:30:00,Borussia M.Gladbach,Hamburger SV,0,3,0.436066,1.02932
+2015-16,Bundesliga,1049,2015-09-12 17:30:00,Bayern Munich,Augsburg,2,1,3.85642,0.15319
+2015-16,Bundesliga,1050,2015-09-12 17:30:00,Hannover 96,Borussia Dortmund,2,4,0.582795,2.16909
+2015-16,Bundesliga,1051,2015-09-12 17:30:00,Hertha Berlin,VfB Stuttgart,2,1,1.47686,1.02726
+2015-16,Bundesliga,1052,2015-09-12 17:30:00,Ingolstadt,Wolfsburg,0,0,0.178191,0.732037
+2015-16,Bundesliga,1053,2015-09-12 17:30:00,Bayer Leverkusen,Darmstadt,0,1,1.3554,0.284787
+2015-16,Bundesliga,1054,2015-09-12 20:30:00,Eintracht Frankfurt,FC Cologne,6,2,2.93005,0.902695
+2015-16,Bundesliga,1055,2015-09-13 17:30:00,Hoffenheim,Werder Bremen,1,3,0.694948,2.2128
+2015-16,Bundesliga,1056,2015-09-13 19:30:00,Schalke 04,Mainz 05,2,1,3.13941,2.94627
+2015-16,Bundesliga,1057,2015-09-18 22:30:00,Mainz 05,Hoffenheim,3,1,1.27625,1.01304
+2015-16,Bundesliga,1058,2015-09-19 17:30:00,Darmstadt,Bayern Munich,0,3,0.204756,1.71752
+2015-16,Bundesliga,1059,2015-09-19 17:30:00,Wolfsburg,Hertha Berlin,2,0,2.42975,0.271584
+2015-16,Bundesliga,1060,2015-09-19 17:30:00,Hamburger SV,Eintracht Frankfurt,0,0,0.909692,0.221397
+2015-16,Bundesliga,1061,2015-09-19 17:30:00,Werder Bremen,Ingolstadt,0,1,1.22829,1.47429
+2015-16,Bundesliga,1062,2015-09-19 17:30:00,FC Cologne,Borussia M.Gladbach,1,0,0.541995,0.4042
+2015-16,Bundesliga,1063,2015-09-20 17:30:00,VfB Stuttgart,Schalke 04,0,1,3.31265,1.09359
+2015-16,Bundesliga,1064,2015-09-20 19:30:00,Augsburg,Hannover 96,2,0,2.24649,0.56218
+2015-16,Bundesliga,1065,2015-09-20 19:30:00,Borussia Dortmund,Bayer Leverkusen,3,0,4.08165,0.927753
+2015-16,Bundesliga,1066,2015-09-22 22:00:00,Bayern Munich,Wolfsburg,5,1,3.68676,0.160394
+2015-16,Bundesliga,1067,2015-09-22 22:00:00,Hertha Berlin,FC Cologne,2,0,1.34684,0.853586
+2015-16,Bundesliga,1068,2015-09-22 22:00:00,Ingolstadt,Hamburger SV,0,1,0.718034,1.16174
+2015-16,Bundesliga,1069,2015-09-22 22:00:00,Darmstadt,Werder Bremen,2,1,1.91868,1.19628
+2015-16,Bundesliga,1070,2015-09-23 22:00:00,Hoffenheim,Borussia Dortmund,1,1,1.18726,1.63998
+2015-16,Bundesliga,1071,2015-09-23 22:00:00,Schalke 04,Eintracht Frankfurt,2,0,2.25209,0.952574
+2015-16,Bundesliga,1072,2015-09-23 22:00:00,Bayer Leverkusen,Mainz 05,1,0,1.74157,0.476793
+2015-16,Bundesliga,1073,2015-09-23 22:00:00,Borussia M.Gladbach,Augsburg,4,2,2.84575,1.92244
+2015-16,Bundesliga,1074,2015-09-23 22:00:00,Hannover 96,VfB Stuttgart,1,3,0.807709,1.81814
+2015-16,Bundesliga,1075,2015-09-25 22:30:00,FC Cologne,Ingolstadt,1,1,1.3352,0.638071
+2015-16,Bundesliga,1076,2015-09-26 17:30:00,Mainz 05,Bayern Munich,0,3,0.75194,2.77408
+2015-16,Bundesliga,1077,2015-09-26 17:30:00,VfB Stuttgart,Borussia M.Gladbach,1,3,2.45923,1.18534
+2015-16,Bundesliga,1078,2015-09-26 17:30:00,Augsburg,Hoffenheim,1,3,1.94324,1.5923
+2015-16,Bundesliga,1079,2015-09-26 17:30:00,Werder Bremen,Bayer Leverkusen,0,3,0.326706,1.3026
+2015-16,Bundesliga,1080,2015-09-26 17:30:00,Wolfsburg,Hannover 96,1,1,1.41905,1.08934
+2015-16,Bundesliga,1081,2015-09-26 20:30:00,Hamburger SV,Schalke 04,0,1,0.583026,1.27784
+2015-16,Bundesliga,1082,2015-09-27 17:30:00,Eintracht Frankfurt,Hertha Berlin,1,1,1.41369,2.23038
+2015-16,Bundesliga,1083,2015-09-27 19:30:00,Borussia Dortmund,Darmstadt,2,2,1.97055,0.508638
+2015-16,Bundesliga,1084,2015-10-02 22:30:00,Darmstadt,Mainz 05,2,3,1.86109,1.45155
+2015-16,Bundesliga,1085,2015-10-03 17:30:00,Borussia M.Gladbach,Wolfsburg,2,0,1.45907,0.813505
+2015-16,Bundesliga,1086,2015-10-03 17:30:00,Hannover 96,Werder Bremen,1,0,0.695247,1.50158
+2015-16,Bundesliga,1087,2015-10-03 17:30:00,Hertha Berlin,Hamburger SV,3,0,2.0435,0.315135
+2015-16,Bundesliga,1088,2015-10-03 17:30:00,Hoffenheim,VfB Stuttgart,2,2,1.90929,2.36648
+2015-16,Bundesliga,1089,2015-10-03 17:30:00,Ingolstadt,Eintracht Frankfurt,2,0,1.185,0.740308
+2015-16,Bundesliga,1090,2015-10-04 17:30:00,Schalke 04,FC Cologne,0,3,1.11607,1.32
+2015-16,Bundesliga,1091,2015-10-04 19:30:00,Bayer Leverkusen,Augsburg,1,1,1.98173,0.119117
+2015-16,Bundesliga,1092,2015-10-04 19:30:00,Bayern Munich,Borussia Dortmund,5,1,3.72164,1.10489
+2015-16,Bundesliga,1093,2015-10-16 22:30:00,Mainz 05,Borussia Dortmund,0,2,1.55155,3.64229
+2015-16,Bundesliga,1094,2015-10-17 17:30:00,Augsburg,Darmstadt,0,2,1.42706,2.54284
+2015-16,Bundesliga,1095,2015-10-17 17:30:00,Werder Bremen,Bayern Munich,0,1,0.691198,2.13219
+2015-16,Bundesliga,1096,2015-10-17 17:30:00,Schalke 04,Hertha Berlin,2,1,2.51235,0.933849
+2015-16,Bundesliga,1097,2015-10-17 17:30:00,Wolfsburg,Hoffenheim,4,2,2.80506,1.07639
+2015-16,Bundesliga,1098,2015-10-17 17:30:00,Hamburger SV,Bayer Leverkusen,0,0,0.469945,0.875048
+2015-16,Bundesliga,1099,2015-10-17 20:30:00,Eintracht Frankfurt,Borussia M.Gladbach,1,5,0.990091,3.50891
+2015-16,Bundesliga,1100,2015-10-18 17:30:00,FC Cologne,Hannover 96,0,1,1.52116,1.26113
+2015-16,Bundesliga,1101,2015-10-18 19:30:00,VfB Stuttgart,Ingolstadt,1,0,1.33256,1.63336
+2015-16,Bundesliga,1102,2015-10-23 22:30:00,Hoffenheim,Hamburger SV,0,1,0.586765,3.11642
+2015-16,Bundesliga,1103,2015-10-24 17:30:00,Mainz 05,Werder Bremen,1,3,1.53001,2.29004
+2015-16,Bundesliga,1104,2015-10-24 17:30:00,Darmstadt,Wolfsburg,0,1,0.594469,0.976111
+2015-16,Bundesliga,1105,2015-10-24 17:30:00,Hannover 96,Eintracht Frankfurt,1,2,0.454178,0.74964
+2015-16,Bundesliga,1106,2015-10-24 17:30:00,Bayer Leverkusen,VfB Stuttgart,4,3,2.87154,2.40291
+2015-16,Bundesliga,1107,2015-10-24 17:30:00,Bayern Munich,FC Cologne,4,0,3.69101,0.230279
+2015-16,Bundesliga,1108,2015-10-24 20:30:00,Ingolstadt,Hertha Berlin,0,1,0.66126,0.702791
+2015-16,Bundesliga,1109,2015-10-25 18:30:00,Borussia Dortmund,Augsburg,5,1,4.21104,0.293643
+2015-16,Bundesliga,1110,2015-10-25 20:30:00,Borussia M.Gladbach,Schalke 04,3,1,2.25814,0.767714
+2015-16,Bundesliga,1111,2015-10-30 23:30:00,Eintracht Frankfurt,Bayern Munich,0,0,0.251519,1.38915
+2015-16,Bundesliga,1112,2015-10-31 18:30:00,FC Cologne,Hoffenheim,0,0,1.33774,0.90728
+2015-16,Bundesliga,1113,2015-10-31 18:30:00,Hertha Berlin,Borussia M.Gladbach,1,4,2.31638,1.29051
+2015-16,Bundesliga,1114,2015-10-31 18:30:00,Augsburg,Mainz 05,3,3,2.98084,1.72651
+2015-16,Bundesliga,1115,2015-10-31 18:30:00,Werder Bremen,Borussia Dortmund,1,3,0.983033,3.35901
+2015-16,Bundesliga,1116,2015-10-31 18:30:00,Schalke 04,Ingolstadt,1,1,1.07951,0.26092
+2015-16,Bundesliga,1117,2015-10-31 21:30:00,Wolfsburg,Bayer Leverkusen,2,1,2.11288,1.31846
+2015-16,Bundesliga,1118,2015-11-01 18:30:00,VfB Stuttgart,Darmstadt,2,0,2.13203,1.08627
+2015-16,Bundesliga,1119,2015-11-01 20:30:00,Hamburger SV,Hannover 96,1,2,2.44912,0.843812
+2015-16,Bundesliga,1120,2015-11-06 23:30:00,Hannover 96,Hertha Berlin,1,3,1.1491,1.8958
+2015-16,Bundesliga,1121,2015-11-07 18:30:00,Hoffenheim,Eintracht Frankfurt,0,0,0.680401,1.60253
+2015-16,Bundesliga,1122,2015-11-07 18:30:00,Mainz 05,Wolfsburg,2,0,1.36046,0.153219
+2015-16,Bundesliga,1123,2015-11-07 18:30:00,Bayer Leverkusen,FC Cologne,1,2,0.457253,2.03601
+2015-16,Bundesliga,1124,2015-11-07 18:30:00,Borussia M.Gladbach,Ingolstadt,0,0,1.28313,0.939938
+2015-16,Bundesliga,1125,2015-11-07 18:30:00,Bayern Munich,VfB Stuttgart,4,0,4.71083,0.284883
+2015-16,Bundesliga,1126,2015-11-07 21:30:00,Darmstadt,Hamburger SV,1,1,1.6995,1.15876
+2015-16,Bundesliga,1127,2015-11-08 18:30:00,Borussia Dortmund,Schalke 04,3,2,2.14772,1.37138
+2015-16,Bundesliga,1128,2015-11-08 20:30:00,Augsburg,Werder Bremen,1,2,1.70717,1.31037
+2015-16,Bundesliga,1129,2015-11-20 23:45:00,Hamburger SV,Borussia Dortmund,3,1,1.47142,2.31377
+2015-16,Bundesliga,1130,2015-11-21 18:30:00,VfB Stuttgart,Augsburg,0,4,0.921864,2.23123
+2015-16,Bundesliga,1131,2015-11-21 18:30:00,Eintracht Frankfurt,Bayer Leverkusen,1,3,0.620149,1.67235
+2015-16,Bundesliga,1132,2015-11-21 18:30:00,FC Cologne,Mainz 05,0,0,0.868247,0.315868
+2015-16,Bundesliga,1133,2015-11-21 18:30:00,Borussia M.Gladbach,Hannover 96,2,1,2.61888,2.19568
+2015-16,Bundesliga,1134,2015-11-21 18:30:00,Wolfsburg,Werder Bremen,6,0,4.16408,0.724132
+2015-16,Bundesliga,1135,2015-11-21 21:30:00,Schalke 04,Bayern Munich,1,3,0.217596,2.27848
+2015-16,Bundesliga,1136,2015-11-22 18:30:00,Hertha Berlin,Hoffenheim,1,0,0.100337,0.328805
+2015-16,Bundesliga,1137,2015-11-22 20:40:00,Ingolstadt,Darmstadt,3,1,2.73623,0.58372
+2015-16,Bundesliga,1138,2015-11-27 23:30:00,Darmstadt,FC Cologne,0,0,0.508721,0.933778
+2015-16,Bundesliga,1139,2015-11-28 18:30:00,Werder Bremen,Hamburger SV,1,3,0.977105,1.13161
+2015-16,Bundesliga,1140,2015-11-28 18:30:00,Hannover 96,Ingolstadt,4,0,1.50396,0.366248
+2015-16,Bundesliga,1141,2015-11-28 18:30:00,Hoffenheim,Borussia M.Gladbach,3,3,2.07714,1.66132
+2015-16,Bundesliga,1142,2015-11-28 18:30:00,Bayern Munich,Hertha Berlin,2,0,3.93799,0.218952
+2015-16,Bundesliga,1143,2015-11-28 18:45:00,Mainz 05,Eintracht Frankfurt,2,1,2.44079,0.62621
+2015-16,Bundesliga,1144,2015-11-29 18:30:00,Borussia Dortmund,VfB Stuttgart,4,1,2.12434,0.700582
+2015-16,Bundesliga,1145,2015-11-29 20:30:00,Bayer Leverkusen,Schalke 04,1,1,2.13995,0.949254
+2015-16,Bundesliga,1146,2015-11-29 20:30:00,Augsburg,Wolfsburg,0,0,1.26639,0.559526
+2015-16,Bundesliga,1147,2015-12-04 23:30:00,Schalke 04,Hannover 96,3,1,3.56394,0.228822
+2015-16,Bundesliga,1148,2015-12-05 18:30:00,Borussia M.Gladbach,Bayern Munich,3,1,2.15779,2.28915
+2015-16,Bundesliga,1149,2015-12-05 18:30:00,Hamburger SV,Mainz 05,1,3,1.30558,1.19413
+2015-16,Bundesliga,1150,2015-12-05 18:30:00,FC Cologne,Augsburg,0,1,2.36543,2.1005
+2015-16,Bundesliga,1151,2015-12-05 18:30:00,Hertha Berlin,Bayer Leverkusen,2,1,1.02556,1.2452
+2015-16,Bundesliga,1152,2015-12-05 18:30:00,Ingolstadt,Hoffenheim,1,1,0.489495,1.12887
+2015-16,Bundesliga,1153,2015-12-05 21:30:00,Wolfsburg,Borussia Dortmund,1,2,1.78593,2.58853
+2015-16,Bundesliga,1154,2015-12-06 18:30:00,VfB Stuttgart,Werder Bremen,1,1,1.49974,0.886678
+2015-16,Bundesliga,1155,2015-12-06 20:30:00,Eintracht Frankfurt,Darmstadt,0,1,1.0568,1.55006
+2015-16,Bundesliga,1156,2015-12-11 23:30:00,Mainz 05,VfB Stuttgart,0,0,0.747148,0.601794
+2015-16,Bundesliga,1157,2015-12-12 18:30:00,Darmstadt,Hertha Berlin,0,4,0.26179,1.99133
+2015-16,Bundesliga,1158,2015-12-12 18:30:00,Wolfsburg,Hamburger SV,1,1,2.00091,0.210485
+2015-16,Bundesliga,1159,2015-12-12 18:30:00,Werder Bremen,FC Cologne,1,1,1.34869,1.22073
+2015-16,Bundesliga,1160,2015-12-12 18:30:00,Hoffenheim,Hannover 96,1,0,1.55239,1.3987
+2015-16,Bundesliga,1161,2015-12-12 18:30:00,Bayern Munich,Ingolstadt,2,0,2.49703,1.00727
+2015-16,Bundesliga,1162,2015-12-12 21:30:00,Bayer Leverkusen,Borussia M.Gladbach,5,0,2.75163,0.376285
+2015-16,Bundesliga,1163,2015-12-13 18:30:00,Augsburg,Schalke 04,2,1,1.2358,1.45492
+2015-16,Bundesliga,1164,2015-12-13 20:30:00,Borussia Dortmund,Eintracht Frankfurt,4,1,6.02931,0.133013
+2015-16,Bundesliga,1165,2015-12-18 23:30:00,Schalke 04,Hoffenheim,1,0,0.722775,0.870611
+2015-16,Bundesliga,1166,2015-12-19 18:30:00,Ingolstadt,Bayer Leverkusen,0,1,0.461211,0.717973
+2015-16,Bundesliga,1167,2015-12-19 18:30:00,Hamburger SV,Augsburg,0,1,1.24397,2.50129
+2015-16,Bundesliga,1168,2015-12-19 18:30:00,Eintracht Frankfurt,Werder Bremen,2,1,1.84525,0.87057
+2015-16,Bundesliga,1169,2015-12-19 18:30:00,FC Cologne,Borussia Dortmund,2,1,0.769926,0.750674
+2015-16,Bundesliga,1170,2015-12-19 18:30:00,Hannover 96,Bayern Munich,0,1,0.221793,2.52645
+2015-16,Bundesliga,1171,2015-12-19 21:30:00,VfB Stuttgart,Wolfsburg,3,1,1.7755,1.32762
+2015-16,Bundesliga,1172,2015-12-20 18:30:00,Hertha Berlin,Mainz 05,2,0,1.52652,0.26315
+2015-16,Bundesliga,1173,2015-12-20 20:30:00,Borussia M.Gladbach,Darmstadt,3,2,1.0366,2.23006
+2015-16,Bundesliga,1174,2016-01-22 23:30:00,Hamburger SV,Bayern Munich,1,2,0.378362,1.95463
+2015-16,Bundesliga,1175,2016-01-23 18:30:00,FC Cologne,VfB Stuttgart,1,3,2.33406,2.63662
+2015-16,Bundesliga,1176,2016-01-23 18:30:00,Hannover 96,Darmstadt,1,2,1.28887,2.76698
+2015-16,Bundesliga,1177,2016-01-23 18:30:00,Hertha Berlin,Augsburg,0,0,0.638542,0.704125
+2015-16,Bundesliga,1178,2016-01-23 18:30:00,Hoffenheim,Bayer Leverkusen,1,1,0.756054,1.82105
+2015-16,Bundesliga,1179,2016-01-23 18:30:00,Ingolstadt,Mainz 05,1,0,1.79614,0.651914
+2015-16,Bundesliga,1180,2016-01-23 21:30:00,Borussia M.Gladbach,Borussia Dortmund,1,3,0.969724,2.60367
+2015-16,Bundesliga,1181,2016-01-24 18:30:00,Eintracht Frankfurt,Wolfsburg,3,2,1.18879,2.75506
+2015-16,Bundesliga,1182,2016-01-24 20:30:00,Schalke 04,Werder Bremen,1,3,2.01652,1.82961
+2015-16,Bundesliga,1183,2016-01-29 23:30:00,Mainz 05,Borussia M.Gladbach,1,0,0.852232,1.91691
+2015-16,Bundesliga,1184,2016-01-30 18:30:00,Darmstadt,Schalke 04,0,2,0.0939969,1.56117
+2015-16,Bundesliga,1185,2016-01-30 18:30:00,Borussia Dortmund,Ingolstadt,2,0,2.19495,0.145484
+2015-16,Bundesliga,1186,2016-01-30 18:30:00,Bayer Leverkusen,Hannover 96,3,0,1.96768,0.177765
+2015-16,Bundesliga,1187,2016-01-30 18:30:00,Augsburg,Eintracht Frankfurt,0,0,0.609193,1.25574
+2015-16,Bundesliga,1188,2016-01-30 18:30:00,Werder Bremen,Hertha Berlin,3,3,2.40454,1.33238
+2015-16,Bundesliga,1189,2016-01-30 21:30:00,VfB Stuttgart,Hamburger SV,2,1,2.69957,1.77488
+2015-16,Bundesliga,1190,2016-01-31 18:30:00,Wolfsburg,FC Cologne,1,1,2.04894,0.698473
+2015-16,Bundesliga,1191,2016-01-31 20:30:00,Bayern Munich,Hoffenheim,2,0,3.08952,0.463233
+2015-16,Bundesliga,1192,2016-02-05 23:30:00,Borussia M.Gladbach,Werder Bremen,5,1,3.16316,1.67818
+2015-16,Bundesliga,1193,2016-02-06 18:30:00,Schalke 04,Wolfsburg,3,0,0.785917,0.559619
+2015-16,Bundesliga,1194,2016-02-06 18:30:00,Eintracht Frankfurt,VfB Stuttgart,2,4,2.36752,3.36402
+2015-16,Bundesliga,1195,2016-02-06 18:30:00,Hannover 96,Mainz 05,0,1,0.638351,0.857195
+2015-16,Bundesliga,1196,2016-02-06 18:30:00,Hertha Berlin,Borussia Dortmund,0,0,0.881103,0.391491
+2015-16,Bundesliga,1197,2016-02-06 18:30:00,Ingolstadt,Augsburg,2,1,2.8596,0.232784
+2015-16,Bundesliga,1198,2016-02-06 21:30:00,Bayer Leverkusen,Bayern Munich,0,0,0.288974,1.17556
+2015-16,Bundesliga,1199,2016-02-07 18:30:00,Hamburger SV,FC Cologne,1,1,0.197661,1.37214
+2015-16,Bundesliga,1200,2016-02-07 20:30:00,Hoffenheim,Darmstadt,0,2,0.584715,2.06675
+2015-16,Bundesliga,1201,2016-02-12 23:30:00,Mainz 05,Schalke 04,2,1,1.00349,0.980702
+2015-16,Bundesliga,1202,2016-02-13 18:30:00,Darmstadt,Bayer Leverkusen,1,2,1.07695,1.5656
+2015-16,Bundesliga,1203,2016-02-13 18:30:00,Borussia Dortmund,Hannover 96,1,0,1.23883,0.212153
+2015-16,Bundesliga,1204,2016-02-13 18:30:00,Wolfsburg,Ingolstadt,2,0,1.37415,0.549133
+2015-16,Bundesliga,1205,2016-02-13 18:30:00,VfB Stuttgart,Hertha Berlin,2,0,1.27221,1.12753
+2015-16,Bundesliga,1206,2016-02-13 18:30:00,Werder Bremen,Hoffenheim,1,1,1.83283,0.57006
+2015-16,Bundesliga,1207,2016-02-13 21:30:00,FC Cologne,Eintracht Frankfurt,3,1,2.27377,0.606015
+2015-16,Bundesliga,1208,2016-02-14 18:30:00,Hamburger SV,Borussia M.Gladbach,3,2,1.48178,2.07387
+2015-16,Bundesliga,1209,2016-02-14 20:30:00,Augsburg,Bayern Munich,1,3,0.310362,2.21151
+2015-16,Bundesliga,1210,2016-02-19 23:30:00,Eintracht Frankfurt,Hamburger SV,0,0,0.45464,0.807708
+2015-16,Bundesliga,1211,2016-02-20 18:30:00,Bayern Munich,Darmstadt,3,1,3.08206,0.61234
+2015-16,Bundesliga,1212,2016-02-20 18:30:00,Hertha Berlin,Wolfsburg,1,1,0.693683,0.743911
+2015-16,Bundesliga,1213,2016-02-20 18:30:00,Hoffenheim,Mainz 05,3,2,1.83746,1.16619
+2015-16,Bundesliga,1214,2016-02-20 18:30:00,Ingolstadt,Werder Bremen,2,0,1.85348,0.572222
+2015-16,Bundesliga,1215,2016-02-20 18:30:00,Borussia M.Gladbach,FC Cologne,1,0,0.907861,0.568002
+2015-16,Bundesliga,1216,2016-02-21 18:30:00,Bayer Leverkusen,Borussia Dortmund,0,1,0.788355,1.25829
+2015-16,Bundesliga,1217,2016-02-21 20:30:00,Hannover 96,Augsburg,0,1,0.433505,1.17413
+2015-16,Bundesliga,1218,2016-02-21 20:30:00,Schalke 04,VfB Stuttgart,1,1,0.989802,1.68313
+2015-16,Bundesliga,1219,2016-02-26 23:30:00,FC Cologne,Hertha Berlin,0,1,0.787942,0.842565
+2015-16,Bundesliga,1220,2016-02-27 18:30:00,Werder Bremen,Darmstadt,2,2,2.2106,1.16123
+2015-16,Bundesliga,1221,2016-02-27 18:30:00,Wolfsburg,Bayern Munich,0,2,0.686422,1.21707
+2015-16,Bundesliga,1222,2016-02-27 18:30:00,Hamburger SV,Ingolstadt,1,1,0.897328,1.01142
+2015-16,Bundesliga,1223,2016-02-27 18:30:00,VfB Stuttgart,Hannover 96,1,2,3.13363,1.59513
+2015-16,Bundesliga,1224,2016-02-28 18:30:00,Augsburg,Borussia M.Gladbach,2,2,1.80948,1.80962
+2015-16,Bundesliga,1225,2016-02-28 20:30:00,Borussia Dortmund,Hoffenheim,3,1,2.47417,0.88117
+2015-16,Bundesliga,1226,2016-02-28 20:30:00,Mainz 05,Bayer Leverkusen,3,1,2.61685,0.81358
+2015-16,Bundesliga,1227,2016-02-28 22:30:00,Eintracht Frankfurt,Schalke 04,0,0,0.775413,0.223305
+2015-16,Bundesliga,1228,2016-03-01 23:00:00,Hannover 96,Wolfsburg,0,4,0.395343,3.15639
+2015-16,Bundesliga,1229,2016-03-01 23:00:00,Ingolstadt,FC Cologne,1,1,1.40092,1.14458
+2015-16,Bundesliga,1230,2016-03-02 23:00:00,Darmstadt,Borussia Dortmund,0,2,0.422078,3.36158
+2015-16,Bundesliga,1231,2016-03-02 23:00:00,Hertha Berlin,Eintracht Frankfurt,2,0,1.21008,0.339767
+2015-16,Bundesliga,1232,2016-03-02 23:00:00,Hoffenheim,Augsburg,2,1,1.60086,1.8142
+2015-16,Bundesliga,1233,2016-03-02 23:00:00,Bayern Munich,Mainz 05,1,2,0.652757,0.723063
+2015-16,Bundesliga,1234,2016-03-02 23:00:00,Schalke 04,Hamburger SV,3,2,2.61412,0.825944
+2015-16,Bundesliga,1235,2016-03-02 23:00:00,Bayer Leverkusen,Werder Bremen,1,4,1.00958,1.88024
+2015-16,Bundesliga,1236,2016-03-02 23:00:00,Borussia M.Gladbach,VfB Stuttgart,4,0,3.23676,0.281312
+2015-16,Bundesliga,1237,2016-03-05 18:30:00,VfB Stuttgart,Hoffenheim,5,1,3.82557,0.918227
+2015-16,Bundesliga,1238,2016-03-05 18:30:00,Augsburg,Bayer Leverkusen,3,3,1.63701,1.46029
+2015-16,Bundesliga,1239,2016-03-05 18:30:00,Werder Bremen,Hannover 96,4,1,2.14361,1.14266
+2015-16,Bundesliga,1240,2016-03-05 18:30:00,Eintracht Frankfurt,Ingolstadt,1,1,2.63935,1.55385
+2015-16,Bundesliga,1241,2016-03-05 18:30:00,FC Cologne,Schalke 04,1,3,2.44466,2.23816
+2015-16,Bundesliga,1242,2016-03-05 18:30:00,Wolfsburg,Borussia M.Gladbach,2,1,0.863815,1.0738
+2015-16,Bundesliga,1243,2016-03-05 21:30:00,Borussia Dortmund,Bayern Munich,0,0,0.750153,1.15007
+2015-16,Bundesliga,1244,2016-03-06 18:30:00,Mainz 05,Darmstadt,0,0,1.18471,1.02252
+2015-16,Bundesliga,1245,2016-03-06 20:30:00,Hamburger SV,Hertha Berlin,2,0,1.10346,0.22915
+2015-16,Bundesliga,1246,2016-03-11 23:30:00,Hertha Berlin,Schalke 04,2,0,1.41068,1.08126
+2015-16,Bundesliga,1247,2016-03-12 18:30:00,Hoffenheim,Wolfsburg,1,0,1.40359,0.680487
+2015-16,Bundesliga,1248,2016-03-12 18:30:00,Ingolstadt,VfB Stuttgart,3,3,1.86907,3.11394
+2015-16,Bundesliga,1249,2016-03-12 18:30:00,Darmstadt,Augsburg,2,2,1.35865,1.28135
+2015-16,Bundesliga,1250,2016-03-12 18:30:00,Borussia M.Gladbach,Eintracht Frankfurt,3,0,1.87363,0.0789648
+2015-16,Bundesliga,1251,2016-03-12 18:30:00,Hannover 96,FC Cologne,0,2,0.988474,1.12909
+2015-16,Bundesliga,1252,2016-03-12 21:30:00,Bayern Munich,Werder Bremen,5,0,3.14093,0.0947484
+2015-16,Bundesliga,1253,2016-03-13 18:30:00,Bayer Leverkusen,Hamburger SV,1,0,1.46364,1.03957
+2015-16,Bundesliga,1254,2016-03-13 20:30:00,Borussia Dortmund,Mainz 05,2,0,3.95436,0.136645
+2015-16,Bundesliga,1255,2016-03-18 23:30:00,Schalke 04,Borussia M.Gladbach,2,1,0.10538,2.14568
+2015-16,Bundesliga,1256,2016-03-19 18:30:00,Wolfsburg,Darmstadt,1,1,1.31288,1.3773
+2015-16,Bundesliga,1257,2016-03-19 18:30:00,Hamburger SV,Hoffenheim,1,3,2.27762,2.21883
+2015-16,Bundesliga,1258,2016-03-19 18:30:00,Werder Bremen,Mainz 05,1,1,1.15003,0.685087
+2015-16,Bundesliga,1259,2016-03-19 18:30:00,FC Cologne,Bayern Munich,0,1,1.00667,0.343724
+2015-16,Bundesliga,1260,2016-03-19 18:30:00,Hertha Berlin,Ingolstadt,2,1,1.12049,0.67263
+2015-16,Bundesliga,1261,2016-03-19 21:30:00,Eintracht Frankfurt,Hannover 96,1,0,1.3943,0.381106
+2015-16,Bundesliga,1262,2016-03-20 18:30:00,VfB Stuttgart,Bayer Leverkusen,0,2,0.64082,2.29012
+2015-16,Bundesliga,1263,2016-03-20 20:30:00,Augsburg,Borussia Dortmund,1,3,1.01768,1.52542
+2015-16,Bundesliga,1264,2016-04-01 22:30:00,Bayer Leverkusen,Wolfsburg,3,0,0.705961,0.572215
+2015-16,Bundesliga,1265,2016-04-02 17:30:00,Bayern Munich,Eintracht Frankfurt,1,0,1.08122,0.118042
+2015-16,Bundesliga,1266,2016-04-02 17:30:00,Mainz 05,Augsburg,4,2,3.6054,0.784999
+2015-16,Bundesliga,1267,2016-04-02 17:30:00,Ingolstadt,Schalke 04,3,0,1.86933,0.864055
+2015-16,Bundesliga,1268,2016-04-02 17:30:00,Darmstadt,VfB Stuttgart,2,2,2.21695,0.480572
+2015-16,Bundesliga,1269,2016-04-02 17:30:00,Hannover 96,Hamburger SV,0,3,1.16167,2.17031
+2015-16,Bundesliga,1270,2016-04-02 20:30:00,Borussia Dortmund,Werder Bremen,3,2,2.84328,0.436067
+2015-16,Bundesliga,1271,2016-04-03 17:30:00,Borussia M.Gladbach,Hertha Berlin,5,0,2.41386,0.280578
+2015-16,Bundesliga,1272,2016-04-03 19:30:00,Hoffenheim,FC Cologne,1,1,1.04133,1.09032
+2015-16,Bundesliga,1273,2016-04-08 22:30:00,Hertha Berlin,Hannover 96,2,2,1.66964,1.25141
+2015-16,Bundesliga,1274,2016-04-09 17:30:00,Ingolstadt,Borussia M.Gladbach,1,0,2.04687,0.311628
+2015-16,Bundesliga,1275,2016-04-09 17:30:00,Hamburger SV,Darmstadt,1,2,0.70616,1.04297
+2015-16,Bundesliga,1276,2016-04-09 17:30:00,VfB Stuttgart,Bayern Munich,1,3,0.959571,0.728737
+2015-16,Bundesliga,1277,2016-04-09 17:30:00,Werder Bremen,Augsburg,1,2,0.716015,0.923628
+2015-16,Bundesliga,1278,2016-04-09 17:30:00,Eintracht Frankfurt,Hoffenheim,0,2,0.581161,1.3548
+2015-16,Bundesliga,1279,2016-04-09 20:30:00,Wolfsburg,Mainz 05,1,1,1.0116,1.76775
+2015-16,Bundesliga,1280,2016-04-10 17:30:00,Schalke 04,Borussia Dortmund,2,2,1.23275,1.6976
+2015-16,Bundesliga,1281,2016-04-10 19:30:00,FC Cologne,Bayer Leverkusen,0,2,0.731816,1.36907
+2015-16,Bundesliga,1282,2016-04-15 22:30:00,Hannover 96,Borussia M.Gladbach,2,0,1.64388,0.732627
+2015-16,Bundesliga,1283,2016-04-16 17:30:00,Hoffenheim,Hertha Berlin,2,1,1.31625,1.09114
+2015-16,Bundesliga,1284,2016-04-16 17:30:00,Darmstadt,Ingolstadt,2,0,1.24602,0.351721
+2015-16,Bundesliga,1285,2016-04-16 17:30:00,Bayer Leverkusen,Eintracht Frankfurt,3,0,1.12161,0.878427
+2015-16,Bundesliga,1286,2016-04-16 17:30:00,Augsburg,VfB Stuttgart,1,0,1.28148,0.428691
+2015-16,Bundesliga,1287,2016-04-16 17:30:00,Werder Bremen,Wolfsburg,3,2,3.58106,1.09409
+2015-16,Bundesliga,1288,2016-04-16 20:30:00,Bayern Munich,Schalke 04,3,0,1.27153,0.430468
+2015-16,Bundesliga,1289,2016-04-17 17:30:00,Borussia Dortmund,Hamburger SV,3,0,1.90773,0.617113
+2015-16,Bundesliga,1290,2016-04-17 19:30:00,Mainz 05,FC Cologne,2,3,1.80923,1.14393
+2015-16,Bundesliga,1291,2016-04-22 22:30:00,Hamburger SV,Werder Bremen,2,1,1.90362,2.52835
+2015-16,Bundesliga,1292,2016-04-23 17:30:00,VfB Stuttgart,Borussia Dortmund,0,3,0.479435,3.53521
+2015-16,Bundesliga,1293,2016-04-23 17:30:00,Wolfsburg,Augsburg,0,2,1.38162,0.967552
+2015-16,Bundesliga,1294,2016-04-23 17:30:00,FC Cologne,Darmstadt,4,1,2.56591,1.03362
+2015-16,Bundesliga,1295,2016-04-23 17:30:00,Hertha Berlin,Bayern Munich,0,2,0.351189,0.192443
+2015-16,Bundesliga,1296,2016-04-23 17:30:00,Ingolstadt,Hannover 96,2,2,1.16542,1.22986
+2015-16,Bundesliga,1297,2016-04-23 20:30:00,Schalke 04,Bayer Leverkusen,2,3,2.42823,1.52773
+2015-16,Bundesliga,1298,2016-04-24 17:30:00,Borussia M.Gladbach,Hoffenheim,3,1,2.90034,1.18468
+2015-16,Bundesliga,1299,2016-04-24 19:30:00,Eintracht Frankfurt,Mainz 05,2,1,0.547038,0.490667
+2015-16,Bundesliga,1300,2016-04-29 22:30:00,Augsburg,FC Cologne,0,0,0.88211,0.257362
+2015-16,Bundesliga,1301,2016-04-30 17:30:00,Hannover 96,Schalke 04,1,3,2.06666,1.79057
+2015-16,Bundesliga,1302,2016-04-30 17:30:00,Hoffenheim,Ingolstadt,2,1,1.82345,2.37831
+2015-16,Bundesliga,1303,2016-04-30 17:30:00,Mainz 05,Hamburger SV,0,0,0.973992,0.570155
+2015-16,Bundesliga,1304,2016-04-30 17:30:00,Darmstadt,Eintracht Frankfurt,1,2,1.19136,0.846611
+2015-16,Bundesliga,1305,2016-04-30 17:30:00,Bayern Munich,Borussia M.Gladbach,1,1,0.283796,0.337244
+2015-16,Bundesliga,1306,2016-04-30 17:30:00,Borussia Dortmund,Wolfsburg,5,1,3.1369,0.643223
+2015-16,Bundesliga,1307,2016-04-30 20:30:00,Bayer Leverkusen,Hertha Berlin,2,1,2.98724,0.344918
+2015-16,Bundesliga,1308,2016-05-02 22:15:00,Werder Bremen,VfB Stuttgart,6,2,2.87488,0.814877
+2015-16,Bundesliga,1309,2016-05-07 17:30:00,Schalke 04,Augsburg,1,1,1.4111,0.557159
+2015-16,Bundesliga,1310,2016-05-07 17:30:00,Borussia M.Gladbach,Bayer Leverkusen,2,1,1.24034,1.96166
+2015-16,Bundesliga,1311,2016-05-07 17:30:00,Hamburger SV,Wolfsburg,0,1,0.427188,1.96183
+2015-16,Bundesliga,1312,2016-05-07 17:30:00,VfB Stuttgart,Mainz 05,1,3,0.873428,3.89767
+2015-16,Bundesliga,1313,2016-05-07 17:30:00,Eintracht Frankfurt,Borussia Dortmund,1,0,0.697175,1.4668
+2015-16,Bundesliga,1314,2016-05-07 17:30:00,FC Cologne,Werder Bremen,0,0,0.578238,0.585339
+2015-16,Bundesliga,1315,2016-05-07 17:30:00,Hannover 96,Hoffenheim,1,0,0.689753,1.39948
+2015-16,Bundesliga,1316,2016-05-07 17:30:00,Hertha Berlin,Darmstadt,1,2,1.35682,1.26224
+2015-16,Bundesliga,1317,2016-05-07 17:30:00,Ingolstadt,Bayern Munich,1,2,1.94299,2.27556
+2015-16,Bundesliga,1318,2016-05-14 17:30:00,Augsburg,Hamburger SV,1,3,1.03269,2.0985
+2015-16,Bundesliga,1319,2016-05-14 17:30:00,Bayern Munich,Hannover 96,3,1,2.692,1.81013
+2015-16,Bundesliga,1320,2016-05-14 17:30:00,Werder Bremen,Eintracht Frankfurt,1,0,1.9531,0.191835
+2015-16,Bundesliga,1321,2016-05-14 17:30:00,Borussia Dortmund,FC Cologne,2,2,1.15049,1.60855
+2015-16,Bundesliga,1322,2016-05-14 17:30:00,Hoffenheim,Schalke 04,1,4,1.41779,1.60217
+2015-16,Bundesliga,1323,2016-05-14 17:30:00,Bayer Leverkusen,Ingolstadt,3,2,3.08569,2.93125
+2015-16,Bundesliga,1324,2016-05-14 17:30:00,Mainz 05,Hertha Berlin,0,0,1.48776,0.873124
+2015-16,Bundesliga,1325,2016-05-14 17:30:00,Wolfsburg,VfB Stuttgart,3,1,2.79348,0.973203
+2015-16,Bundesliga,1326,2016-05-14 17:30:00,Darmstadt,Borussia M.Gladbach,0,2,0.357258,1.87154
+2015-16,La Liga,1399,2015-08-21 22:30:00,Malaga,Sevilla,0,0,0.98272,0.856601
+2015-16,La Liga,1400,2015-08-22 20:30:00,Deportivo La Coruna,Real Sociedad,0,0,0.574748,0.944878
+2015-16,La Liga,1401,2015-08-22 20:30:00,Espanyol,Getafe,1,0,0.477297,1.27636
+2015-16,La Liga,1402,2015-08-22 22:30:00,Atletico Madrid,Las Palmas,1,0,0.91996,0.522515
+2015-16,La Liga,1403,2015-08-23 00:30:00,Rayo Vallecano,Valencia,0,0,0.693517,2.20399
+2015-16,La Liga,1404,2015-08-23 20:30:00,Athletic Club,Barcelona,0,1,0.394999,1.76141
+2015-16,La Liga,1405,2015-08-23 22:30:00,Sporting Gijon,Real Madrid,0,0,0.333248,1.54271
+2015-16,La Liga,1406,2015-08-24 00:00:00,Levante,Celta Vigo,1,2,0.485771,1.80598
+2015-16,La Liga,1407,2015-08-24 00:30:00,Real Betis,Villarreal,1,1,1.4954,1.63096
+2015-16,La Liga,1408,2015-08-24 22:30:00,Granada,Eibar,1,3,0.893586,1.81223
+2015-16,La Liga,1409,2015-08-28 22:30:00,Villarreal,Espanyol,3,1,1.59386,0.721424
+2015-16,La Liga,1410,2015-08-29 20:30:00,Real Sociedad,Sporting Gijon,0,0,0.887693,0.25686
+2015-16,La Liga,1411,2015-08-29 22:30:00,Barcelona,Malaga,1,0,1.92171,0.223011
+2015-16,La Liga,1412,2015-08-30 00:00:00,Celta Vigo,Rayo Vallecano,3,0,1.7022,0.0816438
+2015-16,La Liga,1413,2015-08-30 00:30:00,Real Madrid,Real Betis,5,0,3.14512,0.941159
+2015-16,La Liga,1414,2015-08-30 20:30:00,Eibar,Athletic Club,2,0,1.34808,0.316867
+2015-16,La Liga,1415,2015-08-30 22:30:00,Sevilla,Atletico Madrid,0,3,1.73824,1.2446
+2015-16,La Liga,1416,2015-08-30 22:30:00,Valencia,Deportivo La Coruna,1,1,1.85572,0.818281
+2015-16,La Liga,1417,2015-08-31 00:30:00,Getafe,Granada,1,2,0.801319,1.27622
+2015-16,La Liga,1418,2015-08-31 00:30:00,Las Palmas,Levante,0,0,0.825401,0.0685963
+2015-16,La Liga,1419,2015-09-11 22:30:00,Levante,Sevilla,1,1,1.09171,0.886593
+2015-16,La Liga,1420,2015-09-12 18:00:00,Espanyol,Real Madrid,0,6,1.47918,4.38766
+2015-16,La Liga,1421,2015-09-12 20:15:00,Sporting Gijon,Valencia,0,1,1.10502,1.48606
+2015-16,La Liga,1422,2015-09-12 22:30:00,Atletico Madrid,Barcelona,1,2,0.833737,2.33036
+2015-16,La Liga,1423,2015-09-13 00:00:00,Real Betis,Real Sociedad,1,0,0.75201,0.663712
+2015-16,La Liga,1424,2015-09-13 14:00:00,Granada,Villarreal,1,3,0.817524,1.48742
+2015-16,La Liga,1425,2015-09-13 18:00:00,Athletic Club,Getafe,3,1,1.91225,0.930841
+2015-16,La Liga,1426,2015-09-13 20:15:00,Celta Vigo,Las Palmas,3,3,3.52742,1.29875
+2015-16,La Liga,1427,2015-09-13 22:30:00,Malaga,Eibar,0,0,1.03596,0.885807
+2015-16,La Liga,1428,2015-09-14 22:30:00,Rayo Vallecano,Deportivo La Coruna,1,3,0.61631,2.11613
+2015-16,La Liga,1429,2015-09-18 22:30:00,Getafe,Malaga,1,0,1.18708,0.690557
+2015-16,La Liga,1430,2015-09-19 18:00:00,Real Madrid,Granada,1,0,3.03758,1.7661
+2015-16,La Liga,1431,2015-09-19 20:15:00,Valencia,Real Betis,0,0,1.81097,0.190749
+2015-16,La Liga,1432,2015-09-19 22:30:00,Eibar,Atletico Madrid,0,2,0.2857,1.72085
+2015-16,La Liga,1433,2015-09-20 00:00:00,Real Sociedad,Espanyol,2,3,1.35321,1.89499
+2015-16,La Liga,1434,2015-09-20 14:00:00,Sevilla,Celta Vigo,1,2,1.52622,0.84576
+2015-16,La Liga,1435,2015-09-20 18:00:00,Deportivo La Coruna,Sporting Gijon,2,3,0.831861,1.62405
+2015-16,La Liga,1436,2015-09-20 20:15:00,Villarreal,Athletic Club,3,1,1.61474,1.26405
+2015-16,La Liga,1437,2015-09-20 22:30:00,Barcelona,Levante,4,1,4.0122,0.866439
+2015-16,La Liga,1438,2015-09-20 22:30:00,Las Palmas,Rayo Vallecano,0,1,0.401504,1.77993
+2015-16,La Liga,1439,2015-09-22 22:00:00,Espanyol,Valencia,1,0,1.87389,0.777547
+2015-16,La Liga,1440,2015-09-22 22:00:00,Atletico Madrid,Getafe,2,0,1.48124,0.480381
+2015-16,La Liga,1441,2015-09-23 00:00:00,Granada,Real Sociedad,0,3,0.393118,2.65392
+2015-16,La Liga,1442,2015-09-23 22:00:00,Rayo Vallecano,Sporting Gijon,2,1,2.90667,0.532738
+2015-16,La Liga,1443,2015-09-23 22:00:00,Celta Vigo,Barcelona,4,1,2.22577,2.51546
+2015-16,La Liga,1444,2015-09-23 22:00:00,Levante,Eibar,2,2,0.537144,1.40104
+2015-16,La Liga,1445,2015-09-23 23:00:00,Athletic Club,Real Madrid,1,2,1.17616,2.93805
+2015-16,La Liga,1446,2015-09-24 00:00:00,Malaga,Villarreal,0,1,0.878256,0.933564
+2015-16,La Liga,1447,2015-09-24 00:00:00,Las Palmas,Sevilla,2,0,1.02387,1.53528
+2015-16,La Liga,1448,2015-09-25 00:05:00,Real Betis,Deportivo La Coruna,1,2,1.11886,0.264158
+2015-16,La Liga,1449,2015-09-25 22:30:00,Valencia,Granada,1,0,2.0801,0.990969
+2015-16,La Liga,1450,2015-09-26 18:00:00,Barcelona,Las Palmas,2,1,3.47992,0.585814
+2015-16,La Liga,1451,2015-09-26 20:15:00,Real Madrid,Malaga,0,0,3.18828,0.638418
+2015-16,La Liga,1452,2015-09-26 22:30:00,Sevilla,Rayo Vallecano,3,2,2.76392,0.920477
+2015-16,La Liga,1453,2015-09-26 22:30:00,Villarreal,Atletico Madrid,1,0,0.871094,0.466414
+2015-16,La Liga,1454,2015-09-27 00:05:00,Eibar,Celta Vigo,1,1,1.20938,1.08234
+2015-16,La Liga,1455,2015-09-27 14:00:00,Sporting Gijon,Real Betis,1,2,1.75847,1.65258
+2015-16,La Liga,1456,2015-09-27 18:00:00,Deportivo La Coruna,Espanyol,3,0,1.89137,0.259334
+2015-16,La Liga,1457,2015-09-27 20:15:00,Getafe,Levante,3,0,1.09777,0.589659
+2015-16,La Liga,1458,2015-09-27 22:30:00,Real Sociedad,Athletic Club,0,0,1.08705,0.611548
+2015-16,La Liga,1459,2015-10-02 22:30:00,Celta Vigo,Getafe,0,0,1.48902,1.32092
+2015-16,La Liga,1460,2015-10-03 18:00:00,Sevilla,Barcelona,2,1,1.57705,3.86997
+2015-16,La Liga,1461,2015-10-03 20:15:00,Granada,Deportivo La Coruna,1,1,0.825643,0.942041
+2015-16,La Liga,1462,2015-10-03 22:30:00,Espanyol,Sporting Gijon,1,2,2.00148,1.6289
+2015-16,La Liga,1463,2015-10-04 00:00:00,Las Palmas,Eibar,0,2,0.965753,1.62203
+2015-16,La Liga,1464,2015-10-04 00:05:00,Malaga,Real Sociedad,3,1,1.89707,1.04161
+2015-16,La Liga,1465,2015-10-04 14:00:00,Rayo Vallecano,Real Betis,0,2,1.2884,1.68781
+2015-16,La Liga,1466,2015-10-04 18:00:00,Athletic Club,Valencia,3,1,2.69373,0.61804
+2015-16,La Liga,1467,2015-10-04 20:15:00,Levante,Villarreal,1,0,1.06144,0.114789
+2015-16,La Liga,1468,2015-10-04 22:30:00,Atletico Madrid,Real Madrid,1,1,2.38708,0.792017
+2015-16,La Liga,1469,2015-10-17 18:00:00,Real Madrid,Levante,3,0,1.60293,1.5507
+2015-16,La Liga,1470,2015-10-17 20:15:00,Eibar,Sevilla,1,1,0.781265,1.68695
+2015-16,La Liga,1471,2015-10-17 22:30:00,Barcelona,Rayo Vallecano,5,2,4.61543,2.83637
+2015-16,La Liga,1472,2015-10-18 00:00:00,Valencia,Malaga,3,0,1.59507,1.53697
+2015-16,La Liga,1473,2015-10-18 00:05:00,Real Betis,Espanyol,1,3,1.86579,1.85292
+2015-16,La Liga,1474,2015-10-18 14:00:00,Villarreal,Celta Vigo,1,2,0.995361,1.62408
+2015-16,La Liga,1475,2015-10-18 18:00:00,Real Sociedad,Atletico Madrid,0,2,0.485713,1.57864
+2015-16,La Liga,1476,2015-10-18 20:15:00,Getafe,Las Palmas,4,0,2.86431,0.443316
+2015-16,La Liga,1477,2015-10-18 22:30:00,Deportivo La Coruna,Athletic Club,2,2,1.24801,0.676596
+2015-16,La Liga,1478,2015-10-19 22:30:00,Sporting Gijon,Granada,3,3,1.39196,2.51462
+2015-16,La Liga,1479,2015-10-23 22:30:00,Rayo Vallecano,Espanyol,3,0,1.85851,1.41105
+2015-16,La Liga,1480,2015-10-24 18:00:00,Celta Vigo,Real Madrid,1,3,1.57638,1.9616
+2015-16,La Liga,1481,2015-10-24 20:15:00,Granada,Real Betis,1,1,1.06647,1.11054
+2015-16,La Liga,1482,2015-10-24 22:30:00,Sevilla,Getafe,5,0,5.15361,0.227689
+2015-16,La Liga,1483,2015-10-25 00:05:00,Malaga,Deportivo La Coruna,2,0,1.06014,0.766533
+2015-16,La Liga,1484,2015-10-25 15:00:00,Levante,Real Sociedad,0,4,1.07863,3.28662
+2015-16,La Liga,1485,2015-10-25 19:00:00,Las Palmas,Villarreal,0,0,0.189007,0.205133
+2015-16,La Liga,1486,2015-10-25 21:15:00,Barcelona,Eibar,3,1,1.64662,1.30132
+2015-16,La Liga,1487,2015-10-25 23:30:00,Atletico Madrid,Valencia,2,1,2.07582,0.885758
+2015-16,La Liga,1488,2015-10-26 23:30:00,Athletic Club,Sporting Gijon,3,0,2.81541,0.15924
+2015-16,La Liga,1489,2015-10-30 23:30:00,Deportivo La Coruna,Atletico Madrid,1,1,0.917497,1.43617
+2015-16,La Liga,1490,2015-10-31 19:00:00,Real Madrid,Las Palmas,3,1,2.80269,0.562561
+2015-16,La Liga,1491,2015-10-31 21:15:00,Villarreal,Sevilla,2,1,1.03337,0.880961
+2015-16,La Liga,1492,2015-10-31 21:15:00,Valencia,Levante,3,0,2.26116,1.14512
+2015-16,La Liga,1493,2015-10-31 23:30:00,Getafe,Barcelona,0,2,0.18992,2.07864
+2015-16,La Liga,1494,2015-11-01 01:05:00,Real Sociedad,Celta Vigo,2,3,1.13516,1.43886
+2015-16,La Liga,1495,2015-11-01 15:00:00,Eibar,Rayo Vallecano,1,0,1.26188,0.502135
+2015-16,La Liga,1496,2015-11-01 19:00:00,Espanyol,Granada,1,1,1.71942,0.680785
+2015-16,La Liga,1497,2015-11-01 21:15:00,Sporting Gijon,Malaga,1,0,1.51083,0.482096
+2015-16,La Liga,1498,2015-11-01 23:30:00,Real Betis,Athletic Club,1,3,1.23993,4.022
+2015-16,La Liga,1499,2015-11-06 23:30:00,Las Palmas,Real Sociedad,2,0,0.802566,0.500075
+2015-16,La Liga,1500,2015-11-07 19:00:00,Celta Vigo,Valencia,1,5,1.6317,1.48214
+2015-16,La Liga,1501,2015-11-07 21:15:00,Levante,Deportivo La Coruna,1,1,0.822146,0.572246
+2015-16,La Liga,1502,2015-11-07 23:30:00,Eibar,Getafe,3,1,2.65653,0.607458
+2015-16,La Liga,1503,2015-11-07 23:30:00,Rayo Vallecano,Granada,2,1,0.825919,0.483537
+2015-16,La Liga,1504,2015-11-08 01:05:00,Malaga,Real Betis,0,1,0.890995,0.876923
+2015-16,La Liga,1505,2015-11-08 15:00:00,Athletic Club,Espanyol,2,1,0.780105,0.629441
+2015-16,La Liga,1506,2015-11-08 19:00:00,Barcelona,Villarreal,3,0,3.0769,0.278588
+2015-16,La Liga,1507,2015-11-08 21:15:00,Atletico Madrid,Sporting Gijon,1,0,1.21835,0.396003
+2015-16,La Liga,1508,2015-11-08 23:30:00,Sevilla,Real Madrid,3,2,2.39505,1.25807
+2015-16,La Liga,1509,2015-11-21 19:00:00,Real Sociedad,Sevilla,2,0,1.39018,1.1262
+2015-16,La Liga,1510,2015-11-21 21:15:00,Real Madrid,Barcelona,0,4,1.2581,3.27692
+2015-16,La Liga,1511,2015-11-21 23:30:00,Espanyol,Malaga,2,0,1.15492,0.753602
+2015-16,La Liga,1512,2015-11-22 01:00:00,Valencia,Las Palmas,1,1,1.38069,2.43396
+2015-16,La Liga,1513,2015-11-22 01:05:00,Deportivo La Coruna,Celta Vigo,2,0,1.02848,0.886052
+2015-16,La Liga,1514,2015-11-22 15:00:00,Sporting Gijon,Levante,0,3,1.98544,2.67209
+2015-16,La Liga,1515,2015-11-22 19:00:00,Villarreal,Eibar,1,1,1.78239,2.61337
+2015-16,La Liga,1516,2015-11-22 21:15:00,Granada,Athletic Club,2,0,0.806379,1.35423
+2015-16,La Liga,1517,2015-11-22 23:30:00,Real Betis,Atletico Madrid,0,1,0.128682,2.26452
+2015-16,La Liga,1518,2015-11-23 23:30:00,Getafe,Rayo Vallecano,1,1,0.721945,1.1181
+2015-16,La Liga,1519,2015-11-27 23:30:00,Levante,Real Betis,0,1,1.10847,0.943363
+2015-16,La Liga,1520,2015-11-28 19:00:00,Barcelona,Real Sociedad,4,0,2.95341,0.617573
+2015-16,La Liga,1521,2015-11-28 21:15:00,Atletico Madrid,Espanyol,1,0,1.73222,0.143079
+2015-16,La Liga,1522,2015-11-28 23:30:00,Malaga,Granada,2,2,1.40547,0.557943
+2015-16,La Liga,1523,2015-11-29 01:00:00,Las Palmas,Deportivo La Coruna,0,2,0.349655,2.20767
+2015-16,La Liga,1524,2015-11-29 01:05:00,Celta Vigo,Sporting Gijon,2,1,1.14376,0.664946
+2015-16,La Liga,1525,2015-11-29 15:00:00,Getafe,Villarreal,2,0,1.67288,0.7886
+2015-16,La Liga,1526,2015-11-29 19:00:00,Eibar,Real Madrid,0,2,0.28097,2.29034
+2015-16,La Liga,1527,2015-11-29 21:15:00,Rayo Vallecano,Athletic Club,0,3,1.45678,2.24726
+2015-16,La Liga,1528,2015-11-29 23:30:00,Sevilla,Valencia,1,0,1.63337,0.0
+2015-16,La Liga,1529,2015-12-05 19:00:00,Real Madrid,Getafe,4,1,1.87007,0.24488
+2015-16,La Liga,1530,2015-12-05 21:15:00,Granada,Atletico Madrid,0,2,0.602436,1.93434
+2015-16,La Liga,1531,2015-12-05 23:30:00,Valencia,Barcelona,1,1,0.847612,2.08221
+2015-16,La Liga,1532,2015-12-06 01:00:00,Deportivo La Coruna,Sevilla,1,1,0.64324,1.09296
+2015-16,La Liga,1533,2015-12-06 01:05:00,Real Betis,Celta Vigo,1,1,2.41831,0.535918
+2015-16,La Liga,1534,2015-12-06 15:00:00,Real Sociedad,Eibar,2,1,2.37051,0.286413
+2015-16,La Liga,1535,2015-12-06 19:00:00,Villarreal,Rayo Vallecano,2,1,1.60179,0.325638
+2015-16,La Liga,1536,2015-12-06 21:15:00,Sporting Gijon,Las Palmas,3,1,3.85858,0.418437
+2015-16,La Liga,1537,2015-12-06 23:30:00,Athletic Club,Malaga,0,0,0.305008,0.699162
+2015-16,La Liga,1538,2015-12-07 23:30:00,Espanyol,Levante,1,1,1.40669,1.01356
+2015-16,La Liga,1539,2015-12-11 23:30:00,Getafe,Real Sociedad,1,1,0.762214,1.82817
+2015-16,La Liga,1540,2015-12-12 19:00:00,Barcelona,Deportivo La Coruna,2,2,0.873385,1.22055
+2015-16,La Liga,1541,2015-12-12 21:15:00,Celta Vigo,Espanyol,1,0,1.23164,0.166852
+2015-16,La Liga,1542,2015-12-12 21:15:00,Levante,Granada,1,2,0.727312,0.752355
+2015-16,La Liga,1543,2015-12-12 23:30:00,Sevilla,Sporting Gijon,2,0,2.1509,0.0656616
+2015-16,La Liga,1544,2015-12-13 01:05:00,Las Palmas,Real Betis,1,0,2.11811,0.36831
+2015-16,La Liga,1545,2015-12-13 15:00:00,Rayo Vallecano,Malaga,1,2,1.12081,1.43186
+2015-16,La Liga,1546,2015-12-13 19:00:00,Eibar,Valencia,1,1,2.92204,0.286203
+2015-16,La Liga,1547,2015-12-13 21:15:00,Atletico Madrid,Athletic Club,2,1,0.33621,1.62076
+2015-16,La Liga,1548,2015-12-13 23:30:00,Villarreal,Real Madrid,1,0,0.940499,1.45508
+2015-16,La Liga,1549,2015-12-19 19:00:00,Valencia,Getafe,2,2,1.18705,0.508532
+2015-16,La Liga,1550,2015-12-19 21:15:00,Espanyol,Las Palmas,1,0,1.24844,0.598519
+2015-16,La Liga,1551,2015-12-19 23:30:00,Real Betis,Sevilla,0,0,0.377247,1.02024
+2015-16,La Liga,1552,2015-12-20 01:05:00,Deportivo La Coruna,Eibar,2,0,1.60925,0.462565
+2015-16,La Liga,1553,2015-12-20 19:00:00,Real Madrid,Rayo Vallecano,10,2,5.71778,0.93456
+2015-16,La Liga,1554,2015-12-20 21:15:00,Real Sociedad,Villarreal,0,2,1.02445,0.797645
+2015-16,La Liga,1555,2015-12-20 21:15:00,Granada,Celta Vigo,0,2,0.340342,2.25068
+2015-16,La Liga,1556,2015-12-20 21:15:00,Athletic Club,Levante,2,0,2.74756,0.514585
+2015-16,La Liga,1557,2015-12-20 23:30:00,Malaga,Atletico Madrid,1,0,1.0242,0.378061
+2015-16,La Liga,1558,2015-12-30 19:00:00,Real Madrid,Real Sociedad,3,1,3.42264,0.580977
+2015-16,La Liga,1559,2015-12-30 19:00:00,Levante,Malaga,0,1,0.167376,1.04316
+2015-16,La Liga,1560,2015-12-30 21:15:00,Rayo Vallecano,Atletico Madrid,0,2,0.372305,2.20164
+2015-16,La Liga,1561,2015-12-30 21:15:00,Sevilla,Espanyol,2,0,2.87616,0.633616
+2015-16,La Liga,1562,2015-12-30 21:30:00,Eibar,Sporting Gijon,2,0,1.17554,0.399746
+2015-16,La Liga,1563,2015-12-30 23:30:00,Getafe,Deportivo La Coruna,0,0,0.742286,0.584931
+2015-16,La Liga,1564,2015-12-30 23:30:00,Barcelona,Real Betis,4,0,4.34983,0.457226
+2015-16,La Liga,1565,2015-12-30 23:30:00,Celta Vigo,Athletic Club,0,1,0.414056,1.09564
+2015-16,La Liga,1566,2015-12-31 00:00:00,Las Palmas,Granada,4,1,1.28726,0.688245
+2015-16,La Liga,1567,2015-12-31 19:00:00,Villarreal,Valencia,1,0,0.420594,0.339183
+2015-16,La Liga,1568,2016-01-02 19:00:00,Espanyol,Barcelona,0,0,0.138495,1.00394
+2015-16,La Liga,1569,2016-01-02 23:30:00,Atletico Madrid,Levante,1,0,1.06627,0.460313
+2015-16,La Liga,1570,2016-01-03 01:05:00,Malaga,Celta Vigo,2,0,3.03854,1.0569
+2015-16,La Liga,1571,2016-01-03 15:00:00,Rayo Vallecano,Real Sociedad,2,2,0.924233,1.31907
+2015-16,La Liga,1572,2016-01-03 19:00:00,Real Betis,Eibar,0,4,1.53245,1.49466
+2015-16,La Liga,1573,2016-01-03 19:00:00,Granada,Sevilla,2,1,0.766685,2.31991
+2015-16,La Liga,1574,2016-01-03 21:15:00,Athletic Club,Las Palmas,2,2,1.71133,0.517767
+2015-16,La Liga,1575,2016-01-03 21:15:00,Deportivo La Coruna,Villarreal,1,2,1.15796,1.55208
+2015-16,La Liga,1576,2016-01-03 23:30:00,Valencia,Real Madrid,2,2,2.45563,1.20246
+2015-16,La Liga,1577,2016-01-04 23:30:00,Sporting Gijon,Getafe,1,2,1.85778,2.18421
+2015-16,La Liga,1578,2016-01-09 19:00:00,Barcelona,Granada,4,0,4.72913,0.325061
+2015-16,La Liga,1579,2016-01-09 21:15:00,Sevilla,Athletic Club,2,0,1.7013,1.25007
+2015-16,La Liga,1580,2016-01-09 21:15:00,Getafe,Real Betis,1,0,1.28639,0.602107
+2015-16,La Liga,1581,2016-01-09 23:30:00,Real Madrid,Deportivo La Coruna,5,0,3.52924,0.989088
+2015-16,La Liga,1582,2016-01-10 01:05:00,Levante,Rayo Vallecano,2,1,0.954929,0.34525
+2015-16,La Liga,1583,2016-01-10 15:00:00,Villarreal,Sporting Gijon,2,0,1.53045,0.960625
+2015-16,La Liga,1584,2016-01-10 19:00:00,Real Sociedad,Valencia,2,0,2.82395,0.838597
+2015-16,La Liga,1585,2016-01-10 21:15:00,Eibar,Espanyol,2,1,2.87714,0.263626
+2015-16,La Liga,1586,2016-01-10 21:15:00,Las Palmas,Malaga,1,1,0.391723,2.18407
+2015-16,La Liga,1587,2016-01-10 23:30:00,Celta Vigo,Atletico Madrid,0,2,0.213705,1.07666
+2015-16,La Liga,1588,2016-01-16 19:00:00,Sevilla,Malaga,2,1,1.39715,1.00078
+2015-16,La Liga,1589,2016-01-16 21:15:00,Celta Vigo,Levante,4,3,2.1571,1.42901
+2015-16,La Liga,1590,2016-01-16 23:30:00,Villarreal,Real Betis,0,0,0.806178,0.839004
+2015-16,La Liga,1591,2016-01-17 01:05:00,Real Sociedad,Deportivo La Coruna,1,1,2.75948,1.06682
+2015-16,La Liga,1592,2016-01-17 15:00:00,Valencia,Rayo Vallecano,2,2,1.26687,1.82333
+2015-16,La Liga,1593,2016-01-17 19:00:00,Real Madrid,Sporting Gijon,5,1,3.1536,0.691816
+2015-16,La Liga,1594,2016-01-17 21:15:00,Getafe,Espanyol,3,1,2.98406,1.6525
+2015-16,La Liga,1595,2016-01-17 21:15:00,Las Palmas,Atletico Madrid,0,3,0.605793,1.73491
+2015-16,La Liga,1596,2016-01-17 23:30:00,Barcelona,Athletic Club,6,0,4.44439,0.885303
+2015-16,La Liga,1597,2016-01-18 23:30:00,Eibar,Granada,5,1,2.01571,0.430886
+2015-16,La Liga,1598,2016-01-22 23:30:00,Sporting Gijon,Real Sociedad,5,1,4.13679,0.83285
+2015-16,La Liga,1599,2016-01-23 19:00:00,Malaga,Barcelona,1,2,1.12099,2.55037
+2015-16,La Liga,1600,2016-01-23 21:15:00,Espanyol,Villarreal,2,2,1.36067,1.50472
+2015-16,La Liga,1601,2016-01-23 23:30:00,Granada,Getafe,3,2,2.75252,1.57754
+2015-16,La Liga,1602,2016-01-24 01:05:00,Rayo Vallecano,Celta Vigo,3,0,3.20178,0.133975
+2015-16,La Liga,1603,2016-01-24 15:00:00,Athletic Club,Eibar,5,2,1.21738,1.67081
+2015-16,La Liga,1604,2016-01-24 19:00:00,Atletico Madrid,Sevilla,0,0,1.57618,0.27169
+2015-16,La Liga,1605,2016-01-24 21:15:00,Deportivo La Coruna,Valencia,1,1,1.05958,1.30721
+2015-16,La Liga,1606,2016-01-24 23:30:00,Real Betis,Real Madrid,1,1,0.211024,3.34615
+2015-16,La Liga,1607,2016-01-25 23:30:00,Levante,Las Palmas,3,2,1.48217,1.52612
+2015-16,La Liga,1608,2016-01-30 19:00:00,Barcelona,Atletico Madrid,2,1,1.19052,1.01896
+2015-16,La Liga,1609,2016-01-30 21:15:00,Eibar,Malaga,1,2,0.856269,1.31996
+2015-16,La Liga,1610,2016-01-30 21:15:00,Getafe,Athletic Club,0,1,1.33205,1.59857
+2015-16,La Liga,1611,2016-01-30 23:30:00,Villarreal,Granada,1,0,1.95153,0.91326
+2015-16,La Liga,1612,2016-01-31 01:05:00,Real Sociedad,Real Betis,2,1,1.08259,0.773957
+2015-16,La Liga,1613,2016-01-31 15:00:00,Sevilla,Levante,3,1,2.56252,0.686912
+2015-16,La Liga,1614,2016-01-31 19:00:00,Valencia,Sporting Gijon,0,1,2.04802,1.05546
+2015-16,La Liga,1615,2016-01-31 21:15:00,Las Palmas,Celta Vigo,2,1,2.12188,0.376974
+2015-16,La Liga,1616,2016-01-31 23:30:00,Real Madrid,Espanyol,6,0,2.76612,1.46627
+2015-16,La Liga,1617,2016-02-01 23:30:00,Deportivo La Coruna,Rayo Vallecano,2,2,1.42948,1.13142
+2015-16,La Liga,1618,2016-02-05 23:30:00,Malaga,Getafe,3,0,2.07318,0.524602
+2015-16,La Liga,1619,2016-02-06 19:00:00,Atletico Madrid,Eibar,3,1,2.57006,0.30035
+2015-16,La Liga,1620,2016-02-06 21:15:00,Rayo Vallecano,Las Palmas,2,0,3.09731,0.273377
+2015-16,La Liga,1621,2016-02-06 23:30:00,Athletic Club,Villarreal,0,0,0.56818,0.628815
+2015-16,La Liga,1622,2016-02-07 01:05:00,Sporting Gijon,Deportivo La Coruna,1,1,0.666281,0.227944
+2015-16,La Liga,1623,2016-02-07 15:00:00,Levante,Barcelona,0,2,0.802274,1.40471
+2015-16,La Liga,1624,2016-02-07 19:00:00,Real Betis,Valencia,1,0,1.00904,1.13142
+2015-16,La Liga,1625,2016-02-07 21:15:00,Celta Vigo,Sevilla,1,1,2.37006,0.922926
+2015-16,La Liga,1626,2016-02-07 23:30:00,Granada,Real Madrid,1,2,0.751196,1.67636
+2015-16,La Liga,1627,2016-02-08 23:30:00,Espanyol,Real Sociedad,0,5,0.208008,2.0285
+2015-16,La Liga,1628,2016-02-12 23:30:00,Sporting Gijon,Rayo Vallecano,2,2,2.38598,1.73162
+2015-16,La Liga,1629,2016-02-13 19:00:00,Real Madrid,Athletic Club,4,2,2.09005,1.50136
+2015-16,La Liga,1630,2016-02-13 21:15:00,Villarreal,Malaga,1,0,0.760756,0.671008
+2015-16,La Liga,1631,2016-02-13 23:30:00,Valencia,Espanyol,2,1,2.0361,3.41105
+2015-16,La Liga,1632,2016-02-14 01:05:00,Deportivo La Coruna,Real Betis,2,2,3.22944,0.598716
+2015-16,La Liga,1633,2016-02-14 15:00:00,Real Sociedad,Granada,3,0,2.55267,1.47828
+2015-16,La Liga,1634,2016-02-14 19:00:00,Sevilla,Las Palmas,2,0,1.12123,0.430522
+2015-16,La Liga,1635,2016-02-14 21:15:00,Getafe,Atletico Madrid,0,1,0.312685,0.711788
+2015-16,La Liga,1636,2016-02-14 21:15:00,Eibar,Levante,2,0,4.3639,0.78103
+2015-16,La Liga,1637,2016-02-14 23:30:00,Barcelona,Celta Vigo,6,1,5.54249,1.49242
+2015-16,La Liga,1638,2016-02-17 21:30:00,Sporting Gijon,Barcelona,1,3,0.87373,2.41243
+2015-16,La Liga,1639,2016-02-19 23:30:00,Levante,Getafe,3,0,2.29436,1.46167
+2015-16,La Liga,1640,2016-02-20 19:00:00,Las Palmas,Barcelona,1,2,1.08938,3.29704
+2015-16,La Liga,1641,2016-02-20 21:15:00,Espanyol,Deportivo La Coruna,1,0,3.34615,0.995453
+2015-16,La Liga,1642,2016-02-20 23:30:00,Real Betis,Sporting Gijon,1,1,0.953419,0.408199
+2015-16,La Liga,1643,2016-02-21 01:05:00,Celta Vigo,Eibar,3,2,2.5831,1.4201
+2015-16,La Liga,1644,2016-02-21 15:00:00,Rayo Vallecano,Sevilla,2,2,1.66155,3.37315
+2015-16,La Liga,1645,2016-02-21 19:00:00,Malaga,Real Madrid,1,1,1.68623,1.76313
+2015-16,La Liga,1646,2016-02-21 21:15:00,Athletic Club,Real Sociedad,0,1,0.512824,0.900436
+2015-16,La Liga,1647,2016-02-21 21:15:00,Granada,Valencia,1,2,2.00307,1.71536
+2015-16,La Liga,1648,2016-02-21 23:30:00,Atletico Madrid,Villarreal,0,0,0.769511,0.663896
+2015-16,La Liga,1649,2016-02-26 23:30:00,Eibar,Las Palmas,0,1,0.295947,0.651178
+2015-16,La Liga,1650,2016-02-27 19:00:00,Real Madrid,Atletico Madrid,0,1,0.984203,0.695343
+2015-16,La Liga,1651,2016-02-27 21:15:00,Getafe,Celta Vigo,0,1,0.863924,1.60224
+2015-16,La Liga,1652,2016-02-27 21:15:00,Sporting Gijon,Espanyol,2,4,1.68942,1.38627
+2015-16,La Liga,1653,2016-02-27 23:30:00,Real Betis,Rayo Vallecano,2,2,2.46401,1.42394
+2015-16,La Liga,1654,2016-02-28 01:05:00,Real Sociedad,Malaga,1,1,0.871084,1.22344
+2015-16,La Liga,1655,2016-02-28 15:00:00,Villarreal,Levante,3,0,1.6962,0.664928
+2015-16,La Liga,1656,2016-02-28 19:00:00,Valencia,Athletic Club,0,3,1.49242,1.68968
+2015-16,La Liga,1657,2016-02-28 21:15:00,Deportivo La Coruna,Granada,0,1,0.822359,1.84198
+2015-16,La Liga,1658,2016-02-28 23:30:00,Barcelona,Sevilla,2,1,2.33655,1.29686
+2015-16,La Liga,1659,2016-03-02 00:00:00,Atletico Madrid,Real Sociedad,3,0,1.92794,1.00552
+2015-16,La Liga,1660,2016-03-02 01:00:00,Las Palmas,Getafe,4,0,2.3145,0.477963
+2015-16,La Liga,1661,2016-03-02 23:00:00,Sevilla,Eibar,1,0,1.57261,0.553485
+2015-16,La Liga,1662,2016-03-02 23:00:00,Malaga,Valencia,1,2,0.433431,1.38765
+2015-16,La Liga,1663,2016-03-02 23:00:00,Celta Vigo,Villarreal,0,0,0.846173,0.328383
+2015-16,La Liga,1664,2016-03-02 23:00:00,Athletic Club,Deportivo La Coruna,4,1,2.7862,0.875636
+2015-16,La Liga,1665,2016-03-03 00:00:00,Levante,Real Madrid,1,3,1.07575,2.04124
+2015-16,La Liga,1666,2016-03-03 23:00:00,Granada,Sporting Gijon,2,0,1.87883,0.127036
+2015-16,La Liga,1667,2016-03-03 23:30:00,Espanyol,Real Betis,0,3,0.780555,1.92223
+2015-16,La Liga,1668,2016-03-04 00:00:00,Rayo Vallecano,Barcelona,1,5,1.17964,4.52996
+2015-16,La Liga,1669,2016-03-05 19:00:00,Real Madrid,Celta Vigo,7,1,2.39112,1.52691
+2015-16,La Liga,1670,2016-03-05 21:15:00,Villarreal,Las Palmas,0,1,1.15088,0.52008
+2015-16,La Liga,1671,2016-03-05 23:30:00,Getafe,Sevilla,1,1,1.13072,0.467979
+2015-16,La Liga,1672,2016-03-06 01:05:00,Deportivo La Coruna,Malaga,3,3,3.50017,0.990845
+2015-16,La Liga,1673,2016-03-06 15:00:00,Real Betis,Granada,2,0,0.844439,0.363768
+2015-16,La Liga,1674,2016-03-06 19:00:00,Eibar,Barcelona,0,4,0.358263,2.45515
+2015-16,La Liga,1675,2016-03-06 21:15:00,Sporting Gijon,Athletic Club,0,2,0.656848,1.34389
+2015-16,La Liga,1676,2016-03-06 21:15:00,Real Sociedad,Levante,1,1,2.23386,0.326226
+2015-16,La Liga,1677,2016-03-06 23:30:00,Valencia,Atletico Madrid,1,3,1.16388,1.58564
+2015-16,La Liga,1678,2016-03-07 23:30:00,Espanyol,Rayo Vallecano,2,1,1.78244,0.201034
+2015-16,La Liga,1679,2016-03-11 23:30:00,Malaga,Sporting Gijon,1,0,0.459569,0.957008
+2015-16,La Liga,1680,2016-03-12 19:00:00,Barcelona,Getafe,6,0,4.60705,0.281872
+2015-16,La Liga,1681,2016-03-12 21:15:00,Celta Vigo,Real Sociedad,1,0,0.377845,0.559876
+2015-16,La Liga,1682,2016-03-12 23:30:00,Atletico Madrid,Deportivo La Coruna,3,0,1.30692,0.292134
+2015-16,La Liga,1683,2016-03-13 01:05:00,Rayo Vallecano,Eibar,1,1,1.20734,0.804912
+2015-16,La Liga,1684,2016-03-13 15:00:00,Levante,Valencia,1,0,1.43121,0.77056
+2015-16,La Liga,1685,2016-03-13 19:00:00,Sevilla,Villarreal,4,2,3.1376,1.70728
+2015-16,La Liga,1686,2016-03-13 21:15:00,Athletic Club,Real Betis,3,1,2.14502,1.09836
+2015-16,La Liga,1687,2016-03-13 23:30:00,Las Palmas,Real Madrid,1,2,1.29762,0.860338
+2015-16,La Liga,1688,2016-03-14 23:30:00,Granada,Espanyol,1,1,0.793529,0.699866
+2015-16,La Liga,1689,2016-03-18 23:30:00,Getafe,Eibar,1,1,1.28229,2.83807
+2015-16,La Liga,1690,2016-03-19 19:00:00,Sporting Gijon,Atletico Madrid,2,1,1.89802,0.258695
+2015-16,La Liga,1691,2016-03-19 21:15:00,Real Sociedad,Las Palmas,0,1,0.590086,2.23147
+2015-16,La Liga,1692,2016-03-19 21:15:00,Granada,Rayo Vallecano,2,2,1.40008,1.57585
+2015-16,La Liga,1693,2016-03-19 23:30:00,Deportivo La Coruna,Levante,2,1,1.76797,0.632769
+2015-16,La Liga,1694,2016-03-20 01:05:00,Real Betis,Malaga,0,1,1.65417,1.33486
+2015-16,La Liga,1695,2016-03-20 15:00:00,Espanyol,Athletic Club,2,1,2.19144,1.80603
+2015-16,La Liga,1696,2016-03-20 19:00:00,Villarreal,Barcelona,2,2,0.980467,2.14473
+2015-16,La Liga,1697,2016-03-20 21:15:00,Valencia,Celta Vigo,0,2,0.646205,2.19927
+2015-16,La Liga,1698,2016-03-20 23:30:00,Real Madrid,Sevilla,4,0,4.08121,1.03777
+2015-16,La Liga,1699,2016-04-01 22:30:00,Rayo Vallecano,Getafe,2,0,2.4939,0.759713
+2015-16,La Liga,1700,2016-04-02 18:00:00,Atletico Madrid,Real Betis,5,1,4.5488,0.68708
+2015-16,La Liga,1701,2016-04-02 20:15:00,Las Palmas,Valencia,2,1,2.13172,0.748618
+2015-16,La Liga,1702,2016-04-02 22:30:00,Barcelona,Real Madrid,1,2,0.882445,1.56537
+2015-16,La Liga,1703,2016-04-03 00:05:00,Celta Vigo,Deportivo La Coruna,1,1,0.36047,0.864408
+2015-16,La Liga,1704,2016-04-03 14:00:00,Athletic Club,Granada,1,1,1.37516,0.618683
+2015-16,La Liga,1705,2016-04-03 18:00:00,Malaga,Espanyol,1,1,1.50099,0.260613
+2015-16,La Liga,1706,2016-04-03 20:15:00,Eibar,Villarreal,1,2,0.804064,2.08255
+2015-16,La Liga,1707,2016-04-03 22:30:00,Sevilla,Real Sociedad,1,2,1.82989,0.392534
+2015-16,La Liga,1708,2016-04-04 22:30:00,Levante,Sporting Gijon,0,0,1.87115,0.630978
+2015-16,La Liga,1709,2016-04-08 22:30:00,Granada,Malaga,0,0,0.613945,1.05827
+2015-16,La Liga,1710,2016-04-09 18:00:00,Real Madrid,Eibar,4,0,2.83938,1.60526
+2015-16,La Liga,1711,2016-04-09 20:15:00,Espanyol,Atletico Madrid,1,3,0.63963,2.12141
+2015-16,La Liga,1712,2016-04-09 22:30:00,Real Sociedad,Barcelona,1,0,0.295072,1.37196
+2015-16,La Liga,1713,2016-04-10 00:05:00,Real Betis,Levante,1,0,0.623216,1.17874
+2015-16,La Liga,1714,2016-04-10 14:00:00,Sporting Gijon,Celta Vigo,0,1,0.814767,1.03986
+2015-16,La Liga,1715,2016-04-10 18:00:00,Valencia,Sevilla,2,1,1.90707,1.00405
+2015-16,La Liga,1716,2016-04-10 20:15:00,Villarreal,Getafe,2,0,2.05697,0.718479
+2015-16,La Liga,1717,2016-04-10 22:30:00,Athletic Club,Rayo Vallecano,1,0,0.625122,2.08111
+2015-16,La Liga,1718,2016-04-11 22:30:00,Deportivo La Coruna,Las Palmas,1,3,2.30191,1.63213
+2015-16,La Liga,1719,2016-04-15 22:30:00,Levante,Espanyol,2,1,1.35949,1.08748
+2015-16,La Liga,1720,2016-04-16 18:00:00,Getafe,Real Madrid,1,5,1.0366,3.07047
+2015-16,La Liga,1721,2016-04-16 20:15:00,Las Palmas,Sporting Gijon,1,1,0.54782,0.864694
+2015-16,La Liga,1722,2016-04-16 22:30:00,Eibar,Real Sociedad,2,1,1.24429,0.865097
+2015-16,La Liga,1723,2016-04-17 00:05:00,Celta Vigo,Real Betis,1,1,1.74985,1.54169
+2015-16,La Liga,1724,2016-04-17 14:00:00,Malaga,Athletic Club,0,1,1.9143,1.08656
+2015-16,La Liga,1725,2016-04-17 18:00:00,Sevilla,Deportivo La Coruna,1,1,2.00121,0.699714
+2015-16,La Liga,1726,2016-04-17 20:15:00,Atletico Madrid,Granada,3,0,1.61364,0.473812
+2015-16,La Liga,1727,2016-04-17 20:15:00,Rayo Vallecano,Villarreal,2,1,1.08503,0.631315
+2015-16,La Liga,1728,2016-04-17 22:30:00,Barcelona,Valencia,1,2,4.05676,1.12103
+2015-16,La Liga,1729,2016-04-19 22:00:00,Espanyol,Celta Vigo,1,1,0.873164,0.502009
+2015-16,La Liga,1730,2016-04-19 23:00:00,Real Betis,Las Palmas,1,0,1.92261,0.217396
+2015-16,La Liga,1731,2016-04-20 22:00:00,Deportivo La Coruna,Barcelona,0,8,2.19692,5.76112
+2015-16,La Liga,1732,2016-04-20 22:45:00,Valencia,Eibar,4,0,3.14654,0.651864
+2015-16,La Liga,1733,2016-04-20 22:45:00,Athletic Club,Atletico Madrid,0,1,0.498286,0.919656
+2015-16,La Liga,1734,2016-04-20 22:45:00,Sporting Gijon,Sevilla,2,1,1.2216,1.76493
+2015-16,La Liga,1735,2016-04-20 22:45:00,Malaga,Rayo Vallecano,1,1,1.14186,1.05395
+2015-16,La Liga,1736,2016-04-21 00:00:00,Real Madrid,Villarreal,3,0,1.75884,0.226133
+2015-16,La Liga,1737,2016-04-21 22:30:00,Real Sociedad,Getafe,1,2,1.22844,1.58835
+2015-16,La Liga,1738,2016-04-21 23:00:00,Granada,Levante,5,1,3.1552,1.04939
+2015-16,La Liga,1739,2016-04-22 23:00:00,Las Palmas,Espanyol,4,0,1.68464,1.36658
+2015-16,La Liga,1740,2016-04-23 18:00:00,Rayo Vallecano,Real Madrid,2,3,1.56205,2.6433
+2015-16,La Liga,1741,2016-04-23 20:15:00,Atletico Madrid,Malaga,1,0,1.19248,0.167259
+2015-16,La Liga,1742,2016-04-23 22:30:00,Barcelona,Sporting Gijon,6,0,6.1271,0.624434
+2015-16,La Liga,1743,2016-04-24 00:05:00,Eibar,Deportivo La Coruna,1,1,0.950821,0.323346
+2015-16,La Liga,1744,2016-04-24 14:00:00,Levante,Athletic Club,2,2,0.759214,1.61191
+2015-16,La Liga,1745,2016-04-24 18:00:00,Sevilla,Real Betis,2,0,2.03176,0.394998
+2015-16,La Liga,1746,2016-04-24 20:15:00,Getafe,Valencia,2,2,2.82608,0.728167
+2015-16,La Liga,1747,2016-04-24 22:30:00,Villarreal,Real Sociedad,0,0,0.65957,0.640832
+2015-16,La Liga,1748,2016-04-25 22:30:00,Celta Vigo,Granada,2,1,1.96923,0.740282
+2015-16,La Liga,1749,2016-04-29 22:30:00,Sporting Gijon,Eibar,2,0,0.349788,0.985421
+2015-16,La Liga,1750,2016-04-30 18:00:00,Real Sociedad,Real Madrid,0,1,0.496976,1.58863
+2015-16,La Liga,1751,2016-04-30 20:15:00,Atletico Madrid,Rayo Vallecano,1,0,1.07386,0.597729
+2015-16,La Liga,1752,2016-04-30 22:30:00,Real Betis,Barcelona,0,2,0.0828961,2.07851
+2015-16,La Liga,1753,2016-05-01 00:05:00,Granada,Las Palmas,3,2,2.05186,1.747
+2015-16,La Liga,1754,2016-05-01 14:00:00,Athletic Club,Celta Vigo,2,1,1.64739,0.470176
+2015-16,La Liga,1755,2016-05-01 18:00:00,Espanyol,Sevilla,1,0,1.66593,0.329135
+2015-16,La Liga,1756,2016-05-01 20:15:00,Deportivo La Coruna,Getafe,0,2,0.669729,0.961273
+2015-16,La Liga,1757,2016-05-01 22:30:00,Valencia,Villarreal,0,2,0.259066,1.05764
+2015-16,La Liga,1758,2016-05-02 22:30:00,Malaga,Levante,3,1,2.53234,1.88493
+2015-16,La Liga,1759,2016-05-08 19:00:00,Las Palmas,Athletic Club,0,0,0.133019,0.297706
+2015-16,La Liga,1760,2016-05-08 19:00:00,Celta Vigo,Malaga,1,0,1.25876,0.981005
+2015-16,La Liga,1761,2016-05-08 19:00:00,Levante,Atletico Madrid,2,1,1.26898,1.69964
+2015-16,La Liga,1762,2016-05-08 19:00:00,Getafe,Sporting Gijon,1,1,1.25718,0.508995
+2015-16,La Liga,1763,2016-05-08 19:00:00,Villarreal,Deportivo La Coruna,0,2,0.701392,0.388761
+2015-16,La Liga,1764,2016-05-08 19:00:00,Real Sociedad,Rayo Vallecano,2,1,1.6654,2.18163
+2015-16,La Liga,1765,2016-05-08 19:00:00,Real Madrid,Valencia,3,2,2.52264,2.3222
+2015-16,La Liga,1766,2016-05-08 19:00:00,Eibar,Real Betis,1,1,2.67637,1.13808
+2015-16,La Liga,1767,2016-05-08 19:00:00,Barcelona,Espanyol,5,0,2.59373,0.20206
+2015-16,La Liga,1768,2016-05-08 19:00:00,Sevilla,Granada,1,4,0.898919,2.16052
+2015-16,La Liga,1769,2016-05-13 22:30:00,Valencia,Real Sociedad,0,1,0.918193,0.95132
+2015-16,La Liga,1770,2016-05-14 19:00:00,Deportivo La Coruna,Real Madrid,0,2,0.651269,1.90958
+2015-16,La Liga,1771,2016-05-14 19:00:00,Granada,Barcelona,0,3,0.383514,3.23381
+2015-16,La Liga,1772,2016-05-14 21:30:00,Athletic Club,Sevilla,3,1,1.70447,1.02774
+2015-16,La Liga,1773,2016-05-14 21:30:00,Atletico Madrid,Celta Vigo,2,0,1.24915,0.504827
+2015-16,La Liga,1774,2016-05-15 14:00:00,Malaga,Las Palmas,4,1,2.24531,1.78426
+2015-16,La Liga,1775,2016-05-15 21:00:00,Espanyol,Eibar,4,2,2.23504,1.8428
+2015-16,La Liga,1776,2016-05-15 21:30:00,Real Betis,Getafe,2,1,1.59407,1.28875
+2015-16,La Liga,1777,2016-05-15 21:30:00,Sporting Gijon,Villarreal,2,0,1.51593,0.721212
+2015-16,La Liga,1778,2016-05-15 21:30:00,Rayo Vallecano,Levante,3,1,2.06167,1.32769
+2015-16,Ligue 1,1869,2015-08-07 22:30:00,Lille,Paris Saint Germain,0,1,0.914879,1.33457
+2015-16,Ligue 1,1870,2015-08-08 23:00:00,SC Bastia,Rennes,2,1,0.460955,0.79874
+2015-16,Ligue 1,1871,2015-08-08 23:00:00,Marseille,Caen,0,1,2.17995,0.945659
+2015-16,Ligue 1,1872,2015-08-08 23:00:00,Montpellier,Angers,0,2,0.706047,1.54499
+2015-16,Ligue 1,1873,2015-08-08 23:00:00,Nantes,Guingamp,1,0,0.27314,0.406765
+2015-16,Ligue 1,1874,2015-08-08 23:00:00,Nice,Monaco,1,2,0.459874,2.81413
+2015-16,Ligue 1,1875,2015-08-08 23:00:00,Troyes,GFC Ajaccio,0,0,0.394458,1.05977
+2015-16,Ligue 1,1876,2015-08-09 19:00:00,Toulouse,Saint-Etienne,2,1,0.483519,0.928139
+2015-16,Ligue 1,1877,2015-08-09 19:00:00,Bordeaux,Reims,1,2,1.10655,1.59495
+2015-16,Ligue 1,1878,2015-08-09 23:00:00,Lyon,Lorient,0,0,1.07521,0.766583
+2015-16,Ligue 1,1879,2015-08-14 22:30:00,Monaco,Lille,0,0,1.26252,1.12948
+2015-16,Ligue 1,1880,2015-08-15 19:00:00,Saint-Etienne,Bordeaux,1,1,0.468482,1.47305
+2015-16,Ligue 1,1881,2015-08-15 22:00:00,Troyes,Nice,3,3,1.26651,2.23276
+2015-16,Ligue 1,1882,2015-08-15 22:00:00,Rennes,Montpellier,1,0,0.718904,0.161006
+2015-16,Ligue 1,1883,2015-08-15 22:00:00,Angers,Nantes,0,0,0.391752,0.166221
+2015-16,Ligue 1,1884,2015-08-15 22:00:00,Caen,Toulouse,1,0,1.53584,1.12809
+2015-16,Ligue 1,1885,2015-08-15 22:00:00,Guingamp,Lyon,0,1,1.0359,0.738048
+2015-16,Ligue 1,1886,2015-08-16 16:00:00,Reims,Marseille,1,0,0.941285,0.398183
+2015-16,Ligue 1,1887,2015-08-16 19:00:00,Lorient,SC Bastia,1,1,1.71708,1.36492
+2015-16,Ligue 1,1888,2015-08-16 23:00:00,Paris Saint Germain,GFC Ajaccio,2,0,1.58401,0.150143
+2015-16,Ligue 1,1889,2015-08-21 22:30:00,Montpellier,Paris Saint Germain,0,1,0.372892,0.755727
+2015-16,Ligue 1,1890,2015-08-22 19:00:00,Lyon,Rennes,1,2,0.730806,0.42381
+2015-16,Ligue 1,1891,2015-08-22 22:00:00,Nantes,Reims,1,0,1.91418,0.395955
+2015-16,Ligue 1,1892,2015-08-22 22:00:00,Nice,Caen,2,1,1.09734,0.951564
+2015-16,Ligue 1,1893,2015-08-22 22:00:00,Toulouse,Monaco,1,1,2.0162,1.42714
+2015-16,Ligue 1,1894,2015-08-22 22:00:00,SC Bastia,Guingamp,3,0,1.283,1.37129
+2015-16,Ligue 1,1895,2015-08-22 22:00:00,GFC Ajaccio,Angers,0,2,0.384935,1.15678
+2015-16,Ligue 1,1896,2015-08-23 16:00:00,Lille,Bordeaux,0,0,1.76204,0.695256
+2015-16,Ligue 1,1897,2015-08-23 19:00:00,Lorient,Saint-Etienne,0,1,0.548561,2.35602
+2015-16,Ligue 1,1898,2015-08-23 23:00:00,Marseille,Troyes,6,0,3.2103,0.267975
+2015-16,Ligue 1,1899,2015-08-28 22:30:00,Guingamp,Marseille,2,0,1.78623,0.910693
+2015-16,Ligue 1,1900,2015-08-29 19:00:00,Caen,Lyon,0,4,0.850493,1.09462
+2015-16,Ligue 1,1901,2015-08-29 22:00:00,Lille,GFC Ajaccio,1,0,0.756427,0.397943
+2015-16,Ligue 1,1902,2015-08-29 22:00:00,Troyes,Montpellier,0,0,0.853602,0.768639
+2015-16,Ligue 1,1903,2015-08-29 22:00:00,Angers,Nice,1,1,0.304379,0.905213
+2015-16,Ligue 1,1904,2015-08-29 22:00:00,Reims,Lorient,4,1,2.42331,0.420695
+2015-16,Ligue 1,1905,2015-08-29 22:00:00,Rennes,Toulouse,3,1,1.91483,1.40577
+2015-16,Ligue 1,1906,2015-08-30 16:00:00,Saint-Etienne,SC Bastia,2,1,1.86817,0.607724
+2015-16,Ligue 1,1907,2015-08-30 19:00:00,Bordeaux,Nantes,2,0,2.98014,0.358858
+2015-16,Ligue 1,1908,2015-08-30 23:00:00,Monaco,Paris Saint Germain,0,3,0.13557,2.13619
+2015-16,Ligue 1,1909,2015-09-11 22:30:00,Paris Saint Germain,Bordeaux,2,2,1.55094,0.858052
+2015-16,Ligue 1,1910,2015-09-12 19:00:00,Lyon,Lille,0,0,0.850666,0.472192
+2015-16,Ligue 1,1911,2015-09-12 22:00:00,Montpellier,Saint-Etienne,1,2,1.54974,1.00785
+2015-16,Ligue 1,1912,2015-09-12 22:00:00,Lorient,Angers,3,1,1.35999,0.735923
+2015-16,Ligue 1,1913,2015-09-12 22:00:00,Toulouse,Reims,2,2,2.22332,0.742111
+2015-16,Ligue 1,1914,2015-09-12 22:00:00,Troyes,Caen,1,3,0.404312,1.61264
+2015-16,Ligue 1,1915,2015-09-12 22:00:00,Nice,Guingamp,0,1,0.792313,1.21767
+2015-16,Ligue 1,1916,2015-09-13 16:00:00,GFC Ajaccio,Monaco,0,1,0.970684,2.98213
+2015-16,Ligue 1,1917,2015-09-13 19:00:00,Nantes,Rennes,0,2,0.585464,2.24932
+2015-16,Ligue 1,1918,2015-09-13 23:00:00,Marseille,SC Bastia,4,1,1.62468,0.490543
+2015-16,Ligue 1,1919,2015-09-18 22:30:00,Rennes,Lille,1,1,2.13208,1.03901
+2015-16,Ligue 1,1920,2015-09-19 19:30:00,Reims,Paris Saint Germain,1,1,0.871294,1.48008
+2015-16,Ligue 1,1921,2015-09-19 22:00:00,Angers,Troyes,1,0,1.88805,1.6602
+2015-16,Ligue 1,1922,2015-09-19 22:00:00,SC Bastia,Nice,1,3,0.627561,1.89072
+2015-16,Ligue 1,1923,2015-09-19 22:00:00,Caen,Montpellier,2,1,1.66361,1.02822
+2015-16,Ligue 1,1924,2015-09-19 22:00:00,Guingamp,GFC Ajaccio,2,1,1.31453,0.222122
+2015-16,Ligue 1,1925,2015-09-20 16:00:00,Bordeaux,Toulouse,1,1,2.15522,1.57594
+2015-16,Ligue 1,1926,2015-09-20 19:00:00,Monaco,Lorient,2,3,1.63138,2.11518
+2015-16,Ligue 1,1927,2015-09-20 19:00:00,Saint-Etienne,Nantes,2,0,1.36073,0.375954
+2015-16,Ligue 1,1928,2015-09-20 23:00:00,Marseille,Lyon,1,1,1.04752,2.16016
+2015-16,Ligue 1,1929,2015-09-22 21:00:00,Angers,Reims,0,0,0.594462,0.179745
+2015-16,Ligue 1,1930,2015-09-22 23:00:00,Paris Saint Germain,Guingamp,3,0,3.11111,0.415048
+2015-16,Ligue 1,1931,2015-09-23 21:00:00,Troyes,Saint-Etienne,0,1,0.421449,1.5576
+2015-16,Ligue 1,1932,2015-09-23 21:00:00,Nice,Bordeaux,6,1,2.46066,0.843225
+2015-16,Ligue 1,1933,2015-09-23 21:00:00,Lorient,Caen,2,0,1.06626,0.719549
+2015-16,Ligue 1,1934,2015-09-23 21:00:00,Lyon,SC Bastia,2,0,2.50549,0.335527
+2015-16,Ligue 1,1935,2015-09-23 21:00:00,GFC Ajaccio,Rennes,1,1,0.502333,1.6963
+2015-16,Ligue 1,1936,2015-09-23 23:00:00,Toulouse,Marseille,1,1,0.863681,0.649146
+2015-16,Ligue 1,1937,2015-09-24 20:55:00,Montpellier,Monaco,2,3,1.82333,2.34549
+2015-16,Ligue 1,1938,2015-09-25 22:30:00,Reims,Lille,1,0,1.94384,0.888466
+2015-16,Ligue 1,1939,2015-09-26 19:30:00,Nantes,Paris Saint Germain,1,4,0.54464,1.86069
+2015-16,Ligue 1,1940,2015-09-26 22:00:00,Rennes,Troyes,1,1,1.24575,0.964618
+2015-16,Ligue 1,1941,2015-09-26 22:00:00,SC Bastia,Toulouse,3,0,1.8254,1.182
+2015-16,Ligue 1,1942,2015-09-26 22:00:00,Bordeaux,Lyon,3,1,1.5591,0.79393
+2015-16,Ligue 1,1943,2015-09-26 22:00:00,Caen,GFC Ajaccio,2,0,2.22963,0.270893
+2015-16,Ligue 1,1944,2015-09-27 16:00:00,Marseille,Angers,1,2,1.57087,1.09501
+2015-16,Ligue 1,1945,2015-09-27 19:00:00,Montpellier,Lorient,2,1,1.17693,0.508337
+2015-16,Ligue 1,1946,2015-09-27 19:00:00,Guingamp,Monaco,3,3,1.34153,1.01214
+2015-16,Ligue 1,1947,2015-09-27 23:00:00,Saint-Etienne,Nice,1,4,2.3979,1.06192
+2015-16,Ligue 1,1948,2015-09-29 20:30:00,Lille,Nantes,0,1,1.158,1.58846
+2015-16,Ligue 1,1949,2015-10-02 22:30:00,Lille,Montpellier,2,0,1.81242,1.10281
+2015-16,Ligue 1,1950,2015-10-03 19:30:00,Lyon,Reims,1,0,1.8412,0.482603
+2015-16,Ligue 1,1951,2015-10-03 22:00:00,Troyes,Guingamp,0,1,1.21348,2.19927
+2015-16,Ligue 1,1952,2015-10-03 22:00:00,Angers,SC Bastia,1,0,2.30918,0.461843
+2015-16,Ligue 1,1953,2015-10-03 22:00:00,GFC Ajaccio,Toulouse,2,2,0.807682,0.647119
+2015-16,Ligue 1,1954,2015-10-04 16:00:00,Monaco,Rennes,1,1,1.46766,1.53435
+2015-16,Ligue 1,1955,2015-10-04 19:00:00,Caen,Saint-Etienne,1,0,1.48946,0.761122
+2015-16,Ligue 1,1956,2015-10-04 19:00:00,Lorient,Bordeaux,3,2,1.46745,0.755702
+2015-16,Ligue 1,1957,2015-10-04 23:00:00,Paris Saint Germain,Marseille,2,1,3.63872,1.77639
+2015-16,Ligue 1,1958,2015-10-16 22:30:00,Monaco,Lyon,1,1,1.11571,1.29317
+2015-16,Ligue 1,1959,2015-10-17 19:00:00,SC Bastia,Paris Saint Germain,0,2,0.631104,1.78051
+2015-16,Ligue 1,1960,2015-10-17 22:00:00,Nantes,Troyes,3,0,1.83778,0.88042
+2015-16,Ligue 1,1961,2015-10-17 22:00:00,Reims,Caen,0,1,0.54891,1.33623
+2015-16,Ligue 1,1962,2015-10-17 22:00:00,Saint-Etienne,GFC Ajaccio,2,0,0.616442,0.0897244
+2015-16,Ligue 1,1963,2015-10-17 22:00:00,Toulouse,Angers,1,2,1.66935,0.362657
+2015-16,Ligue 1,1964,2015-10-17 22:00:00,Guingamp,Lille,1,1,0.386919,0.690247
+2015-16,Ligue 1,1965,2015-10-18 16:00:00,Marseille,Lorient,1,1,1.64811,0.513929
+2015-16,Ligue 1,1966,2015-10-18 19:00:00,Bordeaux,Montpellier,0,0,0.93038,0.338106
+2015-16,Ligue 1,1967,2015-10-18 23:00:00,Rennes,Nice,1,4,0.745276,2.09843
+2015-16,Ligue 1,1968,2015-10-23 20:30:00,Caen,Nantes,0,2,1.20724,1.46833
+2015-16,Ligue 1,1969,2015-10-23 22:30:00,Lyon,Toulouse,3,0,2.27945,0.726184
+2015-16,Ligue 1,1970,2015-10-24 19:00:00,Lorient,Rennes,1,1,1.26587,0.926945
+2015-16,Ligue 1,1971,2015-10-24 22:00:00,GFC Ajaccio,Nice,3,1,0.65245,0.265865
+2015-16,Ligue 1,1972,2015-10-24 22:00:00,Montpellier,SC Bastia,2,0,0.369404,0.896565
+2015-16,Ligue 1,1973,2015-10-24 22:00:00,Angers,Guingamp,0,0,0.320128,1.03781
+2015-16,Ligue 1,1974,2015-10-25 17:00:00,Reims,Monaco,0,1,1.3777,1.69446
+2015-16,Ligue 1,1975,2015-10-25 20:00:00,Lille,Marseille,1,2,0.975881,1.30852
+2015-16,Ligue 1,1976,2015-10-25 20:00:00,Bordeaux,Troyes,1,0,0.738685,1.20367
+2015-16,Ligue 1,1977,2015-10-26 00:00:00,Paris Saint Germain,Saint-Etienne,4,1,4.46576,0.565349
+2015-16,Ligue 1,1978,2015-10-30 23:30:00,Rennes,Paris Saint Germain,0,1,0.185016,0.699325
+2015-16,Ligue 1,1979,2015-10-31 20:00:00,Saint-Etienne,Reims,3,0,3.28677,0.336436
+2015-16,Ligue 1,1980,2015-10-31 23:00:00,SC Bastia,Caen,1,0,0.704916,0.282678
+2015-16,Ligue 1,1981,2015-10-31 23:00:00,GFC Ajaccio,Bordeaux,2,0,0.269548,0.285349
+2015-16,Ligue 1,1982,2015-10-31 23:00:00,Guingamp,Lorient,2,2,0.964736,1.66937
+2015-16,Ligue 1,1983,2015-10-31 23:00:00,Troyes,Lyon,0,1,0.36672,2.39165
+2015-16,Ligue 1,1984,2015-10-31 23:00:00,Toulouse,Montpellier,1,1,0.709547,0.356524
+2015-16,Ligue 1,1985,2015-11-01 17:00:00,Nice,Lille,0,0,0.924375,0.376406
+2015-16,Ligue 1,1986,2015-11-01 20:00:00,Monaco,Angers,1,0,2.10979,0.688198
+2015-16,Ligue 1,1987,2015-11-02 00:00:00,Nantes,Marseille,0,1,0.376484,0.538246
+2015-16,Ligue 1,1988,2015-11-04 21:30:00,Nice,Nantes,1,2,1.43923,1.94478
+2015-16,Ligue 1,1989,2015-11-06 23:30:00,Angers,Rennes,0,2,1.61712,0.803349
+2015-16,Ligue 1,1990,2015-11-07 20:00:00,Paris Saint Germain,Toulouse,5,0,2.03364,0.218218
+2015-16,Ligue 1,1991,2015-11-07 23:00:00,Montpellier,Nantes,2,1,1.88516,0.583807
+2015-16,Ligue 1,1992,2015-11-07 23:00:00,Lorient,Troyes,4,1,3.25698,1.50976
+2015-16,Ligue 1,1993,2015-11-07 23:00:00,Caen,Guingamp,2,1,1.23155,1.31109
+2015-16,Ligue 1,1994,2015-11-07 23:00:00,Lille,SC Bastia,1,1,1.47952,0.623895
+2015-16,Ligue 1,1995,2015-11-07 23:00:00,Reims,GFC Ajaccio,1,2,1.40753,0.900066
+2015-16,Ligue 1,1996,2015-11-08 20:00:00,Marseille,Nice,0,1,0.631141,0.414738
+2015-16,Ligue 1,1997,2015-11-09 00:00:00,Lyon,Saint-Etienne,3,0,2.31074,0.186858
+2015-16,Ligue 1,1998,2015-11-09 00:00:00,Bordeaux,Monaco,3,1,1.19574,1.1594
+2015-16,Ligue 1,1999,2015-11-20 23:30:00,Nice,Lyon,3,0,2.33671,1.24162
+2015-16,Ligue 1,2000,2015-11-21 20:00:00,Lorient,Paris Saint Germain,1,2,1.05284,1.66927
+2015-16,Ligue 1,2001,2015-11-21 23:00:00,Guingamp,Toulouse,2,0,1.40676,0.978971
+2015-16,Ligue 1,2002,2015-11-21 23:00:00,Montpellier,Reims,3,1,2.57283,0.578896
+2015-16,Ligue 1,2003,2015-11-21 23:00:00,Monaco,Nantes,1,0,1.22637,0.40002
+2015-16,Ligue 1,2004,2015-11-21 23:00:00,Troyes,Lille,1,1,1.0881,1.36525
+2015-16,Ligue 1,2005,2015-11-22 17:00:00,SC Bastia,GFC Ajaccio,1,2,0.561993,1.91295
+2015-16,Ligue 1,2006,2015-11-22 17:00:00,Caen,Angers,0,0,0.508898,0.379171
+2015-16,Ligue 1,2007,2015-11-22 20:00:00,Rennes,Bordeaux,2,2,1.60804,2.03833
+2015-16,Ligue 1,2008,2015-11-23 00:00:00,Saint-Etienne,Marseille,0,2,0.711899,1.77851
+2015-16,Ligue 1,2009,2015-11-27 23:30:00,Lyon,Montpellier,2,4,1.64889,3.42947
+2015-16,Ligue 1,2010,2015-11-28 20:00:00,Paris Saint Germain,Troyes,4,1,3.14432,0.294756
+2015-16,Ligue 1,2011,2015-11-28 23:00:00,Nantes,SC Bastia,0,0,1.11673,0.227311
+2015-16,Ligue 1,2012,2015-11-28 23:00:00,GFC Ajaccio,Lorient,1,1,1.09623,0.987739
+2015-16,Ligue 1,2013,2015-11-28 23:00:00,Toulouse,Nice,2,0,2.32171,0.369796
+2015-16,Ligue 1,2014,2015-11-28 23:00:00,Reims,Rennes,2,2,1.15581,1.04313
+2015-16,Ligue 1,2015,2015-11-28 23:00:00,Angers,Lille,2,0,1.41771,0.397994
+2015-16,Ligue 1,2016,2015-11-29 17:00:00,Saint-Etienne,Guingamp,3,0,2.58964,1.78537
+2015-16,Ligue 1,2017,2015-11-29 20:00:00,Bordeaux,Caen,1,4,0.720492,1.73398
+2015-16,Ligue 1,2018,2015-11-30 00:00:00,Marseille,Monaco,3,3,1.78687,1.82368
+2015-16,Ligue 1,2019,2015-12-01 22:00:00,Angers,Paris Saint Germain,0,0,0.589837,0.653705
+2015-16,Ligue 1,2020,2015-12-01 22:00:00,Lorient,Nice,0,0,0.361017,1.03623
+2015-16,Ligue 1,2021,2015-12-02 00:00:00,Nantes,Lyon,0,0,0.878455,0.711974
+2015-16,Ligue 1,2022,2015-12-02 22:00:00,Troyes,Toulouse,0,3,1.02724,2.22313
+2015-16,Ligue 1,2023,2015-12-02 22:00:00,Monaco,Caen,1,1,0.618885,0.651609
+2015-16,Ligue 1,2024,2015-12-02 22:00:00,Montpellier,GFC Ajaccio,0,2,1.46601,0.968115
+2015-16,Ligue 1,2025,2015-12-02 22:00:00,SC Bastia,Bordeaux,1,0,0.958588,0.42822
+2015-16,Ligue 1,2026,2015-12-02 22:00:00,Guingamp,Reims,1,2,0.736905,0.872848
+2015-16,Ligue 1,2027,2015-12-03 00:00:00,Lille,Saint-Etienne,1,0,0.408642,0.367291
+2015-16,Ligue 1,2028,2015-12-04 00:00:00,Rennes,Marseille,0,1,1.06062,0.823838
+2015-16,Ligue 1,2029,2015-12-04 23:30:00,Nice,Paris Saint Germain,0,3,0.562786,3.77388
+2015-16,Ligue 1,2030,2015-12-05 20:00:00,Lyon,Angers,0,2,0.700009,0.69754
+2015-16,Ligue 1,2031,2015-12-05 23:00:00,Reims,Troyes,1,1,1.40096,0.5584
+2015-16,Ligue 1,2032,2015-12-05 23:00:00,Toulouse,Lorient,2,3,2.28205,1.01913
+2015-16,Ligue 1,2033,2015-12-05 23:00:00,SC Bastia,Monaco,1,2,0.2207,2.23633
+2015-16,Ligue 1,2034,2015-12-05 23:00:00,Caen,Lille,1,2,1.12223,1.39295
+2015-16,Ligue 1,2035,2015-12-05 23:00:00,GFC Ajaccio,Nantes,1,1,1.34719,1.36347
+2015-16,Ligue 1,2036,2015-12-06 17:00:00,Marseille,Montpellier,2,2,1.5439,0.840059
+2015-16,Ligue 1,2037,2015-12-06 20:00:00,Bordeaux,Guingamp,1,0,0.696353,0.531661
+2015-16,Ligue 1,2038,2015-12-07 00:00:00,Saint-Etienne,Rennes,1,1,1.47089,0.765019
+2015-16,Ligue 1,2039,2015-12-11 23:30:00,Rennes,Caen,1,1,1.68763,0.991033
+2015-16,Ligue 1,2040,2015-12-12 19:00:00,Reims,Nice,1,1,1.31908,0.802532
+2015-16,Ligue 1,2041,2015-12-12 23:00:00,Nantes,Toulouse,1,1,1.06156,0.663031
+2015-16,Ligue 1,2042,2015-12-12 23:00:00,Montpellier,Guingamp,2,1,1.53801,0.233626
+2015-16,Ligue 1,2043,2015-12-12 23:00:00,Troyes,SC Bastia,1,1,1.38713,0.48313
+2015-16,Ligue 1,2044,2015-12-12 23:00:00,Lille,Lorient,3,0,2.15989,0.418619
+2015-16,Ligue 1,2045,2015-12-13 17:00:00,Monaco,Saint-Etienne,1,0,1.45029,0.470198
+2015-16,Ligue 1,2046,2015-12-13 20:00:00,Marseille,GFC Ajaccio,1,1,1.22681,1.17612
+2015-16,Ligue 1,2047,2015-12-13 20:00:00,Angers,Bordeaux,1,1,1.38052,0.557138
+2015-16,Ligue 1,2048,2015-12-14 00:00:00,Paris Saint Germain,Lyon,5,1,2.93193,0.19264
+2015-16,Ligue 1,2049,2015-12-18 23:30:00,Nice,Montpellier,1,0,0.63676,0.765272
+2015-16,Ligue 1,2050,2015-12-19 20:00:00,Caen,Paris Saint Germain,0,3,1.11522,2.46206
+2015-16,Ligue 1,2051,2015-12-19 23:00:00,SC Bastia,Reims,2,0,0.595413,0.724764
+2015-16,Ligue 1,2052,2015-12-19 23:00:00,Guingamp,Rennes,0,2,0.822078,1.13123
+2015-16,Ligue 1,2053,2015-12-19 23:00:00,Lorient,Nantes,0,0,1.84234,1.03257
+2015-16,Ligue 1,2054,2015-12-19 23:00:00,Toulouse,Lille,1,1,1.09533,1.53278
+2015-16,Ligue 1,2055,2015-12-19 23:00:00,Troyes,Monaco,0,0,0.412486,1.30889
+2015-16,Ligue 1,2056,2015-12-20 17:00:00,Saint-Etienne,Angers,1,0,1.10724,0.421122
+2015-16,Ligue 1,2057,2015-12-20 20:00:00,GFC Ajaccio,Lyon,2,1,1.49393,1.1915
+2015-16,Ligue 1,2058,2015-12-21 00:00:00,Bordeaux,Marseille,1,1,1.39029,0.318664
+2015-16,Ligue 1,2059,2016-01-08 23:30:00,Paris Saint Germain,SC Bastia,2,0,2.58941,0.227448
+2015-16,Ligue 1,2060,2016-01-09 20:00:00,Lyon,Troyes,4,1,1.57896,0.281148
+2015-16,Ligue 1,2061,2016-01-09 23:00:00,Montpellier,Bordeaux,0,1,1.67221,1.76628
+2015-16,Ligue 1,2062,2016-01-09 23:00:00,Reims,Toulouse,1,3,0.663137,1.79276
+2015-16,Ligue 1,2063,2016-01-09 23:00:00,Rennes,Lorient,2,2,0.866972,0.998653
+2015-16,Ligue 1,2064,2016-01-09 23:00:00,Angers,Caen,2,0,1.1889,1.04746
+2015-16,Ligue 1,2065,2016-01-09 23:00:00,Monaco,GFC Ajaccio,2,2,1.85303,0.452751
+2015-16,Ligue 1,2066,2016-01-10 17:00:00,Nantes,Saint-Etienne,2,1,1.96071,1.2147
+2015-16,Ligue 1,2067,2016-01-10 20:00:00,Lille,Nice,1,1,0.843157,0.362208
+2015-16,Ligue 1,2068,2016-01-11 00:00:00,Marseille,Guingamp,0,0,1.01882,0.492774
+2015-16,Ligue 1,2069,2016-01-15 23:30:00,Nice,Angers,2,1,1.80834,0.622403
+2015-16,Ligue 1,2070,2016-01-16 20:00:00,Toulouse,Paris Saint Germain,0,1,0.672012,0.851646
+2015-16,Ligue 1,2071,2016-01-16 23:00:00,SC Bastia,Montpellier,1,0,0.520743,0.845241
+2015-16,Ligue 1,2072,2016-01-16 23:00:00,GFC Ajaccio,Reims,2,2,2.46114,0.653273
+2015-16,Ligue 1,2073,2016-01-16 23:00:00,Guingamp,Nantes,2,2,1.21979,0.708649
+2015-16,Ligue 1,2074,2016-01-16 23:00:00,Troyes,Rennes,2,4,0.87041,3.43107
+2015-16,Ligue 1,2075,2016-01-16 23:00:00,Bordeaux,Lille,1,0,0.760121,0.215194
+2015-16,Ligue 1,2076,2016-01-17 17:00:00,Lorient,Monaco,0,2,0.661097,0.688892
+2015-16,Ligue 1,2077,2016-01-17 20:00:00,Caen,Marseille,1,3,0.710914,1.98866
+2015-16,Ligue 1,2078,2016-01-18 00:00:00,Saint-Etienne,Lyon,1,0,0.629161,1.40956
+2015-16,Ligue 1,2079,2016-01-22 23:30:00,Rennes,GFC Ajaccio,1,0,1.43229,0.354163
+2015-16,Ligue 1,2080,2016-01-23 20:00:00,Paris Saint Germain,Angers,5,1,2.62942,0.338627
+2015-16,Ligue 1,2081,2016-01-23 23:00:00,Guingamp,SC Bastia,1,0,2.02847,0.201846
+2015-16,Ligue 1,2082,2016-01-23 23:00:00,Nantes,Bordeaux,2,2,0.946038,0.868853
+2015-16,Ligue 1,2083,2016-01-23 23:00:00,Lille,Troyes,1,3,1.8398,0.766181
+2015-16,Ligue 1,2084,2016-01-23 23:00:00,Montpellier,Caen,1,2,1.94694,0.597596
+2015-16,Ligue 1,2085,2016-01-23 23:00:00,Nice,Lorient,2,1,0.467749,1.23003
+2015-16,Ligue 1,2086,2016-01-24 17:00:00,Monaco,Toulouse,4,0,3.0319,1.39268
+2015-16,Ligue 1,2087,2016-01-24 20:00:00,Reims,Saint-Etienne,1,1,1.93279,0.279599
+2015-16,Ligue 1,2088,2016-01-25 00:00:00,Lyon,Marseille,1,1,2.48082,0.872984
+2015-16,Ligue 1,2089,2016-01-29 23:30:00,Marseille,Lille,1,1,1.78823,1.50673
+2015-16,Ligue 1,2090,2016-01-30 20:00:00,Angers,Monaco,3,0,2.36032,0.451676
+2015-16,Ligue 1,2091,2016-01-30 23:00:00,Troyes,Nantes,0,1,0.77326,0.804304
+2015-16,Ligue 1,2092,2016-01-30 23:00:00,Lorient,Reims,2,0,1.5107,1.47085
+2015-16,Ligue 1,2093,2016-01-30 23:00:00,GFC Ajaccio,Montpellier,0,4,0.930389,1.64948
+2015-16,Ligue 1,2094,2016-01-30 23:00:00,SC Bastia,Lyon,1,0,0.748198,0.408979
+2015-16,Ligue 1,2095,2016-01-30 23:00:00,Toulouse,Guingamp,1,2,2.35913,1.18688
+2015-16,Ligue 1,2096,2016-01-31 17:00:00,Caen,Nice,2,0,2.23948,1.46292
+2015-16,Ligue 1,2097,2016-01-31 20:00:00,Bordeaux,Rennes,4,0,1.5538,0.72082
+2015-16,Ligue 1,2098,2016-02-01 00:00:00,Saint-Etienne,Paris Saint Germain,0,2,0.66288,2.05075
+2015-16,Ligue 1,2099,2016-02-02 22:00:00,Monaco,SC Bastia,2,0,1.2268,0.402997
+2015-16,Ligue 1,2100,2016-02-03 00:00:00,Montpellier,Marseille,0,1,0.509503,0.141059
+2015-16,Ligue 1,2101,2016-02-03 22:00:00,Nice,Toulouse,1,0,1.26807,0.736535
+2015-16,Ligue 1,2102,2016-02-03 22:00:00,Lyon,Bordeaux,3,0,2.4848,1.10364
+2015-16,Ligue 1,2103,2016-02-03 22:00:00,Guingamp,Troyes,4,0,2.1887,1.28691
+2015-16,Ligue 1,2104,2016-02-03 22:00:00,Nantes,GFC Ajaccio,3,1,1.88702,0.515582
+2015-16,Ligue 1,2105,2016-02-03 22:00:00,Lille,Caen,1,0,0.825199,0.440985
+2015-16,Ligue 1,2106,2016-02-03 22:00:00,Reims,Angers,2,1,0.759326,1.36757
+2015-16,Ligue 1,2107,2016-02-04 00:00:00,Paris Saint Germain,Lorient,3,1,2.60881,0.513408
+2015-16,Ligue 1,2108,2016-02-05 00:00:00,Rennes,Saint-Etienne,0,1,0.601554,0.660476
+2015-16,Ligue 1,2109,2016-02-06 17:00:00,Monaco,Nice,1,0,1.86111,0.838579
+2015-16,Ligue 1,2110,2016-02-06 20:00:00,Angers,Lyon,0,3,0.3307,0.586887
+2015-16,Ligue 1,2111,2016-02-06 23:00:00,Lorient,Montpellier,1,1,0.414402,0.638421
+2015-16,Ligue 1,2112,2016-02-06 23:00:00,GFC Ajaccio,Guingamp,0,0,0.838579,0.0436037
+2015-16,Ligue 1,2113,2016-02-06 23:00:00,SC Bastia,Troyes,2,0,2.19574,0.352925
+2015-16,Ligue 1,2114,2016-02-06 23:00:00,Caen,Reims,0,2,1.85273,2.39774
+2015-16,Ligue 1,2115,2016-02-06 23:00:00,Toulouse,Nantes,0,0,0.560312,0.793973
+2015-16,Ligue 1,2116,2016-02-07 17:00:00,Lille,Rennes,1,1,1.67631,1.11632
+2015-16,Ligue 1,2117,2016-02-07 20:00:00,Bordeaux,Saint-Etienne,1,4,0.852137,3.2558
+2015-16,Ligue 1,2118,2016-02-08 00:00:00,Marseille,Paris Saint Germain,1,2,0.985051,1.74708
+2015-16,Ligue 1,2119,2016-02-12 23:30:00,Rennes,Angers,1,0,0.706743,0.65555
+2015-16,Ligue 1,2120,2016-02-13 20:00:00,Paris Saint Germain,Lille,0,0,1.71392,0.0978456
+2015-16,Ligue 1,2121,2016-02-13 23:00:00,Reims,SC Bastia,0,1,1.45592,0.53604
+2015-16,Ligue 1,2122,2016-02-13 23:00:00,Guingamp,Bordeaux,2,4,0.813793,2.10544
+2015-16,Ligue 1,2123,2016-02-13 23:00:00,Nantes,Lorient,2,1,1.33963,0.842693
+2015-16,Ligue 1,2124,2016-02-13 23:00:00,Montpellier,Toulouse,2,0,1.1956,0.508883
+2015-16,Ligue 1,2125,2016-02-13 23:00:00,GFC Ajaccio,Troyes,2,3,2.27489,0.7699
+2015-16,Ligue 1,2126,2016-02-14 17:00:00,Lyon,Caen,4,1,3.89327,1.10005
+2015-16,Ligue 1,2127,2016-02-14 20:00:00,Saint-Etienne,Monaco,1,1,2.03388,1.23838
+2015-16,Ligue 1,2128,2016-02-15 00:00:00,Nice,Marseille,1,1,0.82826,2.12875
+2015-16,Ligue 1,2129,2016-02-19 23:30:00,Bordeaux,Nice,0,0,1.24852,0.478741
+2015-16,Ligue 1,2130,2016-02-20 20:00:00,Paris Saint Germain,Reims,4,1,2.123,0.678292
+2015-16,Ligue 1,2131,2016-02-20 23:00:00,Lorient,Guingamp,4,3,2.44896,0.879315
+2015-16,Ligue 1,2132,2016-02-20 23:00:00,Toulouse,GFC Ajaccio,1,1,1.21292,1.10248
+2015-16,Ligue 1,2133,2016-02-20 23:00:00,Angers,Montpellier,2,3,1.59164,1.63244
+2015-16,Ligue 1,2134,2016-02-20 23:00:00,Monaco,Troyes,3,1,3.25503,1.19478
+2015-16,Ligue 1,2135,2016-02-21 17:00:00,Marseille,Saint-Etienne,1,1,0.839334,0.984151
+2015-16,Ligue 1,2136,2016-02-21 20:00:00,Caen,Rennes,1,0,1.3894,0.353428
+2015-16,Ligue 1,2137,2016-02-22 00:00:00,Lille,Lyon,1,0,0.746493,0.633253
+2015-16,Ligue 1,2138,2016-02-26 23:30:00,Nice,SC Bastia,0,2,1.30364,0.646332
+2015-16,Ligue 1,2139,2016-02-27 20:00:00,Montpellier,Lille,3,0,1.92669,0.356202
+2015-16,Ligue 1,2140,2016-02-27 23:00:00,Reims,Bordeaux,4,1,1.51818,1.01931
+2015-16,Ligue 1,2141,2016-02-27 23:00:00,Toulouse,Rennes,1,2,0.489643,1.31675
+2015-16,Ligue 1,2142,2016-02-27 23:00:00,Guingamp,Angers,2,2,2.4048,1.02966
+2015-16,Ligue 1,2143,2016-02-27 23:00:00,Troyes,Lorient,0,1,0.834748,2.31848
+2015-16,Ligue 1,2144,2016-02-28 17:00:00,Nantes,Monaco,0,0,1.39127,0.357798
+2015-16,Ligue 1,2145,2016-02-28 20:00:00,Saint-Etienne,Caen,1,2,1.76354,1.45084
+2015-16,Ligue 1,2146,2016-02-29 00:00:00,Lyon,Paris Saint Germain,2,1,1.44709,0.341938
+2015-16,Ligue 1,2147,2016-03-04 23:30:00,Caen,Monaco,2,2,1.25259,0.523789
+2015-16,Ligue 1,2148,2016-03-05 20:00:00,Paris Saint Germain,Montpellier,0,0,1.58349,0.238527
+2015-16,Ligue 1,2149,2016-03-05 23:00:00,SC Bastia,Lorient,0,0,1.59793,0.100743
+2015-16,Ligue 1,2150,2016-03-05 23:00:00,Angers,Saint-Etienne,0,0,0.284604,1.16763
+2015-16,Ligue 1,2151,2016-03-05 23:00:00,Bordeaux,GFC Ajaccio,1,1,1.96034,0.182807
+2015-16,Ligue 1,2152,2016-03-05 23:00:00,Lille,Reims,2,0,1.57572,0.360193
+2015-16,Ligue 1,2153,2016-03-05 23:00:00,Nice,Troyes,2,1,1.89872,1.00924
+2015-16,Ligue 1,2154,2016-03-06 17:00:00,Marseille,Toulouse,1,1,1.60371,1.57247
+2015-16,Ligue 1,2155,2016-03-06 20:00:00,Rennes,Nantes,4,1,1.21904,0.827543
+2015-16,Ligue 1,2156,2016-03-07 00:00:00,Lyon,Guingamp,5,1,3.25493,1.7776
+2015-16,Ligue 1,2157,2016-03-09 21:30:00,SC Bastia,Nantes,0,0,0.183823,0.344478
+2015-16,Ligue 1,2158,2016-03-09 21:30:00,GFC Ajaccio,Marseille,1,1,1.35918,1.1007
+2015-16,Ligue 1,2159,2016-03-11 23:30:00,Monaco,Reims,2,2,1.27343,1.46734
+2015-16,Ligue 1,2160,2016-03-12 20:00:00,Lorient,Marseille,1,1,1.56973,1.26139
+2015-16,Ligue 1,2161,2016-03-12 23:00:00,GFC Ajaccio,Caen,1,0,1.1599,0.901377
+2015-16,Ligue 1,2162,2016-03-12 23:00:00,Guingamp,Saint-Etienne,2,0,1.4605,0.636957
+2015-16,Ligue 1,2163,2016-03-12 23:00:00,Montpellier,Nice,0,2,1.16735,1.79157
+2015-16,Ligue 1,2164,2016-03-12 23:00:00,SC Bastia,Lille,1,2,1.10643,1.08963
+2015-16,Ligue 1,2165,2016-03-12 23:00:00,Toulouse,Bordeaux,4,0,3.99474,0.551943
+2015-16,Ligue 1,2166,2016-03-13 17:00:00,Troyes,Paris Saint Germain,0,9,1.37172,4.30333
+2015-16,Ligue 1,2167,2016-03-13 20:00:00,Nantes,Angers,2,0,1.06253,0.17099
+2015-16,Ligue 1,2168,2016-03-14 00:00:00,Rennes,Lyon,2,2,1.3809,2.47073
+2015-16,Ligue 1,2169,2016-03-18 23:30:00,Marseille,Rennes,2,5,2.00585,1.82004
+2015-16,Ligue 1,2170,2016-03-19 20:00:00,Saint-Etienne,Montpellier,3,0,2.13151,0.582112
+2015-16,Ligue 1,2171,2016-03-19 23:00:00,Angers,Lorient,5,1,4.14206,0.436345
+2015-16,Ligue 1,2172,2016-03-19 23:00:00,Lille,Toulouse,1,0,0.263497,0.904971
+2015-16,Ligue 1,2173,2016-03-19 23:00:00,Caen,Troyes,2,1,1.35728,0.537588
+2015-16,Ligue 1,2174,2016-03-19 23:00:00,Reims,Guingamp,0,1,1.64607,0.216286
+2015-16,Ligue 1,2175,2016-03-20 00:00:00,Lyon,Nantes,2,0,2.33773,0.293893
+2015-16,Ligue 1,2176,2016-03-20 17:00:00,Bordeaux,SC Bastia,1,1,1.00046,1.01308
+2015-16,Ligue 1,2177,2016-03-20 20:00:00,Nice,GFC Ajaccio,3,0,1.96796,0.436238
+2015-16,Ligue 1,2178,2016-03-21 00:00:00,Paris Saint Germain,Monaco,0,2,2.31249,1.90627
+2015-16,Ligue 1,2179,2016-04-01 22:30:00,Monaco,Bordeaux,1,2,1.1122,1.28525
+2015-16,Ligue 1,2180,2016-04-02 19:00:00,Paris Saint Germain,Nice,4,1,2.07953,0.571402
+2015-16,Ligue 1,2181,2016-04-02 22:00:00,GFC Ajaccio,Saint-Etienne,0,2,0.920517,0.56491
+2015-16,Ligue 1,2182,2016-04-02 22:00:00,Guingamp,Montpellier,2,2,0.63721,0.950086
+2015-16,Ligue 1,2183,2016-04-02 22:00:00,Troyes,Angers,0,1,1.81211,1.34081
+2015-16,Ligue 1,2184,2016-04-02 22:00:00,Rennes,Reims,3,1,1.13886,0.326441
+2015-16,Ligue 1,2185,2016-04-02 22:00:00,Toulouse,Caen,2,0,0.871213,0.241685
+2015-16,Ligue 1,2186,2016-04-03 16:00:00,Nantes,Lille,0,3,0.530463,0.963477
+2015-16,Ligue 1,2187,2016-04-03 19:00:00,SC Bastia,Marseille,2,1,0.967693,0.534944
+2015-16,Ligue 1,2188,2016-04-03 23:00:00,Lorient,Lyon,1,3,0.840986,2.26934
+2015-16,Ligue 1,2189,2016-04-08 22:30:00,Montpellier,Lyon,0,2,0.475991,2.96722
+2015-16,Ligue 1,2190,2016-04-09 19:00:00,Guingamp,Paris Saint Germain,0,2,0.381495,2.09637
+2015-16,Ligue 1,2191,2016-04-09 22:00:00,Angers,GFC Ajaccio,0,0,0.183063,0.190747
+2015-16,Ligue 1,2192,2016-04-09 22:00:00,Saint-Etienne,Troyes,1,0,2.04874,0.202203
+2015-16,Ligue 1,2193,2016-04-09 22:00:00,Caen,Lorient,1,2,0.818975,2.29063
+2015-16,Ligue 1,2194,2016-04-09 22:00:00,Reims,Nantes,2,1,0.692415,1.64401
+2015-16,Ligue 1,2195,2016-04-09 22:00:00,Toulouse,SC Bastia,4,0,1.24664,0.0534995
+2015-16,Ligue 1,2196,2016-04-10 16:00:00,Lille,Monaco,4,1,2.61337,0.739505
+2015-16,Ligue 1,2197,2016-04-10 19:00:00,Nice,Rennes,3,0,2.16871,0.633499
+2015-16,Ligue 1,2198,2016-04-10 23:00:00,Marseille,Bordeaux,0,0,0.37461,0.547844
+2015-16,Ligue 1,2199,2016-04-15 22:30:00,Lyon,Nice,1,1,1.84228,0.694849
+2015-16,Ligue 1,2200,2016-04-16 19:00:00,Paris Saint Germain,Caen,6,0,3.92379,0.801306
+2015-16,Ligue 1,2201,2016-04-16 22:00:00,SC Bastia,Saint-Etienne,0,1,0.926243,0.724081
+2015-16,Ligue 1,2202,2016-04-16 22:00:00,Bordeaux,Angers,1,3,1.62389,0.623143
+2015-16,Ligue 1,2203,2016-04-16 22:00:00,Lorient,Toulouse,1,1,0.358837,0.739061
+2015-16,Ligue 1,2204,2016-04-16 22:00:00,GFC Ajaccio,Lille,2,4,1.06386,1.40357
+2015-16,Ligue 1,2205,2016-04-16 22:00:00,Troyes,Reims,2,1,2.98887,1.09089
+2015-16,Ligue 1,2206,2016-04-17 16:00:00,Nantes,Montpellier,0,2,0.39658,0.861294
+2015-16,Ligue 1,2207,2016-04-17 19:00:00,Rennes,Guingamp,0,3,0.486994,2.23586
+2015-16,Ligue 1,2208,2016-04-17 23:00:00,Monaco,Marseille,2,1,1.0442,0.469578
+2015-16,Ligue 1,2209,2016-04-22 22:30:00,Nice,Reims,2,0,2.08581,0.785928
+2015-16,Ligue 1,2210,2016-04-23 19:30:00,Toulouse,Lyon,2,3,1.50107,1.08627
+2015-16,Ligue 1,2211,2016-04-24 16:00:00,Marseille,Nantes,1,1,0.795714,0.205873
+2015-16,Ligue 1,2212,2016-04-24 19:00:00,Montpellier,Troyes,4,1,1.61705,2.12498
+2015-16,Ligue 1,2213,2016-04-24 19:00:00,Saint-Etienne,Lorient,2,0,0.980333,0.291292
+2015-16,Ligue 1,2214,2016-04-24 19:00:00,Guingamp,Caen,1,1,0.866074,0.534691
+2015-16,Ligue 1,2215,2016-04-24 19:00:00,GFC Ajaccio,SC Bastia,3,2,1.52838,1.71155
+2015-16,Ligue 1,2216,2016-04-24 23:00:00,Rennes,Monaco,1,1,0.915503,1.56202
+2015-16,Ligue 1,2217,2016-04-27 20:30:00,Lille,Angers,0,0,0.902533,0.239742
+2015-16,Ligue 1,2218,2016-04-29 22:30:00,Paris Saint Germain,Rennes,4,0,3.8578,0.233848
+2015-16,Ligue 1,2219,2016-04-30 16:00:00,Nantes,Nice,1,0,1.9503,0.583675
+2015-16,Ligue 1,2220,2016-04-30 19:00:00,Saint-Etienne,Toulouse,0,0,0.43469,2.18848
+2015-16,Ligue 1,2221,2016-04-30 21:00:00,Monaco,Guingamp,3,2,1.29807,0.951606
+2015-16,Ligue 1,2222,2016-04-30 21:00:00,Troyes,Bordeaux,2,4,2.35658,2.31203
+2015-16,Ligue 1,2223,2016-04-30 21:00:00,Reims,Montpellier,2,3,1.5813,1.19771
+2015-16,Ligue 1,2224,2016-04-30 21:00:00,Lorient,Lille,0,1,0.500598,1.18283
+2015-16,Ligue 1,2225,2016-04-30 21:00:00,Caen,SC Bastia,0,0,1.7164,0.458586
+2015-16,Ligue 1,2226,2016-04-30 23:00:00,Lyon,GFC Ajaccio,2,1,0.492569,0.252836
+2015-16,Ligue 1,2227,2016-05-01 19:00:00,Angers,Marseille,0,1,0.464125,1.40152
+2015-16,Ligue 1,2228,2016-05-07 23:00:00,Nice,Saint-Etienne,2,0,2.0258,0.520259
+2015-16,Ligue 1,2229,2016-05-07 23:00:00,Marseille,Reims,1,0,2.14991,1.64589
+2015-16,Ligue 1,2230,2016-05-07 23:00:00,Bordeaux,Lorient,3,0,1.49543,1.3387
+2015-16,Ligue 1,2231,2016-05-07 23:00:00,Nantes,Caen,1,2,0.883503,1.33264
+2015-16,Ligue 1,2232,2016-05-07 23:00:00,GFC Ajaccio,Paris Saint Germain,0,4,0.360549,2.04865
+2015-16,Ligue 1,2233,2016-05-07 23:00:00,Lille,Guingamp,0,0,1.26201,0.0884296
+2015-16,Ligue 1,2234,2016-05-07 23:00:00,Montpellier,Rennes,2,0,1.28972,0.520643
+2015-16,Ligue 1,2235,2016-05-07 23:00:00,Toulouse,Troyes,1,0,1.04631,0.142776
+2015-16,Ligue 1,2236,2016-05-07 23:00:00,SC Bastia,Angers,1,0,1.32549,1.53551
+2015-16,Ligue 1,2237,2016-05-07 23:00:00,Lyon,Monaco,6,1,4.30241,1.05363
+2015-16,Ligue 1,2238,2016-05-11 22:30:00,Bordeaux,Paris Saint Germain,1,1,0.869861,2.09697
+2015-16,Ligue 1,2239,2016-05-14 23:00:00,Monaco,Montpellier,2,0,3.8289,0.49041
+2015-16,Ligue 1,2240,2016-05-14 23:00:00,Saint-Etienne,Lille,0,1,0.691544,1.61764
+2015-16,Ligue 1,2241,2016-05-14 23:00:00,Guingamp,Nice,2,3,1.17136,0.836067
+2015-16,Ligue 1,2242,2016-05-14 23:00:00,Troyes,Marseille,1,1,0.737584,2.45564
+2015-16,Ligue 1,2243,2016-05-14 23:00:00,Lorient,GFC Ajaccio,1,0,1.28701,1.46352
+2015-16,Ligue 1,2244,2016-05-14 23:00:00,Paris Saint Germain,Nantes,4,0,4.17612,0.561186
+2015-16,Ligue 1,2245,2016-05-14 23:00:00,Caen,Bordeaux,1,0,1.93454,2.02993
+2015-16,Ligue 1,2246,2016-05-14 23:00:00,Reims,Lyon,4,1,2.4455,1.3093
+2015-16,Ligue 1,2247,2016-05-14 23:00:00,Rennes,SC Bastia,1,2,1.33971,1.32918
+2015-16,Ligue 1,2248,2016-05-14 23:00:00,Angers,Toulouse,2,3,0.21944,2.12896
+2015-16,Premier League,81,2015-08-08 15:45:00,Manchester United,Tottenham,1,0,0.627539,0.6746
+2015-16,Premier League,82,2015-08-08 18:00:00,Bournemouth,Aston Villa,0,1,0.876106,0.782253
+2015-16,Premier League,83,2015-08-08 18:00:00,Everton,Watford,2,2,0.604226,0.557892
+2015-16,Premier League,84,2015-08-08 18:00:00,Leicester,Sunderland,4,2,2.56803,1.45946
+2015-16,Premier League,85,2015-08-08 18:00:00,Norwich,Crystal Palace,1,3,1.13076,2.10975
+2015-16,Premier League,86,2015-08-08 20:30:00,Chelsea,Swansea,2,2,0.64396,2.59203
+2015-16,Premier League,87,2015-08-09 16:30:00,Newcastle United,Southampton,2,2,1.54613,1.2529
+2015-16,Premier League,88,2015-08-09 16:30:00,Arsenal,West Ham,0,2,1.33166,0.535961
+2015-16,Premier League,89,2015-08-09 19:00:00,Stoke,Liverpool,0,1,0.381274,0.329873
+2015-16,Premier League,90,2015-08-10 23:00:00,West Bromwich Albion,Manchester City,0,3,0.435238,1.9242
+2015-16,Premier League,91,2015-08-14 22:45:00,Aston Villa,Manchester United,0,1,0.219118,0.660404
+2015-16,Premier League,92,2015-08-15 15:45:00,Southampton,Everton,0,3,1.06214,1.39628
+2015-16,Premier League,93,2015-08-15 18:00:00,Sunderland,Norwich,1,3,0.329128,1.71686
+2015-16,Premier League,94,2015-08-15 18:00:00,Swansea,Newcastle United,2,0,1.97424,0.113109
+2015-16,Premier League,95,2015-08-15 18:00:00,Tottenham,Stoke,2,2,1.70614,2.80956
+2015-16,Premier League,96,2015-08-15 18:00:00,Watford,West Bromwich Albion,0,0,0.760848,0.684036
+2015-16,Premier League,97,2015-08-15 18:00:00,West Ham,Leicester,1,2,0.513491,1.80939
+2015-16,Premier League,98,2015-08-16 16:30:00,Crystal Palace,Arsenal,1,2,0.964134,2.05542
+2015-16,Premier League,99,2015-08-16 19:00:00,Manchester City,Chelsea,3,0,2.18579,0.482423
+2015-16,Premier League,100,2015-08-17 23:00:00,Liverpool,Bournemouth,1,0,2.15062,0.460805
+2015-16,Premier League,101,2015-08-22 15:45:00,Manchester United,Newcastle United,0,0,1.2491,0.4384
+2015-16,Premier League,102,2015-08-22 18:00:00,Norwich,Stoke,1,1,3.14888,0.698228
+2015-16,Premier League,103,2015-08-22 18:00:00,Sunderland,Swansea,1,1,0.569426,1.56064
+2015-16,Premier League,104,2015-08-22 18:00:00,Crystal Palace,Aston Villa,2,1,1.23807,0.765278
+2015-16,Premier League,105,2015-08-22 18:00:00,Leicester,Tottenham,1,1,0.829012,1.89437
+2015-16,Premier League,106,2015-08-22 18:00:00,West Ham,Bournemouth,3,4,1.50203,2.8554
+2015-16,Premier League,107,2015-08-23 16:30:00,West Bromwich Albion,Chelsea,2,3,1.42622,2.02778
+2015-16,Premier League,108,2015-08-23 19:00:00,Everton,Manchester City,0,2,0.579338,1.57983
+2015-16,Premier League,109,2015-08-23 19:00:00,Watford,Southampton,0,0,1.17588,0.68359
+2015-16,Premier League,110,2015-08-24 23:00:00,Arsenal,Liverpool,0,0,1.83755,1.29206
+2015-16,Premier League,111,2015-08-29 15:45:00,Newcastle United,Arsenal,0,1,0.0319694,2.33948
+2015-16,Premier League,112,2015-08-29 18:00:00,Stoke,West Bromwich Albion,0,1,1.21771,0.881194
+2015-16,Premier League,113,2015-08-29 18:00:00,Aston Villa,Sunderland,2,2,2.27406,0.368848
+2015-16,Premier League,114,2015-08-29 18:00:00,Bournemouth,Leicester,1,1,0.321432,0.919097
+2015-16,Premier League,115,2015-08-29 18:00:00,Chelsea,Crystal Palace,1,2,1.27906,2.19283
+2015-16,Premier League,116,2015-08-29 18:00:00,Liverpool,West Ham,0,3,0.561737,0.97217
+2015-16,Premier League,117,2015-08-29 18:00:00,Manchester City,Watford,2,0,1.52895,0.363603
+2015-16,Premier League,118,2015-08-29 20:30:00,Tottenham,Everton,0,0,1.99917,0.694692
+2015-16,Premier League,119,2015-08-30 16:30:00,Southampton,Norwich,3,0,2.85501,0.639434
+2015-16,Premier League,120,2015-08-30 19:00:00,Swansea,Manchester United,2,1,0.971183,1.28089
+2015-16,Premier League,121,2015-09-12 15:45:00,Everton,Chelsea,3,1,1.18026,0.656048
+2015-16,Premier League,122,2015-09-12 18:00:00,Arsenal,Stoke,2,0,4.42684,0.191277
+2015-16,Premier League,123,2015-09-12 18:00:00,Crystal Palace,Manchester City,0,1,0.743193,3.08883
+2015-16,Premier League,124,2015-09-12 18:00:00,Watford,Swansea,1,0,1.57333,0.503008
+2015-16,Premier League,125,2015-09-12 18:00:00,West Bromwich Albion,Southampton,0,0,0.409143,1.00731
+2015-16,Premier League,126,2015-09-12 18:00:00,Norwich,Bournemouth,3,1,1.33151,0.389495
+2015-16,Premier League,127,2015-09-12 20:30:00,Manchester United,Liverpool,3,1,1.46206,1.02572
+2015-16,Premier League,128,2015-09-13 16:30:00,Sunderland,Tottenham,0,1,1.0407,1.45615
+2015-16,Premier League,129,2015-09-13 19:00:00,Leicester,Aston Villa,3,2,1.34987,0.953181
+2015-16,Premier League,130,2015-09-14 23:00:00,West Ham,Newcastle United,2,0,1.71282,0.716599
+2015-16,Premier League,131,2015-09-19 15:45:00,Chelsea,Arsenal,2,0,2.0687,0.775312
+2015-16,Premier League,132,2015-09-19 18:00:00,Newcastle United,Watford,1,2,1.15114,1.33961
+2015-16,Premier League,133,2015-09-19 18:00:00,Aston Villa,West Bromwich Albion,0,1,0.876719,0.632761
+2015-16,Premier League,134,2015-09-19 18:00:00,Bournemouth,Sunderland,2,0,0.644335,0.854867
+2015-16,Premier League,135,2015-09-19 18:00:00,Stoke,Leicester,2,2,1.14717,1.22582
+2015-16,Premier League,136,2015-09-19 18:00:00,Swansea,Everton,0,0,0.864868,1.77458
+2015-16,Premier League,137,2015-09-19 20:30:00,Manchester City,West Ham,1,2,2.98465,0.995273
+2015-16,Premier League,138,2015-09-20 16:30:00,Tottenham,Crystal Palace,1,0,1.01573,0.538439
+2015-16,Premier League,139,2015-09-20 19:00:00,Southampton,Manchester United,2,3,1.83663,1.65119
+2015-16,Premier League,140,2015-09-20 19:00:00,Liverpool,Norwich,1,1,1.90447,0.556271
+2015-16,Premier League,141,2015-09-26 15:45:00,Tottenham,Manchester City,4,1,2.30799,1.57842
+2015-16,Premier League,142,2015-09-26 18:00:00,Southampton,Swansea,3,1,1.55418,1.41962
+2015-16,Premier League,143,2015-09-26 18:00:00,Stoke,Bournemouth,2,1,1.94483,0.871678
+2015-16,Premier League,144,2015-09-26 18:00:00,Leicester,Arsenal,2,5,1.38516,3.89623
+2015-16,Premier League,145,2015-09-26 18:00:00,Liverpool,Aston Villa,3,2,1.78331,0.892054
+2015-16,Premier League,146,2015-09-26 18:00:00,Manchester United,Sunderland,3,0,2.8971,0.832139
+2015-16,Premier League,147,2015-09-26 18:00:00,West Ham,Norwich,2,2,2.60407,1.38603
+2015-16,Premier League,148,2015-09-26 20:30:00,Newcastle United,Chelsea,2,2,0.702109,1.30593
+2015-16,Premier League,149,2015-09-27 19:00:00,Watford,Crystal Palace,0,1,0.685939,2.33566
+2015-16,Premier League,150,2015-09-28 23:00:00,West Bromwich Albion,Everton,2,3,1.27511,2.30159
+2015-16,Premier League,151,2015-10-03 15:45:00,Crystal Palace,West Bromwich Albion,2,0,1.99083,0.255528
+2015-16,Premier League,152,2015-10-03 18:00:00,Aston Villa,Stoke,0,1,0.839028,1.03499
+2015-16,Premier League,153,2015-10-03 18:00:00,Bournemouth,Watford,1,1,1.50268,0.913291
+2015-16,Premier League,154,2015-10-03 18:00:00,Manchester City,Newcastle United,6,1,3.3346,0.980279
+2015-16,Premier League,155,2015-10-03 18:00:00,Norwich,Leicester,1,2,1.18074,3.00282
+2015-16,Premier League,156,2015-10-03 18:00:00,Sunderland,West Ham,2,2,1.08401,1.93656
+2015-16,Premier League,157,2015-10-03 20:30:00,Chelsea,Southampton,1,3,0.520175,1.58246
+2015-16,Premier League,158,2015-10-04 16:30:00,Everton,Liverpool,1,1,1.20063,1.30844
+2015-16,Premier League,159,2015-10-04 19:00:00,Swansea,Tottenham,2,2,0.774806,1.18142
+2015-16,Premier League,160,2015-10-04 19:00:00,Arsenal,Manchester United,3,0,2.16952,1.03953
+2015-16,Premier League,161,2015-10-17 15:45:00,Tottenham,Liverpool,0,0,0.586228,0.715892
+2015-16,Premier League,162,2015-10-17 18:00:00,Southampton,Leicester,2,2,1.46668,2.78648
+2015-16,Premier League,163,2015-10-17 18:00:00,West Bromwich Albion,Sunderland,1,0,2.07781,0.658473
+2015-16,Premier League,164,2015-10-17 18:00:00,Chelsea,Aston Villa,2,0,1.22875,0.795846
+2015-16,Premier League,165,2015-10-17 18:00:00,Crystal Palace,West Ham,1,3,1.08391,2.76356
+2015-16,Premier League,166,2015-10-17 18:00:00,Everton,Manchester United,0,3,0.653457,1.47853
+2015-16,Premier League,167,2015-10-17 18:00:00,Manchester City,Bournemouth,5,1,4.71274,0.173025
+2015-16,Premier League,168,2015-10-17 20:30:00,Watford,Arsenal,0,3,0.254791,2.69046
+2015-16,Premier League,169,2015-10-18 19:00:00,Newcastle United,Norwich,6,2,2.24896,1.34395
+2015-16,Premier League,170,2015-10-19 23:00:00,Swansea,Stoke,0,1,0.485489,1.64894
+2015-16,Premier League,171,2015-10-24 18:00:00,Aston Villa,Swansea,1,2,1.09516,1.74353
+2015-16,Premier League,172,2015-10-24 18:00:00,Leicester,Crystal Palace,1,0,1.33502,0.240008
+2015-16,Premier League,173,2015-10-24 18:00:00,West Ham,Chelsea,2,1,0.77284,1.1356
+2015-16,Premier League,174,2015-10-24 18:00:00,Norwich,West Bromwich Albion,0,1,1.03228,1.45436
+2015-16,Premier League,175,2015-10-24 18:00:00,Stoke,Watford,0,2,0.848432,1.0403
+2015-16,Premier League,176,2015-10-24 20:30:00,Arsenal,Everton,2,1,2.55754,0.373025
+2015-16,Premier League,177,2015-10-25 16:00:00,Sunderland,Newcastle United,3,0,2.37969,1.41744
+2015-16,Premier League,178,2015-10-25 18:05:00,Bournemouth,Tottenham,1,5,0.490581,3.43313
+2015-16,Premier League,179,2015-10-25 18:05:00,Manchester United,Manchester City,0,0,0.391754,0.310718
+2015-16,Premier League,180,2015-10-25 20:15:00,Liverpool,Southampton,1,1,0.682823,1.56383
+2015-16,Premier League,181,2015-10-31 16:45:00,Chelsea,Liverpool,1,3,0.735762,0.839342
+2015-16,Premier League,182,2015-10-31 19:00:00,Crystal Palace,Manchester United,0,0,0.939118,0.394404
+2015-16,Premier League,183,2015-10-31 19:00:00,Manchester City,Norwich,2,1,2.83557,1.17497
+2015-16,Premier League,184,2015-10-31 19:00:00,Newcastle United,Stoke,0,0,1.26075,1.38017
+2015-16,Premier League,185,2015-10-31 19:00:00,Swansea,Arsenal,0,3,0.264441,2.17657
+2015-16,Premier League,186,2015-10-31 19:00:00,Watford,West Ham,2,0,1.61544,0.605625
+2015-16,Premier League,187,2015-10-31 19:00:00,West Bromwich Albion,Leicester,2,3,1.50447,2.22545
+2015-16,Premier League,188,2015-11-01 17:30:00,Everton,Sunderland,6,2,2.34852,1.21834
+2015-16,Premier League,189,2015-11-01 20:00:00,Southampton,Bournemouth,2,0,1.15966,0.712132
+2015-16,Premier League,190,2015-11-03 00:00:00,Tottenham,Aston Villa,3,1,1.14374,0.325711
+2015-16,Premier League,191,2015-11-07 16:45:00,Bournemouth,Newcastle United,0,1,1.00427,0.504409
+2015-16,Premier League,192,2015-11-07 19:00:00,Leicester,Watford,2,1,1.56389,1.00531
+2015-16,Premier League,193,2015-11-07 19:00:00,Manchester United,West Bromwich Albion,2,0,1.2779,0.594031
+2015-16,Premier League,194,2015-11-07 19:00:00,Norwich,Swansea,1,0,1.19517,0.402284
+2015-16,Premier League,195,2015-11-07 19:00:00,West Ham,Everton,1,1,0.589567,1.08814
+2015-16,Premier League,196,2015-11-07 19:00:00,Sunderland,Southampton,0,1,0.299104,1.79578
+2015-16,Premier League,197,2015-11-07 21:30:00,Stoke,Chelsea,1,0,0.825418,1.02642
+2015-16,Premier League,198,2015-11-08 17:30:00,Aston Villa,Manchester City,0,0,0.182741,1.53281
+2015-16,Premier League,199,2015-11-08 20:00:00,Arsenal,Tottenham,1,1,2.01767,0.90585
+2015-16,Premier League,200,2015-11-08 20:00:00,Liverpool,Crystal Palace,1,2,2.15673,0.849281
+2015-16,Premier League,201,2015-11-21 16:45:00,Watford,Manchester United,1,2,1.47077,1.30264
+2015-16,Premier League,202,2015-11-21 19:00:00,Swansea,Bournemouth,2,2,1.88526,1.58509
+2015-16,Premier League,203,2015-11-21 19:00:00,Southampton,Stoke,0,1,0.709485,1.19495
+2015-16,Premier League,204,2015-11-21 19:00:00,West Bromwich Albion,Arsenal,2,1,0.332888,2.08956
+2015-16,Premier League,205,2015-11-21 19:00:00,Newcastle United,Leicester,0,3,0.372387,3.27478
+2015-16,Premier League,206,2015-11-21 19:00:00,Everton,Aston Villa,4,0,2.83068,0.322061
+2015-16,Premier League,207,2015-11-21 19:00:00,Chelsea,Norwich,1,0,2.16487,0.202798
+2015-16,Premier League,208,2015-11-21 21:30:00,Manchester City,Liverpool,1,4,1.08612,2.61697
+2015-16,Premier League,209,2015-11-22 20:00:00,Tottenham,West Ham,4,1,3.22353,0.818937
+2015-16,Premier League,210,2015-11-24 00:00:00,Crystal Palace,Sunderland,0,1,0.696183,1.30739
+2015-16,Premier League,211,2015-11-28 19:00:00,Sunderland,Stoke,2,0,0.863466,0.79464
+2015-16,Premier League,212,2015-11-28 19:00:00,Aston Villa,Watford,2,3,1.48969,1.45176
+2015-16,Premier League,213,2015-11-28 19:00:00,Bournemouth,Everton,3,3,1.69105,0.729005
+2015-16,Premier League,214,2015-11-28 19:00:00,Crystal Palace,Newcastle United,5,1,1.67836,0.791299
+2015-16,Premier League,215,2015-11-28 19:00:00,Manchester City,Southampton,3,1,2.12331,1.24478
+2015-16,Premier League,216,2015-11-28 21:30:00,Leicester,Manchester United,1,1,0.876256,1.05613
+2015-16,Premier League,217,2015-11-29 16:00:00,Tottenham,Chelsea,0,0,0.333494,0.283375
+2015-16,Premier League,218,2015-11-29 18:05:00,West Ham,West Bromwich Albion,1,1,1.41404,0.866305
+2015-16,Premier League,219,2015-11-29 20:15:00,Liverpool,Swansea,1,0,1.19358,0.367517
+2015-16,Premier League,220,2015-11-29 20:15:00,Norwich,Arsenal,1,1,1.01025,1.65699
+2015-16,Premier League,221,2015-12-05 16:45:00,Stoke,Manchester City,2,0,2.01436,0.483752
+2015-16,Premier League,222,2015-12-05 19:00:00,Swansea,Leicester,0,3,0.780602,2.20962
+2015-16,Premier League,223,2015-12-05 19:00:00,Watford,Norwich,2,0,2.07199,0.310524
+2015-16,Premier League,224,2015-12-05 19:00:00,West Bromwich Albion,Tottenham,1,1,1.48695,1.12876
+2015-16,Premier League,225,2015-12-05 19:00:00,Arsenal,Sunderland,3,1,2.29559,1.5228
+2015-16,Premier League,226,2015-12-05 19:00:00,Manchester United,West Ham,0,0,1.76061,1.10206
+2015-16,Premier League,227,2015-12-05 19:00:00,Southampton,Aston Villa,1,1,2.86051,1.058
+2015-16,Premier League,228,2015-12-05 21:30:00,Chelsea,Bournemouth,0,1,1.66952,1.25911
+2015-16,Premier League,229,2015-12-06 20:00:00,Newcastle United,Liverpool,2,0,0.646346,0.999043
+2015-16,Premier League,230,2015-12-08 00:00:00,Everton,Crystal Palace,1,1,1.69774,1.1905
+2015-16,Premier League,231,2015-12-12 16:45:00,Norwich,Everton,1,1,1.49283,2.43558
+2015-16,Premier League,232,2015-12-12 19:00:00,Manchester City,Swansea,2,1,1.34338,0.962789
+2015-16,Premier League,233,2015-12-12 19:00:00,Sunderland,Watford,0,1,0.879474,2.0562
+2015-16,Premier League,234,2015-12-12 19:00:00,Crystal Palace,Southampton,1,0,1.31177,0.890411
+2015-16,Premier League,235,2015-12-12 19:00:00,West Ham,Stoke,0,0,1.13181,1.87239
+2015-16,Premier League,236,2015-12-12 21:30:00,Bournemouth,Manchester United,2,1,1.05032,1.96768
+2015-16,Premier League,237,2015-12-13 17:30:00,Aston Villa,Arsenal,0,2,1.00876,1.68498
+2015-16,Premier League,238,2015-12-13 20:00:00,Liverpool,West Bromwich Albion,2,2,2.12583,0.835885
+2015-16,Premier League,239,2015-12-13 20:00:00,Tottenham,Newcastle United,1,2,1.03317,1.55252
+2015-16,Premier League,240,2015-12-15 00:00:00,Leicester,Chelsea,2,1,0.708846,2.26887
+2015-16,Premier League,241,2015-12-19 19:00:00,West Bromwich Albion,Bournemouth,1,2,0.698255,1.89177
+2015-16,Premier League,242,2015-12-19 19:00:00,Southampton,Tottenham,0,2,0.83385,1.47453
+2015-16,Premier League,243,2015-12-19 19:00:00,Stoke,Crystal Palace,1,2,2.41499,1.95347
+2015-16,Premier League,244,2015-12-19 19:00:00,Chelsea,Sunderland,3,1,3.02023,1.23573
+2015-16,Premier League,245,2015-12-19 19:00:00,Everton,Leicester,2,3,1.48982,2.02911
+2015-16,Premier League,246,2015-12-19 19:00:00,Manchester United,Norwich,1,2,1.01394,0.556897
+2015-16,Premier League,247,2015-12-19 21:30:00,Newcastle United,Aston Villa,1,1,1.28189,0.404373
+2015-16,Premier League,248,2015-12-20 17:30:00,Watford,Liverpool,3,0,1.99336,0.376313
+2015-16,Premier League,249,2015-12-20 20:00:00,Swansea,West Ham,0,0,0.973378,0.401988
+2015-16,Premier League,250,2015-12-22 00:00:00,Arsenal,Manchester City,2,1,1.50109,0.769378
+2015-16,Premier League,251,2015-12-26 16:45:00,Stoke,Manchester United,2,0,1.18211,1.28961
+2015-16,Premier League,252,2015-12-26 19:00:00,Swansea,West Bromwich Albion,1,0,1.21243,0.554583
+2015-16,Premier League,253,2015-12-26 19:00:00,Tottenham,Norwich,3,0,2.40666,0.452019
+2015-16,Premier League,254,2015-12-26 19:00:00,Aston Villa,West Ham,1,1,1.61235,0.836027
+2015-16,Premier League,255,2015-12-26 19:00:00,Bournemouth,Crystal Palace,0,0,0.871395,0.405181
+2015-16,Premier League,256,2015-12-26 19:00:00,Chelsea,Watford,2,2,2.09356,1.667
+2015-16,Premier League,257,2015-12-26 19:00:00,Liverpool,Leicester,1,0,1.37933,0.505167
+2015-16,Premier League,258,2015-12-26 19:00:00,Manchester City,Sunderland,4,1,3.51848,1.08103
+2015-16,Premier League,259,2015-12-26 21:30:00,Newcastle United,Everton,0,1,1.35711,1.69923
+2015-16,Premier League,260,2015-12-26 23:45:00,Southampton,Arsenal,4,0,2.4303,0.83106
+2015-16,Premier League,261,2015-12-28 19:00:00,West Bromwich Albion,Newcastle United,1,0,2.1039,0.456189
+2015-16,Premier League,262,2015-12-28 19:00:00,Watford,Tottenham,1,2,1.13011,0.527248
+2015-16,Premier League,263,2015-12-28 19:00:00,Norwich,Aston Villa,2,0,1.10319,0.235874
+2015-16,Premier League,264,2015-12-28 19:00:00,Crystal Palace,Swansea,0,0,0.735185,0.169425
+2015-16,Premier League,265,2015-12-28 19:00:00,Everton,Stoke,3,4,2.2472,1.58159
+2015-16,Premier League,266,2015-12-28 21:30:00,Arsenal,Bournemouth,2,0,3.12958,0.343752
+2015-16,Premier League,267,2015-12-28 21:30:00,Manchester United,Chelsea,0,0,1.35213,0.900029
+2015-16,Premier League,268,2015-12-28 21:30:00,West Ham,Southampton,2,1,1.79562,1.3709
+2015-16,Premier League,269,2015-12-29 23:45:00,Leicester,Manchester City,0,0,0.810377,1.66777
+2015-16,Premier League,270,2015-12-30 23:45:00,Sunderland,Liverpool,0,1,0.481551,1.80743
+2015-16,Premier League,271,2016-01-02 16:45:00,West Ham,Liverpool,2,0,2.06737,1.86591
+2015-16,Premier League,272,2016-01-02 19:00:00,West Bromwich Albion,Stoke,2,1,1.72318,0.917526
+2015-16,Premier League,273,2016-01-02 19:00:00,Arsenal,Newcastle United,1,0,1.93025,1.15339
+2015-16,Premier League,274,2016-01-02 19:00:00,Leicester,Bournemouth,0,0,2.28506,1.2593
+2015-16,Premier League,275,2016-01-02 19:00:00,Manchester United,Swansea,2,1,1.74266,0.542907
+2015-16,Premier League,276,2016-01-02 19:00:00,Norwich,Southampton,1,0,1.50509,0.932294
+2015-16,Premier League,277,2016-01-02 19:00:00,Sunderland,Aston Villa,3,1,0.761225,0.27956
+2015-16,Premier League,278,2016-01-02 21:30:00,Watford,Manchester City,1,2,0.985368,0.692054
+2015-16,Premier League,279,2016-01-03 17:30:00,Crystal Palace,Chelsea,0,3,0.546499,2.3747
+2015-16,Premier League,280,2016-01-03 20:00:00,Everton,Tottenham,1,1,0.721603,0.75907
+2015-16,Premier League,281,2016-01-12 23:45:00,Newcastle United,Manchester United,3,3,1.81304,2.36216
+2015-16,Premier League,282,2016-01-12 23:45:00,Aston Villa,Crystal Palace,1,0,0.551973,0.547913
+2015-16,Premier League,283,2016-01-12 23:45:00,Bournemouth,West Ham,1,3,0.729546,1.18455
+2015-16,Premier League,284,2016-01-13 23:45:00,Southampton,Watford,2,0,1.7224,0.11543
+2015-16,Premier League,285,2016-01-13 23:45:00,Stoke,Norwich,3,1,1.24456,0.193728
+2015-16,Premier League,286,2016-01-13 23:45:00,Swansea,Sunderland,2,4,1.06526,2.49057
+2015-16,Premier League,287,2016-01-13 23:45:00,Chelsea,West Bromwich Albion,2,2,1.38532,0.704263
+2015-16,Premier League,288,2016-01-13 23:45:00,Manchester City,Everton,0,0,1.44957,0.369548
+2015-16,Premier League,289,2016-01-14 00:00:00,Liverpool,Arsenal,3,3,1.16222,2.22912
+2015-16,Premier League,290,2016-01-14 00:00:00,Tottenham,Leicester,0,1,1.2301,0.588708
+2015-16,Premier League,291,2016-01-16 16:45:00,Tottenham,Sunderland,4,1,2.02579,0.617306
+2015-16,Premier League,292,2016-01-16 19:00:00,Manchester City,Crystal Palace,4,0,1.74025,0.613339
+2015-16,Premier League,293,2016-01-16 19:00:00,Newcastle United,West Ham,2,1,1.84261,1.08248
+2015-16,Premier League,294,2016-01-16 19:00:00,Southampton,West Bromwich Albion,3,0,1.42623,0.410757
+2015-16,Premier League,295,2016-01-16 19:00:00,Chelsea,Everton,3,3,2.44864,1.5891
+2015-16,Premier League,296,2016-01-16 19:00:00,Bournemouth,Norwich,3,0,2.53086,0.595472
+2015-16,Premier League,297,2016-01-16 21:30:00,Aston Villa,Leicester,1,1,0.665386,2.21525
+2015-16,Premier League,298,2016-01-17 18:05:00,Liverpool,Manchester United,0,1,0.952974,0.715703
+2015-16,Premier League,299,2016-01-17 20:15:00,Stoke,Arsenal,0,0,0.546879,0.585841
+2015-16,Premier League,300,2016-01-19 00:00:00,Swansea,Watford,1,0,0.474035,0.525478
+2015-16,Premier League,301,2016-01-23 16:45:00,Norwich,Liverpool,4,5,1.03432,1.44943
+2015-16,Premier League,302,2016-01-23 19:00:00,Crystal Palace,Tottenham,1,3,0.930792,1.74368
+2015-16,Premier League,303,2016-01-23 19:00:00,Manchester United,Southampton,0,1,0.187217,0.83591
+2015-16,Premier League,304,2016-01-23 19:00:00,Leicester,Stoke,3,0,2.25906,0.340483
+2015-16,Premier League,305,2016-01-23 19:00:00,West Bromwich Albion,Aston Villa,0,0,0.23184,0.562461
+2015-16,Premier League,306,2016-01-23 19:00:00,Sunderland,Bournemouth,1,1,0.612134,1.26851
+2015-16,Premier League,307,2016-01-23 19:00:00,Watford,Newcastle United,2,1,2.58707,1.29267
+2015-16,Premier League,308,2016-01-23 21:30:00,West Ham,Manchester City,2,2,1.01267,1.73182
+2015-16,Premier League,309,2016-01-24 17:30:00,Everton,Swansea,1,2,1.94094,1.08055
+2015-16,Premier League,310,2016-01-24 20:00:00,Arsenal,Chelsea,0,1,1.10907,1.48778
+2015-16,Premier League,311,2016-02-02 23:45:00,Arsenal,Southampton,0,0,3.38487,0.93405
+2015-16,Premier League,312,2016-02-02 23:45:00,Leicester,Liverpool,2,0,1.34566,0.580791
+2015-16,Premier League,313,2016-02-02 23:45:00,Norwich,Tottenham,0,3,0.929319,2.75469
+2015-16,Premier League,314,2016-02-02 23:45:00,Sunderland,Manchester City,0,1,0.888437,0.638461
+2015-16,Premier League,315,2016-02-02 23:45:00,West Ham,Aston Villa,2,0,2.34619,0.107888
+2015-16,Premier League,316,2016-02-03 00:00:00,Crystal Palace,Bournemouth,1,2,1.62395,1.17427
+2015-16,Premier League,317,2016-02-03 00:00:00,Manchester United,Stoke,3,0,2.45272,0.350909
+2015-16,Premier League,318,2016-02-03 00:00:00,West Bromwich Albion,Swansea,1,1,2.30645,1.17928
+2015-16,Premier League,319,2016-02-03 23:45:00,Everton,Newcastle United,3,0,2.48447,0.626239
+2015-16,Premier League,320,2016-02-03 23:45:00,Watford,Chelsea,0,0,0.531415,1.13694
+2015-16,Premier League,321,2016-02-06 16:45:00,Manchester City,Leicester,1,3,1.70719,2.50168
+2015-16,Premier League,322,2016-02-06 19:00:00,Newcastle United,West Bromwich Albion,1,0,2.41057,0.472556
+2015-16,Premier League,323,2016-02-06 19:00:00,Stoke,Everton,0,3,0.693548,3.05913
+2015-16,Premier League,324,2016-02-06 19:00:00,Tottenham,Watford,1,0,2.00475,0.149839
+2015-16,Premier League,325,2016-02-06 19:00:00,Swansea,Crystal Palace,1,1,1.32136,1.01465
+2015-16,Premier League,326,2016-02-06 19:00:00,Aston Villa,Norwich,2,0,0.918291,1.1413
+2015-16,Premier League,327,2016-02-06 19:00:00,Liverpool,Sunderland,2,2,1.57712,0.491843
+2015-16,Premier League,328,2016-02-06 21:30:00,Southampton,West Ham,1,0,1.06493,0.970583
+2015-16,Premier League,329,2016-02-07 17:30:00,Bournemouth,Arsenal,0,2,0.584316,1.13957
+2015-16,Premier League,330,2016-02-07 20:00:00,Chelsea,Manchester United,1,1,1.61554,0.780475
+2015-16,Premier League,331,2016-02-13 16:45:00,Sunderland,Manchester United,2,1,1.48186,0.908296
+2015-16,Premier League,332,2016-02-13 19:00:00,Swansea,Southampton,0,1,0.699012,1.19353
+2015-16,Premier League,333,2016-02-13 19:00:00,Norwich,West Ham,2,2,1.03362,0.741428
+2015-16,Premier League,334,2016-02-13 19:00:00,Everton,West Bromwich Albion,0,1,1.82912,1.1974
+2015-16,Premier League,335,2016-02-13 19:00:00,Crystal Palace,Watford,1,2,0.983946,1.99728
+2015-16,Premier League,336,2016-02-13 19:00:00,Bournemouth,Stoke,1,3,1.19427,0.927348
+2015-16,Premier League,337,2016-02-13 21:30:00,Chelsea,Newcastle United,5,1,2.0858,0.430664
+2015-16,Premier League,338,2016-02-14 16:00:00,Arsenal,Leicester,2,1,2.36319,1.31246
+2015-16,Premier League,339,2016-02-14 18:05:00,Aston Villa,Liverpool,0,6,0.174868,2.00756
+2015-16,Premier League,340,2016-02-14 20:15:00,Manchester City,Tottenham,1,2,1.97876,1.23517
+2015-16,Premier League,341,2016-02-27 16:45:00,West Ham,Sunderland,1,0,0.52387,1.07887
+2015-16,Premier League,342,2016-02-27 19:00:00,Watford,Bournemouth,0,0,1.00481,0.955252
+2015-16,Premier League,343,2016-02-27 19:00:00,Leicester,Norwich,1,0,1.7645,0.814784
+2015-16,Premier League,344,2016-02-27 19:00:00,Southampton,Chelsea,1,2,1.01074,0.631036
+2015-16,Premier League,345,2016-02-27 19:00:00,Stoke,Aston Villa,2,1,2.04047,0.414343
+2015-16,Premier League,346,2016-02-27 21:30:00,West Bromwich Albion,Crystal Palace,3,2,2.07488,1.21638
+2015-16,Premier League,347,2016-02-28 18:05:00,Tottenham,Swansea,2,1,3.57325,1.24938
+2015-16,Premier League,348,2016-02-28 18:05:00,Manchester United,Arsenal,3,2,1.09522,1.5435
+2015-16,Premier League,349,2016-03-01 23:45:00,Aston Villa,Everton,1,3,0.60177,2.63668
+2015-16,Premier League,350,2016-03-01 23:45:00,Bournemouth,Southampton,2,0,1.41228,0.954161
+2015-16,Premier League,351,2016-03-01 23:45:00,Leicester,West Bromwich Albion,2,2,3.04626,1.29485
+2015-16,Premier League,352,2016-03-01 23:45:00,Sunderland,Crystal Palace,2,2,0.93375,0.887448
+2015-16,Premier League,353,2016-03-01 23:45:00,Norwich,Chelsea,1,2,1.24159,0.980988
+2015-16,Premier League,354,2016-03-02 23:45:00,West Ham,Tottenham,1,0,0.784319,1.22673
+2015-16,Premier League,355,2016-03-02 23:45:00,Arsenal,Swansea,1,2,1.4928,1.69788
+2015-16,Premier League,356,2016-03-02 23:45:00,Stoke,Newcastle United,1,0,0.298318,0.270782
+2015-16,Premier League,357,2016-03-03 00:00:00,Liverpool,Manchester City,3,0,1.16781,0.180318
+2015-16,Premier League,358,2016-03-03 00:00:00,Manchester United,Watford,1,0,0.786278,2.16484
+2015-16,Premier League,359,2016-03-05 16:45:00,Tottenham,Arsenal,2,2,1.88378,0.543157
+2015-16,Premier League,360,2016-03-05 19:00:00,Southampton,Sunderland,1,1,1.54587,1.31562
+2015-16,Premier League,361,2016-03-05 19:00:00,Swansea,Norwich,1,0,0.545937,0.580126
+2015-16,Premier League,362,2016-03-05 19:00:00,Chelsea,Stoke,1,1,1.0615,1.60285
+2015-16,Premier League,363,2016-03-05 19:00:00,Everton,West Ham,2,3,2.09025,2.72091
+2015-16,Premier League,364,2016-03-05 19:00:00,Manchester City,Aston Villa,4,0,2.83271,0.121136
+2015-16,Premier League,365,2016-03-05 19:00:00,Newcastle United,Bournemouth,1,3,0.833931,1.26853
+2015-16,Premier League,366,2016-03-05 21:30:00,Watford,Leicester,0,1,0.829318,1.47042
+2015-16,Premier League,367,2016-03-06 17:30:00,Crystal Palace,Liverpool,1,2,1.43901,2.27087
+2015-16,Premier League,368,2016-03-06 20:00:00,West Bromwich Albion,Manchester United,1,0,0.565787,0.417622
+2015-16,Premier League,369,2016-03-12 16:45:00,Norwich,Manchester City,0,0,0.139743,0.557373
+2015-16,Premier League,370,2016-03-12 19:00:00,Stoke,Southampton,1,2,1.06676,0.874966
+2015-16,Premier League,371,2016-03-12 19:00:00,Bournemouth,Swansea,3,2,0.70756,1.09562
+2015-16,Premier League,372,2016-03-13 20:00:00,Aston Villa,Tottenham,0,2,1.84022,2.00141
+2015-16,Premier League,373,2016-03-14 00:00:00,Leicester,Newcastle United,1,0,0.846771,0.518715
+2015-16,Premier League,374,2016-03-19 16:45:00,Everton,Arsenal,0,2,0.58617,1.92384
+2015-16,Premier League,375,2016-03-19 19:00:00,Crystal Palace,Leicester,0,1,0.784339,1.20315
+2015-16,Premier League,376,2016-03-19 19:00:00,Chelsea,West Ham,2,2,2.1406,0.862828
+2015-16,Premier League,377,2016-03-19 19:00:00,Watford,Stoke,1,2,0.879462,1.58145
+2015-16,Premier League,378,2016-03-19 19:00:00,West Bromwich Albion,Norwich,0,1,0.332789,0.799255
+2015-16,Premier League,379,2016-03-19 21:30:00,Swansea,Aston Villa,1,0,0.490469,0.730828
+2015-16,Premier League,380,2016-03-20 17:30:00,Southampton,Liverpool,3,2,1.56873,1.29046
+2015-16,Premier League,381,2016-03-20 17:30:00,Newcastle United,Sunderland,1,1,0.940593,0.785017
+2015-16,Premier League,382,2016-03-20 20:00:00,Manchester City,Manchester United,0,1,1.86249,0.900312
+2015-16,Premier League,383,2016-03-20 20:00:00,Tottenham,Bournemouth,3,0,2.02694,0.120366
+2015-16,Premier League,384,2016-04-02 15:45:00,Aston Villa,Chelsea,0,4,0.72512,2.49358
+2015-16,Premier League,385,2016-04-02 18:00:00,Arsenal,Watford,4,0,3.00742,0.290619
+2015-16,Premier League,386,2016-04-02 18:00:00,Bournemouth,Manchester City,0,4,1.3239,0.868303
+2015-16,Premier League,387,2016-04-02 18:00:00,Norwich,Newcastle United,3,2,1.65216,1.46835
+2015-16,Premier League,388,2016-04-02 18:00:00,Stoke,Swansea,2,2,1.17598,0.4319
+2015-16,Premier League,389,2016-04-02 18:00:00,Sunderland,West Bromwich Albion,0,0,1.54544,0.0635563
+2015-16,Premier League,390,2016-04-02 18:00:00,West Ham,Crystal Palace,2,2,1.71369,1.65593
+2015-16,Premier League,391,2016-04-02 20:30:00,Liverpool,Tottenham,1,1,1.37954,1.23579
+2015-16,Premier League,392,2016-04-03 16:30:00,Leicester,Southampton,1,0,1.38701,0.670068
+2015-16,Premier League,393,2016-04-03 19:00:00,Manchester United,Everton,1,0,0.998692,0.755625
+2015-16,Premier League,394,2016-04-09 15:45:00,West Ham,Arsenal,3,3,1.10973,1.46966
+2015-16,Premier League,395,2016-04-09 18:00:00,Watford,Everton,1,1,0.408379,1.59979
+2015-16,Premier League,396,2016-04-09 18:00:00,Southampton,Newcastle United,3,1,1.78477,0.165982
+2015-16,Premier League,397,2016-04-09 18:00:00,Swansea,Chelsea,1,0,1.9071,1.3003
+2015-16,Premier League,398,2016-04-09 18:00:00,Aston Villa,Bournemouth,1,2,0.220872,1.0038
+2015-16,Premier League,399,2016-04-09 18:00:00,Crystal Palace,Norwich,1,0,1.45029,0.675663
+2015-16,Premier League,400,2016-04-09 20:30:00,Manchester City,West Bromwich Albion,2,1,2.07325,1.09413
+2015-16,Premier League,401,2016-04-10 16:30:00,Sunderland,Leicester,0,2,0.872232,2.60072
+2015-16,Premier League,402,2016-04-10 19:00:00,Tottenham,Manchester United,3,0,1.79647,0.341238
+2015-16,Premier League,403,2016-04-10 19:00:00,Liverpool,Stoke,4,1,2.21484,0.85508
+2015-16,Premier League,404,2016-04-13 23:00:00,Crystal Palace,Everton,0,0,1.59025,0.759269
+2015-16,Premier League,405,2016-04-16 15:45:00,Norwich,Sunderland,0,3,1.09006,1.99748
+2015-16,Premier League,406,2016-04-16 18:00:00,Manchester United,Aston Villa,1,0,1.09127,0.262427
+2015-16,Premier League,407,2016-04-16 18:00:00,Everton,Southampton,1,1,0.318721,1.38323
+2015-16,Premier League,408,2016-04-16 18:00:00,Newcastle United,Swansea,3,0,1.5024,0.787081
+2015-16,Premier League,409,2016-04-16 18:00:00,West Bromwich Albion,Watford,0,1,2.2915,0.364852
+2015-16,Premier League,410,2016-04-16 20:30:00,Chelsea,Manchester City,0,3,0.487715,2.62768
+2015-16,Premier League,411,2016-04-17 16:30:00,Leicester,West Ham,2,2,1.95296,1.56819
+2015-16,Premier League,412,2016-04-17 16:30:00,Bournemouth,Liverpool,1,2,0.85914,1.81443
+2015-16,Premier League,413,2016-04-17 19:00:00,Arsenal,Crystal Palace,1,1,1.73461,0.275806
+2015-16,Premier League,414,2016-04-18 23:00:00,Stoke,Tottenham,0,4,0.458376,2.89775
+2015-16,Premier League,415,2016-04-19 22:45:00,Newcastle United,Manchester City,1,1,0.455246,0.522043
+2015-16,Premier League,416,2016-04-20 22:45:00,West Ham,Watford,3,1,3.96294,1.22333
+2015-16,Premier League,417,2016-04-20 23:00:00,Manchester United,Crystal Palace,2,0,1.46607,0.137416
+2015-16,Premier League,418,2016-04-20 23:00:00,Liverpool,Everton,4,0,3.24472,0.0886329
+2015-16,Premier League,419,2016-04-21 22:45:00,Arsenal,West Bromwich Albion,2,0,1.37348,0.839742
+2015-16,Premier League,420,2016-04-23 15:45:00,Manchester City,Stoke,4,0,2.22482,1.09174
+2015-16,Premier League,421,2016-04-23 18:00:00,Aston Villa,Southampton,2,4,1.47192,3.6648
+2015-16,Premier League,422,2016-04-23 18:00:00,Bournemouth,Chelsea,1,4,0.575087,2.07192
+2015-16,Premier League,423,2016-04-23 18:00:00,Liverpool,Newcastle United,2,2,0.712881,0.253033
+2015-16,Premier League,424,2016-04-24 17:05:00,Sunderland,Arsenal,0,0,0.617149,0.97303
+2015-16,Premier League,425,2016-04-24 19:15:00,Leicester,Swansea,4,0,3.31579,0.576457
+2015-16,Premier League,426,2016-04-25 23:00:00,Tottenham,West Bromwich Albion,1,1,1.26346,0.894413
+2015-16,Premier League,427,2016-04-30 18:00:00,Stoke,Sunderland,1,1,0.68487,1.43105
+2015-16,Premier League,428,2016-04-30 18:00:00,Newcastle United,Crystal Palace,1,0,0.53407,1.05079
+2015-16,Premier League,429,2016-04-30 18:00:00,Everton,Bournemouth,2,1,0.95281,1.42599
+2015-16,Premier League,430,2016-04-30 18:00:00,Watford,Aston Villa,3,2,1.36255,0.491793
+2015-16,Premier League,431,2016-04-30 18:00:00,West Bromwich Albion,West Ham,0,3,1.5346,1.27183
+2015-16,Premier League,432,2016-04-30 20:30:00,Arsenal,Norwich,1,0,0.781508,0.578781
+2015-16,Premier League,433,2016-05-01 15:00:00,Swansea,Liverpool,3,1,2.31862,0.776186
+2015-16,Premier League,434,2016-05-01 17:05:00,Manchester United,Leicester,1,1,1.18462,1.16622
+2015-16,Premier League,435,2016-05-01 19:30:00,Southampton,Manchester City,4,2,2.84362,1.12719
+2015-16,Premier League,436,2016-05-02 23:00:00,Chelsea,Tottenham,2,2,0.81661,1.90407
+2015-16,Premier League,437,2016-05-07 15:45:00,Norwich,Manchester United,0,1,1.36825,1.48344
+2015-16,Premier League,438,2016-05-07 18:00:00,Crystal Palace,Stoke,2,1,1.31448,1.27766
+2015-16,Premier League,439,2016-05-07 18:00:00,West Ham,Swansea,1,4,2.39454,2.47265
+2015-16,Premier League,440,2016-05-07 18:00:00,Aston Villa,Newcastle United,0,0,0.0312154,1.09626
+2015-16,Premier League,441,2016-05-07 18:00:00,Bournemouth,West Bromwich Albion,1,1,0.814964,1.34282
+2015-16,Premier League,442,2016-05-07 18:00:00,Sunderland,Chelsea,3,2,0.773876,1.77677
+2015-16,Premier League,443,2016-05-07 20:30:00,Leicester,Everton,3,1,4.50525,1.30184
+2015-16,Premier League,444,2016-05-08 16:30:00,Tottenham,Southampton,1,2,2.55547,1.30812
+2015-16,Premier League,445,2016-05-08 19:00:00,Liverpool,Watford,2,0,2.38919,0.930803
+2015-16,Premier League,446,2016-05-08 19:00:00,Manchester City,Arsenal,2,2,0.75375,1.08084
+2015-16,Premier League,447,2016-05-10 23:30:00,West Ham,Manchester United,3,2,2.13311,0.635987
+2015-16,Premier League,448,2016-05-11 22:45:00,Norwich,Watford,4,2,2.41871,1.7686
+2015-16,Premier League,449,2016-05-11 22:45:00,Sunderland,Everton,3,0,2.44887,1.16563
+2015-16,Premier League,450,2016-05-11 23:00:00,Liverpool,Chelsea,1,1,1.83934,0.812268
+2015-16,Premier League,451,2016-05-15 18:00:00,Arsenal,Aston Villa,4,0,3.40207,0.222731
+2015-16,Premier League,452,2016-05-15 18:00:00,Chelsea,Leicester,1,1,1.86065,1.23491
+2015-16,Premier League,453,2016-05-15 18:00:00,Everton,Norwich,3,0,2.40775,0.43016
+2015-16,Premier League,454,2016-05-15 18:00:00,Newcastle United,Tottenham,5,1,2.42808,0.869082
+2015-16,Premier League,455,2016-05-15 18:00:00,Southampton,Crystal Palace,4,1,2.32278,1.24857
+2015-16,Premier League,456,2016-05-15 18:00:00,Stoke,West Ham,2,1,0.288737,2.94489
+2015-16,Premier League,457,2016-05-15 18:00:00,Swansea,Manchester City,1,1,0.115604,2.04003
+2015-16,Premier League,458,2016-05-15 18:00:00,Watford,Sunderland,2,2,1.95277,0.908817
+2015-16,Premier League,459,2016-05-15 18:00:00,West Bromwich Albion,Liverpool,1,1,1.86869,0.419877
+2015-16,Premier League,460,2016-05-17 23:00:00,Manchester United,Bournemouth,3,1,1.72109,0.503471
+2015-16,Serie A,551,2015-08-22 20:00:00,Verona,Roma,1,1,0.865017,1.16312
+2015-16,Serie A,552,2015-08-22 22:45:00,Lazio,Bologna,2,1,1.54404,0.375662
+2015-16,Serie A,553,2015-08-23 20:00:00,Juventus,Udinese,0,1,1.82451,0.867178
+2015-16,Serie A,554,2015-08-23 22:45:00,Palermo,Genoa,1,0,1.63924,0.77741
+2015-16,Serie A,555,2015-08-23 22:45:00,Sampdoria,Carpi,5,2,1.40755,2.67392
+2015-16,Serie A,556,2015-08-23 22:45:00,Sassuolo,Napoli,2,1,2.16827,1.15002
+2015-16,Serie A,557,2015-08-23 22:45:00,Inter,Atalanta,1,0,1.03572,0.380583
+2015-16,Serie A,558,2015-08-23 22:45:00,Empoli,Chievo,1,3,1.24183,1.0769
+2015-16,Serie A,559,2015-08-23 22:45:00,Fiorentina,AC Milan,2,0,1.93344,0.586002
+2015-16,Serie A,560,2015-08-23 22:45:00,Frosinone,Torino,1,2,0.895109,1.99731
+2015-16,Serie A,561,2015-08-29 20:00:00,Bologna,Sassuolo,0,1,0.153057,0.760634
+2015-16,Serie A,562,2015-08-29 22:45:00,AC Milan,Empoli,2,1,1.05099,1.01877
+2015-16,Serie A,563,2015-08-30 20:00:00,Roma,Juventus,2,1,0.970721,0.973945
+2015-16,Serie A,564,2015-08-30 22:45:00,Torino,Fiorentina,3,1,0.646798,0.839819
+2015-16,Serie A,565,2015-08-30 22:45:00,Udinese,Palermo,0,1,2.23566,0.791464
+2015-16,Serie A,566,2015-08-30 22:45:00,Napoli,Sampdoria,2,2,1.71418,1.36084
+2015-16,Serie A,567,2015-08-30 22:45:00,Carpi,Inter,1,2,0.866071,3.03344
+2015-16,Serie A,568,2015-08-30 22:45:00,Chievo,Lazio,4,0,1.63354,0.832294
+2015-16,Serie A,569,2015-08-30 22:45:00,Genoa,Verona,2,0,2.03288,0.520796
+2015-16,Serie A,570,2015-08-30 22:45:00,Atalanta,Frosinone,2,0,3.15546,0.836519
+2015-16,Serie A,571,2015-09-12 20:00:00,Fiorentina,Genoa,1,0,0.677696,0.612554
+2015-16,Serie A,572,2015-09-12 20:00:00,Frosinone,Roma,0,2,0.366506,1.90653
+2015-16,Serie A,573,2015-09-12 22:45:00,Juventus,Chievo,1,1,2.74683,0.635511
+2015-16,Serie A,574,2015-09-13 14:30:00,Verona,Torino,2,2,1.61701,0.926644
+2015-16,Serie A,575,2015-09-13 17:00:00,Palermo,Carpi,2,2,1.31893,0.912214
+2015-16,Serie A,576,2015-09-13 17:00:00,Sassuolo,Atalanta,2,2,1.26217,1.32444
+2015-16,Serie A,577,2015-09-13 17:00:00,Empoli,Napoli,2,2,1.29389,1.03333
+2015-16,Serie A,578,2015-09-13 20:00:00,Lazio,Udinese,2,0,1.33653,0.611595
+2015-16,Serie A,579,2015-09-13 22:45:00,Inter,AC Milan,1,0,1.85902,0.825596
+2015-16,Serie A,580,2015-09-14 22:45:00,Sampdoria,Bologna,2,0,1.29105,0.262969
+2015-16,Serie A,581,2015-09-19 20:00:00,Udinese,Empoli,1,2,0.991963,0.68218
+2015-16,Serie A,582,2015-09-19 22:45:00,AC Milan,Palermo,3,2,1.29857,1.34984
+2015-16,Serie A,583,2015-09-20 14:30:00,Chievo,Inter,0,1,0.885744,1.36927
+2015-16,Serie A,584,2015-09-20 17:00:00,Genoa,Juventus,0,2,0.382614,2.17908
+2015-16,Serie A,585,2015-09-20 17:00:00,Roma,Sassuolo,2,2,1.67014,0.913148
+2015-16,Serie A,586,2015-09-20 17:00:00,Torino,Sampdoria,2,0,2.63119,0.798391
+2015-16,Serie A,587,2015-09-20 17:00:00,Atalanta,Verona,1,1,0.921773,0.753904
+2015-16,Serie A,588,2015-09-20 17:00:00,Bologna,Frosinone,1,0,1.20228,1.47246
+2015-16,Serie A,589,2015-09-20 20:00:00,Carpi,Fiorentina,0,1,1.49722,0.418407
+2015-16,Serie A,590,2015-09-20 22:45:00,Napoli,Lazio,5,0,2.73209,0.971385
+2015-16,Serie A,591,2015-09-22 22:45:00,Udinese,AC Milan,2,3,1.06772,0.650335
+2015-16,Serie A,592,2015-09-23 22:45:00,Lazio,Genoa,2,0,0.812854,0.345925
+2015-16,Serie A,593,2015-09-23 22:45:00,Palermo,Sassuolo,0,1,0.458442,0.731694
+2015-16,Serie A,594,2015-09-23 22:45:00,Sampdoria,Roma,2,1,0.187797,1.4457
+2015-16,Serie A,595,2015-09-23 22:45:00,Carpi,Napoli,0,0,0.362323,1.16585
+2015-16,Serie A,596,2015-09-23 22:45:00,Chievo,Torino,1,0,0.425996,0.151262
+2015-16,Serie A,597,2015-09-23 22:45:00,Fiorentina,Bologna,2,0,1.64826,0.311562
+2015-16,Serie A,598,2015-09-23 22:45:00,Inter,Verona,1,0,0.838775,0.240971
+2015-16,Serie A,599,2015-09-23 22:45:00,Juventus,Frosinone,1,1,1.99042,0.512593
+2015-16,Serie A,600,2015-09-24 22:45:00,Empoli,Atalanta,0,1,0.719009,0.690699
+2015-16,Serie A,601,2015-09-26 20:00:00,Roma,Carpi,5,1,3.46661,1.51645
+2015-16,Serie A,602,2015-09-26 22:45:00,Napoli,Juventus,2,1,0.704583,0.679724
+2015-16,Serie A,603,2015-09-27 14:30:00,Genoa,AC Milan,1,0,0.656301,0.947572
+2015-16,Serie A,604,2015-09-27 17:00:00,Verona,Lazio,1,2,1.07591,2.28189
+2015-16,Serie A,605,2015-09-27 17:00:00,Sassuolo,Chievo,1,1,0.822599,0.595795
+2015-16,Serie A,606,2015-09-27 17:00:00,Torino,Palermo,2,1,0.578424,0.380741
+2015-16,Serie A,607,2015-09-27 17:00:00,Bologna,Udinese,1,2,1.61378,1.75506
+2015-16,Serie A,608,2015-09-27 22:45:00,Inter,Fiorentina,1,4,1.0519,3.14215
+2015-16,Serie A,609,2015-09-28 21:00:00,Frosinone,Empoli,2,0,1.56653,1.10742
+2015-16,Serie A,610,2015-09-28 23:00:00,Atalanta,Sampdoria,2,1,2.02949,0.78253
+2015-16,Serie A,611,2015-10-03 20:00:00,Carpi,Torino,2,1,0.880132,1.21414
+2015-16,Serie A,612,2015-10-03 22:45:00,Chievo,Verona,1,1,1.67182,1.11646
+2015-16,Serie A,613,2015-10-04 14:30:00,Empoli,Sassuolo,1,0,0.835463,0.298038
+2015-16,Serie A,614,2015-10-04 17:00:00,Palermo,Roma,2,4,1.27132,2.02203
+2015-16,Serie A,615,2015-10-04 17:00:00,Sampdoria,Inter,1,1,2.38692,1.91353
+2015-16,Serie A,616,2015-10-04 17:00:00,Udinese,Genoa,1,1,1.36533,1.41836
+2015-16,Serie A,617,2015-10-04 20:00:00,Juventus,Bologna,3,1,3.4019,0.139356
+2015-16,Serie A,618,2015-10-04 20:00:00,Lazio,Frosinone,2,0,3.62854,0.738998
+2015-16,Serie A,619,2015-10-04 22:45:00,AC Milan,Napoli,0,4,0.380343,1.8145
+2015-16,Serie A,620,2015-10-04 22:45:00,Fiorentina,Atalanta,3,0,3.24131,0.479182
+2015-16,Serie A,621,2015-10-17 20:00:00,Roma,Empoli,3,1,1.59672,0.552993
+2015-16,Serie A,622,2015-10-17 22:45:00,Torino,AC Milan,1,1,0.336416,0.794492
+2015-16,Serie A,623,2015-10-18 14:30:00,Bologna,Palermo,0,1,1.7239,1.66538
+2015-16,Serie A,624,2015-10-18 17:00:00,Frosinone,Sampdoria,2,0,1.23144,1.40095
+2015-16,Serie A,625,2015-10-18 17:00:00,Genoa,Chievo,3,2,1.24967,2.1399
+2015-16,Serie A,626,2015-10-18 17:00:00,Verona,Udinese,1,1,1.10503,0.839325
+2015-16,Serie A,627,2015-10-18 17:00:00,Sassuolo,Lazio,2,1,1.78618,0.719194
+2015-16,Serie A,628,2015-10-18 17:00:00,Atalanta,Carpi,3,0,2.23861,1.03029
+2015-16,Serie A,629,2015-10-18 17:00:00,Napoli,Fiorentina,2,1,2.26213,0.682353
+2015-16,Serie A,630,2015-10-18 22:45:00,Inter,Juventus,0,0,0.360147,0.900473
+2015-16,Serie A,631,2015-10-24 17:00:00,Empoli,Genoa,2,0,1.60235,0.550221
+2015-16,Serie A,632,2015-10-24 20:00:00,Carpi,Bologna,1,2,0.820122,1.96954
+2015-16,Serie A,633,2015-10-24 22:45:00,Palermo,Inter,1,1,1.06069,2.04874
+2015-16,Serie A,634,2015-10-25 15:30:00,Sampdoria,Verona,4,1,2.84874,0.629179
+2015-16,Serie A,635,2015-10-25 18:00:00,Udinese,Frosinone,1,0,2.10451,0.430149
+2015-16,Serie A,636,2015-10-25 18:00:00,AC Milan,Sassuolo,2,1,1.94453,0.104562
+2015-16,Serie A,637,2015-10-25 18:00:00,Juventus,Atalanta,2,0,3.13825,0.112853
+2015-16,Serie A,638,2015-10-25 21:00:00,Lazio,Torino,3,0,1.30999,0.31541
+2015-16,Serie A,639,2015-10-25 21:00:00,Fiorentina,Roma,1,2,1.27493,0.955907
+2015-16,Serie A,640,2015-10-25 23:45:00,Chievo,Napoli,0,1,0.652747,1.27216
+2015-16,Serie A,641,2015-10-27 23:45:00,Bologna,Inter,0,1,0.662582,1.26761
+2015-16,Serie A,642,2015-10-28 23:45:00,Frosinone,Carpi,2,1,1.00468,0.640609
+2015-16,Serie A,643,2015-10-28 23:45:00,Verona,Fiorentina,0,2,0.0829689,1.97422
+2015-16,Serie A,644,2015-10-28 23:45:00,AC Milan,Chievo,1,0,1.5031,0.182518
+2015-16,Serie A,645,2015-10-28 23:45:00,Napoli,Palermo,2,0,1.10143,0.26471
+2015-16,Serie A,646,2015-10-28 23:45:00,Roma,Udinese,3,1,2.09363,0.538201
+2015-16,Serie A,647,2015-10-28 23:45:00,Atalanta,Lazio,2,1,0.40769,0.189085
+2015-16,Serie A,648,2015-10-28 23:45:00,Sassuolo,Juventus,1,0,0.326576,0.552665
+2015-16,Serie A,649,2015-10-28 23:45:00,Torino,Genoa,3,3,1.45703,1.57922
+2015-16,Serie A,650,2015-10-29 23:45:00,Sampdoria,Empoli,1,1,0.578361,0.698332
+2015-16,Serie A,651,2015-10-31 21:00:00,Juventus,Torino,2,1,1.47178,0.753835
+2015-16,Serie A,652,2015-10-31 23:45:00,Inter,Roma,1,0,0.392755,1.89135
+2015-16,Serie A,653,2015-11-01 15:30:00,Fiorentina,Frosinone,4,1,2.48691,0.253216
+2015-16,Serie A,654,2015-11-01 18:00:00,Genoa,Napoli,0,0,0.477536,1.28075
+2015-16,Serie A,655,2015-11-01 18:00:00,Bologna,Atalanta,3,0,1.37773,1.25378
+2015-16,Serie A,656,2015-11-01 18:00:00,Carpi,Verona,0,0,1.24528,0.525153
+2015-16,Serie A,657,2015-11-01 18:00:00,Udinese,Sassuolo,0,0,1.35495,0.249152
+2015-16,Serie A,658,2015-11-01 23:45:00,Lazio,AC Milan,1,3,0.370329,1.97816
+2015-16,Serie A,659,2015-11-02 22:00:00,Chievo,Sampdoria,1,1,1.56286,0.959375
+2015-16,Serie A,660,2015-11-03 00:00:00,Palermo,Empoli,0,1,1.12409,0.848186
+2015-16,Serie A,661,2015-11-07 21:00:00,Verona,Bologna,0,2,0.238936,1.29364
+2015-16,Serie A,662,2015-11-07 23:45:00,AC Milan,Atalanta,0,0,0.444823,1.2934
+2015-16,Serie A,663,2015-11-08 15:30:00,Torino,Inter,0,1,1.34479,0.889238
+2015-16,Serie A,664,2015-11-08 18:00:00,Sassuolo,Carpi,1,0,1.37733,0.271335
+2015-16,Serie A,665,2015-11-08 18:00:00,Palermo,Chievo,1,0,0.862642,1.21475
+2015-16,Serie A,666,2015-11-08 18:00:00,Roma,Lazio,2,0,2.02818,1.36156
+2015-16,Serie A,667,2015-11-08 18:00:00,Empoli,Juventus,1,3,0.478585,2.15262
+2015-16,Serie A,668,2015-11-08 18:00:00,Frosinone,Genoa,2,2,1.26946,1.78652
+2015-16,Serie A,669,2015-11-08 21:00:00,Napoli,Udinese,1,0,1.1988,0.298595
+2015-16,Serie A,670,2015-11-08 23:45:00,Sampdoria,Fiorentina,0,2,0.329683,2.70882
+2015-16,Serie A,671,2015-11-21 21:00:00,Bologna,Roma,2,2,1.55674,2.43427
+2015-16,Serie A,672,2015-11-21 23:45:00,Juventus,AC Milan,1,0,1.00993,0.579847
+2015-16,Serie A,673,2015-11-22 15:30:00,Verona,Napoli,0,2,0.169838,2.39349
+2015-16,Serie A,674,2015-11-22 18:00:00,Lazio,Palermo,1,1,1.52326,0.648783
+2015-16,Serie A,675,2015-11-22 18:00:00,Udinese,Sampdoria,1,0,0.710226,0.432258
+2015-16,Serie A,676,2015-11-22 18:00:00,Carpi,Chievo,1,2,0.949266,0.535478
+2015-16,Serie A,677,2015-11-22 18:00:00,Fiorentina,Empoli,2,2,1.62042,0.640222
+2015-16,Serie A,678,2015-11-22 18:00:00,Genoa,Sassuolo,2,1,0.93114,1.06319
+2015-16,Serie A,679,2015-11-22 18:00:00,Atalanta,Torino,0,1,0.896778,1.55139
+2015-16,Serie A,680,2015-11-22 23:45:00,Inter,Frosinone,4,0,3.15518,0.473179
+2015-16,Serie A,681,2015-11-28 21:00:00,Torino,Bologna,2,0,1.32824,0.095766
+2015-16,Serie A,682,2015-11-28 23:45:00,AC Milan,Sampdoria,4,1,3.69609,1.14859
+2015-16,Serie A,683,2015-11-29 18:00:00,Roma,Atalanta,0,2,0.900985,1.34272
+2015-16,Serie A,684,2015-11-29 18:00:00,Frosinone,Verona,3,2,2.46758,0.811855
+2015-16,Serie A,685,2015-11-29 18:00:00,Genoa,Carpi,1,2,0.666263,2.06166
+2015-16,Serie A,686,2015-11-29 18:00:00,Chievo,Udinese,2,3,1.91846,1.83753
+2015-16,Serie A,687,2015-11-29 21:00:00,Empoli,Lazio,1,0,0.283493,0.923335
+2015-16,Serie A,688,2015-11-29 23:45:00,Palermo,Juventus,0,3,0.458932,1.60298
+2015-16,Serie A,689,2015-11-30 22:00:00,Sassuolo,Fiorentina,1,1,0.85517,1.54801
+2015-16,Serie A,690,2015-12-01 00:00:00,Napoli,Inter,2,1,0.669598,0.515146
+2015-16,Serie A,691,2015-12-04 23:45:00,Lazio,Juventus,0,2,0.394844,0.336716
+2015-16,Serie A,692,2015-12-05 18:00:00,Torino,Roma,1,1,1.64485,0.237957
+2015-16,Serie A,693,2015-12-05 23:45:00,Inter,Genoa,1,0,1.02596,0.0962433
+2015-16,Serie A,694,2015-12-06 15:30:00,Bologna,Napoli,3,2,1.61912,1.51699
+2015-16,Serie A,695,2015-12-06 18:00:00,Atalanta,Palermo,3,0,1.51762,0.845303
+2015-16,Serie A,696,2015-12-06 18:00:00,Fiorentina,Udinese,3,0,2.02848,0.925195
+2015-16,Serie A,697,2015-12-06 18:00:00,Frosinone,Chievo,0,2,1.23162,1.2951
+2015-16,Serie A,698,2015-12-06 18:00:00,Verona,Empoli,0,1,1.40759,0.644992
+2015-16,Serie A,699,2015-12-06 21:00:00,Sampdoria,Sassuolo,1,3,0.631223,2.65301
+2015-16,Serie A,700,2015-12-06 23:45:00,Carpi,AC Milan,0,0,0.413865,0.859272
+2015-16,Serie A,701,2015-12-12 18:00:00,Genoa,Bologna,0,1,2.2972,0.889109
+2015-16,Serie A,702,2015-12-12 21:00:00,Palermo,Frosinone,4,1,2.74774,1.49153
+2015-16,Serie A,703,2015-12-12 23:45:00,Udinese,Inter,0,4,1.56304,1.76294
+2015-16,Serie A,704,2015-12-13 18:00:00,AC Milan,Verona,1,1,1.44621,1.06932
+2015-16,Serie A,705,2015-12-13 18:00:00,Chievo,Atalanta,1,0,1.55883,0.108307
+2015-16,Serie A,706,2015-12-13 18:00:00,Empoli,Carpi,3,0,1.76158,1.39607
+2015-16,Serie A,707,2015-12-13 21:00:00,Napoli,Roma,0,0,1.42523,0.230838
+2015-16,Serie A,708,2015-12-13 23:45:00,Juventus,Fiorentina,3,1,1.68301,0.886683
+2015-16,Serie A,709,2015-12-14 23:45:00,Lazio,Sampdoria,1,1,0.821242,0.420474
+2015-16,Serie A,710,2015-12-19 23:45:00,Bologna,Empoli,2,3,1.25861,1.9478
+2015-16,Serie A,711,2015-12-20 15:30:00,Carpi,Juventus,2,3,1.00082,1.66604
+2015-16,Serie A,712,2015-12-20 18:00:00,Fiorentina,Chievo,2,0,1.00227,0.228348
+2015-16,Serie A,713,2015-12-20 18:00:00,Atalanta,Napoli,1,3,0.799558,3.81906
+2015-16,Serie A,714,2015-12-20 18:00:00,Verona,Sassuolo,1,1,1.16023,1.49577
+2015-16,Serie A,715,2015-12-20 18:00:00,Roma,Genoa,2,0,2.12232,0.888835
+2015-16,Serie A,716,2015-12-20 21:00:00,Sampdoria,Palermo,2,0,1.59365,0.647545
+2015-16,Serie A,717,2015-12-20 21:00:00,Torino,Udinese,0,1,0.50199,1.52143
+2015-16,Serie A,718,2015-12-20 21:00:00,Frosinone,AC Milan,2,4,1.03341,3.94009
+2015-16,Serie A,719,2015-12-20 23:45:00,Inter,Lazio,1,2,0.52033,1.39821
+2015-16,Serie A,720,2016-01-05 23:45:00,Genoa,Sampdoria,2,3,2.02544,1.17866
+2015-16,Serie A,721,2016-01-06 15:30:00,Udinese,Atalanta,2,1,1.91362,1.10135
+2015-16,Serie A,722,2016-01-06 18:00:00,Chievo,Roma,3,3,1.7967,2.52768
+2015-16,Serie A,723,2016-01-06 18:00:00,Palermo,Fiorentina,1,3,0.930207,1.39737
+2015-16,Serie A,724,2016-01-06 18:00:00,Sassuolo,Frosinone,2,2,2.31584,0.181481
+2015-16,Serie A,725,2016-01-06 18:00:00,Juventus,Verona,3,0,1.4656,0.268673
+2015-16,Serie A,726,2016-01-06 18:00:00,Lazio,Carpi,0,0,0.445881,0.194449
+2015-16,Serie A,727,2016-01-06 18:00:00,AC Milan,Bologna,0,1,1.77385,1.25169
+2015-16,Serie A,728,2016-01-06 21:00:00,Empoli,Inter,0,1,0.506892,1.13955
+2015-16,Serie A,729,2016-01-06 23:45:00,Napoli,Torino,2,1,1.36081,1.05846
+2015-16,Serie A,730,2016-01-09 18:00:00,Carpi,Udinese,2,1,1.49909,0.326424
+2015-16,Serie A,731,2016-01-09 21:00:00,Fiorentina,Lazio,1,3,0.733022,1.61272
+2015-16,Serie A,732,2016-01-09 23:45:00,Roma,AC Milan,1,1,1.03182,1.19666
+2015-16,Serie A,733,2016-01-10 15:30:00,Inter,Sassuolo,0,1,2.22072,2.23726
+2015-16,Serie A,734,2016-01-10 18:00:00,Atalanta,Genoa,0,2,0.664628,1.29873
+2015-16,Serie A,735,2016-01-10 18:00:00,Bologna,Chievo,0,1,1.22915,0.344665
+2015-16,Serie A,736,2016-01-10 18:00:00,Torino,Empoli,0,1,1.94161,1.23208
+2015-16,Serie A,737,2016-01-10 18:00:00,Frosinone,Napoli,1,5,0.317832,2.93173
+2015-16,Serie A,738,2016-01-10 18:00:00,Verona,Palermo,0,1,2.97331,1.12513
+2015-16,Serie A,739,2016-01-10 23:45:00,Sampdoria,Juventus,1,2,0.76502,1.24169
+2015-16,Serie A,740,2016-01-16 18:00:00,Atalanta,Inter,1,1,1.68736,0.718571
+2015-16,Serie A,741,2016-01-16 21:00:00,Torino,Frosinone,4,2,2.60731,0.651895
+2015-16,Serie A,742,2016-01-16 23:45:00,Napoli,Sassuolo,3,1,1.84787,1.04073
+2015-16,Serie A,743,2016-01-17 15:30:00,Genoa,Palermo,4,0,2.93614,0.41324
+2015-16,Serie A,744,2016-01-17 18:00:00,Bologna,Lazio,2,2,1.45008,1.27249
+2015-16,Serie A,745,2016-01-17 18:00:00,Udinese,Juventus,0,4,0.338728,2.68244
+2015-16,Serie A,746,2016-01-17 18:00:00,Roma,Verona,1,1,2.46945,1.20156
+2015-16,Serie A,747,2016-01-17 18:00:00,Chievo,Empoli,1,1,1.13429,0.941671
+2015-16,Serie A,748,2016-01-17 18:00:00,Carpi,Sampdoria,2,1,1.3392,2.30542
+2015-16,Serie A,749,2016-01-17 23:45:00,AC Milan,Fiorentina,2,0,1.04719,0.821998
+2015-16,Serie A,750,2016-01-20 23:45:00,Sassuolo,Torino,1,1,1.59728,0.960259
+2015-16,Serie A,751,2016-01-23 21:00:00,Frosinone,Atalanta,0,0,0.800838,0.975734
+2015-16,Serie A,752,2016-01-23 23:45:00,Empoli,AC Milan,2,2,1.30659,1.18014
+2015-16,Serie A,753,2016-01-24 15:30:00,Fiorentina,Torino,2,0,0.834601,1.19235
+2015-16,Serie A,754,2016-01-24 18:00:00,Sampdoria,Napoli,2,4,0.564595,3.3808
+2015-16,Serie A,755,2016-01-24 18:00:00,Inter,Carpi,1,1,2.22439,0.685858
+2015-16,Serie A,756,2016-01-24 18:00:00,Sassuolo,Bologna,0,2,0.582814,1.77372
+2015-16,Serie A,757,2016-01-24 18:00:00,Verona,Genoa,1,1,1.74303,0.67278
+2015-16,Serie A,758,2016-01-24 18:00:00,Lazio,Chievo,4,1,2.6703,1.48963
+2015-16,Serie A,759,2016-01-24 18:00:00,Palermo,Udinese,4,1,1.9135,1.78224
+2015-16,Serie A,760,2016-01-24 23:45:00,Juventus,Roma,1,0,0.693173,0.200084
+2015-16,Serie A,761,2016-01-30 18:00:00,Carpi,Palermo,1,1,1.18567,0.981895
+2015-16,Serie A,762,2016-01-30 21:00:00,Atalanta,Sassuolo,1,1,1.13065,0.907407
+2015-16,Serie A,763,2016-01-30 23:45:00,Roma,Frosinone,3,1,1.21392,0.515185
+2015-16,Serie A,764,2016-01-31 15:30:00,Chievo,Juventus,0,4,0.178979,3.68705
+2015-16,Serie A,765,2016-01-31 18:00:00,Udinese,Lazio,0,0,0.435839,0.870348
+2015-16,Serie A,766,2016-01-31 18:00:00,Torino,Verona,0,0,1.61682,0.546912
+2015-16,Serie A,767,2016-01-31 18:00:00,Napoli,Empoli,5,1,2.68666,0.239824
+2015-16,Serie A,768,2016-01-31 18:00:00,Genoa,Fiorentina,0,0,0.937274,0.584227
+2015-16,Serie A,769,2016-01-31 18:00:00,Bologna,Sampdoria,3,2,1.49711,1.44633
+2015-16,Serie A,770,2016-01-31 23:45:00,AC Milan,Inter,3,0,2.31764,1.75777
+2015-16,Serie A,771,2016-02-02 23:45:00,Sassuolo,Roma,0,2,1.39147,2.61936
+2015-16,Serie A,772,2016-02-03 21:30:00,Frosinone,Bologna,1,0,1.81211,1.06771
+2015-16,Serie A,773,2016-02-03 23:45:00,Fiorentina,Carpi,2,1,0.630181,0.959221
+2015-16,Serie A,774,2016-02-03 23:45:00,Inter,Chievo,1,0,2.4039,0.382305
+2015-16,Serie A,775,2016-02-03 23:45:00,Juventus,Genoa,1,0,0.716861,0.184361
+2015-16,Serie A,776,2016-02-03 23:45:00,Palermo,AC Milan,0,2,0.69714,2.3384
+2015-16,Serie A,777,2016-02-03 23:45:00,Lazio,Napoli,0,2,0.554354,1.55653
+2015-16,Serie A,778,2016-02-03 23:45:00,Sampdoria,Torino,2,2,0.758631,1.84523
+2015-16,Serie A,779,2016-02-03 23:45:00,Empoli,Udinese,1,1,2.10015,0.665742
+2015-16,Serie A,780,2016-02-03 23:45:00,Verona,Atalanta,2,1,1.54232,1.36097
+2015-16,Serie A,781,2016-02-06 21:00:00,Bologna,Fiorentina,1,1,1.01612,0.470711
+2015-16,Serie A,782,2016-02-06 23:45:00,Genoa,Lazio,0,0,0.335093,0.521845
+2015-16,Serie A,783,2016-02-07 15:30:00,Verona,Inter,3,3,1.30961,2.40052
+2015-16,Serie A,784,2016-02-07 18:00:00,Frosinone,Juventus,0,2,0.265668,1.57845
+2015-16,Serie A,785,2016-02-07 18:00:00,Sassuolo,Palermo,2,2,2.28066,0.712807
+2015-16,Serie A,786,2016-02-07 18:00:00,Napoli,Carpi,1,0,2.27124,0.0810378
+2015-16,Serie A,787,2016-02-07 18:00:00,Torino,Chievo,1,2,0.955057,1.02676
+2015-16,Serie A,788,2016-02-07 18:00:00,AC Milan,Udinese,1,1,1.9269,1.45441
+2015-16,Serie A,789,2016-02-07 21:00:00,Atalanta,Empoli,0,0,0.983654,0.588857
+2015-16,Serie A,790,2016-02-07 23:45:00,Roma,Sampdoria,2,1,1.46365,1.14306
+2015-16,Serie A,791,2016-02-11 23:45:00,Lazio,Verona,5,2,4.18006,0.363488
+2015-16,Serie A,792,2016-02-12 23:45:00,Carpi,Roma,1,3,0.873983,2.28532
+2015-16,Serie A,793,2016-02-13 18:00:00,Empoli,Frosinone,1,2,2.54317,1.02693
+2015-16,Serie A,794,2016-02-13 21:00:00,Chievo,Sassuolo,1,1,1.50751,1.10703
+2015-16,Serie A,795,2016-02-13 23:45:00,Juventus,Napoli,1,0,0.560005,0.223882
+2015-16,Serie A,796,2016-02-14 15:30:00,AC Milan,Genoa,2,1,0.743611,1.08215
+2015-16,Serie A,797,2016-02-14 18:00:00,Palermo,Torino,1,3,0.986373,3.01088
+2015-16,Serie A,798,2016-02-14 18:00:00,Sampdoria,Atalanta,0,0,0.923922,0.22159
+2015-16,Serie A,799,2016-02-14 18:00:00,Udinese,Bologna,0,1,1.73146,1.03902
+2015-16,Serie A,800,2016-02-14 23:45:00,Fiorentina,Inter,2,1,1.76114,0.638279
+2015-16,Serie A,801,2016-02-19 23:45:00,Bologna,Juventus,0,0,0.253376,0.824045
+2015-16,Serie A,802,2016-02-20 21:00:00,Verona,Chievo,3,1,2.44214,1.28607
+2015-16,Serie A,803,2016-02-20 23:45:00,Inter,Sampdoria,3,1,1.91305,0.931898
+2015-16,Serie A,804,2016-02-21 18:00:00,Genoa,Udinese,2,1,3.02477,1.73936
+2015-16,Serie A,805,2016-02-21 18:00:00,Sassuolo,Empoli,3,2,0.982567,1.49386
+2015-16,Serie A,806,2016-02-21 18:00:00,Atalanta,Fiorentina,2,3,2.03351,1.94407
+2015-16,Serie A,807,2016-02-21 18:00:00,Torino,Carpi,0,0,1.23939,0.299053
+2015-16,Serie A,808,2016-02-21 21:00:00,Frosinone,Lazio,0,0,0.630916,0.758094
+2015-16,Serie A,809,2016-02-21 23:45:00,Roma,Palermo,5,0,2.43671,0.207981
+2015-16,Serie A,810,2016-02-23 00:00:00,Napoli,AC Milan,1,1,1.40477,0.593696
+2015-16,Serie A,811,2016-02-27 21:00:00,Empoli,Roma,1,3,0.332954,1.08467
+2015-16,Serie A,812,2016-02-27 23:45:00,AC Milan,Torino,1,0,1.34094,0.678004
+2015-16,Serie A,813,2016-02-28 15:30:00,Palermo,Bologna,0,0,0.636809,1.04567
+2015-16,Serie A,814,2016-02-28 18:00:00,Sampdoria,Frosinone,2,0,1.30627,0.49477
+2015-16,Serie A,815,2016-02-28 18:00:00,Chievo,Genoa,1,0,1.76947,0.526085
+2015-16,Serie A,816,2016-02-28 18:00:00,Udinese,Verona,2,0,2.04738,0.58858
+2015-16,Serie A,817,2016-02-28 18:00:00,Carpi,Atalanta,1,1,1.43845,0.947109
+2015-16,Serie A,818,2016-02-28 23:45:00,Juventus,Inter,2,0,1.97864,0.358357
+2015-16,Serie A,819,2016-02-29 22:00:00,Lazio,Sassuolo,0,2,1.33889,1.58757
+2015-16,Serie A,820,2016-03-01 00:00:00,Fiorentina,Napoli,1,1,0.79925,0.911915
+2015-16,Serie A,821,2016-03-04 23:45:00,Roma,Fiorentina,4,1,2.52965,1.07664
+2015-16,Serie A,822,2016-03-05 21:00:00,Verona,Sampdoria,0,3,1.17161,2.77424
+2015-16,Serie A,823,2016-03-05 23:45:00,Napoli,Chievo,3,1,3.32828,0.275541
+2015-16,Serie A,824,2016-03-06 15:30:00,Torino,Lazio,1,1,2.49094,1.32027
+2015-16,Serie A,825,2016-03-06 18:00:00,Sassuolo,AC Milan,2,0,1.65735,1.19852
+2015-16,Serie A,826,2016-03-06 18:00:00,Atalanta,Juventus,0,2,0.65994,1.16757
+2015-16,Serie A,827,2016-03-06 18:00:00,Genoa,Empoli,1,0,1.05898,1.03143
+2015-16,Serie A,828,2016-03-06 18:00:00,Bologna,Carpi,0,0,1.16209,0.285025
+2015-16,Serie A,829,2016-03-06 18:00:00,Frosinone,Udinese,2,0,1.09511,0.142297
+2015-16,Serie A,830,2016-03-06 23:45:00,Inter,Palermo,3,1,1.0249,0.769584
+2015-16,Serie A,831,2016-03-11 23:45:00,Juventus,Sassuolo,1,0,1.48559,0.419901
+2015-16,Serie A,832,2016-03-12 21:00:00,Empoli,Sampdoria,1,1,1.83798,0.754732
+2015-16,Serie A,833,2016-03-12 23:45:00,Inter,Bologna,2,1,1.77997,0.371108
+2015-16,Serie A,834,2016-03-13 15:30:00,Chievo,AC Milan,0,0,0.988176,0.744968
+2015-16,Serie A,835,2016-03-13 18:00:00,Udinese,Roma,1,2,0.594114,2.23974
+2015-16,Serie A,836,2016-03-13 18:00:00,Carpi,Frosinone,2,1,1.78367,1.27464
+2015-16,Serie A,837,2016-03-13 18:00:00,Fiorentina,Verona,1,1,0.614992,0.780842
+2015-16,Serie A,838,2016-03-13 18:00:00,Genoa,Torino,3,2,2.52155,1.26638
+2015-16,Serie A,839,2016-03-13 23:45:00,Lazio,Atalanta,2,0,1.4421,0.776464
+2015-16,Serie A,840,2016-03-13 23:45:00,Palermo,Napoli,0,1,0.289323,2.02645
+2015-16,Serie A,841,2016-03-19 21:00:00,Empoli,Palermo,0,0,0.522438,0.683302
+2015-16,Serie A,842,2016-03-19 23:45:00,Roma,Inter,1,1,1.15003,0.296591
+2015-16,Serie A,843,2016-03-20 15:30:00,Atalanta,Bologna,2,0,3.91595,0.377709
+2015-16,Serie A,844,2016-03-20 18:00:00,Verona,Carpi,1,2,0.68967,1.2492
+2015-16,Serie A,845,2016-03-20 18:00:00,Sampdoria,Chievo,0,1,1.18347,2.61414
+2015-16,Serie A,846,2016-03-20 18:00:00,Frosinone,Fiorentina,0,0,1.06063,2.10086
+2015-16,Serie A,847,2016-03-20 18:00:00,Torino,Juventus,1,4,1.58508,1.74677
+2015-16,Serie A,848,2016-03-20 18:00:00,Sassuolo,Udinese,1,1,0.798145,1.85642
+2015-16,Serie A,849,2016-03-20 21:00:00,Napoli,Genoa,3,1,2.45798,0.46905
+2015-16,Serie A,850,2016-03-20 23:45:00,AC Milan,Lazio,1,1,1.50818,0.71528
+2015-16,Serie A,851,2016-04-02 20:00:00,Carpi,Sassuolo,1,3,1.39986,1.80569
+2015-16,Serie A,852,2016-04-02 22:45:00,Juventus,Empoli,1,0,2.19126,0.627317
+2015-16,Serie A,853,2016-04-03 14:30:00,Udinese,Napoli,3,1,2.75111,0.468281
+2015-16,Serie A,854,2016-04-03 17:00:00,Chievo,Palermo,3,1,1.34014,1.80741
+2015-16,Serie A,855,2016-04-03 17:00:00,Lazio,Roma,1,4,2.84764,1.52919
+2015-16,Serie A,856,2016-04-03 17:00:00,Fiorentina,Sampdoria,1,1,1.06589,0.259248
+2015-16,Serie A,857,2016-04-03 17:00:00,Genoa,Frosinone,4,0,2.08231,0.368689
+2015-16,Serie A,858,2016-04-03 17:00:00,Atalanta,AC Milan,2,1,1.34093,1.52411
+2015-16,Serie A,859,2016-04-03 22:45:00,Inter,Torino,1,2,1.27119,2.2995
+2015-16,Serie A,860,2016-04-04 22:45:00,Bologna,Verona,0,1,1.00837,0.742433
+2015-16,Serie A,861,2016-04-09 17:00:00,Frosinone,Inter,0,1,0.744526,1.413
+2015-16,Serie A,862,2016-04-09 20:00:00,Sassuolo,Genoa,0,1,0.735631,0.70429
+2015-16,Serie A,863,2016-04-09 20:00:00,Chievo,Carpi,1,0,1.22666,0.721378
+2015-16,Serie A,864,2016-04-09 22:45:00,AC Milan,Juventus,1,2,1.46082,0.769122
+2015-16,Serie A,865,2016-04-10 14:30:00,Empoli,Fiorentina,2,0,0.724395,1.04376
+2015-16,Serie A,866,2016-04-10 17:00:00,Napoli,Verona,3,0,3.60923,0.313473
+2015-16,Serie A,867,2016-04-10 17:00:00,Torino,Atalanta,2,1,0.873952,0.99328
+2015-16,Serie A,868,2016-04-10 17:00:00,Sampdoria,Udinese,2,0,2.12831,1.58974
+2015-16,Serie A,869,2016-04-10 22:45:00,Palermo,Lazio,0,3,0.417993,3.05565
+2015-16,Serie A,870,2016-04-11 22:45:00,Roma,Bologna,1,1,1.21204,0.688923
+2015-16,Serie A,871,2016-04-16 17:00:00,Bologna,Torino,0,1,0.507409,1.06984
+2015-16,Serie A,872,2016-04-16 20:00:00,Carpi,Genoa,4,1,3.16479,1.37647
+2015-16,Serie A,873,2016-04-16 22:45:00,Inter,Napoli,2,0,1.88869,0.322765
+2015-16,Serie A,874,2016-04-17 14:30:00,Atalanta,Roma,3,3,2.49058,2.10816
+2015-16,Serie A,875,2016-04-17 17:00:00,Fiorentina,Sassuolo,3,1,1.39254,1.04068
+2015-16,Serie A,876,2016-04-17 17:00:00,Juventus,Palermo,4,0,1.82684,0.696599
+2015-16,Serie A,877,2016-04-17 17:00:00,Udinese,Chievo,0,0,0.994096,0.205673
+2015-16,Serie A,878,2016-04-17 17:00:00,Verona,Frosinone,1,2,2.02081,1.10944
+2015-16,Serie A,879,2016-04-17 20:00:00,Lazio,Empoli,2,0,2.55889,0.407612
+2015-16,Serie A,880,2016-04-17 22:45:00,Sampdoria,AC Milan,0,1,0.354318,1.43637
+2015-16,Serie A,881,2016-04-19 22:45:00,Napoli,Bologna,6,0,2.64419,0.175203
+2015-16,Serie A,882,2016-04-20 20:30:00,Sassuolo,Sampdoria,0,0,3.28685,0.150904
+2015-16,Serie A,883,2016-04-20 22:45:00,Roma,Torino,3,2,2.19722,1.5845
+2015-16,Serie A,884,2016-04-20 22:45:00,Palermo,Atalanta,2,2,2.64762,2.25362
+2015-16,Serie A,885,2016-04-20 22:45:00,Udinese,Fiorentina,2,1,1.15644,0.66153
+2015-16,Serie A,886,2016-04-20 22:45:00,Chievo,Frosinone,5,1,2.31378,0.265652
+2015-16,Serie A,887,2016-04-20 22:45:00,Empoli,Verona,1,0,2.20742,1.9251
+2015-16,Serie A,888,2016-04-20 22:45:00,Genoa,Inter,1,0,0.9988,1.15015
+2015-16,Serie A,889,2016-04-20 22:45:00,Juventus,Lazio,3,0,3.53103,0.195173
+2015-16,Serie A,890,2016-04-21 22:45:00,AC Milan,Carpi,0,0,1.03038,0.26311
+2015-16,Serie A,891,2016-04-23 22:45:00,Inter,Udinese,3,1,2.91335,1.07267
+2015-16,Serie A,892,2016-04-24 14:30:00,Frosinone,Palermo,0,2,1.36967,0.841795
+2015-16,Serie A,893,2016-04-24 17:00:00,Torino,Sassuolo,1,3,0.957336,1.55044
+2015-16,Serie A,894,2016-04-24 17:00:00,Sampdoria,Lazio,2,1,1.72396,3.45462
+2015-16,Serie A,895,2016-04-24 17:00:00,Bologna,Genoa,2,0,0.953231,0.491713
+2015-16,Serie A,896,2016-04-24 17:00:00,Atalanta,Chievo,1,0,0.939437,0.347217
+2015-16,Serie A,897,2016-04-24 22:45:00,Fiorentina,Juventus,1,2,2.41849,1.46994
+2015-16,Serie A,898,2016-04-25 17:00:00,Roma,Napoli,1,0,0.317817,0.639476
+2015-16,Serie A,899,2016-04-25 19:00:00,Verona,AC Milan,2,1,2.66469,1.41824
+2015-16,Serie A,900,2016-04-25 21:00:00,Carpi,Empoli,1,0,1.70068,0.696372
+2015-16,Serie A,901,2016-04-30 20:00:00,Udinese,Torino,1,5,1.56864,1.24571
+2015-16,Serie A,902,2016-04-30 22:45:00,Chievo,Fiorentina,0,0,1.07367,0.857695
+2015-16,Serie A,903,2016-05-01 14:30:00,Juventus,Carpi,2,0,0.97521,0.507266
+2015-16,Serie A,904,2016-05-01 17:00:00,Palermo,Sampdoria,2,0,1.29682,0.446755
+2015-16,Serie A,905,2016-05-01 17:00:00,Empoli,Bologna,0,0,0.569866,0.596736
+2015-16,Serie A,906,2016-05-01 17:00:00,AC Milan,Frosinone,3,3,3.58716,0.647214
+2015-16,Serie A,907,2016-05-01 17:00:00,Sassuolo,Verona,1,0,0.51533,0.483795
+2015-16,Serie A,908,2016-05-01 22:45:00,Lazio,Inter,2,0,1.71802,0.87251
+2015-16,Serie A,909,2016-05-02 21:00:00,Genoa,Roma,2,3,1.05403,2.32478
+2015-16,Serie A,910,2016-05-02 23:00:00,Napoli,Atalanta,2,1,2.52982,0.172012
+2015-16,Serie A,911,2016-05-07 20:00:00,Inter,Empoli,2,1,1.75375,0.929999
+2015-16,Serie A,912,2016-05-07 22:45:00,Bologna,AC Milan,0,1,1.08305,1.2377
+2015-16,Serie A,913,2016-05-08 14:30:00,Roma,Chievo,3,0,2.07283,0.720434
+2015-16,Serie A,914,2016-05-08 17:00:00,Sampdoria,Genoa,0,3,0.694054,2.20008
+2015-16,Serie A,915,2016-05-08 17:00:00,Fiorentina,Palermo,0,0,2.00986,0.166833
+2015-16,Serie A,916,2016-05-08 17:00:00,Frosinone,Sassuolo,0,1,1.09778,1.32832
+2015-16,Serie A,917,2016-05-08 17:00:00,Atalanta,Udinese,1,1,1.12089,0.271001
+2015-16,Serie A,918,2016-05-08 17:00:00,Carpi,Lazio,1,3,3.44148,1.98265
+2015-16,Serie A,919,2016-05-08 22:45:00,Torino,Napoli,1,2,0.459127,1.70567
+2015-16,Serie A,920,2016-05-08 22:45:00,Verona,Juventus,2,1,1.65219,1.30062
+2015-16,Serie A,921,2016-05-14 19:00:00,Juventus,Sampdoria,5,0,2.78687,0.173253
+2015-16,Serie A,922,2016-05-14 22:45:00,Sassuolo,Inter,3,1,1.28643,1.11693
+2015-16,Serie A,923,2016-05-14 22:45:00,AC Milan,Roma,1,3,1.37488,2.27757
+2015-16,Serie A,924,2016-05-14 22:45:00,Napoli,Frosinone,4,0,3.96429,0.837464
+2015-16,Serie A,925,2016-05-15 20:00:00,Empoli,Torino,2,1,0.640557,1.10246
+2015-16,Serie A,926,2016-05-15 20:00:00,Genoa,Atalanta,1,2,2.55677,1.35357
+2015-16,Serie A,927,2016-05-15 20:00:00,Chievo,Bologna,0,0,0.35378,0.425809
+2015-16,Serie A,928,2016-05-15 22:45:00,Udinese,Carpi,1,2,1.29064,1.76289
+2015-16,Serie A,929,2016-05-15 22:45:00,Lazio,Fiorentina,2,4,1.27504,1.86008
+2015-16,Serie A,930,2016-05-15 22:45:00,Palermo,Verona,3,2,0.789971,1.35761

@@ -60,6 +60,28 @@ cd web
 python build.py
 ```
 
+**Actualización semanal** (temporada en curso): `code/actualizar.py` baja solo los partidos nuevos
+de Understat y refresca las páginas de fbref, comprueba que ninguna fuente retrocedió, consolida,
+reconstruye `web/dist/` y, con `--publicar`, hace commit + push (Vercel despliega solo). Si algo
+falla, no publica nada y deja el repo como estaba. El log de cada corrida queda en `logs/`.
+
+```bash
+python code/actualizar.py                # baja + consolida + construye, sin tocar git
+python code/actualizar.py --publicar     # además commit + push (exige árbol limpio y rama master)
+```
+
+Para que corra solo cada lunes a las 23:00 (hora de CDMX), en el Programador de tareas de Windows
+(la PC tiene que estar encendida y con la sesión iniciada; registrar la tarea no la enciende):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File code\programar_tarea.ps1              # registrar
+powershell -ExecutionPolicy Bypass -File code\programar_tarea.ps1 -Despertar   # además despierta la PC suspendida
+powershell -ExecutionPolicy Bypass -File code\programar_tarea.ps1 -Quitar      # borrar
+```
+
+Cada agosto hay que agregar la temporada nueva a `SEASONS` (en `consolidate_data.py` y los
+`fetch_*.py`) y su tamaño a `EXPECTED_SIZES`; mientras no esté, `actualizar.py` falla con ese aviso.
+
 **Vistas en React** (solo si se toca `web/react/src/`; hace falta Node 20+). El bundle compilado
 `web/react/build/` se versiona, así que `python build.py` no necesita Node:
 

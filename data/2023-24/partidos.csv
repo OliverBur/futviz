@@ -1,0 +1,1753 @@
+﻿temporada,liga,game_id,fecha,local,visita,goles_l,goles_v,xg_l,xg_v
+2023-24,Bundesliga,23065,2023-08-18 18:30:00,Werder Bremen,Bayern Munich,0,4,0.63974,2.89704
+2023-24,Bundesliga,23066,2023-08-19 13:30:00,Bayer Leverkusen,RasenBallsport Leipzig,3,2,1.73279,1.60393
+2023-24,Bundesliga,23067,2023-08-19 13:30:00,Wolfsburg,FC Heidenheim,2,0,3.21449,1.17776
+2023-24,Bundesliga,23068,2023-08-19 13:30:00,Hoffenheim,Freiburg,1,2,1.67186,3.24821
+2023-24,Bundesliga,23069,2023-08-19 13:30:00,Augsburg,Borussia M.Gladbach,4,4,2.53482,1.91849
+2023-24,Bundesliga,23070,2023-08-19 13:30:00,VfB Stuttgart,Bochum,5,0,3.98664,0.669108
+2023-24,Bundesliga,23071,2023-08-19 16:30:00,Borussia Dortmund,FC Cologne,1,0,1.72317,1.51393
+2023-24,Bundesliga,23072,2023-08-20 13:30:00,Union Berlin,Mainz 05,4,1,2.11281,2.51995
+2023-24,Bundesliga,23073,2023-08-20 15:30:00,Eintracht Frankfurt,Darmstadt,1,0,1.2399,0.813333
+2023-24,Bundesliga,23074,2023-08-25 18:30:00,RasenBallsport Leipzig,VfB Stuttgart,5,1,2.0934,1.18326
+2023-24,Bundesliga,23075,2023-08-26 13:30:00,Freiburg,Werder Bremen,1,0,1.71877,0.696983
+2023-24,Bundesliga,23076,2023-08-26 13:30:00,FC Cologne,Wolfsburg,1,2,0.64301,2.26952
+2023-24,Bundesliga,23077,2023-08-26 13:30:00,Bochum,Borussia Dortmund,1,1,1.01164,1.17241
+2023-24,Bundesliga,23078,2023-08-26 13:30:00,FC Heidenheim,Hoffenheim,2,3,2.72999,2.75768
+2023-24,Bundesliga,23079,2023-08-26 13:30:00,Darmstadt,Union Berlin,1,4,2.59994,1.6379
+2023-24,Bundesliga,23080,2023-08-26 16:30:00,Borussia M.Gladbach,Bayer Leverkusen,0,3,1.76423,3.65301
+2023-24,Bundesliga,23081,2023-08-27 13:30:00,Mainz 05,Eintracht Frankfurt,1,1,1.44234,1.15731
+2023-24,Bundesliga,23082,2023-08-27 15:30:00,Bayern Munich,Augsburg,3,1,2.82296,0.726241
+2023-24,Bundesliga,23083,2023-09-01 18:30:00,Borussia Dortmund,FC Heidenheim,2,2,2.74794,2.09517
+2023-24,Bundesliga,23084,2023-09-02 13:30:00,Bayer Leverkusen,Darmstadt,5,1,3.42599,0.681851
+2023-24,Bundesliga,23085,2023-09-02 13:30:00,Hoffenheim,Wolfsburg,3,1,1.78689,1.4154
+2023-24,Bundesliga,23086,2023-09-02 13:30:00,Werder Bremen,Mainz 05,4,0,3.01318,0.65805
+2023-24,Bundesliga,23087,2023-09-02 13:30:00,Augsburg,Bochum,2,2,1.88106,1.86494
+2023-24,Bundesliga,23088,2023-09-02 13:30:00,VfB Stuttgart,Freiburg,5,0,2.09598,1.50372
+2023-24,Bundesliga,23089,2023-09-02 16:30:00,Borussia M.Gladbach,Bayern Munich,1,2,0.201237,2.14949
+2023-24,Bundesliga,23090,2023-09-03 13:30:00,Eintracht Frankfurt,FC Cologne,1,1,1.2824,0.931141
+2023-24,Bundesliga,23091,2023-09-03 15:30:00,Union Berlin,RasenBallsport Leipzig,0,3,0.17815,1.21402
+2023-24,Bundesliga,23092,2023-09-15 18:30:00,Bayern Munich,Bayer Leverkusen,2,2,2.74374,2.4584
+2023-24,Bundesliga,23093,2023-09-16 13:30:00,RasenBallsport Leipzig,Augsburg,3,0,1.46279,1.34046
+2023-24,Bundesliga,23094,2023-09-16 13:30:00,Freiburg,Borussia Dortmund,2,4,1.14667,3.37255
+2023-24,Bundesliga,23095,2023-09-16 13:30:00,Wolfsburg,Union Berlin,2,1,0.566932,1.56941
+2023-24,Bundesliga,23096,2023-09-16 13:30:00,Mainz 05,VfB Stuttgart,1,3,1.16545,2.06366
+2023-24,Bundesliga,23097,2023-09-16 13:30:00,FC Cologne,Hoffenheim,1,3,1.19432,1.06988
+2023-24,Bundesliga,23098,2023-09-16 16:30:00,Bochum,Eintracht Frankfurt,1,1,2.17324,0.737999
+2023-24,Bundesliga,23099,2023-09-17 13:30:00,FC Heidenheim,Werder Bremen,4,2,1.96235,2.55978
+2023-24,Bundesliga,23100,2023-09-17 15:30:00,Darmstadt,Borussia M.Gladbach,3,3,1.328,3.49324
+2023-24,Bundesliga,23101,2023-09-22 18:30:00,VfB Stuttgart,Darmstadt,3,1,3.04946,0.272376
+2023-24,Bundesliga,23102,2023-09-23 13:30:00,Augsburg,Mainz 05,2,1,1.04683,0.487325
+2023-24,Bundesliga,23103,2023-09-23 13:30:00,Borussia M.Gladbach,RasenBallsport Leipzig,0,1,0.771966,1.03744
+2023-24,Bundesliga,23104,2023-09-23 13:30:00,Bayern Munich,Bochum,7,0,6.02607,0.0892044
+2023-24,Bundesliga,23105,2023-09-23 13:30:00,Borussia Dortmund,Wolfsburg,1,0,2.16482,0.343309
+2023-24,Bundesliga,23106,2023-09-23 13:30:00,Union Berlin,Hoffenheim,0,2,1.62442,2.15364
+2023-24,Bundesliga,23107,2023-09-23 16:30:00,Werder Bremen,FC Cologne,2,1,1.59965,1.98951
+2023-24,Bundesliga,23108,2023-09-24 13:30:00,Bayer Leverkusen,FC Heidenheim,4,1,3.97445,0.659741
+2023-24,Bundesliga,23109,2023-09-24 15:30:00,Eintracht Frankfurt,Freiburg,0,0,0.754063,0.407479
+2023-24,Bundesliga,23110,2023-09-29 18:30:00,Hoffenheim,Borussia Dortmund,1,3,1.85129,1.69401
+2023-24,Bundesliga,23111,2023-09-30 13:30:00,Bochum,Borussia M.Gladbach,1,3,1.46515,2.86793
+2023-24,Bundesliga,23112,2023-09-30 13:30:00,FC Heidenheim,Union Berlin,1,0,0.542933,2.1613
+2023-24,Bundesliga,23113,2023-09-30 13:30:00,Wolfsburg,Eintracht Frankfurt,2,0,2.77737,1.09205
+2023-24,Bundesliga,23114,2023-09-30 13:30:00,Mainz 05,Bayer Leverkusen,0,3,0.388975,0.811962
+2023-24,Bundesliga,23115,2023-09-30 13:30:00,FC Cologne,VfB Stuttgart,0,2,0.803426,2.06666
+2023-24,Bundesliga,23116,2023-09-30 16:30:00,RasenBallsport Leipzig,Bayern Munich,2,2,0.793383,1.95099
+2023-24,Bundesliga,23117,2023-10-01 13:30:00,Darmstadt,Werder Bremen,4,2,2.34923,1.54627
+2023-24,Bundesliga,23118,2023-10-01 15:30:00,Freiburg,Augsburg,2,0,1.2721,1.00081
+2023-24,Bundesliga,23119,2023-10-06 18:30:00,Borussia M.Gladbach,Mainz 05,2,2,3.01512,1.21309
+2023-24,Bundesliga,23120,2023-10-07 13:30:00,Borussia Dortmund,Union Berlin,4,2,1.76935,1.5245
+2023-24,Bundesliga,23121,2023-10-07 13:30:00,RasenBallsport Leipzig,Bochum,0,0,2.22631,0.741054
+2023-24,Bundesliga,23122,2023-10-07 13:30:00,Augsburg,Darmstadt,1,2,1.18473,1.96153
+2023-24,Bundesliga,23123,2023-10-07 13:30:00,VfB Stuttgart,Wolfsburg,3,1,3.02575,1.06355
+2023-24,Bundesliga,23124,2023-10-07 16:30:00,Werder Bremen,Hoffenheim,2,3,1.03064,1.52805
+2023-24,Bundesliga,23125,2023-10-08 13:30:00,Bayer Leverkusen,FC Cologne,3,0,3.72502,1.41915
+2023-24,Bundesliga,23126,2023-10-08 15:30:00,Bayern Munich,Freiburg,3,0,2.37438,0.0704987
+2023-24,Bundesliga,23127,2023-10-08 17:30:00,Eintracht Frankfurt,FC Heidenheim,2,0,1.83609,0.625618
+2023-24,Bundesliga,23128,2023-10-20 18:30:00,Borussia Dortmund,Werder Bremen,1,0,2.7285,0.53973
+2023-24,Bundesliga,23129,2023-10-21 13:30:00,Union Berlin,VfB Stuttgart,0,3,0.573025,1.87513
+2023-24,Bundesliga,23130,2023-10-21 13:30:00,Freiburg,Bochum,2,1,2.5274,1.37705
+2023-24,Bundesliga,23131,2023-10-21 13:30:00,Wolfsburg,Bayer Leverkusen,1,2,1.3318,2.27695
+2023-24,Bundesliga,23132,2023-10-21 13:30:00,Hoffenheim,Eintracht Frankfurt,1,3,1.13281,2.13235
+2023-24,Bundesliga,23133,2023-10-21 13:30:00,Darmstadt,RasenBallsport Leipzig,1,3,1.68331,1.83161
+2023-24,Bundesliga,23134,2023-10-21 16:30:00,Mainz 05,Bayern Munich,1,3,0.975025,1.68693
+2023-24,Bundesliga,23135,2023-10-22 13:30:00,FC Cologne,Borussia M.Gladbach,3,1,2.72755,0.407008
+2023-24,Bundesliga,23136,2023-10-22 15:30:00,FC Heidenheim,Augsburg,2,5,1.99327,2.82353
+2023-24,Bundesliga,23143,2023-10-27 18:30:00,Bochum,Mainz 05,2,2,2.13405,0.443599
+2023-24,Bundesliga,23137,2023-10-28 13:30:00,Bayern Munich,Darmstadt,8,0,5.884,0.924873
+2023-24,Bundesliga,23141,2023-10-28 13:30:00,Borussia M.Gladbach,FC Heidenheim,2,1,0.981009,0.395956
+2023-24,Bundesliga,23142,2023-10-28 13:30:00,Werder Bremen,Union Berlin,2,0,0.690799,0.368624
+2023-24,Bundesliga,23144,2023-10-28 13:30:00,Augsburg,Wolfsburg,3,2,1.59374,1.25516
+2023-24,Bundesliga,23145,2023-10-28 13:30:00,VfB Stuttgart,Hoffenheim,2,3,3.15109,1.74412
+2023-24,Bundesliga,23138,2023-10-28 16:30:00,RasenBallsport Leipzig,FC Cologne,6,0,4.85886,1.32863
+2023-24,Bundesliga,23140,2023-10-29 14:30:00,Eintracht Frankfurt,Borussia Dortmund,3,3,3.67492,2.41687
+2023-24,Bundesliga,23139,2023-10-29 16:30:00,Bayer Leverkusen,Freiburg,2,1,1.60773,1.02333
+2023-24,Bundesliga,23154,2023-11-03 19:30:00,Darmstadt,Bochum,1,2,0.854923,1.56273
+2023-24,Bundesliga,23147,2023-11-04 14:30:00,Union Berlin,Eintracht Frankfurt,0,3,1.066,1.56887
+2023-24,Bundesliga,23148,2023-11-04 14:30:00,Freiburg,Borussia M.Gladbach,3,3,3.3903,1.92375
+2023-24,Bundesliga,23150,2023-11-04 14:30:00,Mainz 05,RasenBallsport Leipzig,2,0,1.49686,0.507864
+2023-24,Bundesliga,23151,2023-11-04 14:30:00,FC Cologne,Augsburg,1,1,2.22618,2.54685
+2023-24,Bundesliga,23152,2023-11-04 14:30:00,Hoffenheim,Bayer Leverkusen,2,3,1.27214,1.05046
+2023-24,Bundesliga,23146,2023-11-04 17:30:00,Borussia Dortmund,Bayern Munich,0,4,1.47623,2.86067
+2023-24,Bundesliga,23149,2023-11-05 14:30:00,Wolfsburg,Werder Bremen,2,2,1.81371,1.40324
+2023-24,Bundesliga,23153,2023-11-05 16:30:00,FC Heidenheim,VfB Stuttgart,2,0,0.78335,2.57296
+2023-24,Bundesliga,23158,2023-11-10 19:30:00,Borussia M.Gladbach,Wolfsburg,4,0,2.094,0.500797
+2023-24,Bundesliga,23155,2023-11-11 14:30:00,Bayern Munich,FC Heidenheim,4,2,2.60786,1.04526
+2023-24,Bundesliga,23161,2023-11-11 14:30:00,Augsburg,Hoffenheim,1,1,0.937133,0.897413
+2023-24,Bundesliga,23162,2023-11-11 14:30:00,VfB Stuttgart,Borussia Dortmund,2,1,4.1718,0.7643
+2023-24,Bundesliga,23163,2023-11-11 14:30:00,Darmstadt,Mainz 05,0,0,0.449952,0.624718
+2023-24,Bundesliga,23160,2023-11-11 17:30:00,Bochum,FC Cologne,1,1,5.05629,1.07591
+2023-24,Bundesliga,23157,2023-11-12 14:30:00,Bayer Leverkusen,Union Berlin,4,0,3.04223,0.0283806
+2023-24,Bundesliga,23159,2023-11-12 16:30:00,Werder Bremen,Eintracht Frankfurt,2,2,1.93909,2.02339
+2023-24,Bundesliga,23156,2023-11-12 19:30:00,RasenBallsport Leipzig,Freiburg,3,1,1.90144,0.398988
+2023-24,Bundesliga,23169,2023-11-24 19:30:00,FC Cologne,Bayern Munich,0,1,0.189125,3.8999
+2023-24,Bundesliga,23164,2023-11-25 14:30:00,Borussia Dortmund,Borussia M.Gladbach,4,2,3.36754,0.789918
+2023-24,Bundesliga,23165,2023-11-25 14:30:00,Union Berlin,Augsburg,1,1,2.40798,1.84043
+2023-24,Bundesliga,23166,2023-11-25 14:30:00,Freiburg,Darmstadt,1,1,1.34505,0.34181
+2023-24,Bundesliga,23168,2023-11-25 14:30:00,Wolfsburg,RasenBallsport Leipzig,2,1,0.634004,2.90646
+2023-24,Bundesliga,23171,2023-11-25 14:30:00,Werder Bremen,Bayer Leverkusen,0,3,0.306657,1.7528
+2023-24,Bundesliga,23167,2023-11-25 17:30:00,Eintracht Frankfurt,VfB Stuttgart,1,2,0.787582,2.29764
+2023-24,Bundesliga,23172,2023-11-26 14:30:00,FC Heidenheim,Bochum,0,0,0.748895,0.359399
+2023-24,Bundesliga,23170,2023-11-26 16:30:00,Hoffenheim,Mainz 05,1,1,0.7002,1.96701
+2023-24,Bundesliga,23181,2023-12-01 18:30:00,Darmstadt,FC Cologne,0,1,0.61755,1.30112
+2023-24,Bundesliga,23174,2023-12-02 14:30:00,RasenBallsport Leipzig,FC Heidenheim,2,1,4.71075,1.17851
+2023-24,Bundesliga,23177,2023-12-02 14:30:00,Borussia M.Gladbach,Hoffenheim,2,1,1.60234,1.33696
+2023-24,Bundesliga,23178,2023-12-02 14:30:00,Bochum,Wolfsburg,3,1,2.07603,1.03452
+2023-24,Bundesliga,23180,2023-12-02 17:30:00,VfB Stuttgart,Werder Bremen,2,0,4.01803,0.65905
+2023-24,Bundesliga,23176,2023-12-03 14:30:00,Mainz 05,Freiburg,0,1,2.86869,1.34097
+2023-24,Bundesliga,23175,2023-12-03 16:30:00,Bayer Leverkusen,Borussia Dortmund,1,1,1.96389,1.26088
+2023-24,Bundesliga,23179,2023-12-03 18:30:00,Augsburg,Eintracht Frankfurt,2,1,1.95055,0.906933
+2023-24,Bundesliga,23187,2023-12-08 19:30:00,Hoffenheim,Bochum,3,1,2.27533,1.82523
+2023-24,Bundesliga,23183,2023-12-09 14:30:00,Union Berlin,Borussia M.Gladbach,3,1,2.5675,1.03267
+2023-24,Bundesliga,23184,2023-12-09 14:30:00,Eintracht Frankfurt,Bayern Munich,5,1,1.84651,2.59277
+2023-24,Bundesliga,23185,2023-12-09 14:30:00,Wolfsburg,Freiburg,0,1,1.32934,0.511263
+2023-24,Bundesliga,23188,2023-12-09 14:30:00,Werder Bremen,Augsburg,2,0,1.84577,0.627715
+2023-24,Bundesliga,23190,2023-12-09 14:30:00,FC Heidenheim,Darmstadt,3,2,1.86894,1.00759
+2023-24,Bundesliga,23182,2023-12-09 17:30:00,Borussia Dortmund,RasenBallsport Leipzig,2,3,1.71347,3.63569
+2023-24,Bundesliga,23189,2023-12-10 14:30:00,VfB Stuttgart,Bayer Leverkusen,1,1,2.61136,1.47429
+2023-24,Bundesliga,23186,2023-12-10 16:30:00,FC Cologne,Mainz 05,0,0,0.248621,1.87569
+2023-24,Bundesliga,23196,2023-12-15 19:30:00,Borussia M.Gladbach,Werder Bremen,2,2,1.20813,1.64723
+2023-24,Bundesliga,23195,2023-12-16 14:30:00,Mainz 05,FC Heidenheim,0,1,1.21178,0.756363
+2023-24,Bundesliga,23197,2023-12-16 14:30:00,Bochum,Union Berlin,3,0,3.57797,0.670719
+2023-24,Bundesliga,23198,2023-12-16 14:30:00,Augsburg,Borussia Dortmund,1,1,1.509,2.02537
+2023-24,Bundesliga,23199,2023-12-16 14:30:00,Darmstadt,Wolfsburg,0,1,0.942093,0.587028
+2023-24,Bundesliga,23192,2023-12-16 17:30:00,RasenBallsport Leipzig,Hoffenheim,3,1,2.91669,1.04243
+2023-24,Bundesliga,23193,2023-12-17 14:30:00,Freiburg,FC Cologne,2,0,3.46957,1.24601
+2023-24,Bundesliga,23194,2023-12-17 16:30:00,Bayer Leverkusen,Eintracht Frankfurt,3,0,2.4919,0.205245
+2023-24,Bundesliga,23191,2023-12-17 18:30:00,Bayern Munich,VfB Stuttgart,3,0,3.41522,0.309157
+2023-24,Bundesliga,23206,2023-12-19 17:30:00,Werder Bremen,RasenBallsport Leipzig,1,1,1.48185,1.99449
+2023-24,Bundesliga,23200,2023-12-19 19:30:00,Borussia Dortmund,Mainz 05,1,1,1.33337,1.06262
+2023-24,Bundesliga,23205,2023-12-19 19:30:00,Hoffenheim,Darmstadt,3,3,2.81806,0.952662
+2023-24,Bundesliga,23201,2023-12-20 17:30:00,Union Berlin,FC Cologne,2,0,1.86539,0.897866
+2023-24,Bundesliga,23202,2023-12-20 19:30:00,Bayer Leverkusen,Bochum,4,0,3.32375,0.325421
+2023-24,Bundesliga,23203,2023-12-20 19:30:00,Eintracht Frankfurt,Borussia M.Gladbach,2,1,1.53912,0.552196
+2023-24,Bundesliga,23204,2023-12-20 19:30:00,Wolfsburg,Bayern Munich,1,2,0.313193,3.15053
+2023-24,Bundesliga,23207,2023-12-20 19:30:00,VfB Stuttgart,Augsburg,3,0,2.65007,0.224572
+2023-24,Bundesliga,23208,2023-12-20 19:30:00,FC Heidenheim,Freiburg,3,2,1.75628,1.59052
+2023-24,Bundesliga,23209,2024-01-12 19:30:00,Bayern Munich,Hoffenheim,3,0,3.4164,1.61888
+2023-24,Bundesliga,23210,2024-01-13 14:30:00,RasenBallsport Leipzig,Eintracht Frankfurt,0,1,2.67312,1.07791
+2023-24,Bundesliga,23211,2024-01-13 14:30:00,Freiburg,Union Berlin,0,0,2.1675,0.424997
+2023-24,Bundesliga,23212,2024-01-13 14:30:00,Mainz 05,Wolfsburg,1,1,0.366084,0.419404
+2023-24,Bundesliga,23214,2024-01-13 14:30:00,FC Cologne,FC Heidenheim,1,1,0.641578,1.27869
+2023-24,Bundesliga,23216,2024-01-13 14:30:00,Augsburg,Bayer Leverkusen,0,1,0.445211,2.31757
+2023-24,Bundesliga,23217,2024-01-13 17:30:00,Darmstadt,Borussia Dortmund,0,3,0.825788,3.14682
+2023-24,Bundesliga,23215,2024-01-14 14:30:00,Bochum,Werder Bremen,1,1,1.24017,0.934194
+2023-24,Bundesliga,23213,2024-01-14 16:30:00,Borussia M.Gladbach,VfB Stuttgart,3,1,2.02288,1.24703
+2023-24,Bundesliga,23220,2024-01-20 14:30:00,Freiburg,Hoffenheim,3,2,2.47971,1.76349
+2023-24,Bundesliga,23223,2024-01-20 14:30:00,FC Cologne,Borussia Dortmund,0,4,1.3929,3.48032
+2023-24,Bundesliga,23224,2024-01-20 14:30:00,Bochum,VfB Stuttgart,1,0,0.71453,1.99316
+2023-24,Bundesliga,23225,2024-01-20 14:30:00,FC Heidenheim,Wolfsburg,1,1,1.19211,1.22104
+2023-24,Bundesliga,23226,2024-01-20 14:30:00,Darmstadt,Eintracht Frankfurt,2,2,1.3877,1.28892
+2023-24,Bundesliga,23219,2024-01-20 17:30:00,RasenBallsport Leipzig,Bayer Leverkusen,2,3,1.59453,2.17224
+2023-24,Bundesliga,23218,2024-01-21 14:30:00,Bayern Munich,Werder Bremen,0,1,1.54562,0.429252
+2023-24,Bundesliga,23222,2024-01-21 16:30:00,Borussia M.Gladbach,Augsburg,1,2,1.87919,1.61193
+2023-24,Bundesliga,23173,2024-01-24 18:30:00,Bayern Munich,Union Berlin,1,0,2.172,0.477644
+2023-24,Bundesliga,23230,2024-01-26 19:30:00,Eintracht Frankfurt,Mainz 05,1,0,1.13826,0.815239
+2023-24,Bundesliga,23231,2024-01-27 14:30:00,Wolfsburg,FC Cologne,1,1,2.13999,0.365929
+2023-24,Bundesliga,23232,2024-01-27 14:30:00,Hoffenheim,FC Heidenheim,1,1,3.23703,1.10065
+2023-24,Bundesliga,23233,2024-01-27 14:30:00,Werder Bremen,Freiburg,3,1,2.33032,1.33739
+2023-24,Bundesliga,23234,2024-01-27 14:30:00,Augsburg,Bayern Munich,2,3,2.68517,2.27504
+2023-24,Bundesliga,23235,2024-01-27 14:30:00,VfB Stuttgart,RasenBallsport Leipzig,5,2,3.13056,0.495967
+2023-24,Bundesliga,23229,2024-01-27 17:30:00,Bayer Leverkusen,Borussia M.Gladbach,0,0,3.32828,0.278864
+2023-24,Bundesliga,23228,2024-01-28 14:30:00,Union Berlin,Darmstadt,1,0,3.54733,1.00135
+2023-24,Bundesliga,23227,2024-01-28 16:30:00,Borussia Dortmund,Bochum,3,1,3.09919,0.388377
+2023-24,Bundesliga,23243,2024-02-02 19:30:00,FC Heidenheim,Borussia Dortmund,0,0,1.00945,0.8117
+2023-24,Bundesliga,23236,2024-02-03 14:30:00,Bayern Munich,Borussia M.Gladbach,3,1,2.58401,0.780069
+2023-24,Bundesliga,23238,2024-02-03 14:30:00,Freiburg,VfB Stuttgart,1,3,1.15964,2.73728
+2023-24,Bundesliga,23240,2024-02-03 14:30:00,Mainz 05,Werder Bremen,0,1,1.04044,0.395044
+2023-24,Bundesliga,23242,2024-02-03 14:30:00,Bochum,Augsburg,1,1,1.16731,1.39431
+2023-24,Bundesliga,23244,2024-02-03 14:30:00,Darmstadt,Bayer Leverkusen,0,2,0.432778,2.18207
+2023-24,Bundesliga,23241,2024-02-03 17:30:00,FC Cologne,Eintracht Frankfurt,2,0,2.09653,1.16049
+2023-24,Bundesliga,23239,2024-02-04 14:30:00,Wolfsburg,Hoffenheim,2,2,1.60418,1.93269
+2023-24,Bundesliga,23237,2024-02-04 16:30:00,RasenBallsport Leipzig,Union Berlin,2,0,1.7598,0.65912
+2023-24,Bundesliga,23221,2024-02-07 17:30:00,Mainz 05,Union Berlin,1,1,1.37814,1.53583
+2023-24,Bundesliga,23246,2024-02-09 19:30:00,Borussia Dortmund,Freiburg,3,0,3.21996,0.230074
+2023-24,Bundesliga,23245,2024-02-10 14:30:00,Borussia M.Gladbach,Darmstadt,0,0,1.47353,0.817722
+2023-24,Bundesliga,23248,2024-02-10 14:30:00,Union Berlin,Wolfsburg,1,0,0.575454,1.08099
+2023-24,Bundesliga,23249,2024-02-10 14:30:00,Werder Bremen,FC Heidenheim,1,2,1.62589,2.1722
+2023-24,Bundesliga,23251,2024-02-10 14:30:00,Augsburg,RasenBallsport Leipzig,2,2,0.965916,1.78901
+2023-24,Bundesliga,23252,2024-02-10 14:30:00,Eintracht Frankfurt,Bochum,1,1,2.44154,1.27691
+2023-24,Bundesliga,23250,2024-02-10 17:30:00,Bayer Leverkusen,Bayern Munich,3,0,1.22993,0.710198
+2023-24,Bundesliga,23253,2024-02-11 14:30:00,VfB Stuttgart,Mainz 05,3,1,2.17007,1.61535
+2023-24,Bundesliga,23247,2024-02-11 16:30:00,Hoffenheim,FC Cologne,1,1,0.726907,0.172441
+2023-24,Bundesliga,23258,2024-02-16 19:30:00,FC Cologne,Werder Bremen,0,1,0.627448,1.35198
+2023-24,Bundesliga,23256,2024-02-17 14:30:00,Wolfsburg,Borussia Dortmund,1,1,2.11967,1.21109
+2023-24,Bundesliga,23257,2024-02-17 14:30:00,Mainz 05,Augsburg,1,0,2.62289,0.612185
+2023-24,Bundesliga,23259,2024-02-17 14:30:00,Hoffenheim,Union Berlin,0,1,1.24508,2.1649
+2023-24,Bundesliga,23261,2024-02-17 14:30:00,FC Heidenheim,Bayer Leverkusen,1,2,0.698981,1.87986
+2023-24,Bundesliga,23262,2024-02-17 14:30:00,Darmstadt,VfB Stuttgart,1,2,2.66748,1.74454
+2023-24,Bundesliga,23254,2024-02-17 17:30:00,RasenBallsport Leipzig,Borussia M.Gladbach,2,0,1.49022,0.944074
+2023-24,Bundesliga,23255,2024-02-18 14:30:00,Freiburg,Eintracht Frankfurt,3,3,2.77236,1.35483
+2023-24,Bundesliga,23260,2024-02-18 16:30:00,Bochum,Bayern Munich,3,2,2.08495,2.86883
+2023-24,Bundesliga,23268,2024-02-23 19:30:00,Bayer Leverkusen,Mainz 05,2,1,1.47222,0.471019
+2023-24,Bundesliga,23263,2024-02-24 14:30:00,VfB Stuttgart,FC Cologne,1,1,1.87785,1.43669
+2023-24,Bundesliga,23265,2024-02-24 14:30:00,Werder Bremen,Darmstadt,1,1,1.5891,0.890186
+2023-24,Bundesliga,23266,2024-02-24 14:30:00,Borussia M.Gladbach,Bochum,5,2,3.64941,2.13723
+2023-24,Bundesliga,23269,2024-02-24 14:30:00,Union Berlin,FC Heidenheim,2,2,1.20933,1.33022
+2023-24,Bundesliga,23271,2024-02-24 17:30:00,Bayern Munich,RasenBallsport Leipzig,2,1,1.83179,0.57703
+2023-24,Bundesliga,23267,2024-02-25 14:30:00,Eintracht Frankfurt,Wolfsburg,2,2,1.53623,1.18165
+2023-24,Bundesliga,23270,2024-02-25 16:30:00,Borussia Dortmund,Hoffenheim,2,3,3.06361,1.31588
+2023-24,Bundesliga,23264,2024-02-25 18:30:00,Augsburg,Freiburg,2,1,2.40818,1.42649
+2023-24,Bundesliga,23273,2024-03-01 19:30:00,Freiburg,Bayern Munich,2,2,1.53977,2.4424
+2023-24,Bundesliga,23272,2024-03-02 14:30:00,Union Berlin,Borussia Dortmund,0,2,0.999042,1.63921
+2023-24,Bundesliga,23275,2024-03-02 14:30:00,Mainz 05,Borussia M.Gladbach,1,1,1.08864,1.55082
+2023-24,Bundesliga,23278,2024-03-02 14:30:00,Bochum,RasenBallsport Leipzig,1,4,0.562887,2.11704
+2023-24,Bundesliga,23279,2024-03-02 14:30:00,FC Heidenheim,Eintracht Frankfurt,1,2,0.847831,1.57778
+2023-24,Bundesliga,23280,2024-03-02 14:30:00,Darmstadt,Augsburg,0,6,1.113,3.39611
+2023-24,Bundesliga,23274,2024-03-02 17:30:00,Wolfsburg,VfB Stuttgart,2,3,0.964288,1.04058
+2023-24,Bundesliga,23276,2024-03-03 14:30:00,FC Cologne,Bayer Leverkusen,0,2,1.29405,1.63841
+2023-24,Bundesliga,23277,2024-03-03 16:30:00,Hoffenheim,Werder Bremen,2,1,2.06582,1.34942
+2023-24,Bundesliga,23289,2024-03-08 19:30:00,VfB Stuttgart,Union Berlin,2,0,1.30933,0.839212
+2023-24,Bundesliga,23281,2024-03-09 14:30:00,Bayern Munich,Mainz 05,8,1,6.78137,1.07439
+2023-24,Bundesliga,23282,2024-03-09 14:30:00,RasenBallsport Leipzig,Darmstadt,2,0,4.25377,0.394275
+2023-24,Bundesliga,23285,2024-03-09 14:30:00,Borussia M.Gladbach,FC Cologne,3,3,2.54696,0.924707
+2023-24,Bundesliga,23288,2024-03-09 14:30:00,Augsburg,FC Heidenheim,1,0,0.740927,0.267511
+2023-24,Bundesliga,23286,2024-03-09 17:30:00,Werder Bremen,Borussia Dortmund,1,2,1.34789,1.23563
+2023-24,Bundesliga,23287,2024-03-10 14:30:00,Bochum,Freiburg,1,2,1.28237,1.43573
+2023-24,Bundesliga,23284,2024-03-10 16:30:00,Eintracht Frankfurt,Hoffenheim,3,1,3.53168,0.695868
+2023-24,Bundesliga,23283,2024-03-10 18:30:00,Bayer Leverkusen,Wolfsburg,2,0,2.09982,0.354851
+2023-24,Bundesliga,23295,2024-03-15 19:30:00,FC Cologne,RasenBallsport Leipzig,1,5,1.18251,3.92775
+2023-24,Bundesliga,23291,2024-03-16 14:30:00,Union Berlin,Werder Bremen,2,1,1.42836,0.833042
+2023-24,Bundesliga,23293,2024-03-16 14:30:00,Wolfsburg,Augsburg,1,3,1.67932,0.971481
+2023-24,Bundesliga,23294,2024-03-16 14:30:00,Mainz 05,Bochum,2,0,2.33802,0.590727
+2023-24,Bundesliga,23297,2024-03-16 14:30:00,FC Heidenheim,Borussia M.Gladbach,1,1,1.61096,0.820339
+2023-24,Bundesliga,23298,2024-03-16 14:30:00,Darmstadt,Bayern Munich,2,5,1.2476,5.11913
+2023-24,Bundesliga,23296,2024-03-16 17:30:00,Hoffenheim,VfB Stuttgart,0,3,0.229186,3.1752
+2023-24,Bundesliga,23292,2024-03-17 14:30:00,Freiburg,Bayer Leverkusen,2,3,0.916618,2.50336
+2023-24,Bundesliga,23290,2024-03-17 16:30:00,Borussia Dortmund,Eintracht Frankfurt,3,1,2.83411,0.86903
+2023-24,Bundesliga,23300,2024-03-30 14:30:00,RasenBallsport Leipzig,Mainz 05,0,0,2.91967,1.00565
+2023-24,Bundesliga,23301,2024-03-30 14:30:00,Bayer Leverkusen,Hoffenheim,2,1,3.03672,0.657688
+2023-24,Bundesliga,23302,2024-03-30 14:30:00,Eintracht Frankfurt,Union Berlin,0,0,1.3089,1.07679
+2023-24,Bundesliga,23303,2024-03-30 14:30:00,Borussia M.Gladbach,Freiburg,0,3,1.84419,2.08769
+2023-24,Bundesliga,23304,2024-03-30 14:30:00,Werder Bremen,Wolfsburg,0,2,0.738782,2.44615
+2023-24,Bundesliga,23299,2024-03-30 17:30:00,Bayern Munich,Borussia Dortmund,0,2,1.90876,1.25844
+2023-24,Bundesliga,23306,2024-03-31 14:30:00,Augsburg,FC Cologne,1,1,2.13131,1.6795
+2023-24,Bundesliga,23307,2024-03-31 16:30:00,VfB Stuttgart,FC Heidenheim,3,3,3.0588,1.62523
+2023-24,Bundesliga,23305,2024-03-31 18:30:00,Bochum,Darmstadt,2,2,2.29251,0.879015
+2023-24,Bundesliga,23311,2024-04-05 18:30:00,Eintracht Frankfurt,Werder Bremen,1,1,2.18898,1.60098
+2023-24,Bundesliga,23309,2024-04-06 13:30:00,Union Berlin,Bayer Leverkusen,0,1,0.269865,2.7617
+2023-24,Bundesliga,23310,2024-04-06 13:30:00,Freiburg,RasenBallsport Leipzig,1,4,1.55898,2.88698
+2023-24,Bundesliga,23313,2024-04-06 13:30:00,Mainz 05,Darmstadt,4,0,3.84973,0.558152
+2023-24,Bundesliga,23315,2024-04-06 13:30:00,FC Heidenheim,Bayern Munich,3,2,1.35048,2.12066
+2023-24,Bundesliga,23316,2024-04-06 13:30:00,FC Cologne,Bochum,2,1,1.23733,0.777136
+2023-24,Bundesliga,23308,2024-04-06 16:30:00,Borussia Dortmund,VfB Stuttgart,0,1,2.95333,1.82865
+2023-24,Bundesliga,23314,2024-04-07 13:30:00,Hoffenheim,Augsburg,3,1,2.21977,0.806763
+2023-24,Bundesliga,23312,2024-04-07 15:30:00,Wolfsburg,Borussia M.Gladbach,1,3,1.26689,1.38704
+2023-24,Bundesliga,23323,2024-04-12 18:30:00,Augsburg,Union Berlin,2,0,1.7073,1.55042
+2023-24,Bundesliga,23317,2024-04-13 13:30:00,Bayern Munich,FC Cologne,2,0,2.34705,0.766768
+2023-24,Bundesliga,23318,2024-04-13 13:30:00,RasenBallsport Leipzig,Wolfsburg,3,0,1.68139,0.323042
+2023-24,Bundesliga,23320,2024-04-13 13:30:00,Mainz 05,Hoffenheim,4,1,2.58388,0.529727
+2023-24,Bundesliga,23321,2024-04-13 13:30:00,Borussia M.Gladbach,Borussia Dortmund,1,2,1.17228,1.80703
+2023-24,Bundesliga,23322,2024-04-13 13:30:00,Bochum,FC Heidenheim,1,1,1.11714,1.40689
+2023-24,Bundesliga,23324,2024-04-13 16:30:00,VfB Stuttgart,Eintracht Frankfurt,3,0,1.26199,0.565621
+2023-24,Bundesliga,23325,2024-04-14 13:30:00,Darmstadt,Freiburg,0,1,0.962275,1.34437
+2023-24,Bundesliga,23319,2024-04-14 15:30:00,Bayer Leverkusen,Werder Bremen,5,0,3.33579,0.885426
+2023-24,Bundesliga,23329,2024-04-19 18:30:00,Eintracht Frankfurt,Augsburg,3,1,1.88744,0.597958
+2023-24,Bundesliga,23330,2024-04-20 13:30:00,Wolfsburg,Bochum,1,0,1.34814,1.37904
+2023-24,Bundesliga,23331,2024-04-20 13:30:00,FC Cologne,Darmstadt,0,2,1.1117,1.95124
+2023-24,Bundesliga,23332,2024-04-20 13:30:00,Hoffenheim,Borussia M.Gladbach,4,3,2.77278,1.36369
+2023-24,Bundesliga,23334,2024-04-20 13:30:00,FC Heidenheim,RasenBallsport Leipzig,1,2,1.35248,1.58114
+2023-24,Bundesliga,23327,2024-04-20 16:30:00,Union Berlin,Bayern Munich,1,5,1.06863,1.92795
+2023-24,Bundesliga,23333,2024-04-21 13:30:00,Werder Bremen,VfB Stuttgart,2,1,1.40776,3.32355
+2023-24,Bundesliga,23326,2024-04-21 15:30:00,Borussia Dortmund,Bayer Leverkusen,1,1,0.773997,1.51278
+2023-24,Bundesliga,23328,2024-04-21 17:30:00,Freiburg,Mainz 05,1,1,1.25572,1.47938
+2023-24,Bundesliga,23341,2024-04-26 18:30:00,Bochum,Hoffenheim,3,2,3.91029,1.28293
+2023-24,Bundesliga,23335,2024-04-27 13:30:00,Bayern Munich,Eintracht Frankfurt,2,1,3.29649,0.392852
+2023-24,Bundesliga,23336,2024-04-27 13:30:00,RasenBallsport Leipzig,Borussia Dortmund,4,1,2.74912,1.7764
+2023-24,Bundesliga,23337,2024-04-27 13:30:00,Freiburg,Wolfsburg,1,2,1.86256,0.583145
+2023-24,Bundesliga,23342,2024-04-27 13:30:00,Augsburg,Werder Bremen,0,3,0.54257,2.53138
+2023-24,Bundesliga,23338,2024-04-27 16:30:00,Bayer Leverkusen,VfB Stuttgart,2,2,1.66579,2.02009
+2023-24,Bundesliga,23340,2024-04-28 13:30:00,Borussia M.Gladbach,Union Berlin,0,0,1.21021,1.11351
+2023-24,Bundesliga,23339,2024-04-28 15:30:00,Mainz 05,FC Cologne,1,1,1.88933,2.85686
+2023-24,Bundesliga,23343,2024-04-28 17:30:00,Darmstadt,FC Heidenheim,0,1,0.532047,1.49165
+2023-24,Bundesliga,23349,2024-05-03 18:30:00,Hoffenheim,RasenBallsport Leipzig,1,1,1.80367,1.03434
+2023-24,Bundesliga,23344,2024-05-04 13:30:00,Borussia Dortmund,Augsburg,5,1,3.67101,2.56978
+2023-24,Bundesliga,23347,2024-05-04 13:30:00,Wolfsburg,Darmstadt,3,0,3.16035,0.372357
+2023-24,Bundesliga,23350,2024-05-04 13:30:00,Werder Bremen,Borussia M.Gladbach,2,2,1.31618,2.28533
+2023-24,Bundesliga,23351,2024-05-04 13:30:00,VfB Stuttgart,Bayern Munich,3,1,2.0106,1.92761
+2023-24,Bundesliga,23348,2024-05-04 16:30:00,FC Cologne,Freiburg,0,0,1.08936,1.12733
+2023-24,Bundesliga,23345,2024-05-05 13:30:00,Union Berlin,Bochum,3,4,1.49561,1.84679
+2023-24,Bundesliga,23346,2024-05-05 15:30:00,Eintracht Frankfurt,Bayer Leverkusen,1,5,1.57584,3.11322
+2023-24,Bundesliga,23352,2024-05-05 17:30:00,FC Heidenheim,Mainz 05,1,1,1.42565,2.2312
+2023-24,Bundesliga,23360,2024-05-10 18:30:00,Augsburg,VfB Stuttgart,0,1,0.562362,1.82603
+2023-24,Bundesliga,23354,2024-05-11 13:30:00,RasenBallsport Leipzig,Werder Bremen,1,1,1.60961,1.0305
+2023-24,Bundesliga,23355,2024-05-11 13:30:00,Freiburg,FC Heidenheim,1,1,1.8695,0.634464
+2023-24,Bundesliga,23357,2024-05-11 13:30:00,Borussia M.Gladbach,Eintracht Frankfurt,1,1,0.323547,2.33139
+2023-24,Bundesliga,23358,2024-05-11 13:30:00,FC Cologne,Union Berlin,3,2,3.02417,1.66062
+2023-24,Bundesliga,23356,2024-05-11 16:30:00,Mainz 05,Borussia Dortmund,3,0,3.05403,0.398966
+2023-24,Bundesliga,23361,2024-05-12 13:30:00,Darmstadt,Hoffenheim,0,6,0.467229,3.67135
+2023-24,Bundesliga,23353,2024-05-12 15:30:00,Bayern Munich,Wolfsburg,2,0,0.37152,0.132383
+2023-24,Bundesliga,23359,2024-05-12 17:30:00,Bochum,Bayer Leverkusen,0,5,0.221516,4.59495
+2023-24,Bundesliga,23362,2024-05-18 13:30:00,Borussia Dortmund,Darmstadt,4,0,3.0526,0.281801
+2023-24,Bundesliga,23363,2024-05-18 13:30:00,Union Berlin,Freiburg,2,1,2.28943,0.963773
+2023-24,Bundesliga,23364,2024-05-18 13:30:00,Bayer Leverkusen,Augsburg,2,1,2.40225,1.19936
+2023-24,Bundesliga,23365,2024-05-18 13:30:00,Eintracht Frankfurt,RasenBallsport Leipzig,2,2,2.62491,1.79078
+2023-24,Bundesliga,23366,2024-05-18 13:30:00,Wolfsburg,Mainz 05,1,3,1.5246,2.37382
+2023-24,Bundesliga,23367,2024-05-18 13:30:00,Hoffenheim,Bayern Munich,4,2,2.44188,1.69159
+2023-24,Bundesliga,23368,2024-05-18 13:30:00,Werder Bremen,Bochum,4,1,3.80667,2.14301
+2023-24,Bundesliga,23369,2024-05-18 13:30:00,VfB Stuttgart,Borussia M.Gladbach,4,0,2.1075,1.65395
+2023-24,Bundesliga,23370,2024-05-18 13:30:00,FC Heidenheim,FC Cologne,4,1,1.46315,2.70114
+2023-24,La Liga,22685,2023-08-11 17:30:00,Almeria,Rayo Vallecano,0,2,1.1196,2.09532
+2023-24,La Liga,22686,2023-08-11 19:30:00,Sevilla,Valencia,1,2,0.714148,1.06796
+2023-24,La Liga,22687,2023-08-12 15:00:00,Real Sociedad,Girona,1,1,1.46019,1.27791
+2023-24,La Liga,22688,2023-08-12 17:30:00,Las Palmas,Mallorca,1,1,0.871699,1.49411
+2023-24,La Liga,22689,2023-08-12 19:30:00,Athletic Club,Real Madrid,0,2,0.700577,1.33266
+2023-24,La Liga,22690,2023-08-13 15:00:00,Celta Vigo,Osasuna,0,2,0.783184,0.964645
+2023-24,La Liga,22691,2023-08-13 17:30:00,Villarreal,Real Betis,1,2,0.737812,0.969349
+2023-24,La Liga,22692,2023-08-13 19:30:00,Getafe,Barcelona,0,0,0.804505,1.67817
+2023-24,La Liga,22693,2023-08-14 17:30:00,Cadiz,Alaves,1,0,0.822358,0.227442
+2023-24,La Liga,22694,2023-08-14 19:30:00,Atletico Madrid,Granada,3,1,3.01246,1.13452
+2023-24,La Liga,22695,2023-08-18 17:30:00,Mallorca,Villarreal,0,1,0.370077,2.12458
+2023-24,La Liga,22696,2023-08-18 19:30:00,Valencia,Las Palmas,1,0,1.50324,0.741978
+2023-24,La Liga,22697,2023-08-19 15:00:00,Real Sociedad,Celta Vigo,1,1,0.917678,1.77937
+2023-24,La Liga,22698,2023-08-19 17:30:00,Almeria,Real Madrid,1,3,1.81328,2.8802
+2023-24,La Liga,22699,2023-08-19 19:30:00,Osasuna,Athletic Club,0,2,1.33582,1.88906
+2023-24,La Liga,22700,2023-08-20 15:30:00,Girona,Getafe,3,0,1.86612,0.754861
+2023-24,La Liga,22701,2023-08-20 17:30:00,Barcelona,Cadiz,2,0,3.42524,1.11132
+2023-24,La Liga,22702,2023-08-20 19:30:00,Real Betis,Atletico Madrid,0,0,1.02642,0.34492
+2023-24,La Liga,22703,2023-08-21 17:00:00,Alaves,Sevilla,4,3,2.17962,0.958638
+2023-24,La Liga,22704,2023-08-21 19:30:00,Granada,Rayo Vallecano,0,2,0.837141,2.7851
+2023-24,La Liga,22705,2023-08-25 17:30:00,Las Palmas,Real Sociedad,0,0,1.56933,1.11751
+2023-24,La Liga,22712,2023-08-25 19:30:00,Celta Vigo,Real Madrid,0,1,1.17827,1.6167
+2023-24,La Liga,22707,2023-08-26 17:00:00,Cadiz,Almeria,1,1,1.56203,0.271622
+2023-24,La Liga,22708,2023-08-26 17:30:00,Granada,Mallorca,3,2,1.81377,2.50232
+2023-24,La Liga,22709,2023-08-26 19:30:00,Sevilla,Girona,1,2,1.93643,1.07498
+2023-24,La Liga,22710,2023-08-27 15:30:00,Villarreal,Barcelona,3,4,1.87195,2.95807
+2023-24,La Liga,22711,2023-08-27 17:30:00,Valencia,Osasuna,1,2,1.87647,1.45939
+2023-24,La Liga,22706,2023-08-27 19:30:00,Athletic Club,Real Betis,4,2,2.86727,0.346198
+2023-24,La Liga,22713,2023-08-28 17:30:00,Getafe,Alaves,1,0,2.67029,0.860623
+2023-24,La Liga,22714,2023-08-28 19:30:00,Rayo Vallecano,Atletico Madrid,0,7,0.542939,3.29424
+2023-24,La Liga,22718,2023-09-01 17:30:00,Cadiz,Villarreal,3,1,1.97214,0.494033
+2023-24,La Liga,22715,2023-09-01 20:00:00,Almeria,Celta Vigo,2,3,3.16421,1.96028
+2023-24,La Liga,22724,2023-09-02 12:00:00,Real Sociedad,Granada,5,3,2.08686,0.549509
+2023-24,La Liga,22723,2023-09-02 14:15:00,Real Madrid,Getafe,2,1,2.64665,0.893748
+2023-24,La Liga,22720,2023-09-02 16:30:00,Alaves,Valencia,1,0,1.90475,0.715753
+2023-24,La Liga,22717,2023-09-02 19:00:00,Real Betis,Rayo Vallecano,1,0,0.91924,1.53554
+2023-24,La Liga,22719,2023-09-03 12:00:00,Girona,Las Palmas,1,0,1.42397,1.18696
+2023-24,La Liga,22721,2023-09-03 14:15:00,Mallorca,Athletic Club,0,0,0.403052,0.645541
+2023-24,La Liga,22722,2023-09-03 19:00:00,Osasuna,Barcelona,1,2,0.801843,1.77255
+2023-24,La Liga,22734,2023-09-15 19:00:00,Rayo Vallecano,Alaves,2,0,2.64605,0.556231
+2023-24,La Liga,22725,2023-09-16 12:00:00,Athletic Club,Cadiz,3,0,4.05837,0.238836
+2023-24,La Liga,22731,2023-09-16 14:15:00,Valencia,Atletico Madrid,3,0,2.22142,0.564083
+2023-24,La Liga,22727,2023-09-16 16:30:00,Celta Vigo,Mallorca,0,1,2.06489,0.853213
+2023-24,La Liga,22726,2023-09-16 19:00:00,Barcelona,Real Betis,5,0,2.54628,0.852869
+2023-24,La Liga,22728,2023-09-17 12:00:00,Getafe,Osasuna,3,2,0.736469,1.29606
+2023-24,La Liga,22730,2023-09-17 14:15:00,Villarreal,Almeria,2,1,1.43205,1.76794
+2023-24,La Liga,22733,2023-09-17 16:30:00,Sevilla,Las Palmas,1,0,2.43059,1.03513
+2023-24,La Liga,22729,2023-09-17 19:00:00,Real Madrid,Real Sociedad,2,1,2.56902,2.1546
+2023-24,La Liga,22732,2023-09-18 19:00:00,Granada,Girona,2,4,1.97263,2.1418
+2023-24,La Liga,22742,2023-09-22 19:00:00,Alaves,Athletic Club,0,2,1.97317,1.77623
+2023-24,La Liga,22739,2023-09-23 12:00:00,Girona,Mallorca,5,3,4.19225,2.42602
+2023-24,La Liga,22740,2023-09-23 14:15:00,Osasuna,Sevilla,0,0,1.57361,0.693906
+2023-24,La Liga,22737,2023-09-23 16:30:00,Barcelona,Celta Vigo,3,2,1.82246,1.67938
+2023-24,La Liga,22735,2023-09-23 19:00:00,Almeria,Valencia,2,2,2.46387,0.995742
+2023-24,La Liga,22743,2023-09-24 12:00:00,Real Sociedad,Getafe,4,3,2.13384,1.59398
+2023-24,La Liga,22741,2023-09-24 14:15:00,Rayo Vallecano,Villarreal,1,1,1.0345,1.0365
+2023-24,La Liga,22738,2023-09-24 16:30:00,Real Betis,Cadiz,1,1,2.70742,0.570946
+2023-24,La Liga,22744,2023-09-24 16:30:00,Las Palmas,Granada,1,0,0.701293,0.0378648
+2023-24,La Liga,22736,2023-09-24 19:00:00,Atletico Madrid,Real Madrid,3,1,1.79578,0.847915
+2023-24,La Liga,22747,2023-09-26 17:00:00,Sevilla,Almeria,5,1,2.90509,1.37069
+2023-24,La Liga,22749,2023-09-26 19:30:00,Mallorca,Barcelona,2,2,1.21366,1.62815
+2023-24,La Liga,22745,2023-09-27 17:00:00,Athletic Club,Getafe,2,2,0.60877,1.30782
+2023-24,La Liga,22751,2023-09-27 17:00:00,Villarreal,Girona,1,2,1.89071,2.29941
+2023-24,La Liga,22753,2023-09-27 17:00:00,Real Madrid,Las Palmas,2,0,2.71542,0.618032
+2023-24,La Liga,22746,2023-09-27 19:30:00,Cadiz,Rayo Vallecano,0,0,0.35761,0.258447
+2023-24,La Liga,22752,2023-09-27 19:30:00,Valencia,Real Sociedad,0,1,0.356756,0.29355
+2023-24,La Liga,22750,2023-09-28 17:00:00,Granada,Real Betis,1,1,1.55108,0.870668
+2023-24,La Liga,22754,2023-09-28 17:00:00,Celta Vigo,Alaves,1,1,0.497466,2.39712
+2023-24,La Liga,22748,2023-09-28 19:30:00,Osasuna,Atletico Madrid,0,2,0.759357,1.22827
+2023-24,La Liga,22757,2023-09-29 19:00:00,Barcelona,Sevilla,1,0,2.5598,1.07557
+2023-24,La Liga,22759,2023-09-30 12:00:00,Getafe,Villarreal,0,0,0.768368,0.112227
+2023-24,La Liga,22764,2023-09-30 14:15:00,Rayo Vallecano,Mallorca,2,2,1.78616,1.33689
+2023-24,La Liga,22760,2023-09-30 16:30:00,Girona,Real Madrid,0,3,2.17781,2.78602
+2023-24,La Liga,22762,2023-09-30 19:00:00,Real Sociedad,Athletic Club,3,0,1.38238,1.96039
+2023-24,La Liga,22755,2023-10-01 12:00:00,Almeria,Granada,3,3,2.24188,3.51421
+2023-24,La Liga,22761,2023-10-01 14:15:00,Alaves,Osasuna,0,2,1.5824,1.26744
+2023-24,La Liga,22756,2023-10-01 19:00:00,Atletico Madrid,Cadiz,3,2,3.10102,0.677345
+2023-24,La Liga,22758,2023-10-01 19:00:00,Real Betis,Valencia,3,0,2.53745,0.510459
+2023-24,La Liga,22763,2023-10-02 19:00:00,Las Palmas,Celta Vigo,2,1,1.46382,1.54337
+2023-24,La Liga,22770,2023-10-06 19:00:00,Athletic Club,Almeria,3,0,3.02889,0.0892217
+2023-24,La Liga,22766,2023-10-07 12:00:00,Cadiz,Girona,0,1,0.653575,1.26462
+2023-24,La Liga,22772,2023-10-07 14:15:00,Real Madrid,Osasuna,4,0,4.47802,0.164111
+2023-24,La Liga,22768,2023-10-07 16:30:00,Mallorca,Valencia,1,1,0.919992,0.509313
+2023-24,La Liga,22773,2023-10-07 19:00:00,Sevilla,Rayo Vallecano,2,2,0.807105,0.998714
+2023-24,La Liga,22774,2023-10-08 12:00:00,Villarreal,Las Palmas,1,2,1.16305,1.1602
+2023-24,La Liga,22765,2023-10-08 14:15:00,Atletico Madrid,Real Sociedad,2,1,2.94239,0.928071
+2023-24,La Liga,22767,2023-10-08 16:30:00,Celta Vigo,Getafe,2,2,3.02859,1.00866
+2023-24,La Liga,22769,2023-10-08 16:30:00,Alaves,Real Betis,1,1,1.89594,0.872851
+2023-24,La Liga,22771,2023-10-08 19:00:00,Granada,Barcelona,2,2,0.611577,2.99552
+2023-24,La Liga,22783,2023-10-20 19:00:00,Osasuna,Granada,2,0,1.79846,0.776224
+2023-24,La Liga,22781,2023-10-21 12:00:00,Real Sociedad,Mallorca,1,0,2.0056,2.03914
+2023-24,La Liga,22779,2023-10-21 14:15:00,Getafe,Real Betis,1,1,1.86677,1.42816
+2023-24,La Liga,22782,2023-10-21 16:30:00,Sevilla,Real Madrid,1,1,1.8723,2.17904
+2023-24,La Liga,22778,2023-10-21 19:00:00,Celta Vigo,Atletico Madrid,0,3,1.26757,2.39246
+2023-24,La Liga,22775,2023-10-22 12:00:00,Las Palmas,Rayo Vallecano,0,1,1.18559,1.25598
+2023-24,La Liga,22776,2023-10-22 14:15:00,Girona,Almeria,5,2,2.1972,0.878392
+2023-24,La Liga,22784,2023-10-22 16:30:00,Villarreal,Alaves,1,1,1.71642,1.79896
+2023-24,La Liga,22777,2023-10-22 19:00:00,Barcelona,Athletic Club,1,0,1.70266,0.453295
+2023-24,La Liga,22780,2023-10-23 19:00:00,Valencia,Cadiz,2,0,1.6763,0.551967
+2023-24,La Liga,22792,2023-10-27 19:00:00,Girona,Celta Vigo,1,0,0.619488,0.174681
+2023-24,La Liga,22785,2023-10-28 12:00:00,Almeria,Las Palmas,1,2,0.275712,1.06446
+2023-24,La Liga,22787,2023-10-28 14:15:00,Barcelona,Real Madrid,1,2,1.32038,0.959404
+2023-24,La Liga,22793,2023-10-28 16:30:00,Mallorca,Getafe,0,0,0.722341,0.292202
+2023-24,La Liga,22789,2023-10-28 19:00:00,Cadiz,Sevilla,2,2,1.42705,1.28392
+2023-24,La Liga,22788,2023-10-29 13:00:00,Real Betis,Osasuna,2,1,1.43393,0.446425
+2023-24,La Liga,22790,2023-10-29 15:15:00,Rayo Vallecano,Real Sociedad,2,2,0.844003,1.93178
+2023-24,La Liga,22786,2023-10-29 17:30:00,Athletic Club,Valencia,2,2,1.63308,2.17868
+2023-24,La Liga,22794,2023-10-29 20:00:00,Atletico Madrid,Alaves,2,1,1.94088,0.385398
+2023-24,La Liga,22791,2023-10-30 20:00:00,Granada,Villarreal,2,3,2.80131,1.90197
+2023-24,La Liga,22799,2023-11-03 19:00:00,Las Palmas,Atletico Madrid,2,1,0.452709,1.52768
+2023-24,La Liga,22802,2023-11-04 13:00:00,Osasuna,Girona,2,4,2.18398,2.78694
+2023-24,La Liga,22795,2023-11-04 15:15:00,Real Betis,Mallorca,2,0,2.84664,0.540374
+2023-24,La Liga,22796,2023-11-04 17:30:00,Celta Vigo,Sevilla,1,1,3.01524,1.25089
+2023-24,La Liga,22800,2023-11-04 20:00:00,Real Sociedad,Barcelona,0,1,0.84705,1.22041
+2023-24,La Liga,22797,2023-11-05 13:00:00,Alaves,Almeria,1,0,2.57982,0.893084
+2023-24,La Liga,22804,2023-11-05 15:15:00,Valencia,Granada,1,0,1.18921,0.344591
+2023-24,La Liga,22798,2023-11-05 17:30:00,Villarreal,Athletic Club,2,3,1.78074,2.22797
+2023-24,La Liga,22803,2023-11-05 20:00:00,Real Madrid,Rayo Vallecano,0,0,1.85349,0.134981
+2023-24,La Liga,22801,2023-11-06 20:00:00,Getafe,Cadiz,1,0,1.21452,0.821864
+2023-24,La Liga,22806,2023-11-10 20:00:00,Athletic Club,Celta Vigo,4,3,4.72334,2.25302
+2023-24,La Liga,22812,2023-11-11 13:00:00,Rayo Vallecano,Girona,1,2,1.67584,4.2691
+2023-24,La Liga,22805,2023-11-11 15:15:00,Almeria,Real Sociedad,1,3,0.637245,2.53693
+2023-24,La Liga,22811,2023-11-11 17:30:00,Granada,Getafe,1,1,1.4404,2.30149
+2023-24,La Liga,22813,2023-11-11 17:30:00,Osasuna,Las Palmas,1,1,1.44069,0.291858
+2023-24,La Liga,22808,2023-11-11 20:00:00,Real Madrid,Valencia,5,1,1.90598,2.03068
+2023-24,La Liga,22814,2023-11-12 15:15:00,Barcelona,Alaves,2,1,1.81139,1.83858
+2023-24,La Liga,22809,2023-11-12 17:30:00,Sevilla,Real Betis,1,1,0.615603,2.17922
+2023-24,La Liga,22807,2023-11-12 20:00:00,Atletico Madrid,Villarreal,3,1,3.93786,0.868854
+2023-24,La Liga,22819,2023-11-24 20:00:00,Alaves,Granada,3,1,0.871813,1.13855
+2023-24,La Liga,22822,2023-11-25 13:00:00,Rayo Vallecano,Barcelona,1,1,0.912299,1.30627
+2023-24,La Liga,22823,2023-11-25 15:15:00,Valencia,Celta Vigo,0,0,0.247015,0.609862
+2023-24,La Liga,22820,2023-11-25 17:30:00,Getafe,Almeria,2,1,1.39391,1.72918
+2023-24,La Liga,22815,2023-11-25 20:00:00,Atletico Madrid,Mallorca,1,0,2.29683,0.945212
+2023-24,La Liga,22824,2023-11-26 13:00:00,Villarreal,Osasuna,3,1,2.84591,1.26437
+2023-24,La Liga,22818,2023-11-26 15:15:00,Real Sociedad,Sevilla,2,1,1.05204,0.374082
+2023-24,La Liga,22817,2023-11-26 17:30:00,Cadiz,Real Madrid,0,3,1.13056,1.84054
+2023-24,La Liga,22816,2023-11-26 20:00:00,Real Betis,Las Palmas,1,0,1.92649,0.751589
+2023-24,La Liga,22821,2023-11-27 20:00:00,Girona,Athletic Club,1,1,1.36177,1.67266
+2023-24,La Liga,22810,2023-11-29 20:00:00,Mallorca,Cadiz,1,1,0.8514,0.251799
+2023-24,La Liga,22832,2023-12-01 19:00:00,Las Palmas,Getafe,2,0,1.8817,0.76355
+2023-24,La Liga,22827,2023-12-02 13:00:00,Girona,Valencia,2,1,1.85396,1.00981
+2023-24,La Liga,22826,2023-12-02 15:15:00,Athletic Club,Rayo Vallecano,4,0,1.6869,0.34629
+2023-24,La Liga,22833,2023-12-02 17:30:00,Real Madrid,Granada,2,0,2.2606,0.110085
+2023-24,La Liga,22828,2023-12-02 20:00:00,Osasuna,Real Sociedad,1,1,1.01822,1.69944
+2023-24,La Liga,22834,2023-12-03 13:00:00,Mallorca,Alaves,0,0,0.909609,0.277842
+2023-24,La Liga,22825,2023-12-03 15:15:00,Almeria,Real Betis,0,0,2.69938,0.769817
+2023-24,La Liga,22829,2023-12-03 17:30:00,Sevilla,Villarreal,1,1,2.4784,1.47061
+2023-24,La Liga,22830,2023-12-03 20:00:00,Barcelona,Atletico Madrid,1,0,3.18789,0.996297
+2023-24,La Liga,22831,2023-12-04 20:00:00,Celta Vigo,Cadiz,1,1,2.73216,0.346727
+2023-24,La Liga,22838,2023-12-08 20:00:00,Getafe,Valencia,1,0,0.841976,0.183916
+2023-24,La Liga,22840,2023-12-09 13:00:00,Alaves,Las Palmas,0,1,2.20546,0.473883
+2023-24,La Liga,22836,2023-12-09 15:15:00,Real Betis,Real Madrid,1,1,1.51575,0.803862
+2023-24,La Liga,22844,2023-12-09 17:30:00,Villarreal,Real Sociedad,0,3,2.37019,2.19834
+2023-24,La Liga,22839,2023-12-09 20:00:00,Mallorca,Sevilla,1,0,0.533315,0.554467
+2023-24,La Liga,22841,2023-12-10 13:00:00,Atletico Madrid,Almeria,2,1,2.16876,1.6656
+2023-24,La Liga,22837,2023-12-10 17:30:00,Cadiz,Osasuna,1,1,1.15321,1.81825
+2023-24,La Liga,22835,2023-12-10 20:00:00,Barcelona,Girona,2,4,4.25448,2.93797
+2023-24,La Liga,22843,2023-12-11 20:00:00,Rayo Vallecano,Celta Vigo,0,0,1.32415,0.126167
+2023-24,La Liga,22842,2023-12-12 15:15:00,Granada,Athletic Club,1,1,0.543471,1.68816
+2023-24,La Liga,22848,2023-12-15 20:00:00,Osasuna,Rayo Vallecano,1,0,1.77561,1.15316
+2023-24,La Liga,22847,2023-12-16 13:00:00,Celta Vigo,Granada,1,0,1.33261,0.690175
+2023-24,La Liga,22846,2023-12-16 15:15:00,Athletic Club,Atletico Madrid,2,0,2.73082,0.342126
+2023-24,La Liga,22853,2023-12-16 17:30:00,Sevilla,Getafe,0,3,0.80788,2.83746
+2023-24,La Liga,22850,2023-12-16 20:00:00,Valencia,Barcelona,1,1,0.78681,3.16129
+2023-24,La Liga,22845,2023-12-17 13:00:00,Almeria,Mallorca,0,0,0.314828,1.51369
+2023-24,La Liga,22851,2023-12-17 15:15:00,Real Sociedad,Real Betis,0,0,0.989954,1.37163
+2023-24,La Liga,22852,2023-12-17 17:30:00,Las Palmas,Cadiz,1,1,0.826817,1.42619
+2023-24,La Liga,22849,2023-12-17 20:00:00,Real Madrid,Villarreal,4,1,3.22478,0.421986
+2023-24,La Liga,22854,2023-12-18 20:00:00,Girona,Alaves,3,0,1.92988,0.546438
+2023-24,La Liga,22860,2023-12-19 18:00:00,Rayo Vallecano,Valencia,0,1,0.51265,0.33485
+2023-24,La Liga,22856,2023-12-19 20:30:00,Atletico Madrid,Getafe,3,3,2.02936,2.53681
+2023-24,La Liga,22861,2023-12-19 20:30:00,Granada,Sevilla,0,3,1.12822,0.514939
+2023-24,La Liga,22863,2023-12-20 18:00:00,Barcelona,Almeria,3,2,4.04903,1.39703
+2023-24,La Liga,22855,2023-12-20 20:30:00,Athletic Club,Las Palmas,1,0,3.53577,0.2514
+2023-24,La Liga,22864,2023-12-20 20:30:00,Villarreal,Celta Vigo,3,2,2.59564,1.98503
+2023-24,La Liga,22857,2023-12-21 18:00:00,Real Betis,Girona,1,1,1.61394,1.64551
+2023-24,La Liga,22858,2023-12-21 18:00:00,Cadiz,Real Sociedad,0,0,0.856097,0.6603
+2023-24,La Liga,22859,2023-12-21 20:30:00,Mallorca,Osasuna,3,2,1.68391,1.5871
+2023-24,La Liga,22862,2023-12-21 20:30:00,Alaves,Real Madrid,0,1,0.388196,0.947483
+2023-24,La Liga,22716,2023-12-23 14:15:00,Atletico Madrid,Sevilla,1,0,1.53277,0.279969
+2023-24,La Liga,22865,2024-01-02 16:00:00,Getafe,Rayo Vallecano,0,2,0.651184,2.73568
+2023-24,La Liga,22874,2024-01-02 18:15:00,Real Sociedad,Alaves,1,1,0.98082,0.969339
+2023-24,La Liga,22866,2024-01-02 20:30:00,Valencia,Villarreal,3,1,2.78114,1.15004
+2023-24,La Liga,22872,2024-01-03 16:00:00,Granada,Cadiz,2,0,3.87666,0.746073
+2023-24,La Liga,22871,2024-01-03 18:15:00,Celta Vigo,Real Betis,2,1,2.54675,1.73674
+2023-24,La Liga,22873,2024-01-03 18:15:00,Real Madrid,Mallorca,1,0,1.87575,0.840414
+2023-24,La Liga,22869,2024-01-03 20:30:00,Girona,Atletico Madrid,4,3,2.32369,2.67389
+2023-24,La Liga,22867,2024-01-04 16:00:00,Osasuna,Almeria,1,0,2.03356,0.239636
+2023-24,La Liga,22868,2024-01-04 18:15:00,Sevilla,Athletic Club,0,2,0.54777,1.99704
+2023-24,La Liga,22870,2024-01-04 20:30:00,Las Palmas,Barcelona,1,2,0.967341,2.3608
+2023-24,La Liga,22884,2024-01-12 20:00:00,Sevilla,Alaves,2,3,2.49561,2.08895
+2023-24,La Liga,22882,2024-01-13 13:00:00,Las Palmas,Villarreal,3,0,0.963955,1.71198
+2023-24,La Liga,22883,2024-01-13 15:15:00,Mallorca,Celta Vigo,1,1,2.59976,0.711693
+2023-24,La Liga,22876,2024-01-13 17:30:00,Athletic Club,Real Sociedad,2,1,1.73042,1.02381
+2023-24,La Liga,22879,2024-01-13 20:00:00,Real Betis,Granada,1,0,2.00904,0.658067
+2023-24,La Liga,22875,2024-01-14 13:00:00,Almeria,Girona,0,0,2.20551,0.246622
+2023-24,La Liga,22880,2024-01-14 15:15:00,Cadiz,Valencia,1,4,1.55289,1.7596
+2023-24,La Liga,22887,2024-01-19 20:00:00,Alaves,Cadiz,1,0,1.83115,0.670357
+2023-24,La Liga,22894,2024-01-20 13:00:00,Rayo Vallecano,Las Palmas,0,2,2.16832,0.786109
+2023-24,La Liga,22893,2024-01-20 15:15:00,Villarreal,Mallorca,1,1,1.7328,0.430539
+2023-24,La Liga,22889,2024-01-20 17:30:00,Valencia,Athletic Club,1,0,0.7444,0.351363
+2023-24,La Liga,22885,2024-01-20 20:00:00,Celta Vigo,Real Sociedad,0,1,0.257377,0.630224
+2023-24,La Liga,22892,2024-01-21 13:00:00,Osasuna,Getafe,3,2,1.57055,1.50775
+2023-24,La Liga,22888,2024-01-21 15:15:00,Real Madrid,Almeria,3,2,3.07258,0.928735
+2023-24,La Liga,22891,2024-01-21 17:30:00,Real Betis,Barcelona,2,4,1.61122,2.71025
+2023-24,La Liga,22886,2024-01-21 20:00:00,Girona,Sevilla,5,1,2.95279,0.947841
+2023-24,La Liga,22890,2024-01-22 20:00:00,Granada,Atletico Madrid,0,1,0.684269,1.42876
+2023-24,La Liga,22904,2024-01-26 20:00:00,Almeria,Alaves,0,3,1.80182,2.061
+2023-24,La Liga,22903,2024-01-27 13:00:00,Real Sociedad,Rayo Vallecano,0,0,0.251108,0.129675
+2023-24,La Liga,22899,2024-01-27 15:15:00,Las Palmas,Real Madrid,1,2,0.929969,2.05683
+2023-24,La Liga,22896,2024-01-27 17:30:00,Barcelona,Villarreal,3,5,2.02779,2.36875
+2023-24,La Liga,22901,2024-01-27 20:00:00,Mallorca,Real Betis,0,1,1.72961,0.400759
+2023-24,La Liga,22897,2024-01-28 13:00:00,Celta Vigo,Girona,0,1,1.03961,1.60712
+2023-24,La Liga,22900,2024-01-28 15:15:00,Cadiz,Athletic Club,0,0,0.367526,0.25604
+2023-24,La Liga,22902,2024-01-28 17:30:00,Sevilla,Osasuna,1,1,1.42372,1.07779
+2023-24,La Liga,22895,2024-01-28 20:00:00,Atletico Madrid,Valencia,2,0,2.80234,0.406631
+2023-24,La Liga,22898,2024-01-29 20:00:00,Getafe,Granada,2,0,1.03385,1.504
+2023-24,La Liga,22878,2024-01-31 18:00:00,Barcelona,Osasuna,1,0,2.21737,1.41966
+2023-24,La Liga,22877,2024-01-31 20:00:00,Atletico Madrid,Rayo Vallecano,2,1,1.29884,0.426602
+2023-24,La Liga,22881,2024-02-01 20:00:00,Getafe,Real Madrid,0,2,0.791039,2.72231
+2023-24,La Liga,22905,2024-02-02 20:00:00,Athletic Club,Mallorca,4,0,1.95995,0.469702
+2023-24,La Liga,22911,2024-02-03 13:00:00,Valencia,Almeria,2,1,1.38646,1.5882
+2023-24,La Liga,22909,2024-02-03 15:15:00,Granada,Las Palmas,1,1,0.155607,1.27614
+2023-24,La Liga,22910,2024-02-03 17:30:00,Alaves,Barcelona,1,3,1.04716,1.55781
+2023-24,La Liga,22907,2024-02-03 20:00:00,Girona,Real Sociedad,0,0,1.04543,0.583723
+2023-24,La Liga,22913,2024-02-04 13:00:00,Villarreal,Cadiz,0,0,1.00089,0.686978
+2023-24,La Liga,22914,2024-02-04 15:15:00,Osasuna,Celta Vigo,0,3,1.00524,1.37845
+2023-24,La Liga,22906,2024-02-04 17:30:00,Real Betis,Getafe,1,1,1.54414,1.9002
+2023-24,La Liga,22912,2024-02-04 20:00:00,Real Madrid,Atletico Madrid,1,1,2.36334,1.35012
+2023-24,La Liga,22908,2024-02-05 20:00:00,Rayo Vallecano,Sevilla,1,2,2.1306,1.77647
+2023-24,La Liga,22921,2024-02-09 20:00:00,Cadiz,Real Betis,0,2,0.755069,1.43872
+2023-24,La Liga,22919,2024-02-10 13:00:00,Alaves,Villarreal,1,1,2.09111,1.29002
+2023-24,La Liga,22924,2024-02-10 15:15:00,Real Sociedad,Osasuna,0,1,2.50503,0.704714
+2023-24,La Liga,22923,2024-02-10 17:30:00,Real Madrid,Girona,4,0,3.32636,0.180194
+2023-24,La Liga,22918,2024-02-10 20:00:00,Las Palmas,Valencia,2,0,1.41954,0.251178
+2023-24,La Liga,22922,2024-02-11 13:00:00,Getafe,Celta Vigo,3,2,2.22295,1.2733
+2023-24,La Liga,22917,2024-02-11 15:15:00,Mallorca,Rayo Vallecano,2,1,0.82898,1.40787
+2023-24,La Liga,22920,2024-02-11 17:30:00,Sevilla,Atletico Madrid,1,0,2.15338,1.67549
+2023-24,La Liga,22916,2024-02-11 20:00:00,Barcelona,Granada,3,3,2.5229,1.20453
+2023-24,La Liga,22915,2024-02-12 20:00:00,Almeria,Athletic Club,0,0,0.900611,0.621857
+2023-24,La Liga,22932,2024-02-16 20:00:00,Villarreal,Getafe,1,1,1.61961,0.976893
+2023-24,La Liga,22926,2024-02-17 13:00:00,Atletico Madrid,Las Palmas,5,0,2.79269,0.660284
+2023-24,La Liga,22931,2024-02-17 15:15:00,Osasuna,Cadiz,2,0,1.37854,0.919753
+2023-24,La Liga,22930,2024-02-17 17:30:00,Celta Vigo,Barcelona,1,2,0.636492,1.5046
+2023-24,La Liga,22933,2024-02-17 20:00:00,Valencia,Sevilla,0,0,1.11987,0.0457854
+2023-24,La Liga,22928,2024-02-18 13:00:00,Rayo Vallecano,Real Madrid,1,1,1.1431,1.0219
+2023-24,La Liga,22929,2024-02-18 15:15:00,Granada,Almeria,1,1,1.79616,0.693843
+2023-24,La Liga,22927,2024-02-18 17:30:00,Mallorca,Real Sociedad,1,2,0.188904,1.20859
+2023-24,La Liga,22934,2024-02-18 20:00:00,Real Betis,Alaves,0,0,1.18267,0.490778
+2023-24,La Liga,22925,2024-02-19 20:00:00,Athletic Club,Girona,3,2,2.7904,1.80583
+2023-24,La Liga,22940,2024-02-23 20:00:00,Real Sociedad,Villarreal,1,3,1.48985,1.6421
+2023-24,La Liga,22936,2024-02-24 15:15:00,Barcelona,Getafe,4,0,2.65095,0.316762
+2023-24,La Liga,22943,2024-02-24 17:30:00,Alaves,Mallorca,1,1,0.501891,1.80166
+2023-24,La Liga,22935,2024-02-24 20:00:00,Almeria,Atletico Madrid,2,2,0.352281,1.87638
+2023-24,La Liga,22937,2024-02-25 13:00:00,Cadiz,Celta Vigo,2,2,1.87476,0.680213
+2023-24,La Liga,22944,2024-02-25 15:15:00,Real Betis,Athletic Club,3,1,0.921277,0.137757
+2023-24,La Liga,22942,2024-02-25 17:30:00,Las Palmas,Osasuna,1,1,0.942659,0.387933
+2023-24,La Liga,22939,2024-02-25 20:00:00,Real Madrid,Sevilla,1,0,1.01644,0.967099
+2023-24,La Liga,22938,2024-02-26 20:00:00,Girona,Rayo Vallecano,3,0,2.81311,0.564655
+2023-24,La Liga,22948,2024-03-01 20:00:00,Celta Vigo,Almeria,1,0,1.82317,0.3259
+2023-24,La Liga,22952,2024-03-02 13:00:00,Sevilla,Real Sociedad,3,2,2.15506,1.27238
+2023-24,La Liga,22949,2024-03-02 15:15:00,Rayo Vallecano,Cadiz,1,1,0.688061,1.21648
+2023-24,La Liga,22947,2024-03-02 17:30:00,Getafe,Las Palmas,3,3,2.38804,1.37145
+2023-24,La Liga,22951,2024-03-02 20:00:00,Valencia,Real Madrid,2,2,1.33185,1.45798
+2023-24,La Liga,22953,2024-03-03 13:00:00,Villarreal,Granada,5,1,3.02991,0.276758
+2023-24,La Liga,22946,2024-03-03 15:15:00,Atletico Madrid,Real Betis,2,1,3.54138,0.588581
+2023-24,La Liga,22950,2024-03-03 17:30:00,Mallorca,Girona,1,0,0.943297,1.08616
+2023-24,La Liga,22945,2024-03-03 20:00:00,Athletic Club,Barcelona,0,0,0.468397,0.714592
+2023-24,La Liga,22954,2024-03-04 20:00:00,Osasuna,Alaves,1,0,1.71646,1.14533
+2023-24,La Liga,22956,2024-03-08 20:00:00,Barcelona,Mallorca,1,0,2.06225,0.504754
+2023-24,La Liga,22964,2024-03-09 13:00:00,Valencia,Getafe,1,0,1.27245,1.17773
+2023-24,La Liga,22962,2024-03-09 15:15:00,Cadiz,Atletico Madrid,2,0,1.18033,0.895711
+2023-24,La Liga,22959,2024-03-09 17:30:00,Granada,Real Sociedad,2,3,2.0551,1.88323
+2023-24,La Liga,22958,2024-03-09 20:00:00,Girona,Osasuna,2,0,2.1772,0.185235
+2023-24,La Liga,22960,2024-03-10 13:00:00,Alaves,Rayo Vallecano,1,0,0.640241,0.579451
+2023-24,La Liga,22961,2024-03-10 15:15:00,Las Palmas,Athletic Club,0,2,0.834663,1.27321
+2023-24,La Liga,22963,2024-03-10 17:30:00,Real Madrid,Celta Vigo,4,0,3.6885,0.53726
+2023-24,La Liga,22957,2024-03-10 20:00:00,Real Betis,Villarreal,2,3,1.39975,1.30814
+2023-24,La Liga,22955,2024-03-11 20:00:00,Almeria,Sevilla,2,2,1.81235,2.6495
+2023-24,La Liga,22970,2024-03-15 20:00:00,Real Sociedad,Cadiz,2,0,2.34962,0.695705
+2023-24,La Liga,22973,2024-03-16 13:00:00,Mallorca,Granada,1,0,1.65502,0.295993
+2023-24,La Liga,22967,2024-03-16 15:15:00,Osasuna,Real Madrid,2,4,0.669756,3.05767
+2023-24,La Liga,22966,2024-03-16 17:30:00,Getafe,Girona,1,0,1.10963,1.70185
+2023-24,La Liga,22974,2024-03-16 20:00:00,Athletic Club,Alaves,2,0,2.31129,1.38702
+2023-24,La Liga,22971,2024-03-17 13:00:00,Sevilla,Celta Vigo,1,2,1.75591,2.23423
+2023-24,La Liga,22972,2024-03-17 15:15:00,Villarreal,Valencia,1,0,2.1872,1.07722
+2023-24,La Liga,22968,2024-03-17 16:15:00,Las Palmas,Almeria,0,1,0.793707,0.688106
+2023-24,La Liga,22969,2024-03-17 17:30:00,Rayo Vallecano,Real Betis,2,0,0.790186,0.69375
+2023-24,La Liga,22965,2024-03-17 20:00:00,Atletico Madrid,Barcelona,0,3,0.570805,1.94966
+2023-24,La Liga,22977,2024-03-29 20:00:00,Cadiz,Granada,1,0,1.19169,0.412637
+2023-24,La Liga,22979,2024-03-30 13:00:00,Getafe,Sevilla,0,1,1.57791,0.901033
+2023-24,La Liga,22975,2024-03-30 15:15:00,Almeria,Osasuna,0,3,0.745696,1.00888
+2023-24,La Liga,22984,2024-03-30 17:30:00,Valencia,Mallorca,0,0,1.33845,0.673736
+2023-24,La Liga,22976,2024-03-30 20:00:00,Barcelona,Las Palmas,1,0,1.72947,0.314295
+2023-24,La Liga,22978,2024-03-31 13:00:00,Celta Vigo,Rayo Vallecano,0,0,0.838396,0.515128
+2023-24,La Liga,22983,2024-03-31 15:15:00,Girona,Real Betis,3,2,2.43161,0.524961
+2023-24,La Liga,22980,2024-03-31 17:30:00,Alaves,Real Sociedad,0,1,0.142958,1.29248
+2023-24,La Liga,22981,2024-03-31 20:00:00,Real Madrid,Athletic Club,2,0,1.1877,0.304704
+2023-24,La Liga,22982,2024-04-01 19:00:00,Villarreal,Atletico Madrid,1,2,0.681964,1.2402
+2023-24,La Liga,22941,2024-04-04 18:00:00,Granada,Valencia,0,1,0.729135,0.718558
+2023-24,La Liga,22987,2024-04-12 19:00:00,Real Betis,Celta Vigo,2,1,1.22903,1.58129
+2023-24,La Liga,22986,2024-04-13 12:00:00,Atletico Madrid,Girona,3,1,2.58629,2.20992
+2023-24,La Liga,22993,2024-04-13 14:15:00,Rayo Vallecano,Getafe,0,0,0.777828,0.25153
+2023-24,La Liga,22988,2024-04-13 16:30:00,Mallorca,Real Madrid,0,1,0.592998,1.81161
+2023-24,La Liga,22992,2024-04-13 19:00:00,Cadiz,Barcelona,0,1,0.79048,0.833415
+2023-24,La Liga,22990,2024-04-14 12:00:00,Las Palmas,Sevilla,0,2,0.0909476,2.06406
+2023-24,La Liga,22994,2024-04-14 14:15:00,Granada,Alaves,2,0,1.86823,0.279326
+2023-24,La Liga,22985,2024-04-14 16:30:00,Athletic Club,Villarreal,1,1,0.823044,2.1913
+2023-24,La Liga,22991,2024-04-14 19:00:00,Real Sociedad,Almeria,2,2,1.68743,1.77546
+2023-24,La Liga,22989,2024-04-15 19:00:00,Osasuna,Valencia,0,1,2.26875,0.235711
+2023-24,La Liga,22996,2024-04-19 19:00:00,Athletic Club,Granada,1,1,1.64137,0.150973
+2023-24,La Liga,22997,2024-04-20 12:00:00,Celta Vigo,Las Palmas,4,1,3.58931,0.90843
+2023-24,La Liga,23004,2024-04-20 14:15:00,Rayo Vallecano,Osasuna,2,1,0.560289,0.930714
+2023-24,La Liga,23001,2024-04-20 16:30:00,Valencia,Real Betis,1,2,0.951475,1.82123
+2023-24,La Liga,23002,2024-04-20 19:00:00,Girona,Cadiz,4,1,2.30941,1.82433
+2023-24,La Liga,22998,2024-04-21 12:00:00,Getafe,Real Sociedad,1,1,1.19821,1.03517
+2023-24,La Liga,22995,2024-04-21 14:15:00,Almeria,Villarreal,1,2,2.14538,1.60008
+2023-24,La Liga,22999,2024-04-21 16:30:00,Alaves,Atletico Madrid,2,0,0.521018,0.715212
+2023-24,La Liga,23000,2024-04-21 19:00:00,Real Madrid,Barcelona,3,2,2.7698,1.34666
+2023-24,La Liga,23003,2024-04-22 19:00:00,Sevilla,Mallorca,2,1,1.72842,0.879845
+2023-24,La Liga,23014,2024-04-26 19:00:00,Real Sociedad,Real Madrid,0,1,0.380904,0.462672
+2023-24,La Liga,23012,2024-04-27 12:00:00,Las Palmas,Girona,0,2,1.41676,2.0472
+2023-24,La Liga,23005,2024-04-27 14:15:00,Almeria,Getafe,1,3,2.748,1.67485
+2023-24,La Liga,23010,2024-04-27 16:30:00,Alaves,Celta Vigo,3,0,3.41094,0.188273
+2023-24,La Liga,23011,2024-04-27 19:00:00,Atletico Madrid,Athletic Club,3,1,0.62028,0.894572
+2023-24,La Liga,23008,2024-04-28 12:00:00,Cadiz,Mallorca,1,1,0.441837,0.827497
+2023-24,La Liga,23009,2024-04-28 14:15:00,Granada,Osasuna,3,0,2.31468,0.989028
+2023-24,La Liga,23013,2024-04-28 16:30:00,Villarreal,Rayo Vallecano,3,0,1.98091,0.896929
+2023-24,La Liga,23007,2024-04-28 19:00:00,Real Betis,Sevilla,1,1,2.39465,1.26484
+2023-24,La Liga,23006,2024-04-29 19:00:00,Barcelona,Valencia,4,2,2.59636,1.49346
+2023-24,La Liga,23017,2024-05-03 19:00:00,Getafe,Athletic Club,0,2,4.41644,0.925588
+2023-24,La Liga,23023,2024-05-04 12:00:00,Real Sociedad,Las Palmas,2,0,0.899129,0.56693
+2023-24,La Liga,23021,2024-05-04 14:15:00,Real Madrid,Cadiz,3,0,2.63447,0.998827
+2023-24,La Liga,23019,2024-05-04 16:30:00,Girona,Barcelona,4,2,2.31519,2.6053
+2023-24,La Liga,23018,2024-05-04 19:00:00,Mallorca,Atletico Madrid,0,1,0.328479,0.874778
+2023-24,La Liga,23020,2024-05-05 12:00:00,Osasuna,Real Betis,0,2,1.02463,1.44688
+2023-24,La Liga,23015,2024-05-05 14:15:00,Celta Vigo,Villarreal,3,2,4.41257,0.544766
+2023-24,La Liga,23024,2024-05-05 16:30:00,Valencia,Alaves,0,1,1.40821,1.16915
+2023-24,La Liga,23016,2024-05-05 19:00:00,Rayo Vallecano,Almeria,0,1,2.09609,0.555982
+2023-24,La Liga,23022,2024-05-05 19:00:00,Sevilla,Granada,3,0,2.45224,0.227083
+2023-24,La Liga,23030,2024-05-10 19:00:00,Alaves,Girona,2,2,2.40148,1.53657
+2023-24,La Liga,23034,2024-05-11 12:00:00,Mallorca,Las Palmas,1,0,0.45718,0.313172
+2023-24,La Liga,23033,2024-05-11 14:15:00,Villarreal,Sevilla,3,2,3.10775,1.95835
+2023-24,La Liga,23029,2024-05-11 16:30:00,Granada,Real Madrid,0,4,0.699759,2.7909
+2023-24,La Liga,23025,2024-05-11 19:00:00,Athletic Club,Osasuna,2,2,2.17034,1.05326
+2023-24,La Liga,23028,2024-05-12 12:00:00,Cadiz,Getafe,1,0,1.42818,0.310309
+2023-24,La Liga,23026,2024-05-12 14:15:00,Atletico Madrid,Celta Vigo,1,0,1.81009,0.370026
+2023-24,La Liga,23032,2024-05-12 16:30:00,Valencia,Rayo Vallecano,0,0,1.1633,0.785651
+2023-24,La Liga,23031,2024-05-12 19:00:00,Real Betis,Almeria,3,2,1.69343,1.08304
+2023-24,La Liga,23027,2024-05-13 19:00:00,Barcelona,Real Sociedad,2,0,1.66029,0.799193
+2023-24,La Liga,23042,2024-05-14 17:30:00,Osasuna,Mallorca,1,1,0.428998,0.919263
+2023-24,La Liga,23044,2024-05-14 19:30:00,Real Madrid,Alaves,5,0,2.88216,1.50657
+2023-24,La Liga,23036,2024-05-14 20:00:00,Girona,Villarreal,0,1,2.28453,0.776468
+2023-24,La Liga,23041,2024-05-15 17:30:00,Sevilla,Cadiz,0,1,1.43788,2.85137
+2023-24,La Liga,23043,2024-05-15 17:30:00,Rayo Vallecano,Granada,2,1,3.00296,0.933417
+2023-24,La Liga,23038,2024-05-15 20:00:00,Celta Vigo,Athletic Club,2,1,0.758179,0.377111
+2023-24,La Liga,23039,2024-05-15 20:00:00,Getafe,Atletico Madrid,0,3,0.446969,1.67036
+2023-24,La Liga,23040,2024-05-16 17:30:00,Las Palmas,Real Betis,2,2,2.61533,1.3277
+2023-24,La Liga,23035,2024-05-16 19:30:00,Almeria,Barcelona,0,2,1.03949,2.13122
+2023-24,La Liga,23037,2024-05-16 20:00:00,Real Sociedad,Valencia,1,0,1.13192,0.774644
+2023-24,La Liga,23050,2024-05-18 19:00:00,Alaves,Getafe,1,0,1.57753,0.658124
+2023-24,La Liga,23045,2024-05-19 17:00:00,Athletic Club,Sevilla,2,0,1.78593,1.29208
+2023-24,La Liga,23046,2024-05-19 17:00:00,Atletico Madrid,Osasuna,1,4,1.76117,1.88434
+2023-24,La Liga,23047,2024-05-19 17:00:00,Barcelona,Rayo Vallecano,3,0,1.69959,1.68527
+2023-24,La Liga,23048,2024-05-19 17:00:00,Real Betis,Real Sociedad,0,2,1.60754,0.792849
+2023-24,La Liga,23049,2024-05-19 17:00:00,Cadiz,Las Palmas,0,0,1.36112,0.966249
+2023-24,La Liga,23051,2024-05-19 17:00:00,Mallorca,Almeria,2,2,2.45608,0.238391
+2023-24,La Liga,23052,2024-05-19 17:00:00,Granada,Celta Vigo,1,2,1.75765,2.02078
+2023-24,La Liga,23053,2024-05-19 17:00:00,Valencia,Girona,1,3,3.35606,2.90299
+2023-24,La Liga,23054,2024-05-19 17:00:00,Villarreal,Real Madrid,4,4,2.21178,1.59129
+2023-24,La Liga,23058,2024-05-24 19:00:00,Girona,Granada,7,0,4.75092,0.987219
+2023-24,La Liga,23059,2024-05-25 12:00:00,Osasuna,Villarreal,1,1,1.09355,0.835313
+2023-24,La Liga,23061,2024-05-25 14:15:00,Real Sociedad,Atletico Madrid,0,2,0.570544,2.19824
+2023-24,La Liga,23055,2024-05-25 16:30:00,Almeria,Cadiz,6,1,3.23442,0.494605
+2023-24,La Liga,23060,2024-05-25 16:30:00,Rayo Vallecano,Athletic Club,0,1,1.47462,0.930597
+2023-24,La Liga,23063,2024-05-25 19:00:00,Real Madrid,Real Betis,0,0,1.24417,1.15552
+2023-24,La Liga,23057,2024-05-26 12:00:00,Getafe,Mallorca,1,2,1.07908,1.34437
+2023-24,La Liga,23056,2024-05-26 14:15:00,Celta Vigo,Valencia,2,2,1.50162,2.16042
+2023-24,La Liga,23064,2024-05-26 14:15:00,Las Palmas,Alaves,1,1,1.15618,2.23542
+2023-24,La Liga,23062,2024-05-26 19:00:00,Sevilla,Barcelona,1,2,1.96266,1.4772
+2023-24,Ligue 1,23372,2023-08-12 18:00:00,Marseille,Reims,2,1,1.5127,0.993374
+2023-24,Ligue 1,23377,2023-08-12 18:00:00,Nice,Lille,1,1,1.12141,1.53437
+2023-24,Ligue 1,23378,2023-08-12 18:00:00,Brest,Lens,3,2,2.91934,0.960002
+2023-24,Ligue 1,23379,2023-08-12 18:00:00,Paris Saint Germain,Lorient,0,0,1.36166,0.136269
+2023-24,Ligue 1,23374,2023-08-13 13:00:00,Nantes,Toulouse,1,2,1.07028,2.06035
+2023-24,Ligue 1,23375,2023-08-13 13:00:00,Clermont Foot,Monaco,2,4,1.97981,3.40428
+2023-24,Ligue 1,23376,2023-08-13 13:00:00,Montpellier,Le Havre,2,2,1.2977,1.24958
+2023-24,Ligue 1,23371,2023-08-13 15:05:00,Rennes,Metz,5,1,4.67967,0.561838
+2023-24,Ligue 1,23373,2023-08-13 18:45:00,Strasbourg,Lyon,2,1,1.16184,2.05387
+2023-24,Ligue 1,23388,2023-08-18 19:00:00,Metz,Marseille,2,2,0.360903,1.49349
+2023-24,Ligue 1,23384,2023-08-19 15:00:00,Lyon,Montpellier,1,4,0.641589,1.91808
+2023-24,Ligue 1,23380,2023-08-19 19:00:00,Toulouse,Paris Saint Germain,1,1,1.15991,2.00415
+2023-24,Ligue 1,23383,2023-08-20 11:00:00,Lille,Nantes,2,0,3.239,1.27164
+2023-24,Ligue 1,23381,2023-08-20 13:00:00,Lorient,Nice,1,1,0.750785,2.42649
+2023-24,Ligue 1,23385,2023-08-20 13:00:00,Reims,Clermont Foot,2,0,2.41479,0.399613
+2023-24,Ligue 1,23387,2023-08-20 13:00:00,Le Havre,Brest,1,2,0.866995,1.60466
+2023-24,Ligue 1,23382,2023-08-20 15:05:00,Monaco,Strasbourg,3,0,1.30947,0.552621
+2023-24,Ligue 1,23386,2023-08-20 18:45:00,Lens,Rennes,1,1,1.3445,1.62597
+2023-24,Ligue 1,23396,2023-08-25 19:00:00,Nantes,Monaco,3,3,0.906833,4.95812
+2023-24,Ligue 1,23392,2023-08-26 17:00:00,Marseille,Brest,2,0,3.50896,1.72801
+2023-24,Ligue 1,23389,2023-08-26 19:00:00,Paris Saint Germain,Lens,3,1,1.86713,0.487094
+2023-24,Ligue 1,23391,2023-08-27 11:00:00,Rennes,Le Havre,2,2,3.49731,0.41475
+2023-24,Ligue 1,23390,2023-08-27 13:00:00,Strasbourg,Toulouse,2,0,2.84995,0.308716
+2023-24,Ligue 1,23395,2023-08-27 13:00:00,Clermont Foot,Metz,0,1,0.540615,0.791472
+2023-24,Ligue 1,23397,2023-08-27 13:00:00,Montpellier,Reims,1,3,1.42165,1.8496
+2023-24,Ligue 1,23393,2023-08-27 15:05:00,Lorient,Lille,4,1,1.745,1.45127
+2023-24,Ligue 1,23394,2023-08-27 18:45:00,Nice,Lyon,0,0,1.82327,0.25547
+2023-24,Ligue 1,23403,2023-09-01 19:00:00,Nantes,Marseille,1,1,0.621642,2.77866
+2023-24,Ligue 1,23406,2023-09-02 15:00:00,Brest,Rennes,0,0,1.58468,0.248338
+2023-24,Ligue 1,23399,2023-09-02 19:00:00,Monaco,Lens,3,0,1.24938,0.612432
+2023-24,Ligue 1,23398,2023-09-03 11:00:00,Toulouse,Clermont Foot,2,2,0.64111,1.40431
+2023-24,Ligue 1,23400,2023-09-03 13:00:00,Lille,Montpellier,1,0,1.33906,0.793407
+2023-24,Ligue 1,23404,2023-09-03 13:00:00,Le Havre,Lorient,3,0,1.70033,0.675614
+2023-24,Ligue 1,23405,2023-09-03 13:00:00,Metz,Reims,2,2,1.14763,0.859494
+2023-24,Ligue 1,23402,2023-09-03 15:05:00,Nice,Strasbourg,2,0,2.28809,0.158524
+2023-24,Ligue 1,23401,2023-09-03 18:45:00,Lyon,Paris Saint Germain,1,4,2.44259,4.91949
+2023-24,Ligue 1,23407,2023-09-15 19:00:00,Paris Saint Germain,Nice,2,3,1.21929,1.94985
+2023-24,Ligue 1,23409,2023-09-16 15:00:00,Rennes,Lille,2,2,0.427673,1.60903
+2023-24,Ligue 1,23415,2023-09-16 19:00:00,Lens,Metz,0,1,1.61194,0.629577
+2023-24,Ligue 1,23411,2023-09-17 11:00:00,Lorient,Monaco,2,2,0.660724,1.54062
+2023-24,Ligue 1,23408,2023-09-17 13:00:00,Strasbourg,Montpellier,2,2,2.27232,1.03603
+2023-24,Ligue 1,23413,2023-09-17 13:00:00,Clermont Foot,Nantes,0,1,1.26417,0.866302
+2023-24,Ligue 1,23414,2023-09-17 13:00:00,Reims,Brest,1,2,1.97443,1.56067
+2023-24,Ligue 1,23410,2023-09-17 15:05:00,Marseille,Toulouse,0,0,1.16853,0.882315
+2023-24,Ligue 1,23412,2023-09-17 18:45:00,Lyon,Le Havre,0,0,1.83314,1.25165
+2023-24,Ligue 1,23417,2023-09-22 19:00:00,Monaco,Nice,0,1,1.80137,1.10143
+2023-24,Ligue 1,23420,2023-09-23 15:00:00,Nantes,Lorient,5,3,2.52906,1.59675
+2023-24,Ligue 1,23424,2023-09-23 19:00:00,Brest,Lyon,1,0,2.54509,0.254128
+2023-24,Ligue 1,23422,2023-09-24 11:00:00,Metz,Strasbourg,0,1,1.03805,0.456135
+2023-24,Ligue 1,23419,2023-09-24 13:00:00,Lens,Toulouse,2,1,3.08782,0.649363
+2023-24,Ligue 1,23421,2023-09-24 13:00:00,Le Havre,Clermont Foot,2,1,1.01727,0.716065
+2023-24,Ligue 1,23423,2023-09-24 15:05:00,Montpellier,Rennes,0,0,1.38233,0.933593
+2023-24,Ligue 1,23416,2023-09-24 18:45:00,Paris Saint Germain,Marseille,4,0,2.00222,0.568702
+2023-24,Ligue 1,23418,2023-09-26 19:00:00,Lille,Reims,1,2,1.41766,1.21818
+2023-24,Ligue 1,23425,2023-09-29 19:00:00,Strasbourg,Lens,0,1,0.305015,1.52229
+2023-24,Ligue 1,23431,2023-09-30 15:00:00,Clermont Foot,Paris Saint Germain,0,0,1.16006,2.99118
+2023-24,Ligue 1,23429,2023-09-30 19:00:00,Monaco,Marseille,3,2,1.5165,0.908767
+2023-24,Ligue 1,23432,2023-10-01 11:00:00,Reims,Lyon,2,0,1.99596,0.389915
+2023-24,Ligue 1,23427,2023-10-01 13:00:00,Toulouse,Metz,3,0,2.3397,0.598514
+2023-24,Ligue 1,23430,2023-10-01 13:00:00,Nice,Brest,0,0,1.03293,0.153004
+2023-24,Ligue 1,23433,2023-10-01 13:00:00,Le Havre,Lille,0,2,1.05835,1.38688
+2023-24,Ligue 1,23428,2023-10-01 15:05:00,Lorient,Montpellier,0,3,0.799881,2.77044
+2023-24,Ligue 1,23426,2023-10-01 18:45:00,Rennes,Nantes,3,1,2.3169,0.902963
+2023-24,Ligue 1,23434,2023-10-06 19:00:00,Strasbourg,Nantes,1,2,0.944783,2.24185
+2023-24,Ligue 1,23440,2023-10-07 15:00:00,Metz,Nice,0,1,0.263633,1.51523
+2023-24,Ligue 1,23438,2023-10-07 19:00:00,Reims,Monaco,1,3,1.99785,1.74741
+2023-24,Ligue 1,23436,2023-10-08 11:00:00,Marseille,Le Havre,3,0,3.00689,0.131369
+2023-24,Ligue 1,23437,2023-10-08 13:00:00,Lyon,Lorient,3,3,1.3787,1.07853
+2023-24,Ligue 1,23442,2023-10-08 13:00:00,Brest,Toulouse,1,1,1.61363,1.23903
+2023-24,Ligue 1,23439,2023-10-08 15:05:00,Lens,Lille,1,1,2.58377,1.34285
+2023-24,Ligue 1,23435,2023-10-08 18:45:00,Rennes,Paris Saint Germain,1,3,1.34436,3.13091
+2023-24,Ligue 1,23451,2023-10-20 19:00:00,Le Havre,Lens,0,0,1.84471,1.96292
+2023-24,Ligue 1,23443,2023-10-21 15:00:00,Paris Saint Germain,Strasbourg,3,0,2.51872,0.224242
+2023-24,Ligue 1,23449,2023-10-21 19:00:00,Nice,Marseille,1,0,0.828728,1.00304
+2023-24,Ligue 1,23445,2023-10-22 11:00:00,Lorient,Rennes,2,1,0.594654,0.940774
+2023-24,Ligue 1,23444,2023-10-22 13:00:00,Toulouse,Reims,1,1,0.900833,0.96583
+2023-24,Ligue 1,23447,2023-10-22 13:00:00,Lille,Brest,1,0,2.19168,0.625269
+2023-24,Ligue 1,23450,2023-10-22 13:00:00,Nantes,Montpellier,2,0,1.74936,0.495893
+2023-24,Ligue 1,23446,2023-10-22 15:05:00,Monaco,Metz,2,1,1.9731,0.720525
+2023-24,Ligue 1,23448,2023-10-22 18:45:00,Lyon,Clermont Foot,1,2,1.73586,1.28994
+2023-24,Ligue 1,23455,2023-10-27 19:00:00,Clermont Foot,Nice,0,1,0.298709,2.15871
+2023-24,Ligue 1,23456,2023-10-28 15:00:00,Reims,Lorient,1,0,0.981549,0.412238
+2023-24,Ligue 1,23457,2023-10-28 19:00:00,Lens,Nantes,4,0,4.32919,1.21849
+2023-24,Ligue 1,23460,2023-10-29 12:00:00,Brest,Paris Saint Germain,2,3,1.68226,2.09847
+2023-24,Ligue 1,23454,2023-10-29 14:00:00,Lille,Monaco,2,0,0.667633,0.901743
+2023-24,Ligue 1,23458,2023-10-29 14:00:00,Metz,Le Havre,0,0,0.469858,0.890469
+2023-24,Ligue 1,23459,2023-10-29 14:00:00,Montpellier,Toulouse,3,0,3.2823,0.877804
+2023-24,Ligue 1,23452,2023-10-29 16:05:00,Rennes,Strasbourg,1,1,1.11025,1.02122
+2023-24,Ligue 1,23461,2023-11-03 20:00:00,Paris Saint Germain,Montpellier,3,0,1.23178,0.583754
+2023-24,Ligue 1,23465,2023-11-04 16:00:00,Lorient,Lens,0,0,0.521851,0.707799
+2023-24,Ligue 1,23464,2023-11-04 20:00:00,Marseille,Lille,0,0,0.751791,0.326226
+2023-24,Ligue 1,23467,2023-11-05 12:00:00,Lyon,Metz,1,1,1.8478,0.667193
+2023-24,Ligue 1,23462,2023-11-05 14:00:00,Strasbourg,Clermont Foot,0,0,1.55966,1.05162
+2023-24,Ligue 1,23463,2023-11-05 14:00:00,Toulouse,Le Havre,1,2,2.31734,1.21056
+2023-24,Ligue 1,23469,2023-11-05 14:00:00,Nantes,Reims,0,1,1.54695,1.7428
+2023-24,Ligue 1,23466,2023-11-05 16:05:00,Monaco,Brest,2,0,1.11674,0.73688
+2023-24,Ligue 1,23468,2023-11-05 19:45:00,Nice,Rennes,2,0,2.28618,0.484764
+2023-24,Ligue 1,23477,2023-11-10 20:00:00,Montpellier,Nice,0,0,0.651349,0.62039
+2023-24,Ligue 1,23473,2023-11-11 16:00:00,Reims,Paris Saint Germain,0,3,1.54396,2.64035
+2023-24,Ligue 1,23475,2023-11-11 20:00:00,Le Havre,Monaco,0,0,1.12627,0.968375
+2023-24,Ligue 1,23471,2023-11-12 14:00:00,Lille,Toulouse,1,1,2.6899,0.41683
+2023-24,Ligue 1,23472,2023-11-12 14:00:00,Clermont Foot,Lorient,1,0,1.40549,0.58473
+2023-24,Ligue 1,23476,2023-11-12 14:00:00,Metz,Nantes,3,1,0.940982,1.75389
+2023-24,Ligue 1,23470,2023-11-12 16:05:00,Rennes,Lyon,0,1,0.680277,2.07974
+2023-24,Ligue 1,23474,2023-11-12 20:45:00,Lens,Marseille,1,0,1.21972,0.723678
+2023-24,Ligue 1,23479,2023-11-24 20:00:00,Paris Saint Germain,Monaco,5,2,2.61317,1.52014
+2023-24,Ligue 1,23485,2023-11-25 16:00:00,Clermont Foot,Lens,0,3,1.84299,2.53223
+2023-24,Ligue 1,23480,2023-11-25 20:00:00,Strasbourg,Marseille,1,1,1.18208,1.36665
+2023-24,Ligue 1,23484,2023-11-26 12:00:00,Nice,Toulouse,1,0,1.00133,1.27183
+2023-24,Ligue 1,23482,2023-11-26 14:00:00,Lorient,Metz,2,3,1.37412,1.85366
+2023-24,Ligue 1,23486,2023-11-26 14:00:00,Nantes,Le Havre,0,0,1.75264,0.225701
+2023-24,Ligue 1,23487,2023-11-26 14:00:00,Montpellier,Brest,1,3,2.19901,2.38593
+2023-24,Ligue 1,23481,2023-11-26 16:05:00,Rennes,Reims,3,1,1.93506,2.24931
+2023-24,Ligue 1,23483,2023-11-26 19:45:00,Lyon,Lille,0,2,1.71151,1.7068
+2023-24,Ligue 1,23441,2023-11-29 17:00:00,Montpellier,Clermont Foot,1,1,2.5147,0.548696
+2023-24,Ligue 1,23492,2023-12-01 19:00:00,Reims,Strasbourg,2,1,1.93212,1.82995
+2023-24,Ligue 1,23493,2023-12-02 16:00:00,Lens,Lyon,3,2,2.66019,3.02776
+2023-24,Ligue 1,23494,2023-12-02 20:00:00,Nantes,Nice,1,0,1.18224,1.2317
+2023-24,Ligue 1,23495,2023-12-03 12:00:00,Le Havre,Paris Saint Germain,0,2,1.85535,1.76208
+2023-24,Ligue 1,23488,2023-12-03 14:00:00,Toulouse,Lorient,1,1,1.10351,0.645774
+2023-24,Ligue 1,23490,2023-12-03 14:00:00,Monaco,Montpellier,2,0,2.46013,1.18556
+2023-24,Ligue 1,23496,2023-12-03 14:00:00,Brest,Clermont Foot,3,0,1.30229,0.605084
+2023-24,Ligue 1,23491,2023-12-03 16:05:00,Lille,Metz,2,0,3.04386,1.85842
+2023-24,Ligue 1,23489,2023-12-03 19:45:00,Marseille,Rennes,2,0,0.91395,0.483795
+2023-24,Ligue 1,23453,2023-12-06 19:00:00,Marseille,Lyon,3,0,1.82709,0.235651
+2023-24,Ligue 1,23478,2023-12-07 19:30:00,Brest,Strasbourg,1,1,0.993441,1.26839
+2023-24,Ligue 1,23505,2023-12-08 20:00:00,Montpellier,Lens,0,0,1.34889,1.61301
+2023-24,Ligue 1,23499,2023-12-09 16:00:00,Rennes,Monaco,1,2,2.14616,1.09728
+2023-24,Ligue 1,23497,2023-12-09 20:00:00,Paris Saint Germain,Nantes,2,1,2.15633,0.483837
+2023-24,Ligue 1,23502,2023-12-10 12:00:00,Nice,Reims,2,1,1.2751,1.13313
+2023-24,Ligue 1,23498,2023-12-10 14:00:00,Strasbourg,Le Havre,2,1,1.50877,1.62211
+2023-24,Ligue 1,23503,2023-12-10 14:00:00,Clermont Foot,Lille,0,0,1.1121,0.635418
+2023-24,Ligue 1,23504,2023-12-10 14:00:00,Metz,Brest,0,1,0.632144,0.219846
+2023-24,Ligue 1,23501,2023-12-10 16:05:00,Lyon,Toulouse,3,0,3.13849,1.6021
+2023-24,Ligue 1,23500,2023-12-10 19:45:00,Lorient,Marseille,2,4,2.01809,2.88724
+2023-24,Ligue 1,23509,2023-12-15 20:00:00,Monaco,Lyon,0,1,1.40268,0.739288
+2023-24,Ligue 1,23513,2023-12-16 16:00:00,Le Havre,Nice,3,1,1.92557,1.64135
+2023-24,Ligue 1,23511,2023-12-16 20:00:00,Lens,Reims,2,0,1.26773,0.876139
+2023-24,Ligue 1,23512,2023-12-17 12:00:00,Nantes,Brest,0,2,1.38959,1.8065
+2023-24,Ligue 1,23506,2023-12-17 14:00:00,Toulouse,Rennes,0,0,0.686037,1.08165
+2023-24,Ligue 1,23508,2023-12-17 14:00:00,Lorient,Strasbourg,1,2,1.17121,1.76122
+2023-24,Ligue 1,23514,2023-12-17 14:00:00,Metz,Montpellier,0,1,0.850081,0.766157
+2023-24,Ligue 1,23507,2023-12-17 16:05:00,Marseille,Clermont Foot,2,1,2.62654,0.131252
+2023-24,Ligue 1,23510,2023-12-17 19:45:00,Lille,Paris Saint Germain,1,1,1.90778,1.39323
+2023-24,Ligue 1,23515,2023-12-20 20:00:00,Paris Saint Germain,Metz,3,1,2.18199,0.149111
+2023-24,Ligue 1,23516,2023-12-20 20:00:00,Strasbourg,Lille,2,1,0.805349,0.882407
+2023-24,Ligue 1,23517,2023-12-20 20:00:00,Toulouse,Monaco,1,2,1.58928,2.26628
+2023-24,Ligue 1,23518,2023-12-20 20:00:00,Lyon,Nantes,1,0,2.1113,0.351645
+2023-24,Ligue 1,23519,2023-12-20 20:00:00,Nice,Lens,2,0,2.95792,0.539445
+2023-24,Ligue 1,23520,2023-12-20 20:00:00,Clermont Foot,Rennes,1,3,0.75621,2.31736
+2023-24,Ligue 1,23521,2023-12-20 20:00:00,Reims,Le Havre,1,0,1.4252,0.459561
+2023-24,Ligue 1,23522,2023-12-20 20:00:00,Montpellier,Marseille,1,1,1.51091,1.20263
+2023-24,Ligue 1,23523,2023-12-20 20:00:00,Brest,Lorient,4,0,1.59135,0.456656
+2023-24,Ligue 1,23525,2024-01-12 20:00:00,Marseille,Strasbourg,1,1,1.56944,1.14984
+2023-24,Ligue 1,23526,2024-01-13 16:00:00,Monaco,Reims,1,3,1.02592,1.91585
+2023-24,Ligue 1,23524,2024-01-13 20:00:00,Rennes,Nice,2,0,1.82506,0.805568
+2023-24,Ligue 1,23527,2024-01-14 12:00:00,Lille,Lorient,3,0,3.05553,0.122714
+2023-24,Ligue 1,23529,2024-01-14 14:00:00,Nantes,Clermont Foot,1,2,1.63891,1.22157
+2023-24,Ligue 1,23531,2024-01-14 14:00:00,Metz,Toulouse,0,1,0.558992,0.952191
+2023-24,Ligue 1,23532,2024-01-14 14:00:00,Brest,Montpellier,2,0,4.34723,0.462585
+2023-24,Ligue 1,23530,2024-01-14 16:05:00,Le Havre,Lyon,3,1,1.47292,0.873358
+2023-24,Ligue 1,23528,2024-01-14 19:45:00,Lens,Paris Saint Germain,0,2,2.68223,1.80377
+2023-24,Ligue 1,23537,2024-01-26 20:00:00,Lyon,Rennes,2,3,0.96504,1.37472
+2023-24,Ligue 1,23538,2024-01-27 16:00:00,Nice,Metz,1,0,1.97472,0.119776
+2023-24,Ligue 1,23535,2024-01-27 20:00:00,Marseille,Monaco,2,2,3.46234,0.372187
+2023-24,Ligue 1,23541,2024-01-28 12:00:00,Montpellier,Lille,0,0,1.37722,0.622726
+2023-24,Ligue 1,23536,2024-01-28 14:00:00,Lorient,Le Havre,3,3,1.63382,1.35726
+2023-24,Ligue 1,23539,2024-01-28 14:00:00,Clermont Foot,Strasbourg,1,1,1.53045,1.31652
+2023-24,Ligue 1,23540,2024-01-28 14:00:00,Reims,Nantes,0,0,1.21383,1.40977
+2023-24,Ligue 1,23534,2024-01-28 16:05:00,Toulouse,Lens,0,2,2.4207,1.17066
+2023-24,Ligue 1,23533,2024-01-28 19:45:00,Paris Saint Germain,Brest,2,2,1.89797,1.07348
+2023-24,Ligue 1,23542,2024-02-02 20:00:00,Strasbourg,Paris Saint Germain,1,2,2.57864,1.90654
+2023-24,Ligue 1,23543,2024-02-03 16:00:00,Rennes,Montpellier,2,1,2.21096,0.797935
+2023-24,Ligue 1,23548,2024-02-03 20:00:00,Nantes,Lens,0,1,0.711906,1.63838
+2023-24,Ligue 1,23544,2024-02-04 12:00:00,Monaco,Le Havre,1,1,1.48516,0.149171
+2023-24,Ligue 1,23545,2024-02-04 14:00:00,Lille,Clermont Foot,4,0,2.44237,0.81129
+2023-24,Ligue 1,23547,2024-02-04 14:00:00,Reims,Toulouse,2,3,2.02418,1.74173
+2023-24,Ligue 1,23549,2024-02-04 14:00:00,Metz,Lorient,1,2,0.822983,1.37239
+2023-24,Ligue 1,23550,2024-02-04 16:05:00,Brest,Nice,0,0,0.875796,0.67289
+2023-24,Ligue 1,23546,2024-02-04 19:45:00,Lyon,Marseille,1,0,1.92161,0.511356
+2023-24,Ligue 1,23553,2024-02-09 20:00:00,Marseille,Metz,1,1,2.39451,0.955249
+2023-24,Ligue 1,23558,2024-02-10 16:00:00,Lens,Strasbourg,3,1,1.91964,1.66695
+2023-24,Ligue 1,23551,2024-02-10 20:00:00,Paris Saint Germain,Lille,3,1,2.43098,1.48271
+2023-24,Ligue 1,23559,2024-02-11 12:00:00,Le Havre,Rennes,0,1,1.37399,1.18673
+2023-24,Ligue 1,23552,2024-02-11 14:00:00,Toulouse,Nantes,1,2,0.893343,0.497993
+2023-24,Ligue 1,23554,2024-02-11 14:00:00,Lorient,Reims,2,0,2.29027,1.17008
+2023-24,Ligue 1,23557,2024-02-11 14:00:00,Clermont Foot,Brest,1,1,1.19719,1.35687
+2023-24,Ligue 1,23556,2024-02-11 16:05:00,Montpellier,Lyon,1,2,1.78103,1.29775
+2023-24,Ligue 1,23555,2024-02-11 19:45:00,Nice,Monaco,2,3,2.16459,2.06475
+2023-24,Ligue 1,23564,2024-02-16 20:00:00,Lyon,Nice,1,0,0.801467,0.685452
+2023-24,Ligue 1,23563,2024-02-17 16:00:00,Lille,Le Havre,3,0,4.23306,0.29674
+2023-24,Ligue 1,23566,2024-02-17 20:00:00,Nantes,Paris Saint Germain,0,2,2.13627,1.71895
+2023-24,Ligue 1,23560,2024-02-18 12:00:00,Strasbourg,Lorient,1,3,1.71908,2.13729
+2023-24,Ligue 1,23561,2024-02-18 14:00:00,Rennes,Clermont Foot,3,1,4.27182,0.755433
+2023-24,Ligue 1,23562,2024-02-18 14:00:00,Monaco,Toulouse,1,2,1.69534,1.57778
+2023-24,Ligue 1,23567,2024-02-18 14:00:00,Montpellier,Metz,3,0,3.04692,0.929361
+2023-24,Ligue 1,23565,2024-02-18 16:05:00,Reims,Lens,1,1,1.04087,1.45983
+2023-24,Ligue 1,23568,2024-02-18 19:45:00,Brest,Marseille,1,0,1.79901,0.49619
+2023-24,Ligue 1,23570,2024-02-23 20:00:00,Metz,Lyon,1,2,1.76992,1.25668
+2023-24,Ligue 1,23574,2024-02-24 16:00:00,Lorient,Nantes,0,1,0.620869,0.331772
+2023-24,Ligue 1,23577,2024-02-24 20:00:00,Strasbourg,Brest,0,3,0.147244,1.75632
+2023-24,Ligue 1,23572,2024-02-25 12:00:00,Lens,Monaco,2,3,2.863,2.33037
+2023-24,Ligue 1,23571,2024-02-25 14:00:00,Le Havre,Reims,1,2,1.71847,3.16987
+2023-24,Ligue 1,23573,2024-02-25 14:00:00,Nice,Clermont Foot,0,0,1.97032,2.46292
+2023-24,Ligue 1,23576,2024-02-25 14:00:00,Toulouse,Lille,3,1,1.95824,0.599376
+2023-24,Ligue 1,23569,2024-02-25 16:05:00,Paris Saint Germain,Rennes,1,1,1.88699,0.982428
+2023-24,Ligue 1,23575,2024-02-25 19:45:00,Marseille,Montpellier,4,1,2.91179,1.09554
+2023-24,Ligue 1,23580,2024-03-01 20:00:00,Monaco,Paris Saint Germain,0,0,2.44196,1.84721
+2023-24,Ligue 1,23583,2024-03-02 16:00:00,Reims,Lille,0,1,0.533658,1.08259
+2023-24,Ligue 1,23582,2024-03-02 20:00:00,Clermont Foot,Marseille,1,5,0.737192,3.06861
+2023-24,Ligue 1,23579,2024-03-03 12:00:00,Toulouse,Nice,2,1,1.50074,1.91177
+2023-24,Ligue 1,23584,2024-03-03 14:00:00,Nantes,Metz,0,2,0.962736,2.36445
+2023-24,Ligue 1,23585,2024-03-03 14:00:00,Montpellier,Strasbourg,2,2,1.55397,1.61588
+2023-24,Ligue 1,23586,2024-03-03 14:00:00,Brest,Le Havre,1,0,1.2486,0.427329
+2023-24,Ligue 1,23578,2024-03-03 16:05:00,Rennes,Lorient,1,2,1.48788,1.94566
+2023-24,Ligue 1,23581,2024-03-03 19:45:00,Lyon,Lens,0,3,2.13225,3.35268
+2023-24,Ligue 1,23592,2024-03-08 20:00:00,Nice,Montpellier,1,2,1.51018,1.66988
+2023-24,Ligue 1,23590,2024-03-09 16:00:00,Lorient,Lyon,0,2,0.279234,2.37921
+2023-24,Ligue 1,23593,2024-03-09 20:00:00,Lens,Brest,1,0,0.751467,0.522507
+2023-24,Ligue 1,23587,2024-03-10 12:00:00,Paris Saint Germain,Reims,2,2,1.53515,1.51893
+2023-24,Ligue 1,23588,2024-03-10 14:00:00,Strasbourg,Monaco,0,1,0.268122,1.32837
+2023-24,Ligue 1,23594,2024-03-10 14:00:00,Le Havre,Toulouse,1,0,1.2502,0.212288
+2023-24,Ligue 1,23595,2024-03-10 14:00:00,Metz,Clermont Foot,1,0,1.82804,0.624762
+2023-24,Ligue 1,23591,2024-03-10 16:00:00,Lille,Rennes,2,2,2.4764,1.21123
+2023-24,Ligue 1,23589,2024-03-10 19:45:00,Marseille,Nantes,2,0,2.03657,0.651156
+2023-24,Ligue 1,23597,2024-03-15 20:00:00,Toulouse,Lyon,2,3,2.0594,1.49785
+2023-24,Ligue 1,23602,2024-03-16 16:00:00,Nantes,Strasbourg,1,3,0.709166,1.88754
+2023-24,Ligue 1,23601,2024-03-16 20:00:00,Lens,Nice,1,3,1.36305,1.80693
+2023-24,Ligue 1,23604,2024-03-17 12:00:00,Brest,Lille,1,1,1.4278,0.845861
+2023-24,Ligue 1,23598,2024-03-17 14:00:00,Monaco,Lorient,2,2,3.43264,0.75287
+2023-24,Ligue 1,23599,2024-03-17 14:00:00,Clermont Foot,Le Havre,2,1,1.17889,1.13876
+2023-24,Ligue 1,23600,2024-03-17 14:00:00,Reims,Metz,2,1,1.57996,1.12407
+2023-24,Ligue 1,23596,2024-03-17 16:05:00,Rennes,Marseille,2,0,1.59209,0.740416
+2023-24,Ligue 1,23603,2024-03-17 19:45:00,Montpellier,Paris Saint Germain,2,6,2.51778,2.24298
+2023-24,Ligue 1,23608,2024-03-29 20:00:00,Lille,Lens,2,1,1.60249,0.741746
+2023-24,Ligue 1,23613,2024-03-30 16:00:00,Metz,Monaco,2,5,1.76276,2.86235
+2023-24,Ligue 1,23609,2024-03-30 20:00:00,Lyon,Reims,1,1,2.12533,1.48533
+2023-24,Ligue 1,23607,2024-03-31 12:00:00,Lorient,Brest,0,1,1.41137,0.429902
+2023-24,Ligue 1,23610,2024-03-31 14:00:00,Nice,Nantes,1,2,1.21101,1.79381
+2023-24,Ligue 1,23611,2024-03-31 14:00:00,Clermont Foot,Toulouse,0,3,0.897271,2.30312
+2023-24,Ligue 1,23612,2024-03-31 14:00:00,Le Havre,Montpellier,0,2,0.690722,1.81849
+2023-24,Ligue 1,23605,2024-03-31 16:05:00,Strasbourg,Rennes,2,0,2.45769,0.913264
+2023-24,Ligue 1,23606,2024-03-31 19:45:00,Marseille,Paris Saint Germain,0,2,1.02584,1.73967
+2023-24,Ligue 1,23617,2024-04-05 19:00:00,Lille,Marseille,3,1,1.94744,0.849968
+2023-24,Ligue 1,23619,2024-04-06 15:00:00,Lens,Le Havre,1,1,1.03136,1.54783
+2023-24,Ligue 1,23614,2024-04-06 19:00:00,Paris Saint Germain,Clermont Foot,1,1,2.57381,0.28144
+2023-24,Ligue 1,23622,2024-04-07 11:00:00,Brest,Metz,4,3,4.51637,2.08036
+2023-24,Ligue 1,23615,2024-04-07 13:00:00,Toulouse,Strasbourg,0,0,0.825103,0.582127
+2023-24,Ligue 1,23618,2024-04-07 13:00:00,Reims,Nice,0,0,0.537635,1.92153
+2023-24,Ligue 1,23621,2024-04-07 13:00:00,Montpellier,Lorient,2,0,2.68931,1.74832
+2023-24,Ligue 1,23616,2024-04-07 15:05:00,Monaco,Rennes,1,0,1.60487,1.6645
+2023-24,Ligue 1,23620,2024-04-07 18:45:00,Nantes,Lyon,1,3,1.10318,2.90994
+2023-24,Ligue 1,23631,2024-04-12 19:00:00,Metz,Lens,2,1,0.802713,1.90927
+2023-24,Ligue 1,23625,2024-04-13 15:00:00,Strasbourg,Reims,3,1,2.30507,0.739073
+2023-24,Ligue 1,23627,2024-04-13 19:00:00,Rennes,Toulouse,1,2,0.877819,0.783871
+2023-24,Ligue 1,23630,2024-04-14 11:00:00,Le Havre,Nantes,0,1,1.6031,0.756172
+2023-24,Ligue 1,23629,2024-04-14 13:00:00,Clermont Foot,Montpellier,1,1,1.36904,1.71417
+2023-24,Ligue 1,23628,2024-04-14 18:45:00,Lyon,Brest,4,3,1.8478,1.7183
+2023-24,Ligue 1,23635,2024-04-19 19:00:00,Nice,Lorient,3,0,2.51301,0.561667
+2023-24,Ligue 1,23638,2024-04-20 15:00:00,Nantes,Rennes,0,3,0.159376,2.38163
+2023-24,Ligue 1,23637,2024-04-20 19:00:00,Lens,Clermont Foot,1,0,2.80705,0.617299
+2023-24,Ligue 1,23634,2024-04-21 13:00:00,Lille,Strasbourg,1,0,1.26308,0.948728
+2023-24,Ligue 1,23636,2024-04-21 13:00:00,Reims,Montpellier,1,2,1.31942,1.35565
+2023-24,Ligue 1,23639,2024-04-21 13:00:00,Le Havre,Metz,0,1,0.649411,1.50162
+2023-24,Ligue 1,23640,2024-04-21 15:05:00,Brest,Monaco,0,2,0.640964,1.30681
+2023-24,Ligue 1,23633,2024-04-21 17:00:00,Toulouse,Marseille,2,2,0.654707,1.06509
+2023-24,Ligue 1,23632,2024-04-21 19:00:00,Paris Saint Germain,Lyon,4,1,3.09132,0.667233
+2023-24,Ligue 1,23624,2024-04-24 17:00:00,Lorient,Paris Saint Germain,1,4,1.03633,1.97814
+2023-24,Ligue 1,23623,2024-04-24 19:00:00,Marseille,Nice,2,2,1.77662,1.28789
+2023-24,Ligue 1,23626,2024-04-24 19:00:00,Monaco,Lille,1,0,2.21532,1.28227
+2023-24,Ligue 1,23649,2024-04-26 19:00:00,Montpellier,Nantes,1,1,0.679578,1.70799
+2023-24,Ligue 1,23641,2024-04-27 19:00:00,Paris Saint Germain,Le Havre,3,3,2.25829,1.21268
+2023-24,Ligue 1,23648,2024-04-28 11:00:00,Metz,Lille,1,2,1.28183,0.882087
+2023-24,Ligue 1,23642,2024-04-28 13:00:00,Strasbourg,Nice,1,3,1.04231,1.89803
+2023-24,Ligue 1,23645,2024-04-28 13:00:00,Lorient,Toulouse,1,2,1.3574,2.23471
+2023-24,Ligue 1,23647,2024-04-28 13:00:00,Clermont Foot,Reims,4,1,2.56811,0.875188
+2023-24,Ligue 1,23643,2024-04-28 15:05:00,Rennes,Brest,4,5,2.34207,2.18698
+2023-24,Ligue 1,23646,2024-04-28 17:00:00,Lyon,Monaco,3,2,2.6414,2.04607
+2023-24,Ligue 1,23644,2024-04-28 19:00:00,Marseille,Lens,2,1,1.77344,1.25145
+2023-24,Ligue 1,23650,2024-05-03 17:00:00,Toulouse,Montpellier,1,2,1.98611,0.660372
+2023-24,Ligue 1,23655,2024-05-03 19:00:00,Lens,Lorient,2,0,2.30235,0.459806
+2023-24,Ligue 1,23656,2024-05-04 13:00:00,Le Havre,Strasbourg,3,1,2.56306,0.631836
+2023-24,Ligue 1,23651,2024-05-04 15:00:00,Monaco,Clermont Foot,4,1,3.44513,1.01532
+2023-24,Ligue 1,23657,2024-05-04 17:00:00,Metz,Rennes,2,3,0.829235,2.01818
+2023-24,Ligue 1,23658,2024-05-04 19:00:00,Brest,Nantes,0,0,0.621067,1.33601
+2023-24,Ligue 1,23652,2024-05-06 19:00:00,Lille,Lyon,3,4,1.12451,2.42982
+2023-24,Ligue 1,23663,2024-05-10 19:00:00,Nice,Le Havre,1,0,1.93635,0.427788
+2023-24,Ligue 1,23667,2024-05-10 19:00:00,Brest,Reims,1,1,1.34751,0.432216
+2023-24,Ligue 1,23659,2024-05-12 19:00:00,Paris Saint Germain,Toulouse,1,3,1.50414,1.71089
+2023-24,Ligue 1,23660,2024-05-12 19:00:00,Strasbourg,Metz,2,1,1.38725,0.896939
+2023-24,Ligue 1,23661,2024-05-12 19:00:00,Rennes,Lens,1,1,2.1522,0.410537
+2023-24,Ligue 1,23662,2024-05-12 19:00:00,Marseille,Lorient,3,1,3.96907,1.0861
+2023-24,Ligue 1,23664,2024-05-12 19:00:00,Clermont Foot,Lyon,0,1,1.17651,0.389723
+2023-24,Ligue 1,23665,2024-05-12 19:00:00,Nantes,Lille,1,2,0.810391,1.40896
+2023-24,Ligue 1,23666,2024-05-12 19:00:00,Montpellier,Monaco,0,2,1.12952,2.31591
+2023-24,Ligue 1,23653,2024-05-15 19:00:00,Nice,Paris Saint Germain,1,2,1.95517,1.44503
+2023-24,Ligue 1,23654,2024-05-15 19:00:00,Reims,Marseille,1,0,0.879349,1.81257
+2023-24,Ligue 1,23668,2024-05-19 19:00:00,Metz,Paris Saint Germain,0,2,1.20722,2.92879
+2023-24,Ligue 1,23669,2024-05-19 19:00:00,Lens,Montpellier,2,2,5.38555,1.11518
+2023-24,Ligue 1,23670,2024-05-19 19:00:00,Le Havre,Marseille,1,2,2.32336,2.32131
+2023-24,Ligue 1,23671,2024-05-19 19:00:00,Lyon,Strasbourg,2,1,3.26691,1.12544
+2023-24,Ligue 1,23672,2024-05-19 19:00:00,Reims,Rennes,2,1,1.39024,1.25648
+2023-24,Ligue 1,23673,2024-05-19 19:00:00,Lille,Nice,2,2,1.59935,1.32909
+2023-24,Ligue 1,23674,2024-05-19 19:00:00,Lorient,Clermont Foot,5,0,4.92005,0.737223
+2023-24,Ligue 1,23675,2024-05-19 19:00:00,Monaco,Nantes,4,0,1.85296,0.885758
+2023-24,Ligue 1,23676,2024-05-19 19:00:00,Toulouse,Brest,0,3,0.984204,1.02904
+2023-24,Premier League,22275,2023-08-11 19:00:00,Burnley,Manchester City,0,3,0.311032,2.40074
+2023-24,Premier League,22276,2023-08-12 11:30:00,Arsenal,Nottingham Forest,2,1,0.84262,0.966305
+2023-24,Premier League,22277,2023-08-12 14:00:00,Bournemouth,West Ham,1,1,1.51025,1.4834
+2023-24,Premier League,22278,2023-08-12 14:00:00,Brighton,Luton,4,1,4.36748,1.88594
+2023-24,Premier League,22279,2023-08-12 14:00:00,Everton,Fulham,0,1,2.59001,1.58144
+2023-24,Premier League,22280,2023-08-12 14:00:00,Sheffield United,Crystal Palace,0,1,0.422704,2.27616
+2023-24,Premier League,22281,2023-08-12 16:30:00,Newcastle United,Aston Villa,5,1,4.32208,1.486
+2023-24,Premier League,22282,2023-08-13 13:00:00,Brentford,Tottenham,2,2,1.90756,1.45316
+2023-24,Premier League,22283,2023-08-13 15:30:00,Chelsea,Liverpool,1,1,1.93258,1.29994
+2023-24,Premier League,22284,2023-08-14 19:00:00,Manchester United,Wolverhampton Wanderers,1,0,1.97087,1.72228
+2023-24,Premier League,22285,2023-08-18 18:45:00,Nottingham Forest,Sheffield United,2,1,1.37181,0.551038
+2023-24,Premier League,22286,2023-08-19 14:00:00,Wolverhampton Wanderers,Brighton,1,4,2.68821,3.15562
+2023-24,Premier League,22287,2023-08-19 14:00:00,Fulham,Brentford,0,3,0.399899,3.46888
+2023-24,Premier League,22288,2023-08-19 14:00:00,Liverpool,Bournemouth,3,1,3.25448,1.3867
+2023-24,Premier League,22290,2023-08-19 16:30:00,Tottenham,Manchester United,2,0,2.53904,2.44604
+2023-24,Premier League,22291,2023-08-19 19:00:00,Manchester City,Newcastle United,1,0,1.22528,0.257154
+2023-24,Premier League,22292,2023-08-20 13:00:00,Aston Villa,Everton,4,0,3.24336,0.721465
+2023-24,Premier League,22293,2023-08-20 15:30:00,West Ham,Chelsea,3,1,1.71234,1.60916
+2023-24,Premier League,22294,2023-08-21 19:00:00,Crystal Palace,Arsenal,0,1,1.06916,2.20593
+2023-24,Premier League,22295,2023-08-25 19:00:00,Chelsea,Luton,3,0,3.41419,0.465741
+2023-24,Premier League,22296,2023-08-26 11:30:00,Bournemouth,Tottenham,0,2,0.483582,2.26115
+2023-24,Premier League,22297,2023-08-26 14:00:00,Arsenal,Fulham,2,2,3.23088,0.849817
+2023-24,Premier League,22298,2023-08-26 14:00:00,Brentford,Crystal Palace,1,1,0.948011,1.06061
+2023-24,Premier League,22299,2023-08-26 14:00:00,Everton,Wolverhampton Wanderers,0,1,1.89792,1.40228
+2023-24,Premier League,22300,2023-08-26 14:00:00,Manchester United,Nottingham Forest,3,2,3.02803,0.960354
+2023-24,Premier League,22301,2023-08-26 16:30:00,Brighton,West Ham,1,3,1.3743,2.9527
+2023-24,Premier League,22302,2023-08-27 13:00:00,Burnley,Aston Villa,1,3,0.630605,2.83691
+2023-24,Premier League,22303,2023-08-27 13:00:00,Sheffield United,Manchester City,1,2,0.762232,3.84804
+2023-24,Premier League,22304,2023-08-27 15:30:00,Newcastle United,Liverpool,1,2,1.62037,0.856121
+2023-24,Premier League,21925,2023-09-01 19:00:00,Luton,West Ham,1,2,2.02244,1.22528
+2023-24,Premier League,21926,2023-09-02 11:30:00,Sheffield United,Everton,2,2,1.575,2.73871
+2023-24,Premier League,21927,2023-09-02 14:00:00,Manchester City,Fulham,5,1,2.00152,1.46427
+2023-24,Premier League,21928,2023-09-02 14:00:00,Brentford,Bournemouth,2,2,3.07185,2.11013
+2023-24,Premier League,21929,2023-09-02 14:00:00,Burnley,Tottenham,2,5,1.66604,2.39785
+2023-24,Premier League,21930,2023-09-02 14:00:00,Chelsea,Nottingham Forest,0,1,2.28442,1.1505
+2023-24,Premier League,21931,2023-09-02 16:30:00,Brighton,Newcastle United,3,1,1.32258,0.90476
+2023-24,Premier League,21932,2023-09-03 13:00:00,Crystal Palace,Wolverhampton Wanderers,3,2,2.32935,1.13911
+2023-24,Premier League,21933,2023-09-03 13:00:00,Liverpool,Aston Villa,3,0,2.73138,0.615503
+2023-24,Premier League,21934,2023-09-03 15:30:00,Arsenal,Manchester United,3,1,1.90973,0.966109
+2023-24,Premier League,21935,2023-09-16 11:30:00,Wolverhampton Wanderers,Liverpool,1,3,0.538833,2.82701
+2023-24,Premier League,21936,2023-09-16 14:00:00,Tottenham,Sheffield United,2,1,2.15909,0.790655
+2023-24,Premier League,21937,2023-09-16 14:00:00,West Ham,Manchester City,1,3,0.895632,4.15046
+2023-24,Premier League,21938,2023-09-16 14:00:00,Aston Villa,Crystal Palace,3,1,2.31518,1.11696
+2023-24,Premier League,21939,2023-09-16 14:00:00,Fulham,Luton,1,0,1.75704,1.45705
+2023-24,Premier League,21940,2023-09-16 14:00:00,Manchester United,Brighton,1,3,0.719951,1.93908
+2023-24,Premier League,21943,2023-09-16 16:30:00,Newcastle United,Brentford,1,0,1.50126,0.633678
+2023-24,Premier League,21942,2023-09-17 13:00:00,Bournemouth,Chelsea,0,0,1.32515,1.39677
+2023-24,Premier League,21941,2023-09-17 15:30:00,Everton,Arsenal,0,1,0.28317,0.802605
+2023-24,Premier League,21944,2023-09-18 18:45:00,Nottingham Forest,Burnley,1,1,0.705795,0.807651
+2023-24,Premier League,21945,2023-09-23 14:00:00,Luton,Wolverhampton Wanderers,1,1,2.24101,0.762984
+2023-24,Premier League,21946,2023-09-23 14:00:00,Manchester City,Nottingham Forest,2,0,1.33984,0.729109
+2023-24,Premier League,21948,2023-09-23 14:00:00,Crystal Palace,Fulham,0,0,0.37236,0.542678
+2023-24,Premier League,21949,2023-09-23 16:30:00,Brentford,Everton,1,3,1.57402,2.51497
+2023-24,Premier League,21950,2023-09-23 19:00:00,Burnley,Manchester United,0,1,0.935444,0.840273
+2023-24,Premier League,21947,2023-09-24 13:00:00,Chelsea,Aston Villa,0,1,1.19716,1.13479
+2023-24,Premier League,21951,2023-09-24 13:00:00,Brighton,Bournemouth,3,1,2.14533,1.58984
+2023-24,Premier League,21952,2023-09-24 13:00:00,Arsenal,Tottenham,2,2,2.3429,2.21166
+2023-24,Premier League,21953,2023-09-24 13:00:00,Liverpool,West Ham,3,1,4.14262,1.53878
+2023-24,Premier League,21954,2023-09-24 15:30:00,Sheffield United,Newcastle United,0,8,0.579392,5.1082
+2023-24,Premier League,21955,2023-09-30 11:30:00,Aston Villa,Brighton,6,1,1.90746,1.72819
+2023-24,Premier League,21956,2023-09-30 14:00:00,Everton,Luton,1,2,3.65377,1.5102
+2023-24,Premier League,21957,2023-09-30 14:00:00,Manchester United,Crystal Palace,0,1,1.55408,1.19015
+2023-24,Premier League,21958,2023-09-30 14:00:00,Newcastle United,Burnley,2,0,3.08516,0.801849
+2023-24,Premier League,21959,2023-09-30 14:00:00,Bournemouth,Arsenal,0,4,0.644443,4.0742
+2023-24,Premier League,21960,2023-09-30 14:00:00,West Ham,Sheffield United,2,0,3.19753,0.911997
+2023-24,Premier League,21961,2023-09-30 14:00:00,Wolverhampton Wanderers,Manchester City,2,1,0.673985,0.98075
+2023-24,Premier League,21962,2023-09-30 16:30:00,Tottenham,Liverpool,2,1,2.18823,1.12299
+2023-24,Premier League,21963,2023-10-01 13:00:00,Nottingham Forest,Brentford,1,1,0.800317,1.75862
+2023-24,Premier League,21964,2023-10-02 19:00:00,Fulham,Chelsea,0,2,0.889383,1.98461
+2023-24,Premier League,22289,2023-10-03 18:30:00,Luton,Burnley,1,2,1.53058,0.920206
+2023-24,Premier League,21971,2023-10-07 11:30:00,Luton,Tottenham,0,1,0.848118,2.37947
+2023-24,Premier League,21967,2023-10-07 14:00:00,Burnley,Chelsea,1,4,0.956642,1.97566
+2023-24,Premier League,21969,2023-10-07 14:00:00,Everton,Bournemouth,3,0,3.16482,0.981732
+2023-24,Premier League,21970,2023-10-07 14:00:00,Fulham,Sheffield United,3,1,2.26612,0.251809
+2023-24,Premier League,21972,2023-10-07 14:00:00,Manchester United,Brentford,2,1,1.29356,1.02509
+2023-24,Premier League,21968,2023-10-07 16:30:00,Crystal Palace,Nottingham Forest,0,0,0.982452,1.22105
+2023-24,Premier League,21966,2023-10-08 13:00:00,Brighton,Liverpool,2,2,2.23187,2.51029
+2023-24,Premier League,21973,2023-10-08 13:00:00,West Ham,Newcastle United,2,2,0.931345,1.97865
+2023-24,Premier League,21974,2023-10-08 13:00:00,Wolverhampton Wanderers,Aston Villa,1,1,1.76232,1.81618
+2023-24,Premier League,21965,2023-10-08 15:30:00,Arsenal,Manchester City,1,0,0.386558,0.858071
+2023-24,Premier League,21979,2023-10-21 11:30:00,Liverpool,Everton,2,0,2.28568,0.0937725
+2023-24,Premier League,21975,2023-10-21 14:00:00,Bournemouth,Wolverhampton Wanderers,1,2,1.01839,2.30454
+2023-24,Premier League,21977,2023-10-21 14:00:00,Brentford,Burnley,3,0,3.15685,0.693129
+2023-24,Premier League,21980,2023-10-21 14:00:00,Manchester City,Brighton,2,1,0.962509,0.963733
+2023-24,Premier League,21981,2023-10-21 14:00:00,Newcastle United,Crystal Palace,4,0,3.73336,1.08795
+2023-24,Premier League,21982,2023-10-21 14:00:00,Nottingham Forest,Luton,2,2,3.27549,1.49555
+2023-24,Premier League,21978,2023-10-21 16:30:00,Chelsea,Arsenal,2,2,1.71838,1.05791
+2023-24,Premier League,21983,2023-10-21 19:00:00,Sheffield United,Manchester United,1,2,1.41074,1.46187
+2023-24,Premier League,21976,2023-10-22 15:30:00,Aston Villa,West Ham,4,1,2.34143,0.659622
+2023-24,Premier League,21984,2023-10-23 19:00:00,Tottenham,Fulham,2,0,1.63523,0.745838
+2023-24,Premier League,21990,2023-10-27 19:00:00,Crystal Palace,Tottenham,1,2,0.561834,0.989103
+2023-24,Premier League,21989,2023-10-28 11:30:00,Chelsea,Brentford,0,2,1.71801,2.48137
+2023-24,Premier League,21985,2023-10-28 14:00:00,Bournemouth,Burnley,2,1,1.10052,0.90255
+2023-24,Premier League,21986,2023-10-28 14:00:00,Arsenal,Sheffield United,5,0,3.03496,0.0281554
+2023-24,Premier League,21994,2023-10-28 16:30:00,Wolverhampton Wanderers,Newcastle United,2,2,0.863393,2.31987
+2023-24,Premier League,21993,2023-10-29 13:00:00,West Ham,Everton,0,1,0.618578,0.733813
+2023-24,Premier League,21987,2023-10-29 14:00:00,Aston Villa,Luton,3,1,3.07654,0.453117
+2023-24,Premier League,21988,2023-10-29 14:00:00,Brighton,Fulham,1,1,1.31996,0.552523
+2023-24,Premier League,21991,2023-10-29 14:00:00,Liverpool,Nottingham Forest,3,0,2.70428,0.642014
+2023-24,Premier League,21992,2023-10-29 15:30:00,Manchester United,Manchester City,0,3,0.714628,4.54595
+2023-24,Premier League,21998,2023-11-04 12:30:00,Fulham,Manchester United,0,1,1.18241,0.697095
+2023-24,Premier League,21995,2023-11-04 15:00:00,Brentford,West Ham,3,2,1.82944,1.75505
+2023-24,Premier League,21996,2023-11-04 15:00:00,Burnley,Crystal Palace,0,2,1.4998,1.43653
+2023-24,Premier League,21997,2023-11-04 15:00:00,Everton,Brighton,1,1,0.617607,0.442489
+2023-24,Premier League,22000,2023-11-04 15:00:00,Manchester City,Bournemouth,6,1,2.39949,0.643127
+2023-24,Premier League,22003,2023-11-04 15:00:00,Sheffield United,Wolverhampton Wanderers,2,1,1.10165,1.14803
+2023-24,Premier League,22001,2023-11-04 17:30:00,Newcastle United,Arsenal,1,0,1.12355,0.535473
+2023-24,Premier League,22002,2023-11-05 14:00:00,Nottingham Forest,Aston Villa,2,0,0.592447,1.33116
+2023-24,Premier League,21999,2023-11-05 16:30:00,Luton,Liverpool,1,1,1.3411,3.03925
+2023-24,Premier League,22004,2023-11-06 20:00:00,Tottenham,Chelsea,1,4,0.959108,4.05865
+2023-24,Premier League,22014,2023-11-11 12:30:00,Wolverhampton Wanderers,Tottenham,2,1,1.90884,0.432315
+2023-24,Premier League,22006,2023-11-11 15:00:00,Arsenal,Burnley,3,1,2.63194,0.327706
+2023-24,Premier League,22010,2023-11-11 15:00:00,Crystal Palace,Everton,2,3,1.89194,1.7904
+2023-24,Premier League,22012,2023-11-11 15:00:00,Manchester United,Luton,1,0,2.74105,0.408265
+2023-24,Premier League,22005,2023-11-11 17:30:00,Bournemouth,Newcastle United,2,0,2.78424,0.306141
+2023-24,Premier League,22007,2023-11-12 14:00:00,Aston Villa,Fulham,3,1,2.86039,0.648745
+2023-24,Premier League,22008,2023-11-12 14:00:00,Brighton,Sheffield United,1,1,1.08601,0.84434
+2023-24,Premier League,22011,2023-11-12 14:00:00,Liverpool,Brentford,3,0,1.56004,1.44954
+2023-24,Premier League,22013,2023-11-12 14:00:00,West Ham,Nottingham Forest,3,2,2.06402,1.42128
+2023-24,Premier League,22009,2023-11-12 16:30:00,Chelsea,Manchester City,4,4,3.47238,3.19324
+2023-24,Premier League,22020,2023-11-25 12:30:00,Manchester City,Liverpool,1,1,1.79622,0.766278
+2023-24,Premier League,22016,2023-11-25 15:00:00,Burnley,West Ham,1,2,1.44228,1.36963
+2023-24,Premier League,22019,2023-11-25 15:00:00,Luton,Crystal Palace,2,1,0.996153,1.83546
+2023-24,Premier League,22021,2023-11-25 15:00:00,Newcastle United,Chelsea,4,1,2.15227,0.968061
+2023-24,Premier League,22022,2023-11-25 15:00:00,Nottingham Forest,Brighton,2,3,2.22655,1.21792
+2023-24,Premier League,22023,2023-11-25 15:00:00,Sheffield United,Bournemouth,1,3,0.816227,3.13975
+2023-24,Premier League,22015,2023-11-25 17:30:00,Brentford,Arsenal,0,1,1.66315,1.82699
+2023-24,Premier League,22024,2023-11-26 14:00:00,Tottenham,Aston Villa,1,2,2.22542,2.39755
+2023-24,Premier League,22017,2023-11-26 16:30:00,Everton,Manchester United,0,3,2.49764,2.07334
+2023-24,Premier League,22018,2023-11-27 20:00:00,Fulham,Wolverhampton Wanderers,3,2,2.49057,1.57875
+2023-24,Premier League,22026,2023-12-02 15:00:00,Arsenal,Wolverhampton Wanderers,2,1,3.30368,1.07886
+2023-24,Premier League,22027,2023-12-02 15:00:00,Brentford,Luton,3,1,3.25952,0.227176
+2023-24,Premier League,22028,2023-12-02 15:00:00,Burnley,Sheffield United,5,0,2.60469,0.618131
+2023-24,Premier League,22033,2023-12-02 17:30:00,Nottingham Forest,Everton,0,1,0.673085,0.623789
+2023-24,Premier League,22032,2023-12-02 20:00:00,Newcastle United,Manchester United,1,0,2.90191,0.422674
+2023-24,Premier League,22025,2023-12-03 14:00:00,Bournemouth,Aston Villa,2,2,2.54937,0.89511
+2023-24,Premier League,22029,2023-12-03 14:00:00,Chelsea,Brighton,3,2,1.66304,0.855058
+2023-24,Premier League,22030,2023-12-03 14:00:00,Liverpool,Fulham,4,3,2.72831,1.51005
+2023-24,Premier League,22034,2023-12-03 14:00:00,West Ham,Crystal Palace,1,1,1.1466,0.987682
+2023-24,Premier League,22031,2023-12-03 16:30:00,Manchester City,Tottenham,3,3,2.90729,0.433077
+2023-24,Premier League,22042,2023-12-05 19:30:00,Wolverhampton Wanderers,Burnley,1,0,1.11886,0.781542
+2023-24,Premier League,22039,2023-12-05 20:15:00,Luton,Arsenal,3,4,0.526254,2.58815
+2023-24,Premier League,22036,2023-12-06 19:30:00,Brighton,Brentford,2,1,1.54099,1.22007
+2023-24,Premier League,22038,2023-12-06 19:30:00,Fulham,Nottingham Forest,5,0,3.09427,0.218659
+2023-24,Premier League,22040,2023-12-06 19:30:00,Sheffield United,Liverpool,0,2,0.834172,1.80116
+2023-24,Premier League,22043,2023-12-06 19:30:00,Crystal Palace,Bournemouth,0,2,1.26441,1.79997
+2023-24,Premier League,22035,2023-12-06 20:15:00,Aston Villa,Manchester City,1,0,2.1922,1.00198
+2023-24,Premier League,22044,2023-12-06 20:15:00,Manchester United,Chelsea,2,1,4.03949,2.3512
+2023-24,Premier League,22037,2023-12-07 19:30:00,Everton,Newcastle United,3,0,2.95393,1.29564
+2023-24,Premier League,22041,2023-12-07 20:15:00,Tottenham,West Ham,1,2,1.61268,1.7409
+2023-24,Premier League,22047,2023-12-09 12:30:00,Crystal Palace,Liverpool,1,2,1.79152,1.3708
+2023-24,Premier League,22046,2023-12-09 15:00:00,Brighton,Burnley,1,1,2.96247,1.05162
+2023-24,Premier League,22051,2023-12-09 15:00:00,Manchester United,Bournemouth,0,3,1.11296,1.9742
+2023-24,Premier League,22052,2023-12-09 15:00:00,Sheffield United,Brentford,1,0,0.841976,0.644638
+2023-24,Premier League,22054,2023-12-09 15:00:00,Wolverhampton Wanderers,Nottingham Forest,1,1,1.02199,1.21801
+2023-24,Premier League,22045,2023-12-09 17:30:00,Aston Villa,Arsenal,1,0,0.628499,1.71667
+2023-24,Premier League,22048,2023-12-10 14:00:00,Everton,Chelsea,2,0,1.11437,0.885512
+2023-24,Premier League,22049,2023-12-10 14:00:00,Fulham,West Ham,5,0,2.1884,0.983
+2023-24,Premier League,22050,2023-12-10 14:00:00,Luton,Manchester City,1,2,0.689037,2.23353
+2023-24,Premier League,22053,2023-12-10 16:30:00,Tottenham,Newcastle United,4,1,4.40118,1.61368
+2023-24,Premier League,22063,2023-12-15 20:00:00,Nottingham Forest,Tottenham,0,2,1.70569,1.60738
+2023-24,Premier League,22059,2023-12-16 15:00:00,Chelsea,Sheffield United,2,0,3.27322,0.44014
+2023-24,Premier League,22061,2023-12-16 15:00:00,Manchester City,Crystal Palace,2,2,2.41646,1.64977
+2023-24,Premier League,22062,2023-12-16 15:00:00,Newcastle United,Fulham,3,0,4.27933,0.471042
+2023-24,Premier League,22058,2023-12-16 17:30:00,Burnley,Everton,0,2,0.811435,2.22305
+2023-24,Premier League,22056,2023-12-17 14:00:00,Arsenal,Brighton,2,0,2.76976,0.663054
+2023-24,Premier League,22057,2023-12-17 14:00:00,Brentford,Aston Villa,1,2,0.796812,1.4664
+2023-24,Premier League,22064,2023-12-17 14:00:00,West Ham,Wolverhampton Wanderers,3,0,1.03828,0.556206
+2023-24,Premier League,22060,2023-12-17 16:30:00,Liverpool,Manchester United,0,0,1.97111,0.632715
+2023-24,Premier League,22066,2023-12-21 20:00:00,Crystal Palace,Brighton,1,1,1.65409,1.33653
+2023-24,Premier League,22065,2023-12-22 20:00:00,Aston Villa,Sheffield United,1,1,1.21861,0.646159
+2023-24,Premier League,22072,2023-12-23 12:30:00,West Ham,Manchester United,2,0,1.51468,0.730496
+2023-24,Premier League,22067,2023-12-23 15:00:00,Fulham,Burnley,0,2,1.38096,0.41714
+2023-24,Premier League,22069,2023-12-23 15:00:00,Luton,Newcastle United,1,0,1.81844,1.41488
+2023-24,Premier League,22070,2023-12-23 15:00:00,Nottingham Forest,Bournemouth,2,3,0.791806,1.89067
+2023-24,Premier League,22071,2023-12-23 15:00:00,Tottenham,Everton,2,1,1.57527,1.98385
+2023-24,Premier League,22068,2023-12-23 17:30:00,Liverpool,Arsenal,1,1,0.982901,0.851681
+2023-24,Premier League,22073,2023-12-24 13:00:00,Wolverhampton Wanderers,Chelsea,2,1,1.74626,1.75447
+2023-24,Premier League,22083,2023-12-26 12:30:00,Newcastle United,Nottingham Forest,1,3,2.79106,3.1074
+2023-24,Premier League,22075,2023-12-26 15:00:00,Bournemouth,Fulham,3,0,2.07911,0.324365
+2023-24,Premier League,22084,2023-12-26 15:00:00,Sheffield United,Luton,2,3,3.61788,0.715575
+2023-24,Premier League,22079,2023-12-26 17:30:00,Burnley,Liverpool,0,2,0.972389,1.68451
+2023-24,Premier League,22082,2023-12-26 20:00:00,Manchester United,Aston Villa,3,2,1.20104,1.83637
+2023-24,Premier League,22077,2023-12-27 19:30:00,Brentford,Wolverhampton Wanderers,1,4,2.59347,1.89483
+2023-24,Premier League,22080,2023-12-27 19:30:00,Chelsea,Crystal Palace,2,1,2.73005,0.958077
+2023-24,Premier League,22081,2023-12-27 20:15:00,Everton,Manchester City,1,3,1.23529,2.28321
+2023-24,Premier League,22078,2023-12-28 19:30:00,Brighton,Tottenham,4,2,3.84702,2.06955
+2023-24,Premier League,22076,2023-12-28 20:15:00,Arsenal,West Ham,0,2,2.7884,1.59711
+2023-24,Premier League,22089,2023-12-30 12:30:00,Luton,Chelsea,2,3,2.64093,1.57463
+2023-24,Premier League,22085,2023-12-30 15:00:00,Aston Villa,Burnley,3,2,2.92587,1.11923
+2023-24,Premier League,22086,2023-12-30 15:00:00,Crystal Palace,Brentford,3,1,1.61057,1.28731
+2023-24,Premier League,22090,2023-12-30 15:00:00,Manchester City,Sheffield United,2,0,2.24229,0.263211
+2023-24,Premier League,22094,2023-12-30 15:00:00,Wolverhampton Wanderers,Everton,3,0,2.64477,0.519641
+2023-24,Premier League,22091,2023-12-30 17:30:00,Nottingham Forest,Manchester United,2,1,0.744348,0.651905
+2023-24,Premier League,22087,2023-12-31 14:00:00,Fulham,Arsenal,2,1,1.52829,1.6591
+2023-24,Premier League,22092,2023-12-31 14:00:00,Tottenham,Bournemouth,3,1,2.15027,1.58229
+2023-24,Premier League,22088,2024-01-01 19:00:00,Liverpool,Newcastle United,4,2,6.67151,0.910974
+2023-24,Premier League,22093,2024-01-02 18:30:00,West Ham,Brighton,0,0,0.9831,2.1552
+2023-24,Premier League,22096,2024-01-12 19:45:00,Burnley,Luton,1,1,1.52023,0.965167
+2023-24,Premier League,22097,2024-01-13 12:30:00,Chelsea,Fulham,1,0,2.0456,0.697847
+2023-24,Premier League,22100,2024-01-13 17:30:00,Newcastle United,Manchester City,2,3,1.23638,2.55452
+2023-24,Premier League,22098,2024-01-14 14:00:00,Everton,Aston Villa,0,0,1.03664,1.3435
+2023-24,Premier League,22099,2024-01-14 16:30:00,Manchester United,Tottenham,2,2,0.923233,1.31224
+2023-24,Premier League,22103,2024-01-20 12:30:00,Arsenal,Crystal Palace,5,0,3.52167,0.288083
+2023-24,Premier League,22104,2024-01-20 17:30:00,Brentford,Nottingham Forest,3,2,1.94219,1.22251
+2023-24,Premier League,22101,2024-01-21 14:00:00,Sheffield United,West Ham,2,2,2.61362,2.4241
+2023-24,Premier League,22102,2024-01-21 16:30:00,Bournemouth,Liverpool,0,4,0.834585,1.53344
+2023-24,Premier League,22095,2024-01-22 19:45:00,Brighton,Wolverhampton Wanderers,0,0,1.3701,1.14116
+2023-24,Premier League,22108,2024-01-30 19:30:00,Nottingham Forest,Arsenal,1,2,0.631618,1.39143
+2023-24,Premier League,22106,2024-01-30 19:45:00,Fulham,Everton,0,0,2.37499,2.83317
+2023-24,Premier League,22107,2024-01-30 19:45:00,Luton,Brighton,4,0,3.63312,1.01366
+2023-24,Premier League,22112,2024-01-30 20:00:00,Crystal Palace,Sheffield United,3,2,1.1601,0.768467
+2023-24,Premier League,22105,2024-01-30 20:15:00,Aston Villa,Newcastle United,1,3,1.44485,3.3224
+2023-24,Premier League,22109,2024-01-31 19:30:00,Tottenham,Brentford,3,2,3.36194,1.59637
+2023-24,Premier League,22114,2024-01-31 19:30:00,Manchester City,Burnley,3,1,1.84756,1.49114
+2023-24,Premier League,22113,2024-01-31 20:15:00,Liverpool,Chelsea,4,1,3.6627,0.477972
+2023-24,Premier League,22110,2024-02-01 19:30:00,West Ham,Bournemouth,1,1,1.3128,1.13487
+2023-24,Premier League,22111,2024-02-01 20:15:00,Wolverhampton Wanderers,Manchester United,3,4,2.27609,3.22698
+2023-24,Premier League,22121,2024-02-03 12:30:00,Everton,Tottenham,2,2,3.25881,0.922371
+2023-24,Premier League,22118,2024-02-03 15:00:00,Brighton,Crystal Palace,4,1,1.92591,0.241137
+2023-24,Premier League,22119,2024-02-03 15:00:00,Burnley,Fulham,2,2,1.00428,1.28806
+2023-24,Premier League,22123,2024-02-03 15:00:00,Newcastle United,Luton,4,4,2.37353,2.67463
+2023-24,Premier League,22124,2024-02-03 17:30:00,Sheffield United,Aston Villa,0,5,1.52784,2.99015
+2023-24,Premier League,22115,2024-02-04 14:00:00,Bournemouth,Nottingham Forest,1,1,1.1895,0.456548
+2023-24,Premier League,22120,2024-02-04 14:00:00,Chelsea,Wolverhampton Wanderers,2,4,2.35967,2.48996
+2023-24,Premier League,22122,2024-02-04 14:00:00,Manchester United,West Ham,3,0,0.96721,1.1807
+2023-24,Premier League,22116,2024-02-04 16:30:00,Arsenal,Liverpool,3,1,2.8526,0.542052
+2023-24,Premier League,22117,2024-02-05 20:00:00,Brentford,Manchester City,1,3,0.865741,2.10785
+2023-24,Premier League,22130,2024-02-10 12:30:00,Manchester City,Everton,2,0,1.58971,0.192072
+2023-24,Premier League,22127,2024-02-10 15:00:00,Fulham,Bournemouth,3,1,1.7456,2.60612
+2023-24,Premier League,22128,2024-02-10 15:00:00,Liverpool,Burnley,3,1,3.14734,1.11123
+2023-24,Premier League,22129,2024-02-10 15:00:00,Luton,Sheffield United,1,3,1.76215,1.98283
+2023-24,Premier League,22132,2024-02-10 15:00:00,Tottenham,Brighton,2,1,2.10928,1.49285
+2023-24,Premier League,22134,2024-02-10 15:00:00,Wolverhampton Wanderers,Brentford,0,2,1.05781,1.84908
+2023-24,Premier League,22131,2024-02-10 17:30:00,Nottingham Forest,Newcastle United,2,3,0.968075,0.511375
+2023-24,Premier League,22133,2024-02-11 14:00:00,West Ham,Arsenal,0,6,0.191065,3.99893
+2023-24,Premier League,22125,2024-02-11 16:30:00,Aston Villa,Manchester United,1,2,2.64675,2.44591
+2023-24,Premier League,22126,2024-02-12 20:00:00,Crystal Palace,Chelsea,1,3,0.719516,1.26948
+2023-24,Premier League,22135,2024-02-17 12:30:00,Brentford,Liverpool,1,4,1.69518,3.08952
+2023-24,Premier League,22136,2024-02-17 15:00:00,Burnley,Arsenal,0,5,0.335143,2.20575
+2023-24,Premier League,22138,2024-02-17 15:00:00,Fulham,Aston Villa,1,2,1.41796,1.57297
+2023-24,Premier League,22141,2024-02-17 15:00:00,Newcastle United,Bournemouth,2,2,2.38425,2.08098
+2023-24,Premier League,22142,2024-02-17 15:00:00,Nottingham Forest,West Ham,2,0,2.66942,0.520016
+2023-24,Premier League,22144,2024-02-17 15:00:00,Tottenham,Wolverhampton Wanderers,1,2,1.59768,1.77591
+2023-24,Premier League,22140,2024-02-17 17:30:00,Manchester City,Chelsea,1,1,2.77713,1.82903
+2023-24,Premier League,22143,2024-02-18 14:00:00,Sheffield United,Brighton,0,5,0.586214,3.35549
+2023-24,Premier League,22139,2024-02-18 16:30:00,Luton,Manchester United,1,2,1.57234,3.58973
+2023-24,Premier League,22137,2024-02-19 20:00:00,Everton,Crystal Palace,1,1,2.44588,0.734685
+2023-24,Premier League,22074,2024-02-20 18:30:00,Manchester City,Brentford,1,0,2.53766,0.503799
+2023-24,Premier League,22151,2024-02-21 15:00:00,Liverpool,Luton,4,1,3.70302,0.956512
+2023-24,Premier League,22147,2024-02-24 15:00:00,Aston Villa,Nottingham Forest,4,2,3.48861,2.25569
+2023-24,Premier League,22148,2024-02-24 15:00:00,Brighton,Everton,1,1,1.6538,0.286655
+2023-24,Premier League,22150,2024-02-24 15:00:00,Crystal Palace,Burnley,3,0,2.41612,0.0760216
+2023-24,Premier League,22152,2024-02-24 15:00:00,Manchester United,Fulham,1,2,1.96036,1.1385
+2023-24,Premier League,22145,2024-02-24 17:30:00,Bournemouth,Manchester City,0,1,0.925889,1.79636
+2023-24,Premier League,22146,2024-02-24 20:00:00,Arsenal,Newcastle United,4,1,2.59336,0.217373
+2023-24,Premier League,22154,2024-02-25 13:30:00,Wolverhampton Wanderers,Sheffield United,1,0,1.21618,0.654342
+2023-24,Premier League,22153,2024-02-26 20:00:00,West Ham,Brentford,4,2,2.06873,1.33683
+2023-24,Premier League,22155,2024-03-02 15:00:00,Brentford,Chelsea,2,2,2.4732,2.1523
+2023-24,Premier League,22157,2024-03-02 15:00:00,Everton,West Ham,1,3,3.12075,2.17948
+2023-24,Premier League,22158,2024-03-02 15:00:00,Fulham,Brighton,3,0,1.37604,1.15198
+2023-24,Premier League,22161,2024-03-02 15:00:00,Newcastle United,Wolverhampton Wanderers,3,0,3.33495,0.507769
+2023-24,Premier League,22162,2024-03-02 15:00:00,Nottingham Forest,Liverpool,0,1,0.971466,1.32259
+2023-24,Premier League,22164,2024-03-02 15:00:00,Tottenham,Crystal Palace,3,1,2.6625,0.277887
+2023-24,Premier League,22159,2024-03-02 17:30:00,Luton,Aston Villa,2,3,2.43312,2.08586
+2023-24,Premier League,22156,2024-03-03 13:00:00,Burnley,Bournemouth,0,2,1.60461,1.43616
+2023-24,Premier League,22160,2024-03-03 15:30:00,Manchester City,Manchester United,3,1,2.64173,0.153764
+2023-24,Premier League,22163,2024-03-04 20:00:00,Sheffield United,Arsenal,0,6,0.201374,2.47294
+2023-24,Premier League,22172,2024-03-09 12:30:00,Manchester United,Everton,2,0,2.9016,1.8214
+2023-24,Premier League,22165,2024-03-09 15:00:00,Bournemouth,Sheffield United,2,2,3.92657,1.91752
+2023-24,Premier League,22170,2024-03-09 15:00:00,Crystal Palace,Luton,1,1,3.25103,1.08531
+2023-24,Premier League,22174,2024-03-09 15:00:00,Wolverhampton Wanderers,Fulham,2,1,1.29589,2.94155
+2023-24,Premier League,22166,2024-03-09 17:30:00,Arsenal,Brentford,2,1,1.59369,0.733239
+2023-24,Premier League,22167,2024-03-10 13:00:00,Aston Villa,Tottenham,0,4,1.23267,2.25381
+2023-24,Premier League,22168,2024-03-10 14:00:00,Brighton,Nottingham Forest,1,0,0.534518,0.687034
+2023-24,Premier League,22173,2024-03-10 14:00:00,West Ham,Burnley,2,2,1.87414,0.88131
+2023-24,Premier League,22171,2024-03-10 15:45:00,Liverpool,Manchester City,1,1,2.25492,1.37289
+2023-24,Premier League,22169,2024-03-11 20:00:00,Chelsea,Newcastle United,3,2,1.78315,0.568435
+2023-24,Premier League,25861,2024-03-13 19:30:00,Bournemouth,Luton,4,3,2.84403,2.79419
+2023-24,Premier League,22177,2024-03-16 15:00:00,Burnley,Brentford,2,1,2.69776,1.25123
+2023-24,Premier League,22181,2024-03-16 15:00:00,Luton,Nottingham Forest,1,1,0.853782,1.95268
+2023-24,Premier League,22180,2024-03-16 17:30:00,Fulham,Tottenham,3,0,2.47234,2.14564
+2023-24,Premier League,22183,2024-03-17 14:00:00,West Ham,Aston Villa,1,1,1.32829,0.911274
+2023-24,Premier League,22191,2024-03-30 12:30:00,Newcastle United,West Ham,4,3,3.80922,0.994584
+2023-24,Premier League,22185,2024-03-30 15:00:00,Bournemouth,Everton,2,1,1.39268,0.93378
+2023-24,Premier League,22188,2024-03-30 15:00:00,Chelsea,Burnley,2,2,4.46643,2.10422
+2023-24,Premier League,22192,2024-03-30 15:00:00,Nottingham Forest,Crystal Palace,1,1,0.784652,0.900972
+2023-24,Premier League,22193,2024-03-30 15:00:00,Sheffield United,Fulham,3,3,1.78824,1.10254
+2023-24,Premier League,22194,2024-03-30 15:00:00,Tottenham,Luton,2,1,2.46523,0.402402
+2023-24,Premier League,22186,2024-03-30 17:30:00,Aston Villa,Wolverhampton Wanderers,2,0,1.28271,1.66232
+2023-24,Premier League,22187,2024-03-30 20:00:00,Brentford,Manchester United,1,1,3.16487,0.989565
+2023-24,Premier League,22189,2024-03-31 14:00:00,Liverpool,Brighton,2,1,3.21149,0.43922
+2023-24,Premier League,22190,2024-03-31 16:30:00,Manchester City,Arsenal,0,0,1.22009,0.511402
+2023-24,Premier League,22198,2024-04-02 18:30:00,Nottingham Forest,Fulham,3,1,1.94619,1.04304
+2023-24,Premier League,22202,2024-04-02 18:30:00,Newcastle United,Everton,1,1,2.65009,1.69834
+2023-24,Premier League,22195,2024-04-02 18:45:00,Bournemouth,Crystal Palace,1,0,1.30969,0.174389
+2023-24,Premier League,22197,2024-04-02 18:45:00,Burnley,Wolverhampton Wanderers,1,1,1.12581,1.01021
+2023-24,Premier League,22199,2024-04-02 19:15:00,West Ham,Tottenham,1,1,1.47017,1.39423
+2023-24,Premier League,22196,2024-04-03 18:30:00,Arsenal,Luton,2,0,1.14384,0.292082
+2023-24,Premier League,22200,2024-04-03 18:30:00,Brentford,Brighton,0,0,0.423299,1.22404
+2023-24,Premier League,22204,2024-04-03 19:15:00,Manchester City,Aston Villa,4,1,3.87704,1.18643
+2023-24,Premier League,22203,2024-04-04 18:30:00,Liverpool,Sheffield United,3,1,2.51772,0.720948
+2023-24,Premier League,22201,2024-04-04 19:15:00,Chelsea,Manchester United,4,3,3.48048,1.56686
+2023-24,Premier League,22207,2024-04-06 11:30:00,Crystal Palace,Manchester City,2,4,1.49472,2.26381
+2023-24,Premier League,22205,2024-04-06 14:00:00,Aston Villa,Brentford,3,3,1.16333,1.42064
+2023-24,Premier League,22208,2024-04-06 14:00:00,Everton,Burnley,1,0,0.659844,0.34699
+2023-24,Premier League,22209,2024-04-06 14:00:00,Fulham,Newcastle United,0,1,0.834564,1.18012
+2023-24,Premier League,22210,2024-04-06 14:00:00,Luton,Bournemouth,2,1,1.30478,0.616108
+2023-24,Premier League,22214,2024-04-06 14:00:00,Wolverhampton Wanderers,West Ham,1,2,1.78341,1.14133
+2023-24,Premier League,22206,2024-04-06 16:30:00,Brighton,Arsenal,0,3,0.428514,4.16518
+2023-24,Premier League,22211,2024-04-07 14:30:00,Manchester United,Liverpool,2,2,0.814509,4.43457
+2023-24,Premier League,22212,2024-04-07 16:30:00,Sheffield United,Chelsea,2,2,1.74265,0.521789
+2023-24,Premier League,22213,2024-04-07 19:00:00,Tottenham,Nottingham Forest,3,1,1.61978,2.00122
+2023-24,Premier League,22222,2024-04-13 11:30:00,Newcastle United,Tottenham,4,0,3.1483,0.737596
+2023-24,Premier League,22217,2024-04-13 14:00:00,Brentford,Sheffield United,2,0,1.09071,0.834498
+2023-24,Premier League,22218,2024-04-13 14:00:00,Burnley,Brighton,1,1,1.8522,0.889445
+2023-24,Premier League,22221,2024-04-13 14:00:00,Manchester City,Luton,5,1,4.64245,0.809775
+2023-24,Premier League,22223,2024-04-13 14:00:00,Nottingham Forest,Wolverhampton Wanderers,2,2,1.76244,1.45688
+2023-24,Premier League,22215,2024-04-13 16:30:00,Bournemouth,Manchester United,2,2,2.38519,1.52274
+2023-24,Premier League,22220,2024-04-14 13:00:00,Liverpool,Crystal Palace,0,1,3.04497,2.12879
+2023-24,Premier League,22224,2024-04-14 13:00:00,West Ham,Fulham,0,2,1.45307,3.61413
+2023-24,Premier League,22216,2024-04-14 15:30:00,Arsenal,Aston Villa,0,2,1.89003,0.929049
+2023-24,Premier League,22219,2024-04-15 19:00:00,Chelsea,Everton,6,0,3.37093,1.21791
+2023-24,Premier League,22230,2024-04-20 14:00:00,Luton,Brentford,1,5,0.497799,3.7809
+2023-24,Premier League,22232,2024-04-20 14:00:00,Sheffield United,Burnley,1,4,1.97816,2.42338
+2023-24,Premier League,22234,2024-04-20 18:30:00,Wolverhampton Wanderers,Arsenal,0,2,0.164516,1.66179
+2023-24,Premier League,22228,2024-04-21 12:30:00,Everton,Nottingham Forest,2,0,0.473233,1.18916
+2023-24,Premier League,22225,2024-04-21 14:00:00,Aston Villa,Bournemouth,3,1,2.62687,2.05211
+2023-24,Premier League,22227,2024-04-21 14:00:00,Crystal Palace,West Ham,5,2,3.7185,1.34536
+2023-24,Premier League,22229,2024-04-21 15:30:00,Fulham,Liverpool,1,3,0.83885,1.02445
+2023-24,Premier League,22175,2024-04-23 19:00:00,Arsenal,Chelsea,5,0,3.45858,1.60343
+2023-24,Premier League,22184,2024-04-24 18:45:00,Wolverhampton Wanderers,Bournemouth,0,1,0.484454,2.40311
+2023-24,Premier League,22178,2024-04-24 19:00:00,Crystal Palace,Newcastle United,2,0,1.43661,0.55129
+2023-24,Premier League,22179,2024-04-24 19:00:00,Everton,Liverpool,2,0,1.89111,1.87155
+2023-24,Premier League,22182,2024-04-24 19:00:00,Manchester United,Sheffield United,4,2,3.51311,1.20517
+2023-24,Premier League,22176,2024-04-25 19:00:00,Brighton,Manchester City,0,4,0.572021,1.90507
+2023-24,Premier League,22243,2024-04-27 11:30:00,West Ham,Liverpool,2,2,0.794025,2.29298
+2023-24,Premier League,22238,2024-04-27 14:00:00,Fulham,Crystal Palace,1,1,1.39418,1.05387
+2023-24,Premier League,22239,2024-04-27 14:00:00,Manchester United,Burnley,1,1,3.06197,1.89591
+2023-24,Premier League,22240,2024-04-27 14:00:00,Newcastle United,Sheffield United,5,1,2.93477,1.82408
+2023-24,Premier League,22244,2024-04-27 14:00:00,Wolverhampton Wanderers,Luton,2,1,1.49011,0.90435
+2023-24,Premier League,22237,2024-04-27 16:30:00,Everton,Brentford,1,0,1.21399,0.956356
+2023-24,Premier League,22236,2024-04-27 19:00:00,Aston Villa,Chelsea,2,2,0.612257,1.56401
+2023-24,Premier League,22235,2024-04-28 13:00:00,Bournemouth,Brighton,3,0,2.48132,1.35682
+2023-24,Premier League,22241,2024-04-28 13:00:00,Tottenham,Arsenal,2,3,2.60458,1.51469
+2023-24,Premier League,22242,2024-04-28 15:30:00,Nottingham Forest,Manchester City,0,2,2.17312,0.932063
+2023-24,Premier League,22149,2024-05-02 18:30:00,Chelsea,Tottenham,2,0,2.22432,1.27064
+2023-24,Premier League,22252,2024-05-03 19:00:00,Luton,Everton,1,1,0.950391,1.22959
+2023-24,Premier League,22245,2024-05-04 11:30:00,Arsenal,Bournemouth,3,0,3.91372,0.4687
+2023-24,Premier League,22246,2024-05-04 14:00:00,Brentford,Fulham,0,0,0.809379,1.45579
+2023-24,Premier League,22248,2024-05-04 14:00:00,Burnley,Newcastle United,1,4,1.28632,4.25643
+2023-24,Premier League,22254,2024-05-04 14:00:00,Sheffield United,Nottingham Forest,1,3,2.48986,1.93818
+2023-24,Premier League,22253,2024-05-04 16:30:00,Manchester City,Wolverhampton Wanderers,5,1,4.52542,0.396887
+2023-24,Premier League,22247,2024-05-05 13:00:00,Brighton,Aston Villa,1,0,2.63566,0.0644055
+2023-24,Premier League,22249,2024-05-05 13:00:00,Chelsea,West Ham,5,0,4.21838,0.893899
+2023-24,Premier League,22251,2024-05-05 15:30:00,Liverpool,Tottenham,4,2,3.26222,1.17205
+2023-24,Premier League,22250,2024-05-06 19:00:00,Crystal Palace,Manchester United,4,0,2.0656,0.341417
+2023-24,Premier League,22258,2024-05-11 11:30:00,Fulham,Manchester City,0,4,0.0886245,3.15218
+2023-24,Premier League,22255,2024-05-11 14:00:00,Bournemouth,Brentford,1,2,1.07237,1.92722
+2023-24,Premier League,22257,2024-05-11 14:00:00,Everton,Sheffield United,1,0,1.82411,0.465523
+2023-24,Premier League,22260,2024-05-11 14:00:00,Newcastle United,Brighton,1,1,2.45163,1.91556
+2023-24,Premier League,22262,2024-05-11 14:00:00,Tottenham,Burnley,2,1,3.00238,0.950331
+2023-24,Premier League,22263,2024-05-11 14:00:00,West Ham,Luton,3,1,3.71009,0.640456
+2023-24,Premier League,22264,2024-05-11 14:00:00,Wolverhampton Wanderers,Crystal Palace,1,3,1.1561,2.51452
+2023-24,Premier League,22261,2024-05-11 16:30:00,Nottingham Forest,Chelsea,2,3,2.44569,2.41068
+2023-24,Premier League,22259,2024-05-12 15:30:00,Manchester United,Arsenal,0,1,0.551669,1.73104
+2023-24,Premier League,22256,2024-05-13 19:00:00,Aston Villa,Liverpool,3,3,2.71655,1.89968
+2023-24,Premier League,22233,2024-05-14 19:00:00,Tottenham,Manchester City,0,2,1.84285,2.70331
+2023-24,Premier League,22226,2024-05-15 18:45:00,Brighton,Chelsea,1,2,1.32423,1.544
+2023-24,Premier League,22231,2024-05-15 19:00:00,Manchester United,Newcastle United,3,2,1.49706,2.27657
+2023-24,Premier League,22265,2024-05-19 15:00:00,Arsenal,Everton,2,1,3.2117,0.664904
+2023-24,Premier League,22266,2024-05-19 15:00:00,Brentford,Newcastle United,2,4,1.70157,3.65044
+2023-24,Premier League,22267,2024-05-19 15:00:00,Brighton,Manchester United,0,2,1.9717,1.00404
+2023-24,Premier League,22268,2024-05-19 15:00:00,Burnley,Nottingham Forest,1,2,1.08222,1.57962
+2023-24,Premier League,22269,2024-05-19 15:00:00,Chelsea,Bournemouth,2,1,1.59771,2.002
+2023-24,Premier League,22270,2024-05-19 15:00:00,Crystal Palace,Aston Villa,5,0,2.23189,0.598846
+2023-24,Premier League,22271,2024-05-19 15:00:00,Liverpool,Wolverhampton Wanderers,2,0,5.65937,0.731254
+2023-24,Premier League,22272,2024-05-19 15:00:00,Luton,Fulham,2,4,2.06743,1.11598
+2023-24,Premier League,22273,2024-05-19 15:00:00,Manchester City,West Ham,3,1,2.31504,0.240159
+2023-24,Premier League,22274,2024-05-19 15:00:00,Sheffield United,Tottenham,0,3,0.697312,3.19675
+2023-24,Serie A,22305,2023-08-19 16:30:00,Empoli,Verona,0,1,0.844727,0.690842
+2023-24,Serie A,22306,2023-08-19 16:30:00,Frosinone,Napoli,1,3,0.871157,1.31464
+2023-24,Serie A,22307,2023-08-19 18:45:00,Inter,Monza,2,0,2.49549,0.581247
+2023-24,Serie A,22308,2023-08-19 18:45:00,Genoa,Fiorentina,1,4,0.79732,1.1197
+2023-24,Serie A,22309,2023-08-20 16:30:00,Roma,Salernitana,2,2,2.00607,0.364297
+2023-24,Serie A,22310,2023-08-20 16:30:00,Sassuolo,Atalanta,0,2,0.381264,1.50058
+2023-24,Serie A,22311,2023-08-20 18:45:00,Udinese,Juventus,0,3,1.20988,1.86438
+2023-24,Serie A,22312,2023-08-20 18:45:00,Lecce,Lazio,2,1,1.75411,2.22215
+2023-24,Serie A,22313,2023-08-21 16:30:00,Torino,Cagliari,0,0,1.03099,0.443184
+2023-24,Serie A,22314,2023-08-21 18:45:00,Bologna,AC Milan,0,2,1.17349,1.1479
+2023-24,Serie A,22315,2023-08-26 16:30:00,Frosinone,Atalanta,2,1,0.760807,1.44199
+2023-24,Serie A,22316,2023-08-26 16:30:00,Monza,Empoli,2,0,2.0469,1.13824
+2023-24,Serie A,22317,2023-08-26 18:45:00,AC Milan,Torino,4,1,3.25277,0.563184
+2023-24,Serie A,22318,2023-08-26 18:45:00,Verona,Roma,2,1,0.904461,2.00413
+2023-24,Serie A,22319,2023-08-27 16:30:00,Fiorentina,Lecce,2,2,1.51003,0.494028
+2023-24,Serie A,22320,2023-08-27 16:30:00,Juventus,Bologna,1,1,0.915803,0.687398
+2023-24,Serie A,22321,2023-08-27 18:45:00,Lazio,Genoa,0,1,0.937895,0.69511
+2023-24,Serie A,22322,2023-08-27 18:45:00,Napoli,Sassuolo,2,0,3.53489,0.145568
+2023-24,Serie A,22323,2023-08-28 16:30:00,Salernitana,Udinese,1,1,0.559371,0.548425
+2023-24,Serie A,22324,2023-08-28 18:45:00,Cagliari,Inter,0,2,0.484344,1.25423
+2023-24,Serie A,22325,2023-09-01 16:30:00,Sassuolo,Verona,3,1,2.62139,0.555465
+2023-24,Serie A,22326,2023-09-01 18:45:00,Roma,AC Milan,1,2,0.412392,1.62873
+2023-24,Serie A,22327,2023-09-02 16:30:00,Udinese,Frosinone,0,0,2.07837,2.41709
+2023-24,Serie A,22328,2023-09-02 16:30:00,Bologna,Cagliari,2,1,2.8268,0.537052
+2023-24,Serie A,22329,2023-09-02 18:45:00,Atalanta,Monza,3,0,1.96499,0.37036
+2023-24,Serie A,22330,2023-09-02 18:45:00,Napoli,Lazio,1,2,1.04344,1.04826
+2023-24,Serie A,22331,2023-09-03 16:30:00,Torino,Genoa,1,0,0.481429,0.102008
+2023-24,Serie A,22332,2023-09-03 16:30:00,Inter,Fiorentina,4,0,5.21474,0.346607
+2023-24,Serie A,22333,2023-09-03 18:45:00,Empoli,Juventus,0,2,0.304187,3.04937
+2023-24,Serie A,22334,2023-09-03 18:45:00,Lecce,Salernitana,2,0,1.83665,1.05367
+2023-24,Serie A,22335,2023-09-16 13:00:00,Juventus,Lazio,3,1,2.6734,0.704843
+2023-24,Serie A,22336,2023-09-16 16:00:00,Inter,AC Milan,5,1,2.95417,0.989611
+2023-24,Serie A,22337,2023-09-16 18:45:00,Genoa,Napoli,2,2,1.33007,0.984291
+2023-24,Serie A,22338,2023-09-17 10:30:00,Cagliari,Udinese,0,0,2.2007,0.836992
+2023-24,Serie A,22339,2023-09-17 13:00:00,Frosinone,Sassuolo,4,2,2.97022,1.93433
+2023-24,Serie A,22340,2023-09-17 13:00:00,Monza,Lecce,1,1,3.29559,0.895727
+2023-24,Serie A,22341,2023-09-17 16:00:00,Fiorentina,Atalanta,3,2,1.4533,0.632092
+2023-24,Serie A,22342,2023-09-17 18:45:00,Roma,Empoli,7,0,2.49292,0.166755
+2023-24,Serie A,22343,2023-09-18 16:30:00,Salernitana,Torino,0,3,0.694683,1.54562
+2023-24,Serie A,22344,2023-09-18 18:45:00,Verona,Bologna,0,0,0.408446,0.896605
+2023-24,Serie A,22350,2023-09-22 16:30:00,Salernitana,Frosinone,1,1,0.834621,0.98737
+2023-24,Serie A,22351,2023-09-22 18:45:00,Lecce,Genoa,1,0,1.00903,0.532474
+2023-24,Serie A,22352,2023-09-23 13:00:00,AC Milan,Verona,1,0,0.916672,0.845815
+2023-24,Serie A,22353,2023-09-23 16:00:00,Sassuolo,Juventus,4,2,1.74238,1.36816
+2023-24,Serie A,22348,2023-09-23 18:45:00,Lazio,Monza,1,1,1.02354,1.80956
+2023-24,Serie A,22347,2023-09-24 10:30:00,Empoli,Inter,0,1,0.330665,1.63518
+2023-24,Serie A,22345,2023-09-24 13:00:00,Atalanta,Cagliari,2,0,1.67724,1.00314
+2023-24,Serie A,22349,2023-09-24 13:00:00,Udinese,Fiorentina,0,2,2.40063,0.281122
+2023-24,Serie A,22346,2023-09-24 16:00:00,Bologna,Napoli,0,0,0.184666,1.84847
+2023-24,Serie A,22354,2023-09-24 18:45:00,Torino,Roma,1,1,1.10678,1.10764
+2023-24,Serie A,22359,2023-09-26 18:45:00,Juventus,Lecce,1,0,1.64987,0.0667791
+2023-24,Serie A,22355,2023-09-27 16:30:00,Cagliari,AC Milan,1,3,0.67613,2.10838
+2023-24,Serie A,22356,2023-09-27 16:30:00,Empoli,Salernitana,1,0,2.29107,0.477434
+2023-24,Serie A,22362,2023-09-27 16:30:00,Verona,Atalanta,0,1,0.325267,1.38356
+2023-24,Serie A,22358,2023-09-27 18:45:00,Inter,Sassuolo,1,2,1.02458,1.02404
+2023-24,Serie A,22360,2023-09-27 18:45:00,Lazio,Torino,2,0,0.773684,0.213455
+2023-24,Serie A,22361,2023-09-27 18:45:00,Napoli,Udinese,4,1,3.70921,0.82191
+2023-24,Serie A,22363,2023-09-28 16:30:00,Monza,Bologna,0,0,1.02777,1.04179
+2023-24,Serie A,22364,2023-09-28 16:30:00,Frosinone,Fiorentina,1,1,0.976021,1.45269
+2023-24,Serie A,22357,2023-09-28 18:45:00,Genoa,Roma,4,1,1.59801,1.29625
+2023-24,Serie A,22367,2023-09-30 13:00:00,Lecce,Napoli,0,4,0.612649,2.71689
+2023-24,Serie A,22373,2023-09-30 16:00:00,AC Milan,Lazio,2,0,2.69178,0.502537
+2023-24,Serie A,22372,2023-09-30 18:45:00,Salernitana,Inter,0,4,0.620122,2.5554
+2023-24,Serie A,22366,2023-10-01 10:30:00,Bologna,Empoli,3,0,3.28867,1.04905
+2023-24,Serie A,22370,2023-10-01 13:00:00,Udinese,Genoa,2,2,1.53115,0.83333
+2023-24,Serie A,22365,2023-10-01 16:00:00,Atalanta,Juventus,0,0,1.97735,0.203059
+2023-24,Serie A,22369,2023-10-01 18:45:00,Roma,Frosinone,2,0,0.830718,0.791935
+2023-24,Serie A,22371,2023-10-02 16:30:00,Torino,Verona,0,0,0.617691,0.273624
+2023-24,Serie A,22374,2023-10-02 16:30:00,Sassuolo,Monza,0,1,1.49022,1.84951
+2023-24,Serie A,22368,2023-10-02 18:45:00,Fiorentina,Cagliari,3,0,1.52678,0.81356
+2023-24,Serie A,22376,2023-10-06 16:30:00,Empoli,Udinese,0,0,1.00116,1.23968
+2023-24,Serie A,22380,2023-10-06 18:45:00,Lecce,Sassuolo,1,1,1.51817,1.74518
+2023-24,Serie A,22383,2023-10-07 13:00:00,Inter,Bologna,2,2,0.705274,1.04766
+2023-24,Serie A,22379,2023-10-07 16:00:00,Juventus,Torino,2,0,2.40906,0.592513
+2023-24,Serie A,22378,2023-10-07 18:45:00,Genoa,AC Milan,0,1,0.353901,0.898603
+2023-24,Serie A,22381,2023-10-08 10:30:00,Monza,Salernitana,3,0,3.73783,0.999628
+2023-24,Serie A,22377,2023-10-08 13:00:00,Frosinone,Verona,2,1,1.91977,0.506291
+2023-24,Serie A,22382,2023-10-08 13:00:00,Lazio,Atalanta,3,2,1.65045,1.0016
+2023-24,Serie A,22375,2023-10-08 16:00:00,Cagliari,Roma,1,4,1.76268,3.3327
+2023-24,Serie A,22384,2023-10-08 18:45:00,Napoli,Fiorentina,1,3,1.77418,1.76863
+2023-24,Serie A,22387,2023-10-21 13:00:00,Verona,Napoli,1,3,0.87241,2.65531
+2023-24,Serie A,22390,2023-10-21 16:00:00,Torino,Inter,0,3,0.596799,2.44253
+2023-24,Serie A,22392,2023-10-21 18:45:00,Sassuolo,Lazio,0,2,0.319165,2.93562
+2023-24,Serie A,22394,2023-10-22 10:30:00,Roma,Monza,1,0,2.53278,0.423669
+2023-24,Serie A,22386,2023-10-22 13:00:00,Bologna,Frosinone,2,1,1.63336,1.42786
+2023-24,Serie A,22388,2023-10-22 13:00:00,Salernitana,Cagliari,2,2,1.33333,1.4958
+2023-24,Serie A,22385,2023-10-22 16:00:00,Atalanta,Genoa,2,0,1.97081,1.04166
+2023-24,Serie A,22391,2023-10-22 18:45:00,AC Milan,Juventus,0,1,0.238518,1.80571
+2023-24,Serie A,22393,2023-10-23 16:30:00,Udinese,Lecce,1,1,2.58184,0.808325
+2023-24,Serie A,22389,2023-10-23 18:45:00,Fiorentina,Empoli,0,2,0.764401,1.79488
+2023-24,Serie A,22396,2023-10-27 18:45:00,Genoa,Salernitana,1,0,0.40726,0.778619
+2023-24,Serie A,22401,2023-10-28 13:00:00,Sassuolo,Bologna,1,1,0.864789,0.829724
+2023-24,Serie A,22398,2023-10-28 16:00:00,Lecce,Torino,0,1,0.462357,1.33241
+2023-24,Serie A,22403,2023-10-28 18:45:00,Juventus,Verona,1,0,3.64831,0.318759
+2023-24,Serie A,22395,2023-10-29 11:30:00,Cagliari,Frosinone,4,3,4.07472,1.29593
+2023-24,Serie A,22399,2023-10-29 14:00:00,Monza,Udinese,1,1,0.40283,1.05616
+2023-24,Serie A,22397,2023-10-29 17:00:00,Inter,Roma,1,0,2.25314,0.495306
+2023-24,Serie A,22404,2023-10-29 19:45:00,Napoli,AC Milan,2,2,1.50253,2.37489
+2023-24,Serie A,22400,2023-10-30 17:30:00,Empoli,Atalanta,0,3,0.271851,2.19175
+2023-24,Serie A,22402,2023-10-30 19:45:00,Lazio,Fiorentina,1,0,2.36178,0.389451
+2023-24,Serie A,22406,2023-11-03 19:45:00,Bologna,Lazio,1,0,0.698258,0.462021
+2023-24,Serie A,22413,2023-11-04 14:00:00,Salernitana,Napoli,0,2,0.322231,1.67658
+2023-24,Serie A,22405,2023-11-04 17:00:00,Atalanta,Inter,1,2,1.36089,1.39642
+2023-24,Serie A,22410,2023-11-04 19:45:00,AC Milan,Udinese,0,1,1.28493,2.1049
+2023-24,Serie A,22409,2023-11-05 11:30:00,Verona,Monza,1,3,1.12724,1.39014
+2023-24,Serie A,22407,2023-11-05 14:00:00,Cagliari,Genoa,2,1,1.26944,0.669834
+2023-24,Serie A,22412,2023-11-05 17:00:00,Roma,Lecce,2,1,2.55177,1.20256
+2023-24,Serie A,22408,2023-11-05 19:45:00,Fiorentina,Juventus,0,1,0.675388,0.855784
+2023-24,Serie A,22411,2023-11-06 17:30:00,Frosinone,Empoli,2,1,0.80376,1.87117
+2023-24,Serie A,22414,2023-11-06 19:45:00,Torino,Sassuolo,2,1,3.43408,0.499189
+2023-24,Serie A,22423,2023-11-10 17:30:00,Sassuolo,Salernitana,2,2,2.4684,0.946956
+2023-24,Serie A,22415,2023-11-10 19:45:00,Genoa,Verona,1,0,2.04226,0.2458
+2023-24,Serie A,22417,2023-11-11 14:00:00,Lecce,AC Milan,2,2,1.99035,2.22404
+2023-24,Serie A,22421,2023-11-11 17:00:00,Juventus,Cagliari,2,1,3.04248,0.477922
+2023-24,Serie A,22418,2023-11-11 19:45:00,Monza,Torino,1,1,1.16628,0.819686
+2023-24,Serie A,22422,2023-11-12 11:30:00,Napoli,Empoli,0,1,1.06052,0.38859
+2023-24,Serie A,22419,2023-11-12 14:00:00,Udinese,Atalanta,1,1,1.21433,0.575292
+2023-24,Serie A,22420,2023-11-12 14:00:00,Fiorentina,Bologna,2,1,1.57435,2.31019
+2023-24,Serie A,22416,2023-11-12 17:00:00,Lazio,Roma,0,0,0.398131,0.320262
+2023-24,Serie A,22424,2023-11-12 20:45:00,Inter,Frosinone,2,0,3.2782,0.58612
+2023-24,Serie A,22431,2023-11-25 14:00:00,Salernitana,Lazio,2,1,1.40102,1.83536
+2023-24,Serie A,22426,2023-11-25 17:00:00,Atalanta,Napoli,1,2,0.880466,2.51076
+2023-24,Serie A,22433,2023-11-25 19:45:00,AC Milan,Fiorentina,1,0,1.78395,1.69486
+2023-24,Serie A,22430,2023-11-26 11:30:00,Cagliari,Monza,1,1,1.58663,0.802396
+2023-24,Serie A,22428,2023-11-26 14:00:00,Frosinone,Genoa,2,1,0.990501,1.82552
+2023-24,Serie A,22429,2023-11-26 14:00:00,Empoli,Sassuolo,3,4,1.47716,2.97603
+2023-24,Serie A,22434,2023-11-26 17:00:00,Roma,Udinese,3,1,1.25942,0.532293
+2023-24,Serie A,22432,2023-11-26 19:45:00,Juventus,Inter,1,1,0.488914,0.692636
+2023-24,Serie A,22427,2023-11-27 17:30:00,Verona,Lecce,2,2,1.94683,1.52186
+2023-24,Serie A,22425,2023-11-27 19:45:00,Bologna,Torino,2,0,1.34938,0.573292
+2023-24,Serie A,22443,2023-12-01 18:45:00,Monza,Juventus,1,2,0.656513,2.95935
+2023-24,Serie A,22439,2023-12-02 14:00:00,Genoa,Empoli,1,1,0.832928,0.753276
+2023-24,Serie A,22438,2023-12-02 17:00:00,Lazio,Cagliari,1,0,2.50417,0.613719
+2023-24,Serie A,22440,2023-12-02 19:45:00,AC Milan,Frosinone,3,1,1.01016,0.728766
+2023-24,Serie A,22437,2023-12-03 11:30:00,Lecce,Bologna,1,1,1.65827,1.51659
+2023-24,Serie A,22435,2023-12-03 14:00:00,Fiorentina,Salernitana,3,0,3.06935,0.780756
+2023-24,Serie A,22441,2023-12-03 14:00:00,Udinese,Verona,3,3,2.14774,1.56674
+2023-24,Serie A,22444,2023-12-03 17:00:00,Sassuolo,Roma,1,2,0.916551,1.9994
+2023-24,Serie A,22442,2023-12-03 19:45:00,Napoli,Inter,0,3,0.787314,2.58503
+2023-24,Serie A,22436,2023-12-04 19:45:00,Torino,Atalanta,3,0,1.63866,0.345831
+2023-24,Serie A,22451,2023-12-08 19:45:00,Juventus,Napoli,1,0,0.662608,1.00524
+2023-24,Serie A,22449,2023-12-09 14:00:00,Verona,Lazio,1,1,0.792676,1.01398
+2023-24,Serie A,22445,2023-12-09 17:00:00,Atalanta,AC Milan,3,2,3.10106,1.00625
+2023-24,Serie A,22450,2023-12-09 19:45:00,Inter,Udinese,4,0,3.34151,0.847308
+2023-24,Serie A,22448,2023-12-10 11:30:00,Frosinone,Torino,0,0,1.50797,1.06355
+2023-24,Serie A,22454,2023-12-10 14:00:00,Monza,Genoa,1,0,0.67177,1.74997
+2023-24,Serie A,22452,2023-12-10 17:00:00,Salernitana,Bologna,1,2,0.601235,1.67302
+2023-24,Serie A,22453,2023-12-10 19:45:00,Roma,Fiorentina,1,1,0.702857,0.975261
+2023-24,Serie A,22447,2023-12-11 17:30:00,Empoli,Lecce,1,1,1.8919,0.985028
+2023-24,Serie A,22446,2023-12-11 19:45:00,Cagliari,Sassuolo,2,1,1.2382,1.29012
+2023-24,Serie A,22458,2023-12-15 19:45:00,Genoa,Juventus,1,1,0.844502,2.10424
+2023-24,Serie A,22462,2023-12-16 14:00:00,Lecce,Frosinone,2,1,0.729342,1.84133
+2023-24,Serie A,22460,2023-12-16 17:00:00,Napoli,Cagliari,2,1,3.03273,1.83831
+2023-24,Serie A,22461,2023-12-16 19:45:00,Torino,Empoli,1,0,2.11343,0.28927
+2023-24,Serie A,22459,2023-12-17 11:30:00,AC Milan,Monza,3,0,2.26584,1.42821
+2023-24,Serie A,22457,2023-12-17 14:00:00,Fiorentina,Verona,1,0,0.330363,2.92504
+2023-24,Serie A,22464,2023-12-17 14:00:00,Udinese,Sassuolo,2,2,0.750879,2.90114
+2023-24,Serie A,22456,2023-12-17 17:00:00,Bologna,Roma,2,0,0.782175,0.566461
+2023-24,Serie A,22463,2023-12-17 19:45:00,Lazio,Inter,0,2,1.63799,1.69409
+2023-24,Serie A,22455,2023-12-18 19:45:00,Atalanta,Salernitana,4,1,2.34764,0.976758
+2023-24,Serie A,22465,2023-12-22 17:30:00,Empoli,Lazio,0,2,0.659249,1.95383
+2023-24,Serie A,22472,2023-12-22 17:30:00,Sassuolo,Genoa,1,2,2.17129,1.3709
+2023-24,Serie A,22471,2023-12-22 19:45:00,Monza,Fiorentina,0,1,0.659021,1.95676
+2023-24,Serie A,22473,2023-12-22 19:45:00,Salernitana,AC Milan,2,2,1.14336,2.9432
+2023-24,Serie A,22466,2023-12-23 11:30:00,Frosinone,Juventus,1,2,0.495508,1.27523
+2023-24,Serie A,22468,2023-12-23 14:00:00,Torino,Udinese,1,1,0.666821,0.919531
+2023-24,Serie A,22469,2023-12-23 14:00:00,Bologna,Atalanta,1,0,0.986587,1.59382
+2023-24,Serie A,22467,2023-12-23 17:00:00,Inter,Lecce,2,0,3.28691,1.1279
+2023-24,Serie A,22470,2023-12-23 17:00:00,Verona,Cagliari,2,0,0.986759,1.20911
+2023-24,Serie A,22474,2023-12-23 19:45:00,Roma,Napoli,2,0,2.06895,0.44093
+2023-24,Serie A,22477,2023-12-29 17:30:00,Fiorentina,Torino,1,0,0.885643,0.439657
+2023-24,Serie A,22484,2023-12-29 17:30:00,Napoli,Monza,0,0,2.37308,1.09674
+2023-24,Serie A,22478,2023-12-29 19:45:00,Genoa,Inter,1,1,0.410279,1.8593
+2023-24,Serie A,22483,2023-12-29 19:45:00,Lazio,Frosinone,3,1,1.74892,1.13132
+2023-24,Serie A,22475,2023-12-30 11:30:00,Atalanta,Lecce,1,0,1.4919,1.38509
+2023-24,Serie A,22476,2023-12-30 14:00:00,Cagliari,Empoli,0,0,1.4357,0.222516
+2023-24,Serie A,22482,2023-12-30 14:00:00,Udinese,Bologna,3,0,1.53169,0.766703
+2023-24,Serie A,22479,2023-12-30 17:00:00,Verona,Salernitana,0,1,0.812164,0.768493
+2023-24,Serie A,22481,2023-12-30 17:00:00,AC Milan,Sassuolo,1,0,1.49842,0.40374
+2023-24,Serie A,22480,2023-12-30 19:45:00,Juventus,Roma,1,0,1.63273,0.39518
+2023-24,Serie A,22485,2024-01-05 19:45:00,Bologna,Genoa,1,1,1.35919,0.153342
+2023-24,Serie A,22491,2024-01-06 11:30:00,Inter,Verona,2,1,2.12311,1.36479
+2023-24,Serie A,22487,2024-01-06 14:00:00,Frosinone,Monza,2,3,1.14998,1.45289
+2023-24,Serie A,22489,2024-01-06 17:00:00,Lecce,Cagliari,1,1,1.61147,0.994223
+2023-24,Serie A,22490,2024-01-06 19:45:00,Sassuolo,Fiorentina,1,0,0.701861,1.4924
+2023-24,Serie A,22486,2024-01-07 11:30:00,Empoli,AC Milan,0,3,0.945682,1.51431
+2023-24,Serie A,22493,2024-01-07 14:00:00,Udinese,Lazio,1,2,0.612027,0.498208
+2023-24,Serie A,22494,2024-01-07 14:00:00,Torino,Napoli,3,0,2.13004,1.14787
+2023-24,Serie A,22492,2024-01-07 17:00:00,Salernitana,Juventus,1,2,0.930992,1.82515
+2023-24,Serie A,22488,2024-01-07 19:45:00,Roma,Atalanta,1,1,2.58182,1.11144
+2023-24,Serie A,22497,2024-01-13 14:00:00,Genoa,Torino,0,0,0.575708,0.30855
+2023-24,Serie A,22501,2024-01-13 14:00:00,Napoli,Salernitana,2,1,2.73312,0.151576
+2023-24,Serie A,22503,2024-01-13 17:00:00,Verona,Empoli,2,1,1.25066,0.720625
+2023-24,Serie A,22504,2024-01-13 19:45:00,Monza,Inter,1,5,1.07372,4.72502
+2023-24,Serie A,22499,2024-01-14 11:30:00,Lazio,Lecce,1,0,1.08287,0.971265
+2023-24,Serie A,22502,2024-01-14 14:00:00,Cagliari,Bologna,2,1,0.48909,0.738045
+2023-24,Serie A,22496,2024-01-14 17:00:00,Fiorentina,Udinese,2,2,1.66667,1.16643
+2023-24,Serie A,22500,2024-01-14 19:45:00,AC Milan,Roma,3,1,1.57355,1.23713
+2023-24,Serie A,22495,2024-01-15 19:45:00,Atalanta,Frosinone,5,0,4.91726,0.434507
+2023-24,Serie A,22498,2024-01-16 19:45:00,Juventus,Sassuolo,3,0,1.23237,0.29509
+2023-24,Serie A,22510,2024-01-20 17:00:00,Roma,Verona,2,1,1.4542,1.09599
+2023-24,Serie A,22513,2024-01-20 19:45:00,Udinese,AC Milan,2,3,0.813024,2.43121
+2023-24,Serie A,22508,2024-01-21 11:30:00,Frosinone,Cagliari,3,1,2.9278,0.599249
+2023-24,Serie A,22506,2024-01-21 14:00:00,Empoli,Monza,3,0,1.78103,0.868813
+2023-24,Serie A,22509,2024-01-21 17:00:00,Salernitana,Genoa,1,2,1.1539,1.11078
+2023-24,Serie A,22511,2024-01-21 19:45:00,Lecce,Juventus,0,3,0.493249,2.48407
+2023-24,Serie A,22523,2024-01-26 19:45:00,Cagliari,Torino,1,2,1.97593,2.42275
+2023-24,Serie A,22515,2024-01-27 14:00:00,Atalanta,Udinese,2,0,1.32201,0.616693
+2023-24,Serie A,22517,2024-01-27 17:00:00,Juventus,Empoli,1,1,0.990773,0.696403
+2023-24,Serie A,22518,2024-01-27 19:45:00,AC Milan,Bologna,2,2,3.60116,2.07278
+2023-24,Serie A,22521,2024-01-28 11:30:00,Genoa,Lecce,2,1,2.08542,2.29888
+2023-24,Serie A,22516,2024-01-28 14:00:00,Verona,Frosinone,1,1,2.29871,1.66579
+2023-24,Serie A,22519,2024-01-28 14:00:00,Monza,Sassuolo,1,0,0.419129,0.725542
+2023-24,Serie A,22520,2024-01-28 17:00:00,Lazio,Napoli,0,0,0.414353,0.169707
+2023-24,Serie A,22522,2024-01-28 19:45:00,Fiorentina,Inter,0,1,1.89212,0.617311
+2023-24,Serie A,22524,2024-01-29 19:45:00,Salernitana,Roma,1,2,1.42906,1.48834
+2023-24,Serie A,22534,2024-02-02 19:45:00,Lecce,Fiorentina,3,2,2.31602,1.07539
+2023-24,Serie A,22527,2024-02-03 14:00:00,Udinese,Monza,0,0,0.780762,0.124799
+2023-24,Serie A,22530,2024-02-03 14:00:00,Empoli,Genoa,0,0,0.58479,0.577479
+2023-24,Serie A,22531,2024-02-03 17:00:00,Frosinone,AC Milan,2,3,1.0672,2.01173
+2023-24,Serie A,22528,2024-02-03 19:45:00,Bologna,Sassuolo,4,2,0.889471,0.898681
+2023-24,Serie A,22529,2024-02-04 11:30:00,Torino,Salernitana,0,0,0.742534,0.0814573
+2023-24,Serie A,22525,2024-02-04 14:00:00,Napoli,Verona,2,1,1.97716,1.18484
+2023-24,Serie A,22526,2024-02-04 17:00:00,Atalanta,Lazio,3,1,2.87997,1.29656
+2023-24,Serie A,22532,2024-02-04 19:45:00,Inter,Juventus,1,0,1.64254,0.597312
+2023-24,Serie A,22533,2024-02-05 19:45:00,Roma,Cagliari,4,0,3.35931,0.503174
+2023-24,Serie A,22541,2024-02-09 19:45:00,Salernitana,Empoli,1,3,0.799924,2.14988
+2023-24,Serie A,22536,2024-02-10 14:00:00,Cagliari,Lazio,1,3,0.69339,1.60335
+2023-24,Serie A,22544,2024-02-10 17:00:00,Roma,Inter,2,4,1.00864,1.24183
+2023-24,Serie A,22540,2024-02-10 19:45:00,Sassuolo,Torino,1,1,0.803849,1.11139
+2023-24,Serie A,22537,2024-02-11 11:30:00,Fiorentina,Frosinone,5,1,3.17846,1.2861
+2023-24,Serie A,22535,2024-02-11 14:00:00,Bologna,Lecce,4,0,1.77523,1.10831
+2023-24,Serie A,22543,2024-02-11 14:00:00,Monza,Verona,0,0,0.831924,0.576842
+2023-24,Serie A,22542,2024-02-11 17:00:00,Genoa,Atalanta,1,4,0.906299,2.84643
+2023-24,Serie A,22539,2024-02-11 19:45:00,AC Milan,Napoli,1,0,1.37304,0.502118
+2023-24,Serie A,22538,2024-02-12 19:45:00,Juventus,Udinese,0,1,2.01527,1.13222
+2023-24,Serie A,22505,2024-02-14 18:00:00,Bologna,Fiorentina,2,0,2.65166,0.969673
+2023-24,Serie A,22547,2024-02-16 18:00:00,Torino,Lecce,2,0,1.52802,0.415653
+2023-24,Serie A,22550,2024-02-16 20:00:00,Inter,Salernitana,4,0,4.48759,0.0464174
+2023-24,Serie A,22546,2024-02-17 14:00:00,Napoli,Genoa,1,1,1.18788,0.285006
+2023-24,Serie A,22551,2024-02-17 17:00:00,Verona,Juventus,2,2,0.617246,1.80606
+2023-24,Serie A,22554,2024-02-17 19:45:00,Atalanta,Sassuolo,3,0,5.00929,1.81361
+2023-24,Serie A,22549,2024-02-18 11:30:00,Lazio,Bologna,1,2,1.14123,1.16044
+2023-24,Serie A,22545,2024-02-18 14:00:00,Udinese,Cagliari,1,1,1.17588,0.817344
+2023-24,Serie A,22553,2024-02-18 14:00:00,Empoli,Fiorentina,1,1,0.945067,0.920295
+2023-24,Serie A,22552,2024-02-18 17:00:00,Frosinone,Roma,0,3,1.62402,1.81853
+2023-24,Serie A,22548,2024-02-18 19:45:00,Monza,AC Milan,4,2,1.6186,1.33102
+2023-24,Serie A,22512,2024-02-22 19:45:00,Torino,Lazio,0,2,1.94911,0.352376
+2023-24,Serie A,22555,2024-02-23 19:45:00,Bologna,Verona,2,0,2.33279,0.701896
+2023-24,Serie A,22561,2024-02-24 14:00:00,Sassuolo,Empoli,2,3,1.60152,2.52542
+2023-24,Serie A,22564,2024-02-24 17:00:00,Salernitana,Monza,0,2,0.728802,2.6089
+2023-24,Serie A,22558,2024-02-24 19:45:00,Genoa,Udinese,2,0,1.62322,0.322829
+2023-24,Serie A,22562,2024-02-25 11:30:00,Juventus,Frosinone,3,2,1.74414,0.570671
+2023-24,Serie A,22556,2024-02-25 14:00:00,Cagliari,Napoli,1,1,0.916353,1.46253
+2023-24,Serie A,22563,2024-02-25 17:00:00,Lecce,Inter,0,4,0.928229,3.07379
+2023-24,Serie A,22560,2024-02-25 19:45:00,AC Milan,Atalanta,1,1,1.38915,1.06552
+2023-24,Serie A,22559,2024-02-26 17:30:00,Roma,Torino,3,2,1.52399,0.551839
+2023-24,Serie A,22557,2024-02-26 19:45:00,Fiorentina,Lazio,2,1,3.86937,0.611852
+2023-24,Serie A,22514,2024-02-28 17:00:00,Sassuolo,Napoli,1,6,0.237572,2.7969
+2023-24,Serie A,22507,2024-02-28 19:45:00,Inter,Atalanta,4,0,2.91852,0.258264
+2023-24,Serie A,22568,2024-03-01 19:45:00,Lazio,AC Milan,0,1,1.59899,0.849675
+2023-24,Serie A,22574,2024-03-02 14:00:00,Udinese,Salernitana,1,1,1.98278,0.839171
+2023-24,Serie A,22569,2024-03-02 17:00:00,Monza,Roma,1,4,1.01584,1.89657
+2023-24,Serie A,22571,2024-03-02 19:45:00,Torino,Fiorentina,0,0,0.561691,0.697752
+2023-24,Serie A,22567,2024-03-03 11:30:00,Verona,Sassuolo,1,0,0.504318,0.360012
+2023-24,Serie A,22566,2024-03-03 14:00:00,Frosinone,Lecce,1,1,1.53511,1.29494
+2023-24,Serie A,22570,2024-03-03 14:00:00,Empoli,Cagliari,0,1,1.50581,0.428646
+2023-24,Serie A,22565,2024-03-03 17:00:00,Atalanta,Bologna,1,2,1.20723,1.58258
+2023-24,Serie A,22573,2024-03-03 19:45:00,Napoli,Juventus,2,1,1.7764,2.0359
+2023-24,Serie A,22572,2024-03-04 19:45:00,Inter,Genoa,2,1,2.90423,1.17046
+2023-24,Serie A,22584,2024-03-08 19:45:00,Napoli,Torino,1,1,1.61516,1.12784
+2023-24,Serie A,22576,2024-03-09 14:00:00,Cagliari,Salernitana,4,2,3.41823,1.17253
+2023-24,Serie A,22580,2024-03-09 14:00:00,Sassuolo,Frosinone,1,0,0.596618,1.38509
+2023-24,Serie A,22575,2024-03-09 17:00:00,Bologna,Inter,0,1,0.668681,0.81996
+2023-24,Serie A,22582,2024-03-09 19:45:00,Genoa,Monza,2,3,1.81546,1.66208
+2023-24,Serie A,22581,2024-03-10 11:30:00,Lecce,Verona,0,1,1.03517,0.556534
+2023-24,Serie A,22579,2024-03-10 14:00:00,AC Milan,Empoli,1,0,0.988992,0.419598
+2023-24,Serie A,22578,2024-03-10 17:00:00,Juventus,Atalanta,2,2,1.66716,0.470912
+2023-24,Serie A,22577,2024-03-10 19:45:00,Fiorentina,Roma,2,2,2.47793,0.776614
+2023-24,Serie A,22583,2024-03-11 19:45:00,Lazio,Udinese,1,2,2.15139,1.48854
+2023-24,Serie A,22591,2024-03-15 19:45:00,Empoli,Bologna,0,1,0.868895,2.30568
+2023-24,Serie A,22590,2024-03-16 14:00:00,Monza,Cagliari,1,0,1.4436,0.443858
+2023-24,Serie A,22593,2024-03-16 14:00:00,Udinese,Torino,0,2,0.384805,1.54612
+2023-24,Serie A,22594,2024-03-16 17:00:00,Salernitana,Lecce,0,1,1.45145,2.01475
+2023-24,Serie A,22586,2024-03-16 19:45:00,Frosinone,Lazio,2,3,1.90054,3.30539
+2023-24,Serie A,22589,2024-03-17 11:30:00,Juventus,Genoa,0,0,1.38709,0.175513
+2023-24,Serie A,22588,2024-03-17 14:00:00,Verona,AC Milan,1,3,0.565727,2.75283
+2023-24,Serie A,22592,2024-03-17 17:00:00,Roma,Sassuolo,1,0,0.858457,0.777601
+2023-24,Serie A,22587,2024-03-17 19:45:00,Inter,Napoli,1,1,1.37916,1.36148
+2023-24,Serie A,22598,2024-03-30 11:30:00,Napoli,Atalanta,0,3,1.83498,1.55904
+2023-24,Serie A,22602,2024-03-30 14:00:00,Genoa,Frosinone,1,1,1.65796,1.00689
+2023-24,Serie A,22604,2024-03-30 14:00:00,Torino,Monza,1,0,1.61585,0.560169
+2023-24,Serie A,22603,2024-03-30 17:00:00,Lazio,Juventus,1,0,1.24248,0.479175
+2023-24,Serie A,22601,2024-03-30 19:45:00,Fiorentina,AC Milan,1,2,1.69969,3.17431
+2023-24,Serie A,22596,2024-04-01 11:30:00,Bologna,Salernitana,3,0,1.85322,0.702173
+2023-24,Serie A,22595,2024-04-01 14:00:00,Cagliari,Verona,1,1,0.594452,1.09202
+2023-24,Serie A,22597,2024-04-01 14:00:00,Sassuolo,Udinese,1,1,1.47611,1.72665
+2023-24,Serie A,22600,2024-04-01 17:00:00,Lecce,Roma,0,0,1.97592,1.69372
+2023-24,Serie A,22599,2024-04-01 18:45:00,Inter,Empoli,2,0,2.03375,0.560443
+2023-24,Serie A,22611,2024-04-05 18:45:00,Salernitana,Sassuolo,2,2,1.2795,1.88042
+2023-24,Serie A,22612,2024-04-06 13:00:00,AC Milan,Lecce,3,0,2.41313,0.841362
+2023-24,Serie A,22608,2024-04-06 16:00:00,Roma,Lazio,1,0,0.635152,0.480271
+2023-24,Serie A,22609,2024-04-06 18:45:00,Empoli,Torino,3,2,0.487874,2.5343
+2023-24,Serie A,22614,2024-04-07 10:30:00,Frosinone,Bologna,0,0,0.568316,2.46415
+2023-24,Serie A,22610,2024-04-07 13:00:00,Monza,Napoli,2,4,0.414034,2.70294
+2023-24,Serie A,22606,2024-04-07 16:00:00,Verona,Genoa,1,2,0.961468,2.01327
+2023-24,Serie A,22613,2024-04-07 16:00:00,Cagliari,Atalanta,2,1,0.715338,0.772446
+2023-24,Serie A,22605,2024-04-07 18:45:00,Juventus,Fiorentina,1,0,2.46449,0.508961
+2023-24,Serie A,22607,2024-04-08 18:45:00,Udinese,Inter,1,2,0.0699579,3.41188
+2023-24,Serie A,22615,2024-04-12 18:45:00,Lazio,Salernitana,4,1,2.50164,0.544591
+2023-24,Serie A,22617,2024-04-13 13:00:00,Lecce,Empoli,1,0,3.15126,0.136102
+2023-24,Serie A,22619,2024-04-13 16:00:00,Torino,Juventus,0,0,0.834792,1.25957
+2023-24,Serie A,22622,2024-04-13 18:45:00,Bologna,Monza,0,0,2.77216,0.409248
+2023-24,Serie A,22618,2024-04-14 10:30:00,Napoli,Frosinone,2,2,2.7326,2.31434
+2023-24,Serie A,22620,2024-04-14 13:00:00,Sassuolo,AC Milan,3,3,1.37198,3.05285
+2023-24,Serie A,22621,2024-04-14 16:00:00,Udinese,Roma,1,2,0.94473,1.61555
+2023-24,Serie A,22616,2024-04-14 18:45:00,Inter,Cagliari,2,2,1.95072,1.10904
+2023-24,Serie A,22623,2024-04-15 16:30:00,Fiorentina,Genoa,1,1,1.78763,1.59509
+2023-24,Serie A,22624,2024-04-15 18:45:00,Atalanta,Verona,2,2,1.67088,1.10418
+2023-24,Serie A,22627,2024-04-19 16:30:00,Genoa,Lazio,0,1,0.608539,0.952136
+2023-24,Serie A,22625,2024-04-19 18:45:00,Cagliari,Juventus,2,2,1.97822,0.595113
+2023-24,Serie A,22626,2024-04-20 16:00:00,Empoli,Napoli,1,0,1.25351,0.891755
+2023-24,Serie A,22628,2024-04-20 18:45:00,Verona,Udinese,1,0,1.29522,1.97219
+2023-24,Serie A,22634,2024-04-21 10:30:00,Sassuolo,Lecce,0,3,0.410145,2.36614
+2023-24,Serie A,22632,2024-04-21 13:00:00,Torino,Frosinone,0,0,0.520991,0.57895
+2023-24,Serie A,22631,2024-04-21 16:00:00,Salernitana,Fiorentina,0,2,0.32683,2.45106
+2023-24,Serie A,22629,2024-04-21 18:45:00,Monza,Atalanta,1,2,0.878869,2.19828
+2023-24,Serie A,22630,2024-04-22 16:30:00,Roma,Bologna,1,3,1.83356,1.25682
+2023-24,Serie A,22633,2024-04-22 18:45:00,AC Milan,Inter,1,2,2.51108,1.62976
+2023-24,Serie A,22640,2024-04-26 18:45:00,Frosinone,Salernitana,3,0,1.75172,1.03098
+2023-24,Serie A,22639,2024-04-27 13:00:00,Lecce,Monza,1,1,0.927644,1.09563
+2023-24,Serie A,22638,2024-04-27 16:00:00,Juventus,AC Milan,0,0,1.76562,0.277994
+2023-24,Serie A,22635,2024-04-27 18:45:00,Lazio,Verona,1,0,1.31699,0.629309
+2023-24,Serie A,22641,2024-04-28 10:30:00,Inter,Torino,2,0,1.90101,0.45813
+2023-24,Serie A,22642,2024-04-28 13:00:00,Bologna,Udinese,1,1,0.709144,0.613931
+2023-24,Serie A,22636,2024-04-28 16:00:00,Napoli,Roma,2,2,3.87555,1.78885
+2023-24,Serie A,22644,2024-04-28 16:00:00,Atalanta,Empoli,2,0,2.13088,0.593896
+2023-24,Serie A,22643,2024-04-28 18:45:00,Fiorentina,Sassuolo,5,1,4.29626,0.268378
+2023-24,Serie A,22637,2024-04-29 18:45:00,Genoa,Cagliari,3,0,1.09421,0.781529
+2023-24,Serie A,22648,2024-05-03 18:45:00,Torino,Bologna,0,0,0.786625,0.169889
+2023-24,Serie A,22653,2024-05-04 16:00:00,Monza,Lazio,2,2,2.08077,1.57454
+2023-24,Serie A,22651,2024-05-04 18:45:00,Sassuolo,Inter,1,0,0.334967,1.63693
+2023-24,Serie A,22645,2024-05-05 10:30:00,Cagliari,Lecce,1,1,0.923968,1.81298
+2023-24,Serie A,22646,2024-05-05 13:00:00,Empoli,Frosinone,0,0,0.318217,0.947755
+2023-24,Serie A,22649,2024-05-05 13:00:00,Verona,Fiorentina,2,1,1.49212,1.10741
+2023-24,Serie A,22650,2024-05-05 16:00:00,AC Milan,Genoa,3,3,2.31497,0.91116
+2023-24,Serie A,22652,2024-05-05 18:45:00,Roma,Juventus,1,1,1.60597,0.95263
+2023-24,Serie A,22647,2024-05-06 16:00:00,Salernitana,Atalanta,1,2,0.497067,2.26499
+2023-24,Serie A,22654,2024-05-06 18:45:00,Udinese,Napoli,1,1,0.521861,1.1157
+2023-24,Serie A,22657,2024-05-10 18:45:00,Frosinone,Inter,0,5,1.88809,2.05666
+2023-24,Serie A,22662,2024-05-11 16:00:00,Napoli,Bologna,0,2,1.48316,1.74055
+2023-24,Serie A,22663,2024-05-11 18:45:00,AC Milan,Cagliari,5,1,3.56305,1.33911
+2023-24,Serie A,22664,2024-05-12 10:30:00,Lazio,Empoli,2,0,1.61078,1.10282
+2023-24,Serie A,22658,2024-05-12 13:00:00,Genoa,Sassuolo,2,1,0.81296,1.69037
+2023-24,Serie A,22659,2024-05-12 13:00:00,Verona,Torino,1,2,1.09252,0.956758
+2023-24,Serie A,22660,2024-05-12 16:00:00,Juventus,Salernitana,1,1,2.36999,0.921042
+2023-24,Serie A,22655,2024-05-12 18:45:00,Atalanta,Roma,2,1,2.85949,1.17185
+2023-24,Serie A,22661,2024-05-13 16:30:00,Lecce,Udinese,0,2,0.3485,1.63735
+2023-24,Serie A,22656,2024-05-13 18:45:00,Fiorentina,Monza,2,1,2.45011,1.19628
+2023-24,Serie A,22666,2024-05-17 16:00:00,Fiorentina,Napoli,2,2,0.566509,1.32124
+2023-24,Serie A,22668,2024-05-18 16:00:00,Lecce,Atalanta,0,2,1.03049,2.22033
+2023-24,Serie A,22674,2024-05-18 18:45:00,Torino,AC Milan,3,1,1.08012,1.64179
+2023-24,Serie A,22667,2024-05-19 16:00:00,Inter,Lazio,1,1,1.61165,0.686603
+2023-24,Serie A,22669,2024-05-19 16:00:00,Sassuolo,Cagliari,0,2,0.269648,1.47384
+2023-24,Serie A,22670,2024-05-19 16:00:00,Udinese,Empoli,1,1,1.66873,0.82957
+2023-24,Serie A,22671,2024-05-19 16:00:00,Monza,Frosinone,0,1,1.24886,2.22694
+2023-24,Serie A,22672,2024-05-19 18:45:00,Roma,Genoa,1,0,0.736827,0.508028
+2023-24,Serie A,22673,2024-05-20 16:30:00,Salernitana,Verona,1,2,0.900837,2.33362
+2023-24,Serie A,22665,2024-05-20 18:45:00,Bologna,Juventus,3,3,1.379,1.27372
+2023-24,Serie A,22676,2024-05-24 16:00:00,Cagliari,Fiorentina,2,3,2.08262,2.21632
+2023-24,Serie A,22683,2024-05-24 18:45:00,Genoa,Bologna,2,0,1.5757,0.450804
+2023-24,Serie A,22680,2024-05-25 16:00:00,Juventus,Monza,2,0,1.92843,1.13394
+2023-24,Serie A,22682,2024-05-25 18:45:00,AC Milan,Salernitana,3,3,2.82527,1.80163
+2023-24,Serie A,22675,2024-05-26 16:00:00,Atalanta,Torino,3,0,2.56869,1.69527
+2023-24,Serie A,22684,2024-05-26 16:00:00,Napoli,Lecce,0,0,1.83014,0.622384
+2023-24,Serie A,22677,2024-05-26 18:45:00,Empoli,Roma,2,1,2.88989,1.45583
+2023-24,Serie A,22678,2024-05-26 18:45:00,Frosinone,Udinese,0,1,0.869244,0.895463
+2023-24,Serie A,22679,2024-05-26 18:45:00,Verona,Inter,2,2,1.63678,2.99853
+2023-24,Serie A,22681,2024-05-26 18:45:00,Lazio,Sassuolo,1,1,1.25146,1.11933
+2023-24,Serie A,22585,2024-06-02 16:00:00,Atalanta,Fiorentina,2,3,1.69732,1.0071

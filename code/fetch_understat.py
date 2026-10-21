@@ -160,6 +160,7 @@ def main():
 
     print(f"Descargando Understat: {', '.join(pendientes)}")
     escritos = 0
+    sin_datos = []
     for season in pendientes:
         out_dir = DATA_DIR / season
         out_dir.mkdir(parents=True, exist_ok=True)
@@ -171,6 +172,7 @@ def main():
             time.sleep(DELAY_SECONDS)
             if not players:
                 print(f"    {fname:22s} SIN DATOS")
+                sin_datos.append(f"{season} {liga}")
                 continue
             out = to_manual_format(players)
             out.to_csv(out_dir / fname, sep=";", index=False, encoding="utf-8-sig")
@@ -178,6 +180,10 @@ def main():
             print(f"    {fname:22s} {len(out):4d} jugadores")
 
     print(f"\n{escritos} CSV escritos. Siguiente paso: python consolidate_data.py")
+    if sin_datos:
+        # código de salida != 0: lo usa `actualizar.py` para no publicar a medias
+        print(f"SIN DATOS: {', '.join(sin_datos)}")
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

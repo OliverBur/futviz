@@ -44,6 +44,16 @@ Uso:
     python fetch_shots.py                 # todas las temporadas que falten
     python fetch_shots.py 2023-24         # solo esa
     python fetch_shots.py --force 2024-25 # rehace el CSV aunque ya exista
+    python fetch_shots.py --actualizar 2026-27  # suma solo los partidos nuevos
+                                          # de una temporada en curso
+    python fetch_shots.py --historico     # 2014-15 a 2020-21 (~2 h, ~12.800
+                                          # partidos); no entran a la corrida normal
+    python fetch_shots.py --last-action   # rellena `last_action` en los CSV que no la
+                                          # tienen (desde el caché de soccerdata)
+    python fetch_shots.py --partidos      # solo `partidos.csv` (local, marcador,
+                                          # xG del partido): 5 peticiones por temporada
+
+Cada temporada deja además `partidos.csv` junto a `shots.csv`.
 """
 
 import sys
@@ -59,6 +69,13 @@ warnings.filterwarnings("ignore")
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
 SEASONS = ["2021-22", "2022-23", "2023-24", "2024-25", "2025-26", "2026-27"]
+
+# Temporadas anteriores, solo de tiros: sirven para ver cuánto sesga Understat a
+# lo largo de más años y cuánto mejora un xG al darle más datos (ver `ml_xg.py`).
+# Quedan fuera de SEASONS a propósito: no hay tablas de fbref ni ELO para ellas,
+# y así ni `consolidate_data.py` ni la actualización semanal las tocan. Se bajan
+# solo si se pide (`--historico` o el nombre de la temporada).
+HISTORICAS = ["2014-15", "2015-16", "2016-17", "2017-18", "2018-19", "2019-20", "2020-21"]
 
 API = "https://understat.com"
 DELAY_SECONDS = 0.3  # entre partidos; son ~50-380 pedidos por liga-temporada
@@ -76,7 +93,7 @@ LEAGUES = {
 COLUMNS = [
     "temporada", "liga", "game_id", "date", "team", "rival",
     "player", "assist_player", "minute", "situation", "body_part", "result",
-    "xg", "location_x", "location_y", "shot_id", "player_id", "team_id",
+    "xg", "location_x", "location_y", "shot_id", "player_id", "team_id", "last_action",
 ]
 
 # JSON de Understat -> mismos rótulos que ya usan los notebooks y el resto del
@@ -94,6 +111,8 @@ BODY_PARTS = {"RightFoot": "Right Foot", "LeftFoot": "Left Foot", "OtherBodyPart
 
 # Partidos que no se pudieron leer, acumulados durante la corrida.
 PARTIDOS_SALTADOS = []
+# Ligas cuya petición de la lista de partidos falló (red caída, no "sin datos").
+LIGAS_FALLIDAS = []
 
 
 def season_code(season):
@@ -131,6 +150,101 @@ def partidos_jugados(liga_code, temporada_code):
     return equipos, ids
 
 
+PARTIDOS_COLUMNS = ["temporada", "liga", "game_id", "fecha", "local", "visita",
+                    "goles_l", "goles_v", "xg_l", "xg_v"]
+
+
+def escribir_partidos(season):
+    """`data/<temporada>/partidos.csv`: quién fue local, el marcador final y el
+    xG del partido de cada encuentro jugado.
+
+    Sale de la misma `getLeagueData` que ya se pide para listar partidos, así que
+    son 5 peticiones por temporada. Los tiros no dicen quién jugaba en casa ni
+    traen el marcador final (los autogoles, además, cuentan para el rival), y
+    sin eso no se puede saber el estado del marcador ni la localía de un tiro.
+
+    Todo o nada: si una liga falla no se escribe nada, para no dejar un archivo
+    que parezca completo y no lo sea. No reescribe si no cambió nada.
+    """
+    filas = []
+    for liga, code in LEAGUES.items():
+        data = pedir(f"{API}/getLeagueData/{code}/{season_code(season)}")
+        for d in data.get("dates", []):
+            if not d.get("isResult"):
+                continue
+            filas.append({
+                "temporada": season, "liga": liga, "game_id": int(d["id"]),
+                "fecha": d["datetime"], "local": d["h"]["title"], "visita": d["a"]["title"],
+                "goles_l": int(d["goals"]["h"]), "goles_v": int(d["goals"]["a"]),
+                "xg_l": float(d["xG"]["h"]), "xg_v": float(d["xG"]["a"]),
+            })
+        time.sleep(DELAY_SECONDS)
+    if not filas:
+        return 0
+    df = (pd.DataFrame(filas, columns=PARTIDOS_COLUMNS)
+          .sort_values(["liga", "fecha", "game_id"]).reset_index(drop=True))
+    ruta = DATA_DIR / season / "partidos.csv"
+    nuevo = df.to_csv(index=False, encoding="utf-8-sig")
+    if not ruta.exists() or ruta.read_text(encoding="utf-8-sig") != nuevo.lstrip("﻿"):
+        ruta.parent.mkdir(parents=True, exist_ok=True)
+        ruta.write_text(nuevo.lstrip("﻿"), encoding="utf-8-sig")
+    return len(df)
+
+
+def accion_previa(s):
+    """La acción que precedió al tiro (`Pass`, `Cross`, `Throughball`, `Rebound`,
+    `TakeOn`, `Aerial`…). Understat la usa en su xG y es de las variables que más
+    mueven un modelo: un remate tras pase filtrado no vale lo que uno tras un
+    centro. Cuando no hay acción previa la API manda el texto "None", que pandas
+    lee como nulo al volver a abrir el CSV: se guarda como `Ninguna` para que
+    "sin acción previa" sea una categoría y no un faltante."""
+    la = s.get("lastAction")
+    return "Ninguna" if la in (None, "", "None") else la
+
+
+# Caché de la época en que se usaba `soccerdata`: JSON de partido con el mismo
+# formato que devuelve `getMatchData`, así que sirve para rellenar `last_action`
+# de las temporadas ya bajadas sin volver a pedir ~9.000 partidos.
+CACHE_SOCCERDATA = Path.home() / "soccerdata" / "data" / "Understat"
+
+
+def rellenar_last_action(season):
+    """Agrega `last_action` a un `shots.csv` que no la tiene. Lee cada partido
+    del caché de soccerdata y, si no está, de la API. Devuelve cuántos tiros
+    quedaron sin acción (debe ser 0)."""
+    import json
+    ruta = DATA_DIR / season / "shots.csv"
+    df = pd.read_csv(ruta, encoding="utf-8-sig", float_precision="round_trip")
+    if "last_action" in df.columns:
+        # Ya la tiene. Los nulos son el texto "None" de la primera versión, que pandas
+        # lee como nulo: se normalizan a `Ninguna` sin volver a pedir nada.
+        n = int(df["last_action"].isna().sum())
+        if n:
+            df["last_action"] = df["last_action"].fillna("Ninguna")
+            df[COLUMNS].to_csv(ruta, index=False, encoding="utf-8-sig")
+        print(f"  {season}: ya tiene last_action ({n} 'None' normalizados)")
+        return 0
+    mapa, de_api = {}, 0
+    for game_id in df["game_id"].unique():
+        f = CACHE_SOCCERDATA / f"match_{int(game_id)}.json"
+        shots = None
+        if f.exists():
+            shots = json.loads(f.read_text(encoding="utf-8")).get("shots")
+        if not shots:
+            shots = pedir(f"{API}/getMatchData/{int(game_id)}").get("shots") or {}
+            de_api += 1
+            time.sleep(DELAY_SECONDS)
+        for lado in ("h", "a"):
+            for t in shots.get(lado, []):
+                mapa[int(t["id"])] = accion_previa(t)
+    df["last_action"] = df["shot_id"].map(mapa)
+    faltan = int(df["last_action"].isna().sum())
+    df = df[COLUMNS]
+    df.to_csv(ruta, index=False, encoding="utf-8-sig")
+    print(f"  {season}: {len(df)} tiros · {de_api} partidos desde la API · {faltan} sin acción previa")
+    return faltan
+
+
 def tiros_de(game_id, equipos):
     """Los tiros de un partido, en el formato final. `None` si el partido
     viene malformado (sin `shots`, o sin los dos lados)."""
@@ -160,6 +274,7 @@ def tiros_de(game_id, equipos):
                 "shot_id": int(s["id"]),
                 "player_id": int(s["player_id"]),
                 "team_id": nombre_a_id.get(equipo),
+                "last_action": accion_previa(s),
             })
     return filas
 
@@ -178,9 +293,11 @@ def add_rival(df):
     return df
 
 
-def fetch_league_season(liga_code, temporada_code, liga):
-    """Todos los tiros de una liga-temporada."""
+def fetch_league_season(liga_code, temporada_code, liga, omitir=frozenset()):
+    """Todos los tiros de una liga-temporada, salvo los partidos de `omitir`
+    (ids que el CSV ya tiene)."""
     equipos, ids = partidos_jugados(liga_code, temporada_code)
+    ids = [g for g in ids if int(g) not in omitir]
     filas = []
     for game_id in ids:
         try:
@@ -195,25 +312,42 @@ def fetch_league_season(liga_code, temporada_code, liga):
     return pd.DataFrame(filas)
 
 
-def build_season(season, force=False):
+def build_season(season, force=False, actualizar=False):
     """Completa la temporada: baja solo las ligas que falten en el CSV.
 
     Es lo que permite arreglar una corrida en la que alguna liga se cayó por
     red — antes el script se saltaba la temporada entera con solo ver que el
     archivo existía, y dejaba el hueco ahí para siempre.
+
+    Con `actualizar` (la temporada en curso) hace lo contrario: las 5 ligas ya
+    están, pero se siguen jugando partidos. Pide la lista de partidos de cada
+    liga y baja **solo los que el CSV todavía no tiene**, así que una corrida
+    semanal son unas decenas de peticiones en vez de las ~2.000 de la temporada
+    entera. Un partido que falla queda fuera del CSV y se reintenta solo en la
+    corrida siguiente.
     """
     out_path = DATA_DIR / season / "shots.csv"
     temporada_code = season_code(season)
 
     previo = None
+    omitir = frozenset()
     if out_path.exists() and not force:
-        previo = pd.read_csv(out_path, encoding="utf-8-sig")
-        ya = set(previo["liga"])
-        pendientes = {code: l for l, code in LEAGUES.items() if l not in ya}
-        if not pendientes:
-            print(f"  completa ({len(previo)} tiros, 5/5 ligas), se salta")
-            return 0
-        print(f"  incompleta: faltan {sorted(pendientes.values())}", flush=True)
+        # `round_trip`: el lector rápido de pandas pierde el último dígito de los
+        # flotantes, y entonces cada corrida reescribiría TODOS los tiros ya
+        # bajados (xg y coordenadas con un dígito menos) y el diff de git de
+        # una actualización semanal sería el archivo entero.
+        previo = pd.read_csv(out_path, encoding="utf-8-sig", float_precision="round_trip")
+        if actualizar:
+            pendientes = {code: l for l, code in LEAGUES.items()}
+            omitir = frozenset(previo["game_id"].astype(int))
+            print(f"  actualizando: {len(omitir)} partidos ya bajados", flush=True)
+        else:
+            ya = set(previo["liga"])
+            pendientes = {code: l for l, code in LEAGUES.items() if l not in ya}
+            if not pendientes:
+                print(f"  completa ({len(previo)} tiros, 5/5 ligas), se salta")
+                return 0
+            print(f"  incompleta: faltan {sorted(pendientes.values())}", flush=True)
     else:
         pendientes = {code: l for l, code in LEAGUES.items()}
 
@@ -223,14 +357,15 @@ def build_season(season, force=False):
         t0 = time.time()
         n_saltados_antes = len(PARTIDOS_SALTADOS)
         try:
-            df = fetch_league_season(liga_code, temporada_code, liga)
+            df = fetch_league_season(liga_code, temporada_code, liga, omitir)
         except Exception as exc:  # una liga caída no debe tumbar la corrida
             print(f"    {liga:15s} FALLÓ: {type(exc).__name__}: {exc}", flush=True)
             fallidas.append(liga)
             continue
 
         if df.empty:
-            print(f"    {liga:15s} sin partidos jugados todavía", flush=True)
+            print(f"    {liga:15s} " + ("sin partidos nuevos" if actualizar
+                                         else "sin partidos jugados todavía"), flush=True)
             continue
 
         df["temporada"] = season
@@ -243,12 +378,27 @@ def build_season(season, force=False):
         if saltados:
             nota += f"  [{saltados} partido(s) malformado(s) omitido(s)]"
         print(f"    {liga:15s} {len(df):6d} tiros en {time.time()-t0:4.0f}s{nota}", flush=True)
+        if not actualizar:
+            # Punto de control: si la corrida se corta, las ligas ya bajadas quedan
+            # en el CSV y la siguiente corrida solo pide las que falten.
+            parcial = (pd.concat(bloques, ignore_index=True).drop_duplicates("shot_id")[COLUMNS]
+                       .sort_values(["liga", "date", "game_id"]).reset_index(drop=True))
+            out_path.parent.mkdir(parents=True, exist_ok=True)
+            parcial.to_csv(out_path, index=False, encoding="utf-8-sig")
 
     if not bloques:
         print(f"  {season}: ninguna liga se pudo bajar")
         return 0
 
-    full = pd.concat(bloques, ignore_index=True)
+    if previo is not None and len(bloques) == 1:
+        # nada nuevo: no se reescribe el CSV, para no ensuciar el diff de git
+        print(f"  {season}: al día ({len(previo)} tiros)"
+              + (f" — FALLARON {fallidas}" if fallidas else ""))
+        LIGAS_FALLIDAS.extend(fallidas)
+        return 0
+
+    full = pd.concat(bloques, ignore_index=True).drop_duplicates("shot_id")
+    LIGAS_FALLIDAS.extend(fallidas)
     faltantes = [c for c in COLUMNS if c not in full.columns]
     if faltantes:
         raise ValueError(f"{season}: faltan columnas esperadas: {faltantes}")
@@ -264,17 +414,37 @@ def build_season(season, force=False):
 def main():
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     force = "--force" in sys.argv
-    seasons = args or SEASONS
+    actualizar = "--actualizar" in sys.argv
+    seasons = args or (HISTORICAS if "--historico" in sys.argv else SEASONS)
 
-    desconocidas = [s for s in seasons if s not in SEASONS]
+    desconocidas = [s for s in seasons if s not in SEASONS + HISTORICAS]
     if desconocidas:
-        raise SystemExit(f"Temporada no reconocida: {desconocidas}. Válidas: {SEASONS}")
+        raise SystemExit(f"Temporada no reconocida: {desconocidas}. "
+                         f"Válidas: {SEASONS + HISTORICAS}")
 
+    if "--last-action" in sys.argv:
+        sin = sum(rellenar_last_action(sn) for sn in (args or SEASONS))
+        raise SystemExit(1 if sin else 0)
+
+    solo_partidos = "--partidos" in sys.argv
     t_inicio = time.time()
     total = 0
     for season in seasons:
         print(f"\n{season}", flush=True)
-        total += build_season(season, force=force)
+        if not solo_partidos:
+            total += build_season(season, force=force, actualizar=actualizar)
+        # La tabla de partidos va aparte de los tiros: si falla no tira abajo
+        # la corrida, pero tampoco se calla (sin ella no hay local ni marcador).
+        try:
+            print(f"  partidos.csv: {escribir_partidos(season)} partidos", flush=True)
+        except Exception as exc:  # noqa: BLE001
+            print(f"  partidos.csv FALLÓ: {type(exc).__name__}: {exc}", flush=True)
+            LIGAS_FALLIDAS.append(f"partidos {season}")
+
+    if solo_partidos:
+        if LIGAS_FALLIDAS:
+            raise SystemExit(1)
+        return
 
     print(f"\n{total} tiros bajados en esta corrida, en {(time.time()-t_inicio)/60:.1f} min.")
     if PARTIDOS_SALTADOS:
@@ -284,7 +454,7 @@ def main():
     # hueco por un timeout es silencioso y envenena cualquier análisis después
     print("\nEstado:")
     incompletas = []
-    for s in SEASONS:
+    for s in SEASONS + [h for h in HISTORICAS if h in seasons]:
         p = DATA_DIR / s / "shots.csv"
         if not p.exists():
             print(f"  {s}: sin descargar"); incompletas.append(s); continue
@@ -299,6 +469,12 @@ def main():
         print(f"\nVuelve a correr para completar: python fetch_shots.py {' '.join(incompletas)}")
     else:
         print("\nTodo completo. Siguiente paso: python consolidate_data.py")
+
+    # Código de salida distinto de 0 solo si falló algo de lo PEDIDO en esta
+    # corrida: lo usa `actualizar.py` para no publicar un sitio a medias.
+    pedidas_incompletas = [s for s in incompletas if s in seasons]
+    if LIGAS_FALLIDAS or pedidas_incompletas:
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

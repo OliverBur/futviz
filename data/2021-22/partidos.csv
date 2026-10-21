@@ -1,0 +1,1827 @@
+﻿temporada,liga,game_id,fecha,local,visita,goles_l,goles_v,xg_l,xg_v
+2021-22,Bundesliga,17516,2021-08-13 18:30:00,Borussia M.Gladbach,Bayern Munich,1,1,1.98777,2.91794
+2021-22,Bundesliga,17517,2021-08-14 13:30:00,Arminia Bielefeld,Freiburg,0,0,0.575032,1.63663
+2021-22,Bundesliga,17518,2021-08-14 13:30:00,Augsburg,Hoffenheim,0,4,0.734658,3.44423
+2021-22,Bundesliga,17519,2021-08-14 13:30:00,VfB Stuttgart,Greuther Fuerth,5,1,4.25968,1.31466
+2021-22,Bundesliga,17520,2021-08-14 13:30:00,Union Berlin,Bayer Leverkusen,1,1,0.443841,0.7943
+2021-22,Bundesliga,17521,2021-08-14 13:30:00,Wolfsburg,Bochum,1,0,2.78774,0.297792
+2021-22,Bundesliga,17522,2021-08-14 16:30:00,Borussia Dortmund,Eintracht Frankfurt,5,2,2.83799,1.36709
+2021-22,Bundesliga,17523,2021-08-15 13:30:00,Mainz 05,RasenBallsport Leipzig,1,0,1.27109,0.841814
+2021-22,Bundesliga,17524,2021-08-15 15:30:00,FC Cologne,Hertha Berlin,3,1,1.62567,2.1078
+2021-22,Bundesliga,17525,2021-08-20 18:30:00,RasenBallsport Leipzig,VfB Stuttgart,4,0,2.86627,0.958579
+2021-22,Bundesliga,17526,2021-08-21 13:30:00,Greuther Fuerth,Arminia Bielefeld,1,1,2.57735,0.763691
+2021-22,Bundesliga,17527,2021-08-21 13:30:00,Bochum,Mainz 05,2,0,1.05301,0.817413
+2021-22,Bundesliga,17528,2021-08-21 13:30:00,Hertha Berlin,Wolfsburg,1,2,1.17401,0.558009
+2021-22,Bundesliga,17529,2021-08-21 13:30:00,Freiburg,Borussia Dortmund,2,1,1.58418,1.49634
+2021-22,Bundesliga,17530,2021-08-21 13:30:00,Eintracht Frankfurt,Augsburg,0,0,1.3297,0.16593
+2021-22,Bundesliga,17531,2021-08-21 16:30:00,Bayer Leverkusen,Borussia M.Gladbach,4,0,1.94592,1.66054
+2021-22,Bundesliga,17532,2021-08-22 13:30:00,Hoffenheim,Union Berlin,2,2,0.967015,2.35122
+2021-22,Bundesliga,17533,2021-08-22 15:30:00,Bayern Munich,FC Cologne,3,2,3.08002,0.957893
+2021-22,Bundesliga,17534,2021-08-27 18:30:00,Borussia Dortmund,Hoffenheim,3,2,3.40779,2.42487
+2021-22,Bundesliga,17535,2021-08-28 13:30:00,FC Cologne,Bochum,2,1,2.91135,0.721445
+2021-22,Bundesliga,17536,2021-08-28 13:30:00,Arminia Bielefeld,Eintracht Frankfurt,1,1,0.626534,1.78556
+2021-22,Bundesliga,17537,2021-08-28 13:30:00,Augsburg,Bayer Leverkusen,1,4,1.6937,2.1207
+2021-22,Bundesliga,17538,2021-08-28 13:30:00,Mainz 05,Greuther Fuerth,3,0,2.79493,0.304223
+2021-22,Bundesliga,17539,2021-08-28 13:30:00,VfB Stuttgart,Freiburg,2,3,2.28063,1.36171
+2021-22,Bundesliga,17540,2021-08-28 16:30:00,Bayern Munich,Hertha Berlin,5,0,4.25513,0.575566
+2021-22,Bundesliga,17541,2021-08-29 13:30:00,Union Berlin,Borussia M.Gladbach,2,1,1.56256,1.52841
+2021-22,Bundesliga,17542,2021-08-29 15:30:00,Wolfsburg,RasenBallsport Leipzig,1,0,1.11229,1.43914
+2021-22,Bundesliga,17543,2021-09-11 13:30:00,Greuther Fuerth,Wolfsburg,0,2,0.392561,1.44282
+2021-22,Bundesliga,17544,2021-09-11 13:30:00,Hoffenheim,Mainz 05,0,2,0.509713,0.933476
+2021-22,Bundesliga,17545,2021-09-11 13:30:00,Freiburg,FC Cologne,1,1,0.871642,1.50213
+2021-22,Bundesliga,17546,2021-09-11 13:30:00,Union Berlin,Augsburg,0,0,1.71533,0.831722
+2021-22,Bundesliga,17547,2021-09-11 13:30:00,Bayer Leverkusen,Borussia Dortmund,3,4,0.471066,2.2922
+2021-22,Bundesliga,17548,2021-09-11 16:30:00,RasenBallsport Leipzig,Bayern Munich,1,4,0.347898,4.30091
+2021-22,Bundesliga,17549,2021-09-12 13:30:00,Eintracht Frankfurt,VfB Stuttgart,1,1,1.46763,1.2361
+2021-22,Bundesliga,17550,2021-09-12 15:30:00,Bochum,Hertha Berlin,1,3,1.02687,0.605231
+2021-22,Bundesliga,17551,2021-09-12 17:30:00,Borussia M.Gladbach,Arminia Bielefeld,3,1,2.12932,1.53189
+2021-22,Bundesliga,17552,2021-09-17 18:30:00,Hertha Berlin,Greuther Fuerth,2,1,1.59085,1.55279
+2021-22,Bundesliga,17553,2021-09-18 13:30:00,Augsburg,Borussia M.Gladbach,1,0,0.494801,0.74574
+2021-22,Bundesliga,17554,2021-09-18 13:30:00,Mainz 05,Freiburg,0,0,1.26167,0.364252
+2021-22,Bundesliga,17555,2021-09-18 13:30:00,Arminia Bielefeld,Hoffenheim,0,0,1.00534,1.54136
+2021-22,Bundesliga,17556,2021-09-18 13:30:00,Bayern Munich,Bochum,7,0,6.88189,1.23312
+2021-22,Bundesliga,17557,2021-09-18 16:30:00,FC Cologne,RasenBallsport Leipzig,1,1,1.68932,2.03702
+2021-22,Bundesliga,17558,2021-09-19 13:30:00,VfB Stuttgart,Bayer Leverkusen,1,3,1.41677,1.59332
+2021-22,Bundesliga,17559,2021-09-19 15:30:00,Borussia Dortmund,Union Berlin,4,2,1.09855,1.7321
+2021-22,Bundesliga,17560,2021-09-19 17:30:00,Wolfsburg,Eintracht Frankfurt,1,1,1.84989,0.280625
+2021-22,Bundesliga,17561,2021-09-24 18:30:00,Greuther Fuerth,Bayern Munich,1,3,0.655908,0.677915
+2021-22,Bundesliga,17562,2021-09-25 13:30:00,Union Berlin,Arminia Bielefeld,1,0,1.25321,0.435528
+2021-22,Bundesliga,17563,2021-09-25 13:30:00,Bayer Leverkusen,Mainz 05,1,0,1.45034,0.930118
+2021-22,Bundesliga,17564,2021-09-25 13:30:00,Eintracht Frankfurt,FC Cologne,1,1,0.950916,1.10981
+2021-22,Bundesliga,17565,2021-09-25 13:30:00,RasenBallsport Leipzig,Hertha Berlin,6,0,4.25065,0.341267
+2021-22,Bundesliga,17566,2021-09-25 13:30:00,Hoffenheim,Wolfsburg,3,1,1.78602,0.504541
+2021-22,Bundesliga,17567,2021-09-25 16:30:00,Borussia M.Gladbach,Borussia Dortmund,1,0,1.65529,0.568652
+2021-22,Bundesliga,17568,2021-09-26 13:30:00,Bochum,VfB Stuttgart,0,0,0.925854,0.29441
+2021-22,Bundesliga,17569,2021-09-26 15:30:00,Freiburg,Augsburg,3,0,3.97075,0.191653
+2021-22,Bundesliga,17570,2021-10-01 18:30:00,FC Cologne,Greuther Fuerth,3,1,2.8694,0.984368
+2021-22,Bundesliga,17572,2021-10-02 13:30:00,Hertha Berlin,Freiburg,1,2,0.913547,0.861008
+2021-22,Bundesliga,17574,2021-10-02 13:30:00,VfB Stuttgart,Hoffenheim,3,1,0.76705,0.978235
+2021-22,Bundesliga,17575,2021-10-02 13:30:00,Wolfsburg,Borussia M.Gladbach,1,3,1.22196,3.51831
+2021-22,Bundesliga,17576,2021-10-02 13:30:00,Borussia Dortmund,Augsburg,2,1,2.72281,0.746485
+2021-22,Bundesliga,17577,2021-10-02 16:30:00,RasenBallsport Leipzig,Bochum,3,0,2.46461,1.51583
+2021-22,Bundesliga,17573,2021-10-03 13:30:00,Mainz 05,Union Berlin,1,2,1.25545,1.1103
+2021-22,Bundesliga,17578,2021-10-03 15:30:00,Bayern Munich,Eintracht Frankfurt,1,2,2.18047,0.389616
+2021-22,Bundesliga,17571,2021-10-03 17:30:00,Arminia Bielefeld,Bayer Leverkusen,0,4,0.447571,2.96917
+2021-22,Bundesliga,17581,2021-10-15 18:30:00,Hoffenheim,FC Cologne,5,0,4.18974,0.484187
+2021-22,Bundesliga,17579,2021-10-16 13:30:00,Greuther Fuerth,Bochum,0,1,0.69855,1.72207
+2021-22,Bundesliga,17582,2021-10-16 13:30:00,Freiburg,RasenBallsport Leipzig,1,1,1.63966,1.65528
+2021-22,Bundesliga,17584,2021-10-16 13:30:00,Union Berlin,Wolfsburg,2,0,1.32884,1.28381
+2021-22,Bundesliga,17586,2021-10-16 13:30:00,Eintracht Frankfurt,Hertha Berlin,1,2,1.70283,2.56404
+2021-22,Bundesliga,17587,2021-10-16 13:30:00,Borussia Dortmund,Mainz 05,3,1,2.3618,0.610876
+2021-22,Bundesliga,17583,2021-10-16 16:30:00,Borussia M.Gladbach,VfB Stuttgart,1,1,2.28296,0.292328
+2021-22,Bundesliga,17585,2021-10-17 13:30:00,Bayer Leverkusen,Bayern Munich,1,5,0.729378,3.44913
+2021-22,Bundesliga,17580,2021-10-17 15:30:00,Augsburg,Arminia Bielefeld,1,1,0.913256,0.285865
+2021-22,Bundesliga,17592,2021-10-22 18:30:00,Mainz 05,Augsburg,4,1,4.13366,0.664542
+2021-22,Bundesliga,17590,2021-10-23 13:30:00,Arminia Bielefeld,Borussia Dortmund,1,3,1.40239,2.58993
+2021-22,Bundesliga,17594,2021-10-23 13:30:00,Wolfsburg,Freiburg,0,2,1.72591,2.17659
+2021-22,Bundesliga,17595,2021-10-23 13:30:00,RasenBallsport Leipzig,Greuther Fuerth,4,1,2.30304,1.94277
+2021-22,Bundesliga,17596,2021-10-23 13:30:00,Bayern Munich,Hoffenheim,4,0,3.31148,0.446465
+2021-22,Bundesliga,17591,2021-10-23 16:30:00,Hertha Berlin,Borussia M.Gladbach,1,0,1.47383,0.47063
+2021-22,Bundesliga,17589,2021-10-24 13:30:00,FC Cologne,Bayer Leverkusen,2,2,1.71198,1.79735
+2021-22,Bundesliga,17593,2021-10-24 15:30:00,VfB Stuttgart,Union Berlin,1,1,0.426401,1.01643
+2021-22,Bundesliga,17588,2021-10-24 17:30:00,Bochum,Eintracht Frankfurt,2,0,2.78664,1.51826
+2021-22,Bundesliga,17599,2021-10-29 18:30:00,Hoffenheim,Hertha Berlin,2,0,0.860088,0.471538
+2021-22,Bundesliga,17597,2021-10-30 13:30:00,Arminia Bielefeld,Mainz 05,1,2,0.497896,2.97383
+2021-22,Bundesliga,17600,2021-10-30 13:30:00,Freiburg,Greuther Fuerth,3,1,1.2181,0.48039
+2021-22,Bundesliga,17602,2021-10-30 13:30:00,Union Berlin,Bayern Munich,2,5,0.744794,3.14739
+2021-22,Bundesliga,17603,2021-10-30 13:30:00,Bayer Leverkusen,Wolfsburg,0,2,1.30903,1.8693
+2021-22,Bundesliga,17605,2021-10-30 13:30:00,Borussia Dortmund,FC Cologne,2,0,1.75772,1.20191
+2021-22,Bundesliga,17604,2021-10-30 16:30:00,Eintracht Frankfurt,RasenBallsport Leipzig,1,1,0.594345,3.99211
+2021-22,Bundesliga,17598,2021-10-31 14:30:00,Augsburg,VfB Stuttgart,4,1,2.59567,0.90948
+2021-22,Bundesliga,17601,2021-10-31 16:30:00,Borussia M.Gladbach,Bochum,2,1,1.81742,1.07958
+2021-22,Bundesliga,17610,2021-11-05 19:30:00,Mainz 05,Borussia M.Gladbach,1,1,0.94947,1.50835
+2021-22,Bundesliga,17607,2021-11-06 14:30:00,Bochum,Hoffenheim,2,0,2.12433,0.641687
+2021-22,Bundesliga,17611,2021-11-06 14:30:00,VfB Stuttgart,Arminia Bielefeld,0,1,1.11192,1.55125
+2021-22,Bundesliga,17612,2021-11-06 14:30:00,Wolfsburg,Augsburg,1,0,0.910085,0.867311
+2021-22,Bundesliga,17614,2021-11-06 14:30:00,Bayern Munich,Freiburg,2,1,3.16849,0.910798
+2021-22,Bundesliga,17613,2021-11-06 17:30:00,RasenBallsport Leipzig,Borussia Dortmund,2,1,2.48845,0.734721
+2021-22,Bundesliga,17609,2021-11-07 14:30:00,Hertha Berlin,Bayer Leverkusen,1,1,0.903476,0.774023
+2021-22,Bundesliga,17608,2021-11-07 16:30:00,FC Cologne,Union Berlin,2,2,1.93335,1.1297
+2021-22,Bundesliga,17606,2021-11-07 18:30:00,Greuther Fuerth,Eintracht Frankfurt,1,2,2.4344,1.26639
+2021-22,Bundesliga,17616,2021-11-19 19:30:00,Augsburg,Bayern Munich,2,1,0.614461,1.24258
+2021-22,Bundesliga,17615,2021-11-20 14:30:00,Arminia Bielefeld,Wolfsburg,2,2,1.40579,1.35662
+2021-22,Bundesliga,17618,2021-11-20 14:30:00,Hoffenheim,RasenBallsport Leipzig,2,0,2.88876,0.211083
+2021-22,Bundesliga,17620,2021-11-20 14:30:00,Borussia M.Gladbach,Greuther Fuerth,4,0,2.47443,0.307559
+2021-22,Bundesliga,17622,2021-11-20 14:30:00,Bayer Leverkusen,Bochum,1,0,1.62637,0.708697
+2021-22,Bundesliga,17623,2021-11-20 14:30:00,Borussia Dortmund,VfB Stuttgart,2,1,1.99186,1.54108
+2021-22,Bundesliga,17621,2021-11-20 17:30:00,Union Berlin,Hertha Berlin,2,0,1.89108,0.211495
+2021-22,Bundesliga,17619,2021-11-21 14:30:00,Freiburg,Eintracht Frankfurt,0,2,1.5667,1.24268
+2021-22,Bundesliga,17617,2021-11-21 16:30:00,Mainz 05,FC Cologne,1,1,0.941346,1.75564
+2021-22,Bundesliga,17628,2021-11-26 19:30:00,VfB Stuttgart,Mainz 05,2,1,0.276918,1.17743
+2021-22,Bundesliga,17624,2021-11-27 14:30:00,Greuther Fuerth,Hoffenheim,3,6,1.36493,3.01705
+2021-22,Bundesliga,17625,2021-11-27 14:30:00,Bochum,Freiburg,2,1,0.955994,2.12135
+2021-22,Bundesliga,17626,2021-11-27 14:30:00,FC Cologne,Borussia M.Gladbach,4,1,1.48695,1.30291
+2021-22,Bundesliga,17627,2021-11-27 14:30:00,Hertha Berlin,Augsburg,1,1,1.92656,1.61295
+2021-22,Bundesliga,17630,2021-11-27 14:30:00,Wolfsburg,Borussia Dortmund,1,3,2.17146,2.35127
+2021-22,Bundesliga,17632,2021-11-27 17:30:00,Bayern Munich,Arminia Bielefeld,1,0,2.67728,0.385377
+2021-22,Bundesliga,17629,2021-11-28 14:30:00,Eintracht Frankfurt,Union Berlin,2,1,1.69692,1.07386
+2021-22,Bundesliga,17631,2021-11-28 16:30:00,RasenBallsport Leipzig,Bayer Leverkusen,1,3,1.43225,1.23553
+2021-22,Bundesliga,17639,2021-12-03 19:30:00,Union Berlin,RasenBallsport Leipzig,2,1,3.76492,1.14392
+2021-22,Bundesliga,17633,2021-12-04 14:30:00,Arminia Bielefeld,FC Cologne,1,1,1.01727,1.18693
+2021-22,Bundesliga,17634,2021-12-04 14:30:00,Augsburg,Bochum,2,3,2.86606,2.04524
+2021-22,Bundesliga,17635,2021-12-04 14:30:00,Mainz 05,Wolfsburg,3,0,1.41164,0.760457
+2021-22,Bundesliga,17636,2021-12-04 14:30:00,Hoffenheim,Eintracht Frankfurt,3,2,0.924975,1.57864
+2021-22,Bundesliga,17640,2021-12-04 14:30:00,Bayer Leverkusen,Greuther Fuerth,7,1,2.4319,0.279746
+2021-22,Bundesliga,17641,2021-12-04 17:30:00,Borussia Dortmund,Bayern Munich,2,3,1.43058,2.42143
+2021-22,Bundesliga,17637,2021-12-05 14:30:00,VfB Stuttgart,Hertha Berlin,2,2,0.921944,1.25849
+2021-22,Bundesliga,17638,2021-12-05 16:30:00,Borussia M.Gladbach,Freiburg,0,6,1.07562,2.70796
+2021-22,Bundesliga,17644,2021-12-10 19:30:00,FC Cologne,Augsburg,0,2,1.15891,1.17632
+2021-22,Bundesliga,17643,2021-12-11 14:30:00,Bochum,Borussia Dortmund,1,1,0.966453,2.68284
+2021-22,Bundesliga,17645,2021-12-11 14:30:00,Hertha Berlin,Arminia Bielefeld,2,0,2.23797,0.454841
+2021-22,Bundesliga,17646,2021-12-11 14:30:00,Freiburg,Hoffenheim,1,2,2.25197,1.5054
+2021-22,Bundesliga,17649,2021-12-11 14:30:00,RasenBallsport Leipzig,Borussia M.Gladbach,4,1,4.80258,0.84748
+2021-22,Bundesliga,17650,2021-12-11 14:30:00,Bayern Munich,Mainz 05,2,1,1.78613,0.872668
+2021-22,Bundesliga,17648,2021-12-11 17:30:00,Wolfsburg,VfB Stuttgart,0,2,1.46986,1.53296
+2021-22,Bundesliga,17642,2021-12-12 14:30:00,Greuther Fuerth,Union Berlin,1,0,0.680225,1.83652
+2021-22,Bundesliga,17647,2021-12-12 16:30:00,Eintracht Frankfurt,Bayer Leverkusen,5,2,1.44415,1.60141
+2021-22,Bundesliga,17654,2021-12-14 17:30:00,VfB Stuttgart,Bayern Munich,0,5,1.04709,4.98146
+2021-22,Bundesliga,17651,2021-12-14 19:30:00,Arminia Bielefeld,Bochum,2,0,0.642785,0.748012
+2021-22,Bundesliga,17653,2021-12-14 19:30:00,Mainz 05,Hertha Berlin,4,0,3.10591,0.393369
+2021-22,Bundesliga,17658,2021-12-14 19:30:00,Wolfsburg,FC Cologne,2,3,2.42693,3.14693
+2021-22,Bundesliga,17655,2021-12-15 17:30:00,Borussia M.Gladbach,Eintracht Frankfurt,2,3,2.22983,2.50286
+2021-22,Bundesliga,17652,2021-12-15 19:30:00,Augsburg,RasenBallsport Leipzig,1,1,1.56744,3.08255
+2021-22,Bundesliga,17656,2021-12-15 19:30:00,Union Berlin,Freiburg,0,0,2.25007,1.22466
+2021-22,Bundesliga,17657,2021-12-15 19:30:00,Bayer Leverkusen,Hoffenheim,2,2,2.42553,1.68115
+2021-22,Bundesliga,17659,2021-12-15 19:30:00,Borussia Dortmund,Greuther Fuerth,3,0,1.91572,0.379024
+2021-22,Bundesliga,17668,2021-12-17 19:30:00,Bayern Munich,Wolfsburg,4,0,4.31291,1.41635
+2021-22,Bundesliga,17660,2021-12-18 14:30:00,Greuther Fuerth,Augsburg,0,0,0.0901985,1.48497
+2021-22,Bundesliga,17661,2021-12-18 14:30:00,Bochum,Union Berlin,0,1,1.04215,0.999651
+2021-22,Bundesliga,17664,2021-12-18 14:30:00,Hoffenheim,Borussia M.Gladbach,1,1,2.24422,1.62486
+2021-22,Bundesliga,17666,2021-12-18 14:30:00,Eintracht Frankfurt,Mainz 05,1,0,1.52805,0.832437
+2021-22,Bundesliga,17667,2021-12-18 14:30:00,RasenBallsport Leipzig,Arminia Bielefeld,0,2,1.64503,1.33454
+2021-22,Bundesliga,17663,2021-12-18 17:30:00,Hertha Berlin,Borussia Dortmund,3,2,1.61634,1.57262
+2021-22,Bundesliga,17665,2021-12-19 14:30:00,Freiburg,Bayer Leverkusen,2,1,2.07857,0.818605
+2021-22,Bundesliga,17662,2021-12-19 16:30:00,FC Cologne,VfB Stuttgart,1,0,1.35819,0.333564
+2021-22,Bundesliga,17677,2022-01-07 19:30:00,Bayern Munich,Borussia M.Gladbach,1,2,1.35599,1.51069
+2021-22,Bundesliga,17669,2022-01-08 14:30:00,Greuther Fuerth,VfB Stuttgart,0,0,1.12386,1.62697
+2021-22,Bundesliga,17672,2022-01-08 14:30:00,Hoffenheim,Augsburg,3,1,2.76228,0.749744
+2021-22,Bundesliga,17673,2022-01-08 14:30:00,Freiburg,Arminia Bielefeld,2,2,2.20416,1.1145
+2021-22,Bundesliga,17674,2022-01-08 14:30:00,Bayer Leverkusen,Union Berlin,2,2,2.20526,3.04208
+2021-22,Bundesliga,17676,2022-01-08 14:30:00,RasenBallsport Leipzig,Mainz 05,4,1,3.55391,0.319779
+2021-22,Bundesliga,17675,2022-01-08 17:30:00,Eintracht Frankfurt,Borussia Dortmund,2,3,1.77844,2.38227
+2021-22,Bundesliga,17671,2022-01-09 14:30:00,Hertha Berlin,FC Cologne,1,3,0.791753,2.46989
+2021-22,Bundesliga,17670,2022-01-09 16:30:00,Bochum,Wolfsburg,1,0,1.57295,0.400404
+2021-22,Bundesliga,17686,2022-01-14 19:30:00,Borussia Dortmund,Freiburg,5,1,2.42754,1.04847
+2021-22,Bundesliga,17678,2022-01-15 14:30:00,FC Cologne,Bayern Munich,0,4,1.0312,3.87329
+2021-22,Bundesliga,17681,2022-01-15 14:30:00,Mainz 05,Bochum,1,0,1.60302,1.32639
+2021-22,Bundesliga,17682,2022-01-15 14:30:00,VfB Stuttgart,RasenBallsport Leipzig,0,2,1.18793,1.601
+2021-22,Bundesliga,17684,2022-01-15 14:30:00,Union Berlin,Hoffenheim,2,1,1.76684,0.61487
+2021-22,Bundesliga,17685,2022-01-15 14:30:00,Wolfsburg,Hertha Berlin,0,0,1.80168,0.313936
+2021-22,Bundesliga,17683,2022-01-15 17:30:00,Borussia M.Gladbach,Bayer Leverkusen,1,2,1.44472,6.49734
+2021-22,Bundesliga,17680,2022-01-16 14:30:00,Augsburg,Eintracht Frankfurt,1,1,0.834967,2.14731
+2021-22,Bundesliga,17679,2022-01-16 16:30:00,Arminia Bielefeld,Greuther Fuerth,2,2,0.534681,0.55128
+2021-22,Bundesliga,17694,2022-01-21 19:30:00,Eintracht Frankfurt,Arminia Bielefeld,0,2,1.44952,1.56136
+2021-22,Bundesliga,17687,2022-01-22 14:30:00,Greuther Fuerth,Mainz 05,2,1,1.29371,1.40771
+2021-22,Bundesliga,17690,2022-01-22 14:30:00,Hoffenheim,Borussia Dortmund,2,3,1.16246,1.3361
+2021-22,Bundesliga,17691,2022-01-22 14:30:00,Freiburg,VfB Stuttgart,2,0,1.58203,0.221777
+2021-22,Bundesliga,17692,2022-01-22 14:30:00,Borussia M.Gladbach,Union Berlin,1,2,1.29912,1.30514
+2021-22,Bundesliga,17693,2022-01-22 14:30:00,Bayer Leverkusen,Augsburg,5,1,3.51884,1.21255
+2021-22,Bundesliga,17688,2022-01-22 17:30:00,Bochum,FC Cologne,2,2,1.77931,1.5434
+2021-22,Bundesliga,17695,2022-01-23 14:30:00,RasenBallsport Leipzig,Wolfsburg,2,0,1.69425,0.871043
+2021-22,Bundesliga,17689,2022-01-23 16:30:00,Hertha Berlin,Bayern Munich,1,4,0.847937,5.18503
+2021-22,Bundesliga,17698,2022-02-04 19:30:00,Hertha Berlin,Bochum,1,1,0.444153,0.993261
+2021-22,Bundesliga,17696,2022-02-05 14:30:00,FC Cologne,Freiburg,1,0,1.09604,0.683704
+2021-22,Bundesliga,17697,2022-02-05 14:30:00,Arminia Bielefeld,Borussia M.Gladbach,1,1,0.5965,1.4844
+2021-22,Bundesliga,17699,2022-02-05 14:30:00,Augsburg,Union Berlin,2,0,1.83212,2.09718
+2021-22,Bundesliga,17700,2022-02-05 14:30:00,Mainz 05,Hoffenheim,2,0,1.77868,1.31773
+2021-22,Bundesliga,17701,2022-02-05 14:30:00,VfB Stuttgart,Eintracht Frankfurt,2,3,2.12047,0.842047
+2021-22,Bundesliga,17704,2022-02-05 17:30:00,Bayern Munich,RasenBallsport Leipzig,3,2,3.0334,2.65667
+2021-22,Bundesliga,17703,2022-02-06 14:30:00,Borussia Dortmund,Bayer Leverkusen,2,5,1.60338,1.81345
+2021-22,Bundesliga,17702,2022-02-06 16:30:00,Wolfsburg,Greuther Fuerth,4,1,2.0638,1.10423
+2021-22,Bundesliga,17713,2022-02-11 19:30:00,RasenBallsport Leipzig,FC Cologne,3,1,0.850488,0.794743
+2021-22,Bundesliga,17705,2022-02-12 14:30:00,Greuther Fuerth,Hertha Berlin,2,1,2.69634,1.84512
+2021-22,Bundesliga,17706,2022-02-12 14:30:00,Bochum,Bayern Munich,4,2,1.34846,1.87083
+2021-22,Bundesliga,17708,2022-02-12 14:30:00,Freiburg,Mainz 05,1,1,1.69097,3.15753
+2021-22,Bundesliga,17709,2022-02-12 14:30:00,Borussia M.Gladbach,Augsburg,3,2,3.03062,1.62757
+2021-22,Bundesliga,17712,2022-02-12 14:30:00,Eintracht Frankfurt,Wolfsburg,0,2,0.879318,1.61974
+2021-22,Bundesliga,17711,2022-02-12 17:30:00,Bayer Leverkusen,VfB Stuttgart,4,2,2.41919,1.17227
+2021-22,Bundesliga,17710,2022-02-13 14:30:00,Union Berlin,Borussia Dortmund,0,3,1.47085,2.59623
+2021-22,Bundesliga,17707,2022-02-13 16:30:00,Hoffenheim,Arminia Bielefeld,2,0,4.16571,0.652006
+2021-22,Bundesliga,17718,2022-02-18 19:30:00,Mainz 05,Bayer Leverkusen,3,2,1.00622,0.827749
+2021-22,Bundesliga,17715,2022-02-19 14:30:00,Arminia Bielefeld,Union Berlin,1,0,1.41442,0.771488
+2021-22,Bundesliga,17717,2022-02-19 14:30:00,Augsburg,Freiburg,1,2,0.951389,2.56075
+2021-22,Bundesliga,17719,2022-02-19 14:30:00,VfB Stuttgart,Bochum,1,1,1.37485,1.93431
+2021-22,Bundesliga,17720,2022-02-19 14:30:00,Wolfsburg,Hoffenheim,1,2,1.50299,1.07132
+2021-22,Bundesliga,17714,2022-02-19 17:30:00,FC Cologne,Eintracht Frankfurt,1,0,1.43278,0.678832
+2021-22,Bundesliga,17722,2022-02-20 14:30:00,Bayern Munich,Greuther Fuerth,4,1,2.52333,0.66071
+2021-22,Bundesliga,17721,2022-02-20 16:30:00,Borussia Dortmund,Borussia M.Gladbach,6,0,3.59589,0.769068
+2021-22,Bundesliga,17716,2022-02-20 18:30:00,Hertha Berlin,RasenBallsport Leipzig,1,6,1.0916,3.42076
+2021-22,Bundesliga,17726,2022-02-25 19:30:00,Hoffenheim,VfB Stuttgart,2,1,2.65346,1.83937
+2021-22,Bundesliga,17723,2022-02-26 14:30:00,Greuther Fuerth,FC Cologne,1,1,0.640559,0.569519
+2021-22,Bundesliga,17727,2022-02-26 14:30:00,Freiburg,Hertha Berlin,3,0,3.66711,1.54627
+2021-22,Bundesliga,17728,2022-02-26 14:30:00,Borussia M.Gladbach,Wolfsburg,2,2,2.7626,1.26995
+2021-22,Bundesliga,17729,2022-02-26 14:30:00,Union Berlin,Mainz 05,3,1,0.883998,0.75947
+2021-22,Bundesliga,17730,2022-02-26 14:30:00,Bayer Leverkusen,Arminia Bielefeld,3,0,3.05247,0.307307
+2021-22,Bundesliga,17731,2022-02-26 17:30:00,Eintracht Frankfurt,Bayern Munich,0,1,1.1892,2.60814
+2021-22,Bundesliga,17724,2022-02-27 14:30:00,Bochum,RasenBallsport Leipzig,0,1,0.998771,0.61309
+2021-22,Bundesliga,17725,2022-02-27 16:30:00,Augsburg,Borussia Dortmund,1,1,0.856029,0.640799
+2021-22,Bundesliga,17734,2022-03-04 19:30:00,Arminia Bielefeld,Augsburg,0,1,0.14375,0.308406
+2021-22,Bundesliga,17732,2022-03-05 14:30:00,Bochum,Greuther Fuerth,2,1,1.6566,0.579266
+2021-22,Bundesliga,17735,2022-03-05 14:30:00,Hertha Berlin,Eintracht Frankfurt,1,4,0.483243,1.37042
+2021-22,Bundesliga,17738,2022-03-05 14:30:00,Wolfsburg,Union Berlin,1,0,0.411697,1.55639
+2021-22,Bundesliga,17739,2022-03-05 14:30:00,RasenBallsport Leipzig,Freiburg,1,1,0.753651,0.484924
+2021-22,Bundesliga,17740,2022-03-05 14:30:00,Bayern Munich,Bayer Leverkusen,1,1,1.6659,2.26407
+2021-22,Bundesliga,17737,2022-03-05 17:30:00,VfB Stuttgart,Borussia M.Gladbach,3,2,2.36751,1.20797
+2021-22,Bundesliga,17733,2022-03-06 16:30:00,FC Cologne,Hoffenheim,0,1,1.22016,2.87337
+2021-22,Bundesliga,17743,2022-03-12 14:30:00,Hoffenheim,Bayern Munich,1,1,2.02668,3.98532
+2021-22,Bundesliga,17744,2022-03-12 14:30:00,Freiburg,Wolfsburg,3,2,1.54229,0.908576
+2021-22,Bundesliga,17746,2022-03-12 14:30:00,Union Berlin,VfB Stuttgart,1,1,1.89937,1.73181
+2021-22,Bundesliga,17745,2022-03-12 17:30:00,Borussia M.Gladbach,Hertha Berlin,2,0,1.75587,0.443109
+2021-22,Bundesliga,17747,2022-03-13 14:30:00,Bayer Leverkusen,FC Cologne,0,1,2.40118,0.59749
+2021-22,Bundesliga,17748,2022-03-13 16:30:00,Eintracht Frankfurt,Bochum,2,1,1.55276,1.20928
+2021-22,Bundesliga,17749,2022-03-13 16:30:00,Borussia Dortmund,Arminia Bielefeld,1,0,2.06968,0.691049
+2021-22,Bundesliga,17741,2022-03-13 18:30:00,Greuther Fuerth,RasenBallsport Leipzig,1,6,0.377793,2.14171
+2021-22,Bundesliga,17736,2022-03-16 17:30:00,Mainz 05,Borussia Dortmund,0,1,0.782406,1.39041
+2021-22,Bundesliga,17751,2022-03-18 17:30:00,Bochum,Borussia M.Gladbach,0,2,1.65633,0.616407
+2021-22,Bundesliga,17750,2022-03-19 14:30:00,Greuther Fuerth,Freiburg,0,0,0.781339,1.05712
+2021-22,Bundesliga,17753,2022-03-19 14:30:00,Hertha Berlin,Hoffenheim,3,0,1.76348,0.576415
+2021-22,Bundesliga,17754,2022-03-19 14:30:00,Mainz 05,Arminia Bielefeld,4,0,4.32637,0.236164
+2021-22,Bundesliga,17755,2022-03-19 14:30:00,VfB Stuttgart,Augsburg,3,2,2.18312,0.770891
+2021-22,Bundesliga,17758,2022-03-19 17:30:00,Bayern Munich,Union Berlin,4,0,2.82028,1.38973
+2021-22,Bundesliga,17757,2022-03-20 14:30:00,RasenBallsport Leipzig,Eintracht Frankfurt,0,0,1.05989,0.258751
+2021-22,Bundesliga,17756,2022-03-20 16:30:00,Wolfsburg,Bayer Leverkusen,0,2,1.31797,1.43941
+2021-22,Bundesliga,17752,2022-03-20 18:30:00,FC Cologne,Borussia Dortmund,1,1,1.265,1.0401
+2021-22,Bundesliga,17764,2022-04-01 18:30:00,Union Berlin,FC Cologne,1,0,1.0725,0.220646
+2021-22,Bundesliga,17759,2022-04-02 13:30:00,Arminia Bielefeld,VfB Stuttgart,1,1,1.01032,2.73417
+2021-22,Bundesliga,17761,2022-04-02 13:30:00,Hoffenheim,Bochum,1,2,1.9687,1.70208
+2021-22,Bundesliga,17762,2022-04-02 13:30:00,Freiburg,Bayern Munich,1,4,0.754263,3.15613
+2021-22,Bundesliga,17765,2022-04-02 13:30:00,Bayer Leverkusen,Hertha Berlin,2,1,1.78741,0.872251
+2021-22,Bundesliga,17766,2022-04-02 13:30:00,Eintracht Frankfurt,Greuther Fuerth,0,0,1.31928,0.466385
+2021-22,Bundesliga,17767,2022-04-02 16:30:00,Borussia Dortmund,RasenBallsport Leipzig,1,4,0.969967,1.23272
+2021-22,Bundesliga,17760,2022-04-03 13:30:00,Augsburg,Wolfsburg,3,0,2.52845,1.18916
+2021-22,Bundesliga,17763,2022-04-03 15:30:00,Borussia M.Gladbach,Mainz 05,1,1,1.55193,1.78
+2021-22,Bundesliga,17742,2022-04-06 16:30:00,Augsburg,Mainz 05,2,1,1.92513,1.84563
+2021-22,Bundesliga,17772,2022-04-08 18:30:00,VfB Stuttgart,Borussia Dortmund,0,2,2.03163,1.49649
+2021-22,Bundesliga,17768,2022-04-09 13:30:00,Greuther Fuerth,Borussia M.Gladbach,0,2,0.651835,3.48459
+2021-22,Bundesliga,17770,2022-04-09 13:30:00,FC Cologne,Mainz 05,3,2,1.90576,0.926438
+2021-22,Bundesliga,17774,2022-04-09 13:30:00,Wolfsburg,Arminia Bielefeld,4,0,1.99101,0.476945
+2021-22,Bundesliga,17776,2022-04-09 13:30:00,Bayern Munich,Augsburg,1,0,1.43145,0.277271
+2021-22,Bundesliga,17771,2022-04-09 16:30:00,Hertha Berlin,Union Berlin,1,4,0.85457,1.85412
+2021-22,Bundesliga,17769,2022-04-10 13:30:00,Bochum,Bayer Leverkusen,0,0,1.05181,1.21928
+2021-22,Bundesliga,17773,2022-04-10 15:30:00,Eintracht Frankfurt,Freiburg,1,2,1.09915,1.46109
+2021-22,Bundesliga,17775,2022-04-10 17:30:00,RasenBallsport Leipzig,Hoffenheim,3,0,1.61141,0.171037
+2021-22,Bundesliga,17778,2022-04-16 13:30:00,Augsburg,Hertha Berlin,0,1,0.777494,1.6343
+2021-22,Bundesliga,17779,2022-04-16 13:30:00,Mainz 05,VfB Stuttgart,0,0,0.723024,0.633775
+2021-22,Bundesliga,17781,2022-04-16 13:30:00,Freiburg,Bochum,3,0,2.45736,0.427462
+2021-22,Bundesliga,17785,2022-04-16 13:30:00,Borussia Dortmund,Wolfsburg,6,1,3.31511,1.96018
+2021-22,Bundesliga,17782,2022-04-16 16:30:00,Borussia M.Gladbach,FC Cologne,1,3,1.19803,3.01287
+2021-22,Bundesliga,17777,2022-04-17 13:30:00,Arminia Bielefeld,Bayern Munich,0,3,0.463135,3.49911
+2021-22,Bundesliga,17780,2022-04-17 15:30:00,Hoffenheim,Greuther Fuerth,0,0,0.973602,0.284206
+2021-22,Bundesliga,17783,2022-04-17 15:30:00,Union Berlin,Eintracht Frankfurt,2,0,1.3196,0.513925
+2021-22,Bundesliga,17784,2022-04-17 17:30:00,Bayer Leverkusen,RasenBallsport Leipzig,0,1,0.728724,0.507455
+2021-22,Bundesliga,17792,2022-04-22 18:30:00,Wolfsburg,Mainz 05,5,0,3.6526,0.613976
+2021-22,Bundesliga,17786,2022-04-23 13:30:00,Greuther Fuerth,Bayer Leverkusen,1,4,1.18317,2.11362
+2021-22,Bundesliga,17788,2022-04-23 13:30:00,FC Cologne,Arminia Bielefeld,3,1,1.91505,0.740533
+2021-22,Bundesliga,17790,2022-04-23 13:30:00,Freiburg,Borussia M.Gladbach,3,3,2.49907,1.52115
+2021-22,Bundesliga,17791,2022-04-23 13:30:00,Eintracht Frankfurt,Hoffenheim,2,2,1.06541,0.757228
+2021-22,Bundesliga,17793,2022-04-23 13:30:00,RasenBallsport Leipzig,Union Berlin,1,2,0.573656,1.93634
+2021-22,Bundesliga,17794,2022-04-23 16:30:00,Bayern Munich,Borussia Dortmund,3,1,2.0232,1.17213
+2021-22,Bundesliga,17787,2022-04-24 13:30:00,Bochum,Augsburg,0,2,1.18661,1.99486
+2021-22,Bundesliga,17789,2022-04-24 15:30:00,Hertha Berlin,VfB Stuttgart,2,0,0.947404,0.451742
+2021-22,Bundesliga,17801,2022-04-29 18:30:00,Union Berlin,Greuther Fuerth,1,1,0.857798,0.237425
+2021-22,Bundesliga,17795,2022-04-30 13:30:00,Arminia Bielefeld,Hertha Berlin,1,1,0.403104,1.66247
+2021-22,Bundesliga,17796,2022-04-30 13:30:00,Augsburg,FC Cologne,1,4,1.73625,3.04059
+2021-22,Bundesliga,17797,2022-04-30 13:30:00,Mainz 05,Bayern Munich,3,1,3.17227,1.23601
+2021-22,Bundesliga,17799,2022-04-30 13:30:00,VfB Stuttgart,Wolfsburg,1,1,0.826738,1.16064
+2021-22,Bundesliga,17803,2022-04-30 13:30:00,Borussia Dortmund,Bochum,3,4,3.34247,1.90488
+2021-22,Bundesliga,17798,2022-04-30 16:30:00,Hoffenheim,Freiburg,3,4,2.60025,2.694
+2021-22,Bundesliga,17800,2022-05-02 18:30:00,Borussia M.Gladbach,RasenBallsport Leipzig,3,1,1.57029,1.22604
+2021-22,Bundesliga,17802,2022-05-02 18:30:00,Bayer Leverkusen,Eintracht Frankfurt,2,0,2.17544,0.349041
+2021-22,Bundesliga,17805,2022-05-06 18:30:00,Bochum,Arminia Bielefeld,2,1,2.68894,0.845303
+2021-22,Bundesliga,17804,2022-05-07 13:30:00,Greuther Fuerth,Borussia Dortmund,1,3,1.22647,1.12743
+2021-22,Bundesliga,17806,2022-05-07 13:30:00,FC Cologne,Wolfsburg,0,1,0.975489,1.14328
+2021-22,Bundesliga,17808,2022-05-07 13:30:00,Hoffenheim,Bayer Leverkusen,2,4,2.09206,3.9336
+2021-22,Bundesliga,17809,2022-05-07 13:30:00,Freiburg,Union Berlin,1,4,1.64859,2.40109
+2021-22,Bundesliga,17807,2022-05-07 16:30:00,Hertha Berlin,Mainz 05,1,2,1.11131,0.756414
+2021-22,Bundesliga,17810,2022-05-08 13:30:00,Eintracht Frankfurt,Borussia M.Gladbach,1,1,0.808226,2.02639
+2021-22,Bundesliga,17812,2022-05-08 15:30:00,Bayern Munich,VfB Stuttgart,2,2,2.77465,1.95837
+2021-22,Bundesliga,17811,2022-05-08 17:30:00,RasenBallsport Leipzig,Augsburg,4,0,3.4379,0.173579
+2021-22,Bundesliga,17813,2022-05-14 13:30:00,Arminia Bielefeld,RasenBallsport Leipzig,1,1,1.66972,3.45794
+2021-22,Bundesliga,17814,2022-05-14 13:30:00,Augsburg,Greuther Fuerth,2,1,1.17202,0.337532
+2021-22,Bundesliga,17815,2022-05-14 13:30:00,Mainz 05,Eintracht Frankfurt,2,2,0.850382,1.70213
+2021-22,Bundesliga,17816,2022-05-14 13:30:00,VfB Stuttgart,FC Cologne,2,1,3.83676,1.11893
+2021-22,Bundesliga,17817,2022-05-14 13:30:00,Borussia M.Gladbach,Hoffenheim,5,1,3.82831,1.92751
+2021-22,Bundesliga,17818,2022-05-14 13:30:00,Union Berlin,Bochum,3,2,3.37468,0.391265
+2021-22,Bundesliga,17819,2022-05-14 13:30:00,Bayer Leverkusen,Freiburg,2,1,1.82142,1.1463
+2021-22,Bundesliga,17820,2022-05-14 13:30:00,Wolfsburg,Bayern Munich,2,2,1.14112,2.07091
+2021-22,Bundesliga,17821,2022-05-14 13:30:00,Borussia Dortmund,Hertha Berlin,2,1,1.32689,0.876533
+2021-22,La Liga,17136,2021-08-13 19:00:00,Valencia,Getafe,1,0,1.57861,1.19326
+2021-22,La Liga,17138,2021-08-14 17:30:00,Mallorca,Real Betis,1,1,0.569578,0.814085
+2021-22,La Liga,17139,2021-08-14 17:30:00,Cadiz,Levante,1,1,0.993589,0.915954
+2021-22,La Liga,17137,2021-08-14 20:00:00,Osasuna,Espanyol,0,0,0.579404,0.583698
+2021-22,La Liga,17140,2021-08-14 20:00:00,Alaves,Real Madrid,1,4,1.41097,2.15551
+2021-22,La Liga,17141,2021-08-15 15:30:00,Celta Vigo,Atletico Madrid,1,2,1.59399,1.805
+2021-22,La Liga,17142,2021-08-15 18:00:00,Barcelona,Real Sociedad,4,2,3.46484,0.902312
+2021-22,La Liga,17143,2021-08-15 20:15:00,Sevilla,Rayo Vallecano,3,0,3.67402,0.484078
+2021-22,La Liga,17144,2021-08-16 18:00:00,Villarreal,Granada,0,0,1.21791,0.246735
+2021-22,La Liga,17145,2021-08-16 20:00:00,Elche,Athletic Club,0,0,0.933565,0.634866
+2021-22,La Liga,17146,2021-08-20 19:00:00,Real Betis,Cadiz,1,1,1.82337,1.4533
+2021-22,La Liga,17147,2021-08-21 15:00:00,Alaves,Mallorca,0,1,0.920977,0.82407
+2021-22,La Liga,17148,2021-08-21 17:30:00,Granada,Valencia,1,1,0.752693,1.50025
+2021-22,La Liga,17149,2021-08-21 17:30:00,Espanyol,Villarreal,0,0,1.68861,0.597171
+2021-22,La Liga,17150,2021-08-21 20:00:00,Athletic Club,Barcelona,1,1,1.43436,1.18383
+2021-22,La Liga,17151,2021-08-22 15:00:00,Real Sociedad,Rayo Vallecano,1,0,2.26913,0.76322
+2021-22,La Liga,17152,2021-08-22 17:30:00,Atletico Madrid,Elche,1,0,1.04508,0.168373
+2021-22,La Liga,17153,2021-08-22 20:00:00,Levante,Real Madrid,3,3,1.63837,2.14125
+2021-22,La Liga,17154,2021-08-23 18:00:00,Getafe,Sevilla,0,1,0.391853,0.813891
+2021-22,La Liga,17155,2021-08-23 20:00:00,Osasuna,Celta Vigo,0,0,2.58218,0.084571
+2021-22,La Liga,17156,2021-08-27 18:00:00,Mallorca,Espanyol,1,0,1.28733,0.296878
+2021-22,La Liga,17157,2021-08-27 20:15:00,Valencia,Alaves,3,0,2.33998,0.360675
+2021-22,La Liga,17158,2021-08-28 15:00:00,Celta Vigo,Athletic Club,0,1,0.934567,1.45227
+2021-22,La Liga,17159,2021-08-28 17:30:00,Real Sociedad,Levante,1,0,0.855875,0.521015
+2021-22,La Liga,17160,2021-08-28 17:30:00,Elche,Sevilla,1,1,0.855435,1.70035
+2021-22,La Liga,17161,2021-08-28 20:00:00,Real Betis,Real Madrid,0,1,0.420687,0.94097
+2021-22,La Liga,17162,2021-08-29 15:00:00,Barcelona,Getafe,2,1,1.05122,0.283315
+2021-22,La Liga,17163,2021-08-29 17:30:00,Cadiz,Osasuna,2,3,1.36149,2.28418
+2021-22,La Liga,17164,2021-08-29 17:30:00,Rayo Vallecano,Granada,4,0,2.19631,0.586302
+2021-22,La Liga,17165,2021-08-29 20:00:00,Atletico Madrid,Villarreal,2,2,1.773,0.448731
+2021-22,La Liga,17171,2021-09-11 16:30:00,Levante,Rayo Vallecano,1,1,1.10993,2.7683
+2021-22,La Liga,17166,2021-09-11 19:00:00,Athletic Club,Mallorca,2,0,1.855,0.22503
+2021-22,La Liga,17170,2021-09-12 12:00:00,Espanyol,Atletico Madrid,1,2,0.373891,0.732283
+2021-22,La Liga,17172,2021-09-12 14:15:00,Osasuna,Valencia,1,4,0.457252,0.924929
+2021-22,La Liga,17168,2021-09-12 16:30:00,Cadiz,Real Sociedad,0,2,0.607763,2.36611
+2021-22,La Liga,17173,2021-09-12 19:00:00,Real Madrid,Celta Vigo,5,2,3.03734,1.99062
+2021-22,La Liga,17167,2021-09-13 18:00:00,Getafe,Elche,0,1,0.3796,1.07401
+2021-22,La Liga,17169,2021-09-13 20:00:00,Granada,Real Betis,1,2,0.780077,2.43767
+2021-22,La Liga,17180,2021-09-17 19:00:00,Celta Vigo,Cadiz,1,2,0.993864,1.07407
+2021-22,La Liga,17184,2021-09-18 12:00:00,Rayo Vallecano,Getafe,3,0,1.98661,1.15428
+2021-22,La Liga,17177,2021-09-18 14:15:00,Atletico Madrid,Athletic Club,0,0,1.10053,1.10578
+2021-22,La Liga,17185,2021-09-18 16:30:00,Elche,Levante,1,1,0.536512,1.12463
+2021-22,La Liga,17176,2021-09-18 19:00:00,Alaves,Osasuna,0,2,0.251601,1.32313
+2021-22,La Liga,17181,2021-09-19 12:00:00,Mallorca,Villarreal,0,0,0.529054,1.63437
+2021-22,La Liga,17182,2021-09-19 14:15:00,Real Sociedad,Sevilla,0,0,1.17723,0.7654
+2021-22,La Liga,17179,2021-09-19 16:30:00,Real Betis,Espanyol,2,2,2.36891,1.21693
+2021-22,La Liga,17183,2021-09-19 19:00:00,Valencia,Real Madrid,1,2,0.647432,1.36343
+2021-22,La Liga,17178,2021-09-20 19:00:00,Barcelona,Granada,1,1,1.88236,0.612728
+2021-22,La Liga,17187,2021-09-21 17:30:00,Getafe,Atletico Madrid,1,2,0.330581,1.47906
+2021-22,La Liga,17186,2021-09-21 20:00:00,Athletic Club,Rayo Vallecano,1,2,0.956027,1.04121
+2021-22,La Liga,17194,2021-09-21 20:00:00,Levante,Celta Vigo,0,2,1.40702,0.739683
+2021-22,La Liga,17189,2021-09-22 17:30:00,Sevilla,Valencia,3,1,1.20708,0.442431
+2021-22,La Liga,17193,2021-09-22 17:30:00,Espanyol,Alaves,1,0,1.61796,0.424815
+2021-22,La Liga,17188,2021-09-22 20:00:00,Villarreal,Elche,4,1,2.77855,1.09551
+2021-22,La Liga,17190,2021-09-22 20:00:00,Real Madrid,Mallorca,6,1,2.3746,1.19165
+2021-22,La Liga,17192,2021-09-23 17:30:00,Granada,Real Sociedad,2,3,1.25019,1.58153
+2021-22,La Liga,17195,2021-09-23 17:30:00,Osasuna,Real Betis,1,3,0.820269,2.20306
+2021-22,La Liga,17191,2021-09-23 20:00:00,Cadiz,Barcelona,0,0,1.40061,0.361756
+2021-22,La Liga,17197,2021-09-25 12:00:00,Alaves,Atletico Madrid,1,0,1.19699,0.558059
+2021-22,La Liga,17199,2021-09-25 14:15:00,Valencia,Athletic Club,1,1,1.08633,0.830524
+2021-22,La Liga,17200,2021-09-25 16:30:00,Sevilla,Espanyol,2,0,1.57528,0.478568
+2021-22,La Liga,17202,2021-09-25 19:00:00,Real Madrid,Villarreal,0,0,1.53636,0.666401
+2021-22,La Liga,17203,2021-09-26 12:00:00,Mallorca,Osasuna,2,3,2.74158,1.63553
+2021-22,La Liga,17196,2021-09-26 14:15:00,Barcelona,Levante,3,0,3.11328,0.712689
+2021-22,La Liga,17198,2021-09-26 16:30:00,Rayo Vallecano,Cadiz,3,1,1.89007,1.09997
+2021-22,La Liga,17201,2021-09-26 16:30:00,Real Sociedad,Elche,1,0,2.11835,0.573483
+2021-22,La Liga,17205,2021-09-26 19:00:00,Real Betis,Getafe,2,0,2.4642,0.590585
+2021-22,La Liga,17204,2021-09-27 19:00:00,Celta Vigo,Granada,1,0,1.26658,0.541862
+2021-22,La Liga,17211,2021-10-01 19:00:00,Athletic Club,Alaves,1,0,2.49402,0.808018
+2021-22,La Liga,17208,2021-10-02 12:00:00,Osasuna,Rayo Vallecano,1,0,0.657174,0.148539
+2021-22,La Liga,17213,2021-10-02 14:15:00,Mallorca,Levante,1,0,0.442135,1.43388
+2021-22,La Liga,17215,2021-10-02 16:30:00,Cadiz,Valencia,0,0,0.156791,1.43757
+2021-22,La Liga,17212,2021-10-02 19:00:00,Atletico Madrid,Barcelona,2,0,1.37412,0.74746
+2021-22,La Liga,17210,2021-10-03 12:00:00,Elche,Celta Vigo,1,0,1.39817,0.713553
+2021-22,La Liga,17207,2021-10-03 14:15:00,Espanyol,Real Madrid,2,1,1.29119,1.62384
+2021-22,La Liga,17209,2021-10-03 16:30:00,Villarreal,Real Betis,2,0,2.58641,0.527081
+2021-22,La Liga,17214,2021-10-03 16:30:00,Getafe,Real Sociedad,1,1,0.523662,0.799948
+2021-22,La Liga,17206,2021-10-03 19:00:00,Granada,Sevilla,1,0,0.0843984,1.4028
+2021-22,La Liga,17221,2021-10-16 16:30:00,Levante,Getafe,0,0,0.83295,0.557421
+2021-22,La Liga,17223,2021-10-16 19:00:00,Real Sociedad,Mallorca,1,0,0.404506,0.35977
+2021-22,La Liga,17224,2021-10-17 12:00:00,Rayo Vallecano,Elche,2,1,1.10651,0.326072
+2021-22,La Liga,17218,2021-10-17 14:15:00,Celta Vigo,Sevilla,0,1,0.888941,0.828384
+2021-22,La Liga,17225,2021-10-17 16:30:00,Villarreal,Osasuna,1,2,0.713142,0.957297
+2021-22,La Liga,17217,2021-10-17 19:00:00,Barcelona,Valencia,3,1,2.37862,0.378333
+2021-22,La Liga,17216,2021-10-18 17:00:00,Alaves,Real Betis,0,1,1.35769,1.47785
+2021-22,La Liga,17220,2021-10-18 19:00:00,Espanyol,Cadiz,2,0,1.73503,0.603648
+2021-22,La Liga,17230,2021-10-22 19:00:00,Osasuna,Granada,1,1,1.24456,0.434896
+2021-22,La Liga,17228,2021-10-23 12:00:00,Valencia,Mallorca,2,2,1.47094,0.807566
+2021-22,La Liga,17231,2021-10-23 14:15:00,Cadiz,Alaves,0,2,2.00294,1.86733
+2021-22,La Liga,17227,2021-10-23 16:30:00,Elche,Espanyol,2,2,0.998945,1.05435
+2021-22,La Liga,17226,2021-10-23 19:00:00,Athletic Club,Villarreal,2,1,2.64328,0.605636
+2021-22,La Liga,17229,2021-10-24 12:00:00,Sevilla,Levante,5,3,1.82952,1.28779
+2021-22,La Liga,17234,2021-10-24 14:15:00,Barcelona,Real Madrid,1,2,1.58789,1.5463
+2021-22,La Liga,17233,2021-10-24 16:30:00,Real Betis,Rayo Vallecano,3,2,1.43375,1.16768
+2021-22,La Liga,17235,2021-10-24 19:00:00,Atletico Madrid,Real Sociedad,2,2,1.75286,0.834092
+2021-22,La Liga,17232,2021-10-25 19:00:00,Getafe,Celta Vigo,0,3,0.461119,2.48108
+2021-22,La Liga,17239,2021-10-26 17:00:00,Alaves,Elche,1,0,1.81349,0.281657
+2021-22,La Liga,17243,2021-10-26 19:00:00,Espanyol,Athletic Club,1,1,1.23306,3.68446
+2021-22,La Liga,17238,2021-10-26 19:30:00,Villarreal,Cadiz,3,3,1.95102,1.53615
+2021-22,La Liga,17236,2021-10-27 17:00:00,Rayo Vallecano,Barcelona,1,0,0.786282,2.85731
+2021-22,La Liga,17245,2021-10-27 17:00:00,Mallorca,Sevilla,1,1,2.27366,1.42068
+2021-22,La Liga,17241,2021-10-27 18:00:00,Real Betis,Valencia,4,1,2.58067,2.17844
+2021-22,La Liga,17237,2021-10-27 19:30:00,Real Madrid,Osasuna,0,0,0.655438,0.71046
+2021-22,La Liga,17240,2021-10-28 17:00:00,Celta Vigo,Real Sociedad,0,2,0.995591,1.42714
+2021-22,La Liga,17244,2021-10-28 18:00:00,Granada,Getafe,1,1,2.26351,0.581107
+2021-22,La Liga,17242,2021-10-28 19:30:00,Levante,Atletico Madrid,2,2,2.12426,1.33383
+2021-22,La Liga,17246,2021-10-30 12:00:00,Elche,Real Madrid,1,2,1.15068,1.60735
+2021-22,La Liga,17249,2021-10-30 14:15:00,Sevilla,Osasuna,2,0,2.43378,0.790454
+2021-22,La Liga,17247,2021-10-30 16:30:00,Valencia,Villarreal,2,0,1.66395,0.804209
+2021-22,La Liga,17252,2021-10-30 19:00:00,Barcelona,Alaves,1,1,1.56007,0.599628
+2021-22,La Liga,17254,2021-10-31 13:00:00,Cadiz,Mallorca,1,1,1.80233,1.03662
+2021-22,La Liga,17251,2021-10-31 15:15:00,Atletico Madrid,Real Betis,3,0,2.5506,0.521096
+2021-22,La Liga,17253,2021-10-31 17:30:00,Getafe,Espanyol,2,1,0.951784,0.619895
+2021-22,La Liga,17250,2021-10-31 20:00:00,Real Sociedad,Athletic Club,1,1,1.05807,1.01149
+2021-22,La Liga,17248,2021-11-01 17:30:00,Rayo Vallecano,Celta Vigo,0,0,0.467972,0.43779
+2021-22,La Liga,17255,2021-11-01 20:00:00,Levante,Granada,0,3,1.33088,1.46089
+2021-22,La Liga,17257,2021-11-05 20:00:00,Athletic Club,Cadiz,0,1,0.584754,0.491777
+2021-22,La Liga,17261,2021-11-06 13:00:00,Espanyol,Granada,2,0,1.76367,2.06874
+2021-22,La Liga,17259,2021-11-06 15:15:00,Celta Vigo,Barcelona,3,3,1.77068,1.13925
+2021-22,La Liga,17256,2021-11-06 17:30:00,Alaves,Levante,2,1,1.53471,0.802633
+2021-22,La Liga,17263,2021-11-06 20:00:00,Real Madrid,Rayo Vallecano,2,1,2.72626,1.78044
+2021-22,La Liga,17265,2021-11-07 13:00:00,Villarreal,Getafe,1,0,1.49263,0.153162
+2021-22,La Liga,17264,2021-11-07 15:15:00,Valencia,Atletico Madrid,3,3,1.57167,2.63804
+2021-22,La Liga,17260,2021-11-07 17:30:00,Mallorca,Elche,2,2,2.04894,0.679919
+2021-22,La Liga,17262,2021-11-07 17:30:00,Osasuna,Real Sociedad,0,2,0.495749,1.43263
+2021-22,La Liga,17258,2021-11-07 20:00:00,Real Betis,Sevilla,0,2,0.389163,1.42156
+2021-22,La Liga,17271,2021-11-19 20:00:00,Levante,Athletic Club,0,0,0.630763,0.452179
+2021-22,La Liga,17268,2021-11-20 13:00:00,Celta Vigo,Villarreal,1,1,0.90981,2.71931
+2021-22,La Liga,17273,2021-11-20 15:15:00,Sevilla,Alaves,2,2,1.37509,1.47367
+2021-22,La Liga,17266,2021-11-20 17:30:00,Atletico Madrid,Osasuna,1,0,1.61044,0.378974
+2021-22,La Liga,17267,2021-11-20 20:00:00,Barcelona,Espanyol,1,0,1.51262,1.41291
+2021-22,La Liga,17269,2021-11-21 13:00:00,Getafe,Cadiz,4,0,1.54295,0.370193
+2021-22,La Liga,17270,2021-11-21 15:15:00,Granada,Real Madrid,1,4,0.56422,3.77854
+2021-22,La Liga,17275,2021-11-21 17:30:00,Elche,Real Betis,0,3,0.824849,1.60069
+2021-22,La Liga,17272,2021-11-21 20:00:00,Real Sociedad,Valencia,0,0,0.405372,0.584859
+2021-22,La Liga,17274,2021-11-22 20:00:00,Rayo Vallecano,Mallorca,3,1,1.94957,0.827606
+2021-22,La Liga,17277,2021-11-26 20:00:00,Athletic Club,Granada,2,2,1.33935,0.977596
+2021-22,La Liga,17276,2021-11-27 13:00:00,Alaves,Celta Vigo,1,2,0.677245,1.54308
+2021-22,La Liga,17284,2021-11-27 15:15:00,Valencia,Rayo Vallecano,1,1,1.58132,2.02852
+2021-22,La Liga,17279,2021-11-27 17:30:00,Mallorca,Getafe,0,0,0.472696,0.739333
+2021-22,La Liga,17285,2021-11-27 20:00:00,Villarreal,Barcelona,1,3,1.55977,3.37249
+2021-22,La Liga,17278,2021-11-28 13:00:00,Real Betis,Levante,3,1,2.3097,0.645945
+2021-22,La Liga,17281,2021-11-28 15:15:00,Espanyol,Real Sociedad,1,0,0.378098,1.32638
+2021-22,La Liga,17280,2021-11-28 17:30:00,Cadiz,Atletico Madrid,1,4,0.766477,3.32569
+2021-22,La Liga,17283,2021-11-28 20:00:00,Real Madrid,Sevilla,2,1,1.2476,1.30167
+2021-22,La Liga,17282,2021-11-29 20:00:00,Osasuna,Elche,1,1,2.13729,1.05682
+2021-22,La Liga,17222,2021-12-01 20:00:00,Real Madrid,Athletic Club,1,0,1.60531,2.70199
+2021-22,La Liga,17290,2021-12-03 20:00:00,Granada,Alaves,2,1,1.08266,1.38466
+2021-22,La Liga,17292,2021-12-04 13:00:00,Sevilla,Villarreal,1,0,0.46965,1.90918
+2021-22,La Liga,17287,2021-12-04 15:15:00,Barcelona,Real Betis,0,1,1.20871,0.642697
+2021-22,La Liga,17286,2021-12-04 17:30:00,Atletico Madrid,Mallorca,1,2,2.07045,0.775913
+2021-22,La Liga,17295,2021-12-04 20:00:00,Real Sociedad,Real Madrid,0,2,0.585154,2.19245
+2021-22,La Liga,17293,2021-12-05 13:00:00,Rayo Vallecano,Espanyol,1,0,0.649198,0.474816
+2021-22,La Liga,17294,2021-12-05 15:15:00,Elche,Cadiz,3,1,2.33084,1.50592
+2021-22,La Liga,17291,2021-12-05 17:30:00,Levante,Osasuna,0,0,0.510046,0.250564
+2021-22,La Liga,17288,2021-12-05 20:00:00,Celta Vigo,Valencia,1,2,0.645079,1.01149
+2021-22,La Liga,17289,2021-12-06 20:00:00,Getafe,Athletic Club,0,0,1.35736,0.466017
+2021-22,La Liga,17299,2021-12-10 20:00:00,Mallorca,Celta Vigo,0,0,0.898098,1.33476
+2021-22,La Liga,17301,2021-12-11 13:00:00,Espanyol,Levante,4,3,2.1352,3.38759
+2021-22,La Liga,17296,2021-12-11 15:15:00,Alaves,Getafe,1,1,0.989074,1.04682
+2021-22,La Liga,17304,2021-12-11 17:30:00,Valencia,Elche,2,1,1.67544,1.12996
+2021-22,La Liga,17297,2021-12-11 20:00:00,Athletic Club,Sevilla,0,1,2.35659,0.214536
+2021-22,La Liga,17305,2021-12-12 13:00:00,Villarreal,Rayo Vallecano,2,0,2.10964,1.41255
+2021-22,La Liga,17302,2021-12-12 15:15:00,Osasuna,Barcelona,2,2,0.367626,1.3894
+2021-22,La Liga,17298,2021-12-12 17:30:00,Real Betis,Real Sociedad,4,0,1.21698,1.06737
+2021-22,La Liga,17303,2021-12-12 20:00:00,Real Madrid,Atletico Madrid,2,0,0.587828,0.769681
+2021-22,La Liga,17300,2021-12-13 20:00:00,Cadiz,Granada,1,1,0.6189,1.12436
+2021-22,La Liga,17308,2021-12-17 20:00:00,Celta Vigo,Espanyol,3,1,1.6562,0.377711
+2021-22,La Liga,17315,2021-12-18 13:00:00,Rayo Vallecano,Alaves,2,0,1.87281,0.198501
+2021-22,La Liga,17312,2021-12-18 15:15:00,Real Sociedad,Villarreal,1,3,1.34561,3.02243
+2021-22,La Liga,17307,2021-12-18 17:30:00,Barcelona,Elche,3,2,2.96397,1.26552
+2021-22,La Liga,17311,2021-12-18 20:00:00,Sevilla,Atletico Madrid,2,1,0.373147,1.24499
+2021-22,La Liga,17309,2021-12-19 13:00:00,Granada,Mallorca,4,1,2.71538,1.08613
+2021-22,La Liga,17306,2021-12-19 15:15:00,Athletic Club,Real Betis,3,2,1.1909,2.01927
+2021-22,La Liga,17310,2021-12-19 17:30:00,Getafe,Osasuna,1,0,1.09096,0.712207
+2021-22,La Liga,17313,2021-12-19 20:00:00,Real Madrid,Cadiz,0,0,2.79615,0.242189
+2021-22,La Liga,17314,2021-12-20 20:00:00,Levante,Valencia,3,4,2.73541,2.10622
+2021-22,La Liga,17175,2021-12-21 20:00:00,Villarreal,Alaves,5,2,3.87986,0.310052
+2021-22,La Liga,17174,2021-12-21 22:30:00,Sevilla,Barcelona,1,1,0.299426,1.90576
+2021-22,La Liga,17219,2021-12-22 20:00:00,Granada,Atletico Madrid,2,1,0.911053,1.77937
+2021-22,La Liga,17336,2021-12-22 20:30:00,Athletic Club,Real Madrid,1,2,1.0933,1.58518
+2021-22,La Liga,17317,2021-12-31 15:15:00,Valencia,Espanyol,1,2,0.864078,2.14833
+2021-22,La Liga,17323,2022-01-02 13:00:00,Getafe,Real Madrid,1,0,0.900039,0.913167
+2021-22,La Liga,17316,2022-01-02 15:15:00,Elche,Granada,0,0,1.44824,0.965958
+2021-22,La Liga,17320,2022-01-02 15:15:00,Atletico Madrid,Rayo Vallecano,2,0,1.98103,0.104074
+2021-22,La Liga,17319,2022-01-02 17:30:00,Alaves,Real Sociedad,1,1,1.5407,1.38111
+2021-22,La Liga,17321,2022-01-02 17:30:00,Real Betis,Celta Vigo,0,2,0.889436,1.872
+2021-22,La Liga,17322,2022-01-02 20:00:00,Mallorca,Barcelona,0,1,0.988536,1.61795
+2021-22,La Liga,17318,2022-01-03 18:00:00,Villarreal,Levante,5,0,4.19047,0.423407
+2021-22,La Liga,17325,2022-01-03 20:00:00,Osasuna,Athletic Club,1,3,0.521945,2.48538
+2021-22,La Liga,17324,2022-01-03 20:15:00,Cadiz,Sevilla,0,1,0.238594,1.28387
+2021-22,La Liga,17329,2022-01-08 13:00:00,Levante,Mallorca,2,0,1.32485,1.16534
+2021-22,La Liga,17332,2022-01-08 15:15:00,Real Sociedad,Celta Vigo,1,0,2.32107,0.313993
+2021-22,La Liga,17327,2022-01-08 17:30:00,Granada,Barcelona,1,1,0.747757,0.967234
+2021-22,La Liga,17331,2022-01-08 20:00:00,Real Madrid,Valencia,4,1,4.1129,1.12054
+2021-22,La Liga,17334,2022-01-09 13:00:00,Rayo Vallecano,Real Betis,1,1,1.47922,1.26688
+2021-22,La Liga,17333,2022-01-09 15:15:00,Sevilla,Getafe,1,0,0.592329,0.114607
+2021-22,La Liga,17326,2022-01-09 17:30:00,Alaves,Athletic Club,0,0,0.585505,0.463719
+2021-22,La Liga,17330,2022-01-09 17:30:00,Osasuna,Cadiz,2,0,3.13396,0.210192
+2021-22,La Liga,17335,2022-01-09 20:00:00,Villarreal,Atletico Madrid,2,2,2.56125,0.882404
+2021-22,La Liga,17328,2022-01-10 20:00:00,Espanyol,Elche,1,2,1.30222,0.662335
+2021-22,La Liga,17345,2022-01-16 18:00:00,Elche,Villarreal,1,0,0.204155,0.755426
+2021-22,La Liga,17343,2022-01-18 18:00:00,Cadiz,Espanyol,2,2,0.801983,1.91578
+2021-22,La Liga,17339,2022-01-18 20:00:00,Real Betis,Alaves,4,0,2.10165,0.260065
+2021-22,La Liga,17340,2022-01-19 18:00:00,Celta Vigo,Osasuna,2,0,1.52433,0.46556
+2021-22,La Liga,17344,2022-01-19 20:30:00,Valencia,Sevilla,1,1,0.573449,1.17995
+2021-22,La Liga,17342,2022-01-20 18:00:00,Getafe,Granada,4,2,1.18065,0.856476
+2021-22,La Liga,17349,2022-01-21 20:00:00,Espanyol,Real Betis,1,4,1.57092,2.85687
+2021-22,La Liga,17350,2022-01-22 13:00:00,Levante,Cadiz,0,2,1.08487,0.911469
+2021-22,La Liga,17355,2022-01-22 15:15:00,Villarreal,Mallorca,3,0,2.19824,1.59983
+2021-22,La Liga,17353,2022-01-22 17:30:00,Sevilla,Celta Vigo,2,2,0.885077,0.469693
+2021-22,La Liga,17347,2022-01-22 20:00:00,Atletico Madrid,Valencia,3,2,2.25966,0.726623
+2021-22,La Liga,17348,2022-01-23 13:00:00,Granada,Osasuna,0,2,0.582823,2.17061
+2021-22,La Liga,17351,2022-01-23 15:15:00,Real Madrid,Elche,2,2,3.82847,0.725434
+2021-22,La Liga,17352,2022-01-23 17:30:00,Real Sociedad,Getafe,0,0,1.21342,0.350506
+2021-22,La Liga,17354,2022-01-23 17:30:00,Rayo Vallecano,Athletic Club,0,1,1.45337,0.412898
+2021-22,La Liga,17346,2022-01-23 20:00:00,Alaves,Barcelona,0,1,0.733223,1.14948
+2021-22,La Liga,17361,2022-02-04 20:00:00,Getafe,Levante,3,0,1.1718,0.556029
+2021-22,La Liga,17365,2022-02-05 13:00:00,Elche,Alaves,3,1,1.77379,1.12234
+2021-22,La Liga,17360,2022-02-05 15:15:00,Mallorca,Cadiz,2,1,2.23498,0.887418
+2021-22,La Liga,17359,2022-02-05 17:30:00,Celta Vigo,Rayo Vallecano,2,0,0.65442,0.678815
+2021-22,La Liga,17362,2022-02-05 20:00:00,Osasuna,Sevilla,0,0,0.397154,1.34983
+2021-22,La Liga,17364,2022-02-06 13:00:00,Valencia,Real Sociedad,0,0,1.19065,0.539612
+2021-22,La Liga,17357,2022-02-06 15:15:00,Barcelona,Atletico Madrid,4,2,0.926663,1.61465
+2021-22,La Liga,17358,2022-02-06 17:30:00,Real Betis,Villarreal,0,2,0.737524,1.34131
+2021-22,La Liga,17363,2022-02-06 20:00:00,Real Madrid,Granada,1,0,1.47173,0.39522
+2021-22,La Liga,17356,2022-02-07 20:00:00,Athletic Club,Espanyol,2,1,1.07545,0.580028
+2021-22,La Liga,17373,2022-02-11 20:00:00,Sevilla,Elche,2,0,0.767939,0.28732
+2021-22,La Liga,17369,2022-02-12 13:00:00,Cadiz,Celta Vigo,0,0,0.880656,0.900788
+2021-22,La Liga,17375,2022-02-12 15:15:00,Villarreal,Real Madrid,0,0,0.460031,2.11101
+2021-22,La Liga,17374,2022-02-12 17:30:00,Rayo Vallecano,Osasuna,0,3,0.590034,2.12321
+2021-22,La Liga,17367,2022-02-12 20:00:00,Atletico Madrid,Getafe,4,3,3.20819,2.2661
+2021-22,La Liga,17366,2022-02-13 13:00:00,Alaves,Valencia,2,1,2.03492,1.18082
+2021-22,La Liga,17371,2022-02-13 15:15:00,Levante,Real Betis,2,4,1.66764,2.09703
+2021-22,La Liga,17372,2022-02-13 17:30:00,Real Sociedad,Granada,2,0,3.43761,0.773811
+2021-22,La Liga,17370,2022-02-13 20:00:00,Espanyol,Barcelona,2,2,0.624266,1.62221
+2021-22,La Liga,17368,2022-02-14 20:00:00,Mallorca,Athletic Club,3,2,1.81722,1.54391
+2021-22,La Liga,17337,2022-02-16 18:00:00,Atletico Madrid,Levante,0,1,1.10602,0.813252
+2021-22,La Liga,17385,2022-02-18 20:00:00,Elche,Rayo Vallecano,2,1,2.95715,0.832156
+2021-22,La Liga,17380,2022-02-19 13:00:00,Granada,Villarreal,1,4,2.12749,5.34192
+2021-22,La Liga,17382,2022-02-19 15:15:00,Osasuna,Atletico Madrid,0,3,0.689493,0.928671
+2021-22,La Liga,17379,2022-02-19 17:30:00,Cadiz,Getafe,1,1,0.653762,0.885378
+2021-22,La Liga,17383,2022-02-19 20:00:00,Real Madrid,Alaves,3,0,3.02281,0.63724
+2021-22,La Liga,17381,2022-02-20 13:00:00,Espanyol,Sevilla,1,1,1.60205,0.958453
+2021-22,La Liga,17384,2022-02-20 15:15:00,Valencia,Barcelona,1,4,0.774868,2.4686
+2021-22,La Liga,17377,2022-02-20 17:30:00,Real Betis,Mallorca,2,1,1.47285,0.33988
+2021-22,La Liga,17376,2022-02-20 20:00:00,Athletic Club,Real Sociedad,4,0,3.08821,0.528403
+2021-22,La Liga,17378,2022-02-21 20:00:00,Celta Vigo,Levante,1,1,1.40465,1.54675
+2021-22,La Liga,17391,2022-02-25 20:00:00,Levante,Elche,3,0,2.13075,1.0394
+2021-22,La Liga,17388,2022-02-26 13:00:00,Mallorca,Valencia,0,1,1.38849,0.71964
+2021-22,La Liga,17389,2022-02-26 15:15:00,Getafe,Alaves,2,2,1.2384,1.33865
+2021-22,La Liga,17394,2022-02-26 17:30:00,Rayo Vallecano,Real Madrid,0,1,1.19813,1.92697
+2021-22,La Liga,17386,2022-02-26 20:00:00,Atletico Madrid,Celta Vigo,2,0,0.771653,0.724951
+2021-22,La Liga,17395,2022-02-27 13:00:00,Villarreal,Espanyol,5,1,4.80545,0.641431
+2021-22,La Liga,17393,2022-02-27 15:15:00,Sevilla,Real Betis,2,1,1.73411,0.745673
+2021-22,La Liga,17392,2022-02-27 17:30:00,Real Sociedad,Osasuna,1,0,1.52268,0.410683
+2021-22,La Liga,17387,2022-02-27 20:00:00,Barcelona,Athletic Club,4,0,3.24274,0.332521
+2021-22,La Liga,17390,2022-02-28 20:00:00,Granada,Cadiz,0,0,0.240876,0.902122
+2021-22,La Liga,17341,2022-03-02 20:00:00,Mallorca,Real Sociedad,0,2,0.455768,1.44904
+2021-22,La Liga,17396,2022-03-04 20:00:00,Alaves,Sevilla,0,0,2.03396,1.07969
+2021-22,La Liga,17402,2022-03-05 13:00:00,Osasuna,Villarreal,1,0,1.52659,0.522906
+2021-22,La Liga,17401,2022-03-05 15:15:00,Espanyol,Getafe,2,0,0.12167,0.477665
+2021-22,La Liga,17404,2022-03-05 17:30:00,Valencia,Granada,3,1,1.83454,0.209802
+2021-22,La Liga,17403,2022-03-05 20:00:00,Real Madrid,Real Sociedad,4,1,2.08769,0.743278
+2021-22,La Liga,17400,2022-03-06 13:00:00,Cadiz,Rayo Vallecano,2,0,1.1663,0.908358
+2021-22,La Liga,17405,2022-03-06 15:15:00,Elche,Barcelona,1,2,0.850008,4.0864
+2021-22,La Liga,17399,2022-03-06 17:30:00,Celta Vigo,Mallorca,4,3,2.80024,1.59076
+2021-22,La Liga,17398,2022-03-06 20:00:00,Real Betis,Atletico Madrid,1,3,1.31499,2.6744
+2021-22,La Liga,17397,2022-03-07 20:00:00,Athletic Club,Levante,3,1,3.4866,0.552215
+2021-22,La Liga,17406,2022-03-11 20:00:00,Atletico Madrid,Cadiz,2,1,0.659742,0.817457
+2021-22,La Liga,17412,2022-03-12 13:00:00,Levante,Espanyol,1,1,1.25649,0.47916
+2021-22,La Liga,17411,2022-03-12 15:15:00,Granada,Elche,0,1,1.34208,1.32937
+2021-22,La Liga,17415,2022-03-12 17:30:00,Villarreal,Celta Vigo,1,0,1.16993,0.933297
+2021-22,La Liga,17410,2022-03-12 20:00:00,Getafe,Valencia,0,0,1.20664,0.250843
+2021-22,La Liga,17414,2022-03-13 13:00:00,Rayo Vallecano,Sevilla,1,1,0.626895,0.412843
+2021-22,La Liga,17408,2022-03-13 15:15:00,Real Betis,Athletic Club,1,0,0.846393,0.707634
+2021-22,La Liga,17413,2022-03-13 17:30:00,Real Sociedad,Alaves,1,0,3.04773,0.666399
+2021-22,La Liga,17407,2022-03-13 20:00:00,Barcelona,Osasuna,4,0,3.90343,0.110884
+2021-22,La Liga,17409,2022-03-14 20:00:00,Mallorca,Real Madrid,0,3,1.17685,1.81712
+2021-22,La Liga,17417,2022-03-18 20:00:00,Athletic Club,Getafe,1,1,2.64347,0.562831
+2021-22,La Liga,17416,2022-03-19 13:00:00,Alaves,Granada,2,3,2.13094,2.19056
+2021-22,La Liga,17425,2022-03-19 15:15:00,Elche,Valencia,0,1,0.509372,0.979663
+2021-22,La Liga,17421,2022-03-19 17:30:00,Osasuna,Levante,3,1,2.67397,1.21866
+2021-22,La Liga,17424,2022-03-19 20:00:00,Rayo Vallecano,Atletico Madrid,0,1,1.88474,1.1919
+2021-22,La Liga,17420,2022-03-20 13:00:00,Espanyol,Mallorca,1,0,1.54033,0.306153
+2021-22,La Liga,17418,2022-03-20 15:15:00,Celta Vigo,Real Betis,0,0,1.26157,0.444295
+2021-22,La Liga,17419,2022-03-20 15:15:00,Cadiz,Villarreal,1,0,1.4273,0.192945
+2021-22,La Liga,17423,2022-03-20 17:30:00,Sevilla,Real Sociedad,0,0,0.355365,1.22058
+2021-22,La Liga,17422,2022-03-20 20:00:00,Real Madrid,Barcelona,0,4,0.627785,4.25983
+2021-22,La Liga,17431,2022-04-02 12:00:00,Getafe,Mallorca,1,0,1.69452,0.308149
+2021-22,La Liga,17433,2022-04-02 14:15:00,Levante,Villarreal,2,0,1.71737,1.10171
+2021-22,La Liga,17430,2022-04-02 16:30:00,Celta Vigo,Real Madrid,1,2,1.07389,2.94585
+2021-22,La Liga,17427,2022-04-02 19:00:00,Atletico Madrid,Alaves,4,1,2.86429,0.518108
+2021-22,La Liga,17426,2022-04-03 12:00:00,Athletic Club,Elche,2,1,2.08095,0.45189
+2021-22,La Liga,17429,2022-04-03 14:15:00,Real Betis,Osasuna,4,1,4.85779,0.310951
+2021-22,La Liga,17432,2022-04-03 16:30:00,Granada,Rayo Vallecano,2,2,2.26365,1.04645
+2021-22,La Liga,17435,2022-04-03 16:30:00,Valencia,Cadiz,0,0,0.107859,0.196233
+2021-22,La Liga,17428,2022-04-03 19:00:00,Barcelona,Sevilla,1,0,1.93362,0.488161
+2021-22,La Liga,17434,2022-04-04 19:00:00,Real Sociedad,Espanyol,1,0,1.95778,0.714821
+2021-22,La Liga,17442,2022-04-08 19:00:00,Sevilla,Granada,4,2,3.30823,0.981555
+2021-22,La Liga,17437,2022-04-09 12:00:00,Cadiz,Real Betis,1,2,1.15546,1.22849
+2021-22,La Liga,17436,2022-04-09 14:15:00,Mallorca,Atletico Madrid,1,0,1.08047,0.575266
+2021-22,La Liga,17444,2022-04-09 16:30:00,Villarreal,Athletic Club,1,1,0.919935,2.04982
+2021-22,La Liga,17441,2022-04-09 19:00:00,Real Madrid,Getafe,2,0,1.62196,0.407933
+2021-22,La Liga,17440,2022-04-10 12:00:00,Osasuna,Alaves,1,0,2.67295,0.779772
+2021-22,La Liga,17438,2022-04-10 14:15:00,Espanyol,Celta Vigo,1,0,1.55824,0.6961
+2021-22,La Liga,17445,2022-04-10 16:30:00,Elche,Real Sociedad,1,2,1.0483,2.08213
+2021-22,La Liga,17439,2022-04-10 19:00:00,Levante,Barcelona,2,3,2.98698,1.36074
+2021-22,La Liga,17443,2022-04-11 19:00:00,Rayo Vallecano,Valencia,1,1,0.556213,0.56958
+2021-22,La Liga,17452,2022-04-15 19:00:00,Real Sociedad,Real Betis,0,0,0.86796,0.377534
+2021-22,La Liga,17455,2022-04-16 12:00:00,Elche,Mallorca,3,0,1.49995,1.06428
+2021-22,La Liga,17446,2022-04-16 14:15:00,Alaves,Rayo Vallecano,1,0,0.531373,1.22034
+2021-22,La Liga,17454,2022-04-16 16:30:00,Valencia,Osasuna,1,2,1.20904,1.06317
+2021-22,La Liga,17450,2022-04-16 19:00:00,Getafe,Villarreal,1,2,0.939154,2.82388
+2021-22,La Liga,17451,2022-04-17 12:00:00,Granada,Levante,1,4,1.15642,4.45893
+2021-22,La Liga,17448,2022-04-17 14:15:00,Atletico Madrid,Espanyol,2,1,1.58913,0.814562
+2021-22,La Liga,17447,2022-04-17 16:30:00,Athletic Club,Celta Vigo,0,2,0.910556,0.882589
+2021-22,La Liga,17453,2022-04-17 19:00:00,Sevilla,Real Madrid,2,3,1.17236,1.53527
+2021-22,La Liga,17449,2022-04-18 19:00:00,Barcelona,Cadiz,0,1,1.35403,1.92768
+2021-22,La Liga,17459,2022-04-19 17:00:00,Mallorca,Alaves,2,1,0.91373,0.561806
+2021-22,La Liga,17457,2022-04-19 19:00:00,Real Betis,Elche,0,1,1.34387,0.834721
+2021-22,La Liga,17465,2022-04-19 19:30:00,Villarreal,Valencia,2,0,2.79507,0.313345
+2021-22,La Liga,17456,2022-04-20 17:00:00,Atletico Madrid,Granada,0,0,1.14761,0.150986
+2021-22,La Liga,17458,2022-04-20 18:00:00,Celta Vigo,Getafe,0,2,0.326278,1.45896
+2021-22,La Liga,17463,2022-04-20 19:30:00,Osasuna,Real Madrid,1,3,0.872915,4.60461
+2021-22,La Liga,17461,2022-04-21 17:00:00,Espanyol,Rayo Vallecano,0,1,0.454741,1.01579
+2021-22,La Liga,17462,2022-04-21 17:00:00,Levante,Sevilla,2,3,2.62106,2.46009
+2021-22,La Liga,17460,2022-04-21 18:00:00,Cadiz,Athletic Club,2,3,3.42624,2.33226
+2021-22,La Liga,17464,2022-04-21 19:30:00,Real Sociedad,Barcelona,0,1,1.0324,1.96498
+2021-22,La Liga,17338,2022-04-24 19:00:00,Barcelona,Rayo Vallecano,0,1,1.10806,0.247749
+2021-22,La Liga,17472,2022-04-29 19:00:00,Sevilla,Cadiz,1,1,0.873458,0.899478
+2021-22,La Liga,17466,2022-04-30 12:00:00,Alaves,Villarreal,2,1,1.85307,1.14043
+2021-22,La Liga,17471,2022-04-30 14:15:00,Real Madrid,Espanyol,4,0,2.31704,1.64156
+2021-22,La Liga,17473,2022-04-30 16:30:00,Valencia,Levante,1,1,0.737326,1.70278
+2021-22,La Liga,17467,2022-04-30 19:00:00,Athletic Club,Atletico Madrid,2,0,1.24712,0.503211
+2021-22,La Liga,17475,2022-05-01 12:00:00,Elche,Osasuna,1,1,0.80936,1.11898
+2021-22,La Liga,17470,2022-05-01 14:15:00,Granada,Celta Vigo,1,1,0.999398,1.30137
+2021-22,La Liga,17474,2022-05-01 16:30:00,Rayo Vallecano,Real Sociedad,1,1,1.19946,0.87498
+2021-22,La Liga,17468,2022-05-01 19:00:00,Barcelona,Mallorca,2,1,1.64114,1.23981
+2021-22,La Liga,17469,2022-05-02 19:00:00,Getafe,Real Betis,0,0,0.851757,0.470229
+2021-22,La Liga,17484,2022-05-06 19:00:00,Levante,Real Sociedad,2,1,2.22217,2.30649
+2021-22,La Liga,17480,2022-05-07 12:00:00,Mallorca,Granada,2,6,1.77941,2.64631
+2021-22,La Liga,17476,2022-05-07 14:15:00,Athletic Club,Valencia,0,0,1.54495,0.127375
+2021-22,La Liga,17479,2022-05-07 16:30:00,Celta Vigo,Alaves,4,0,2.99933,0.136283
+2021-22,La Liga,17482,2022-05-07 16:30:00,Cadiz,Elche,3,0,2.02383,0.0634173
+2021-22,La Liga,17478,2022-05-07 19:00:00,Real Betis,Barcelona,1,2,0.627814,1.19659
+2021-22,La Liga,17481,2022-05-08 12:00:00,Getafe,Rayo Vallecano,0,0,0.629264,0.816549
+2021-22,La Liga,17485,2022-05-08 14:15:00,Villarreal,Sevilla,1,1,2.70051,0.986887
+2021-22,La Liga,17483,2022-05-08 16:30:00,Espanyol,Osasuna,1,1,0.56923,1.11008
+2021-22,La Liga,17477,2022-05-08 19:00:00,Atletico Madrid,Real Madrid,1,0,2.45366,1.13607
+2021-22,La Liga,17493,2022-05-10 17:00:00,Valencia,Real Betis,0,3,1.11931,1.83636
+2021-22,La Liga,17488,2022-05-10 18:00:00,Granada,Athletic Club,1,0,1.01967,0.35575
+2021-22,La Liga,17487,2022-05-10 19:30:00,Barcelona,Celta Vigo,3,1,1.23358,0.851127
+2021-22,La Liga,17486,2022-05-11 17:00:00,Alaves,Espanyol,2,1,2.4573,0.902191
+2021-22,La Liga,17489,2022-05-11 17:00:00,Osasuna,Getafe,1,1,0.608205,0.582724
+2021-22,La Liga,17492,2022-05-11 18:30:00,Sevilla,Mallorca,0,0,1.65199,0.553368
+2021-22,La Liga,17495,2022-05-11 19:30:00,Elche,Atletico Madrid,0,2,0.169168,2.61258
+2021-22,La Liga,17491,2022-05-12 17:00:00,Real Sociedad,Cadiz,3,0,2.65814,0.675387
+2021-22,La Liga,17494,2022-05-12 18:00:00,Rayo Vallecano,Villarreal,1,5,1.8933,2.9178
+2021-22,La Liga,17490,2022-05-12 19:30:00,Real Madrid,Levante,6,0,4.89552,0.695945
+2021-22,La Liga,17496,2022-05-15 17:30:00,Athletic Club,Osasuna,2,0,1.47829,0.764272
+2021-22,La Liga,17497,2022-05-15 17:30:00,Atletico Madrid,Sevilla,1,1,0.892826,0.794179
+2021-22,La Liga,17498,2022-05-15 17:30:00,Real Betis,Granada,2,0,1.70154,1.15584
+2021-22,La Liga,17499,2022-05-15 17:30:00,Celta Vigo,Elche,1,0,1.5573,0.445721
+2021-22,La Liga,17500,2022-05-15 17:30:00,Mallorca,Rayo Vallecano,2,1,0.945419,2.04546
+2021-22,La Liga,17501,2022-05-15 17:30:00,Getafe,Barcelona,0,0,0.237476,0.19547
+2021-22,La Liga,17502,2022-05-15 17:30:00,Cadiz,Real Madrid,1,1,2.66633,1.92483
+2021-22,La Liga,17503,2022-05-15 17:30:00,Espanyol,Valencia,1,1,0.59873,2.2262
+2021-22,La Liga,17504,2022-05-15 17:30:00,Levante,Alaves,3,1,2.14717,0.571687
+2021-22,La Liga,17505,2022-05-15 17:30:00,Villarreal,Real Sociedad,1,2,1.01013,2.72677
+2021-22,La Liga,17510,2022-05-20 19:00:00,Real Madrid,Real Betis,0,0,1.8155,1.43562
+2021-22,La Liga,17514,2022-05-20 19:00:00,Rayo Vallecano,Levante,2,4,2.7327,3.28491
+2021-22,La Liga,17513,2022-05-21 15:30:00,Valencia,Celta Vigo,2,0,1.47889,1.40936
+2021-22,La Liga,17515,2022-05-22 15:30:00,Elche,Getafe,3,1,3.02536,1.06857
+2021-22,La Liga,17506,2022-05-22 18:00:00,Alaves,Cadiz,0,1,0.391505,1.84089
+2021-22,La Liga,17508,2022-05-22 18:00:00,Granada,Espanyol,0,0,2.0332,0.386799
+2021-22,La Liga,17509,2022-05-22 18:00:00,Osasuna,Mallorca,0,2,0.897014,1.2351
+2021-22,La Liga,17507,2022-05-22 20:00:00,Barcelona,Villarreal,0,2,0.628178,0.68657
+2021-22,La Liga,17511,2022-05-22 20:00:00,Real Sociedad,Atletico Madrid,1,2,2.21737,0.586617
+2021-22,La Liga,17512,2022-05-22 20:00:00,Sevilla,Athletic Club,1,0,1.41239,0.487249
+2021-22,Ligue 1,17822,2021-08-06 19:00:00,Monaco,Nantes,1,1,1.76899,0.239715
+2021-22,Ligue 1,17823,2021-08-07 15:00:00,Lyon,Brest,1,1,1.17521,1.01966
+2021-22,Ligue 1,17824,2021-08-07 19:00:00,Troyes,Paris Saint Germain,1,2,0.618173,1.48651
+2021-22,Ligue 1,17825,2021-08-08 11:00:00,Rennes,Lens,1,1,0.598423,2.13637
+2021-22,Ligue 1,17826,2021-08-08 13:00:00,Saint-Etienne,Lorient,1,1,1.85797,0.835981
+2021-22,Ligue 1,17827,2021-08-08 13:00:00,Strasbourg,Angers,0,2,0.267011,1.41617
+2021-22,Ligue 1,17828,2021-08-08 13:00:00,Bordeaux,Clermont Foot,0,2,0.510543,2.95652
+2021-22,Ligue 1,17829,2021-08-08 13:00:00,Nice,Reims,0,0,1.09947,0.158446
+2021-22,Ligue 1,17830,2021-08-08 15:00:00,Metz,Lille,3,3,1.02062,1.62245
+2021-22,Ligue 1,17831,2021-08-08 18:45:00,Montpellier,Marseille,2,3,0.764726,2.15797
+2021-22,Ligue 1,17832,2021-08-13 19:00:00,Lorient,Monaco,1,0,0.779459,0.86536
+2021-22,Ligue 1,17833,2021-08-14 15:00:00,Lille,Nice,0,4,0.768573,2.33694
+2021-22,Ligue 1,17834,2021-08-14 19:00:00,Paris Saint Germain,Strasbourg,4,2,2.90032,0.570058
+2021-22,Ligue 1,17835,2021-08-15 11:00:00,Angers,Lyon,3,0,1.6418,0.977124
+2021-22,Ligue 1,17836,2021-08-15 13:00:00,Brest,Rennes,1,1,2.2991,1.32152
+2021-22,Ligue 1,17837,2021-08-15 13:00:00,Clermont Foot,Troyes,2,0,1.44309,0.696005
+2021-22,Ligue 1,17838,2021-08-15 13:00:00,Nantes,Metz,2,0,1.7221,0.885265
+2021-22,Ligue 1,17839,2021-08-15 13:00:00,Reims,Montpellier,3,3,1.30758,1.9999
+2021-22,Ligue 1,17840,2021-08-15 15:00:00,Lens,Saint-Etienne,2,2,1.1447,0.85171
+2021-22,Ligue 1,17841,2021-08-15 18:45:00,Marseille,Bordeaux,2,2,1.05273,0.318288
+2021-22,Ligue 1,17842,2021-08-20 19:00:00,Brest,Paris Saint Germain,2,4,1.24868,1.51499
+2021-22,Ligue 1,17843,2021-08-21 15:00:00,Monaco,Lens,0,2,0.241985,0.598613
+2021-22,Ligue 1,17844,2021-08-21 19:00:00,Saint-Etienne,Lille,1,1,0.476794,1.1966
+2021-22,Ligue 1,17845,2021-08-22 11:00:00,Lyon,Clermont Foot,3,3,3.31864,1.82093
+2021-22,Ligue 1,17846,2021-08-22 13:00:00,Metz,Reims,1,1,0.670048,1.18358
+2021-22,Ligue 1,17847,2021-08-22 13:00:00,Bordeaux,Angers,1,1,0.603119,1.01295
+2021-22,Ligue 1,17848,2021-08-22 13:00:00,Strasbourg,Troyes,1,1,2.95463,1.14502
+2021-22,Ligue 1,17849,2021-08-22 13:00:00,Montpellier,Lorient,3,1,3.64876,0.462326
+2021-22,Ligue 1,17850,2021-08-22 15:00:00,Rennes,Nantes,1,0,0.869605,0.264197
+2021-22,Ligue 1,17852,2021-08-27 19:00:00,Nantes,Lyon,0,1,1.35394,1.44128
+2021-22,Ligue 1,17853,2021-08-28 15:00:00,Nice,Bordeaux,4,0,2.52768,0.867457
+2021-22,Ligue 1,17854,2021-08-28 19:00:00,Marseille,Saint-Etienne,3,1,2.73701,1.22779
+2021-22,Ligue 1,17855,2021-08-29 11:00:00,Troyes,Monaco,1,2,0.589287,1.74073
+2021-22,Ligue 1,17856,2021-08-29 13:00:00,Strasbourg,Brest,3,1,1.22705,0.592574
+2021-22,Ligue 1,17857,2021-08-29 13:00:00,Angers,Rennes,2,0,2.63179,1.28738
+2021-22,Ligue 1,17858,2021-08-29 13:00:00,Clermont Foot,Metz,2,2,1.64521,1.90265
+2021-22,Ligue 1,17859,2021-08-29 13:00:00,Lens,Lorient,2,2,1.13941,1.2163
+2021-22,Ligue 1,17860,2021-08-29 15:00:00,Lille,Montpellier,2,1,2.46405,0.719288
+2021-22,Ligue 1,17861,2021-08-29 18:45:00,Reims,Paris Saint Germain,0,2,0.826608,1.82461
+2021-22,Ligue 1,17867,2021-09-10 19:00:00,Lorient,Lille,2,1,1.08464,1.51807
+2021-22,Ligue 1,17863,2021-09-11 15:00:00,Paris Saint Germain,Clermont Foot,4,0,2.50575,1.0353
+2021-22,Ligue 1,17871,2021-09-11 19:00:00,Monaco,Marseille,0,2,0.890728,1.36062
+2021-22,Ligue 1,17869,2021-09-12 11:00:00,Montpellier,Saint-Etienne,2,0,1.08969,0.861648
+2021-22,Ligue 1,17864,2021-09-12 13:00:00,Rennes,Reims,0,2,0.805521,0.871123
+2021-22,Ligue 1,17865,2021-09-12 13:00:00,Bordeaux,Lens,2,3,1.00806,3.12454
+2021-22,Ligue 1,17866,2021-09-12 13:00:00,Brest,Angers,1,1,1.47981,0.998328
+2021-22,Ligue 1,17870,2021-09-12 13:00:00,Metz,Troyes,0,2,0.781252,0.86724
+2021-22,Ligue 1,17862,2021-09-12 15:00:00,Nantes,Nice,0,2,2.1566,2.45276
+2021-22,Ligue 1,17868,2021-09-12 18:45:00,Lyon,Strasbourg,3,1,1.69926,2.0448
+2021-22,Ligue 1,17873,2021-09-17 19:00:00,Strasbourg,Metz,3,0,2.04719,0.612439
+2021-22,Ligue 1,17876,2021-09-18 15:00:00,Lens,Lille,1,0,0.486611,1.20992
+2021-22,Ligue 1,17881,2021-09-18 19:00:00,Saint-Etienne,Bordeaux,1,2,1.75367,2.36783
+2021-22,Ligue 1,17878,2021-09-19 11:00:00,Nice,Monaco,2,2,1.94463,2.59113
+2021-22,Ligue 1,17872,2021-09-19 13:00:00,Troyes,Montpellier,1,1,0.489047,0.249763
+2021-22,Ligue 1,17874,2021-09-19 13:00:00,Angers,Nantes,1,4,0.609027,2.59886
+2021-22,Ligue 1,17875,2021-09-19 13:00:00,Clermont Foot,Brest,1,1,0.792314,0.657165
+2021-22,Ligue 1,17880,2021-09-19 13:00:00,Reims,Lorient,0,0,0.977907,0.174553
+2021-22,Ligue 1,17877,2021-09-19 15:00:00,Marseille,Rennes,2,0,2.21352,1.06105
+2021-22,Ligue 1,17879,2021-09-19 18:45:00,Paris Saint Germain,Lyon,2,1,2.22972,0.822779
+2021-22,Ligue 1,17886,2021-09-22 17:00:00,Monaco,Saint-Etienne,3,1,1.73834,0.325508
+2021-22,Ligue 1,17887,2021-09-22 17:00:00,Montpellier,Bordeaux,3,3,1.68484,1.269
+2021-22,Ligue 1,17888,2021-09-22 17:00:00,Nantes,Brest,3,1,1.66414,0.563562
+2021-22,Ligue 1,17889,2021-09-22 17:00:00,Rennes,Clermont Foot,6,0,3.15024,0.379902
+2021-22,Ligue 1,17891,2021-09-22 17:00:00,Lille,Reims,2,1,1.18526,1.1754
+2021-22,Ligue 1,17882,2021-09-22 19:00:00,Lens,Strasbourg,0,1,2.68397,1.09537
+2021-22,Ligue 1,17883,2021-09-22 19:00:00,Angers,Marseille,0,0,0.470168,0.494217
+2021-22,Ligue 1,17884,2021-09-22 19:00:00,Lyon,Troyes,3,1,2.47231,0.943884
+2021-22,Ligue 1,17885,2021-09-22 19:00:00,Metz,Paris Saint Germain,1,2,0.761431,1.14719
+2021-22,Ligue 1,17890,2021-09-22 19:00:00,Lorient,Nice,1,0,0.619405,2.16916
+2021-22,Ligue 1,17899,2021-09-25 15:00:00,Saint-Etienne,Nice,0,3,0.663428,3.17651
+2021-22,Ligue 1,17900,2021-09-25 17:00:00,Strasbourg,Lille,1,2,0.495724,2.58598
+2021-22,Ligue 1,17895,2021-09-25 19:00:00,Lyon,Lorient,1,1,0.843214,0.53504
+2021-22,Ligue 1,17897,2021-09-25 19:00:00,Paris Saint Germain,Montpellier,2,0,2.58386,0.274573
+2021-22,Ligue 1,17892,2021-09-26 11:00:00,Bordeaux,Rennes,1,1,0.601971,1.78121
+2021-22,Ligue 1,17893,2021-09-26 13:00:00,Brest,Metz,1,2,1.66801,0.668594
+2021-22,Ligue 1,17898,2021-09-26 13:00:00,Reims,Nantes,3,1,1.23068,0.768528
+2021-22,Ligue 1,17901,2021-09-26 13:00:00,Troyes,Angers,1,1,1.25966,1.28496
+2021-22,Ligue 1,17894,2021-09-26 15:00:00,Clermont Foot,Monaco,1,3,1.30935,1.79185
+2021-22,Ligue 1,17896,2021-09-26 18:45:00,Marseille,Lens,2,3,2.01958,2.4899
+2021-22,Ligue 1,17903,2021-10-01 19:00:00,Lens,Reims,2,0,2.36403,0.086376
+2021-22,Ligue 1,17907,2021-10-02 15:00:00,Montpellier,Strasbourg,1,1,1.05711,0.293859
+2021-22,Ligue 1,17909,2021-10-02 19:00:00,Nice,Brest,2,1,4.36782,0.31524
+2021-22,Ligue 1,17910,2021-10-03 11:00:00,Rennes,Paris Saint Germain,2,0,0.878199,1.39782
+2021-22,Ligue 1,17902,2021-10-03 13:00:00,Angers,Metz,3,2,2.81377,0.895212
+2021-22,Ligue 1,17905,2021-10-03 13:00:00,Lorient,Clermont Foot,1,1,0.585194,0.774714
+2021-22,Ligue 1,17906,2021-10-03 13:00:00,Monaco,Bordeaux,3,0,1.7267,0.574838
+2021-22,Ligue 1,17908,2021-10-03 13:00:00,Nantes,Troyes,2,0,1.71042,1.64687
+2021-22,Ligue 1,17904,2021-10-03 15:00:00,Lille,Marseille,2,0,3.52308,0.563626
+2021-22,Ligue 1,17911,2021-10-03 18:45:00,Saint-Etienne,Lyon,1,1,2.47827,1.34812
+2021-22,Ligue 1,17919,2021-10-15 19:00:00,Paris Saint Germain,Angers,2,1,2.48997,1.15895
+2021-22,Ligue 1,17914,2021-10-16 15:00:00,Clermont Foot,Lille,1,0,0.403245,0.607051
+2021-22,Ligue 1,17915,2021-10-16 19:00:00,Lyon,Monaco,2,0,2.81711,0.514906
+2021-22,Ligue 1,17921,2021-10-17 11:00:00,Troyes,Nice,1,0,1.42208,0.513333
+2021-22,Ligue 1,17912,2021-10-17 13:00:00,Bordeaux,Nantes,1,1,0.673783,1.27892
+2021-22,Ligue 1,17913,2021-10-17 13:00:00,Brest,Reims,1,1,0.508125,1.03949
+2021-22,Ligue 1,17917,2021-10-17 13:00:00,Metz,Rennes,0,3,0.97348,3.36021
+2021-22,Ligue 1,17920,2021-10-17 13:00:00,Strasbourg,Saint-Etienne,5,1,2.71053,0.931047
+2021-22,Ligue 1,17918,2021-10-17 15:00:00,Montpellier,Lens,1,0,1.62492,1.19027
+2021-22,Ligue 1,17916,2021-10-17 18:45:00,Marseille,Lorient,4,1,1.70821,2.09245
+2021-22,Ligue 1,17931,2021-10-22 19:00:00,Saint-Etienne,Angers,2,2,1.50388,0.675033
+2021-22,Ligue 1,17927,2021-10-23 15:00:00,Nantes,Clermont Foot,2,1,1.07124,0.735892
+2021-22,Ligue 1,17923,2021-10-23 19:00:00,Lille,Brest,1,1,1.6786,1.14162
+2021-22,Ligue 1,17928,2021-10-24 11:00:00,Nice,Lyon,3,2,1.99644,1.41733
+2021-22,Ligue 1,17922,2021-10-24 13:00:00,Lens,Metz,4,1,2.37156,0.790081
+2021-22,Ligue 1,17924,2021-10-24 13:00:00,Lorient,Bordeaux,1,1,1.78373,1.06479
+2021-22,Ligue 1,17929,2021-10-24 13:00:00,Reims,Troyes,1,2,1.02175,0.675059
+2021-22,Ligue 1,17930,2021-10-24 13:00:00,Rennes,Strasbourg,1,0,1.35771,1.02588
+2021-22,Ligue 1,17926,2021-10-24 15:00:00,Monaco,Montpellier,3,1,2.11858,1.16841
+2021-22,Ligue 1,17925,2021-10-24 18:45:00,Marseille,Paris Saint Germain,0,0,1.29195,2.0521
+2021-22,Ligue 1,17851,2021-10-27 21:00:00,Nice,Marseille,1,1,1.50504,0.341475
+2021-22,Ligue 1,17939,2021-10-29 19:00:00,Paris Saint Germain,Lille,2,1,2.30974,1.83335
+2021-22,Ligue 1,17937,2021-10-30 15:00:00,Metz,Saint-Etienne,1,1,0.382626,0.281781
+2021-22,Ligue 1,17936,2021-10-30 19:00:00,Lyon,Lens,2,1,2.02936,2.12966
+2021-22,Ligue 1,17932,2021-10-31 12:00:00,Angers,Nice,1,2,1.21195,0.897424
+2021-22,Ligue 1,17933,2021-10-31 14:00:00,Bordeaux,Reims,3,2,1.94845,1.81401
+2021-22,Ligue 1,17938,2021-10-31 14:00:00,Montpellier,Nantes,2,0,1.47174,0.856557
+2021-22,Ligue 1,17940,2021-10-31 14:00:00,Strasbourg,Lorient,4,0,3.09428,0.666205
+2021-22,Ligue 1,17941,2021-10-31 14:00:00,Troyes,Rennes,2,2,1.80006,1.51345
+2021-22,Ligue 1,17934,2021-10-31 16:00:00,Brest,Monaco,2,0,1.77116,0.507286
+2021-22,Ligue 1,17935,2021-10-31 19:45:00,Clermont Foot,Marseille,0,1,0.743883,1.24579
+2021-22,Ligue 1,17943,2021-11-05 20:00:00,Lens,Troyes,4,0,3.16809,0.537488
+2021-22,Ligue 1,17944,2021-11-06 16:00:00,Lille,Angers,1,1,1.74491,1.15058
+2021-22,Ligue 1,17942,2021-11-06 20:00:00,Bordeaux,Paris Saint Germain,2,3,1.57566,1.23993
+2021-22,Ligue 1,17946,2021-11-07 12:00:00,Marseille,Metz,0,0,1.66928,1.36054
+2021-22,Ligue 1,17945,2021-11-07 14:00:00,Lorient,Brest,1,2,1.16964,2.34992
+2021-22,Ligue 1,17947,2021-11-07 14:00:00,Nantes,Strasbourg,2,2,2.26281,1.92452
+2021-22,Ligue 1,17949,2021-11-07 14:00:00,Reims,Monaco,0,0,0.33707,0.973878
+2021-22,Ligue 1,17951,2021-11-07 14:00:00,Saint-Etienne,Clermont Foot,3,2,2.0562,1.30338
+2021-22,Ligue 1,17948,2021-11-07 16:00:00,Nice,Montpellier,0,1,1.63624,0.641977
+2021-22,Ligue 1,17950,2021-11-07 19:45:00,Rennes,Lyon,4,1,3.97971,0.953137
+2021-22,Ligue 1,17961,2021-11-19 20:00:00,Monaco,Lille,2,2,0.938265,2.16486
+2021-22,Ligue 1,17956,2021-11-20 16:00:00,Paris Saint Germain,Nantes,3,1,1.26725,0.998765
+2021-22,Ligue 1,17957,2021-11-20 20:00:00,Rennes,Montpellier,2,0,3.99657,0.298729
+2021-22,Ligue 1,17953,2021-11-21 12:00:00,Brest,Lens,4,0,1.44486,1.7144
+2021-22,Ligue 1,17952,2021-11-21 14:00:00,Angers,Lorient,1,0,1.46206,0.420713
+2021-22,Ligue 1,17958,2021-11-21 14:00:00,Strasbourg,Reims,1,1,2.02517,1.25894
+2021-22,Ligue 1,17959,2021-11-21 14:00:00,Troyes,Saint-Etienne,0,1,1.19094,1.24032
+2021-22,Ligue 1,17960,2021-11-21 14:00:00,Metz,Bordeaux,3,3,1.32669,2.68178
+2021-22,Ligue 1,17954,2021-11-21 16:00:00,Clermont Foot,Nice,1,2,0.779709,0.617574
+2021-22,Ligue 1,17965,2021-11-26 20:00:00,Lens,Angers,2,2,1.60255,2.00176
+2021-22,Ligue 1,17966,2021-11-27 16:00:00,Lille,Nantes,1,1,1.46803,0.358991
+2021-22,Ligue 1,17971,2021-11-27 20:00:00,Nice,Metz,0,1,1.3496,0.526632
+2021-22,Ligue 1,17962,2021-11-28 12:00:00,Saint-Etienne,Paris Saint Germain,1,3,0.969955,3.43495
+2021-22,Ligue 1,17963,2021-11-28 14:00:00,Reims,Clermont Foot,1,0,0.707634,0.270002
+2021-22,Ligue 1,17964,2021-11-28 14:00:00,Bordeaux,Brest,1,2,1.4572,2.26589
+2021-22,Ligue 1,17967,2021-11-28 14:00:00,Lorient,Rennes,0,2,0.633986,0.989174
+2021-22,Ligue 1,17969,2021-11-28 14:00:00,Monaco,Strasbourg,1,1,1.58216,0.945132
+2021-22,Ligue 1,17970,2021-11-28 16:00:00,Montpellier,Lyon,0,1,1.02178,1.17882
+2021-22,Ligue 1,17968,2021-11-28 19:45:00,Marseille,Troyes,1,0,1.15323,0.145868
+2021-22,Ligue 1,17972,2021-12-01 18:00:00,Angers,Monaco,1,3,1.03304,3.50553
+2021-22,Ligue 1,17973,2021-12-01 18:00:00,Brest,Saint-Etienne,1,0,1.89197,0.456836
+2021-22,Ligue 1,17976,2021-12-01 18:00:00,Metz,Montpellier,1,3,1.47536,1.41193
+2021-22,Ligue 1,17980,2021-12-01 18:00:00,Strasbourg,Bordeaux,5,2,3.43125,1.48801
+2021-22,Ligue 1,17981,2021-12-01 18:00:00,Troyes,Lorient,2,0,1.12178,0.433668
+2021-22,Ligue 1,17974,2021-12-01 20:00:00,Clermont Foot,Lens,2,2,1.80535,0.568409
+2021-22,Ligue 1,17975,2021-12-01 20:00:00,Lyon,Reims,1,2,2.85052,1.05349
+2021-22,Ligue 1,17977,2021-12-01 20:00:00,Nantes,Marseille,0,1,0.174142,1.63717
+2021-22,Ligue 1,17978,2021-12-01 20:00:00,Paris Saint Germain,Nice,0,0,1.61794,0.957516
+2021-22,Ligue 1,17979,2021-12-01 20:00:00,Rennes,Lille,1,2,0.799539,0.708091
+2021-22,Ligue 1,17987,2021-12-04 16:00:00,Marseille,Brest,1,2,1.92281,1.55388
+2021-22,Ligue 1,17982,2021-12-04 18:00:00,Lille,Troyes,2,1,1.79406,0.28995
+2021-22,Ligue 1,17991,2021-12-04 20:00:00,Lens,Paris Saint Germain,1,1,0.824432,2.29134
+2021-22,Ligue 1,17983,2021-12-05 12:00:00,Saint-Etienne,Rennes,0,5,0.357851,3.1151
+2021-22,Ligue 1,17984,2021-12-05 14:00:00,Reims,Angers,1,2,1.34274,1.7715
+2021-22,Ligue 1,17986,2021-12-05 14:00:00,Lorient,Nantes,0,1,0.619711,0.268938
+2021-22,Ligue 1,17988,2021-12-05 14:00:00,Monaco,Metz,4,0,1.91421,0.547708
+2021-22,Ligue 1,17989,2021-12-05 14:00:00,Montpellier,Clermont Foot,1,0,0.855855,0.394172
+2021-22,Ligue 1,17985,2021-12-05 16:00:00,Nice,Strasbourg,0,3,1.36817,2.7263
+2021-22,Ligue 1,17990,2021-12-05 19:45:00,Bordeaux,Lyon,2,2,2.60089,1.84671
+2021-22,Ligue 1,18000,2021-12-10 20:00:00,Nantes,Lens,3,2,1.43665,0.840732
+2021-22,Ligue 1,17996,2021-12-11 16:00:00,Brest,Montpellier,0,4,0.691352,1.67645
+2021-22,Ligue 1,17998,2021-12-11 20:00:00,Reims,Saint-Etienne,2,0,2.71752,0.119419
+2021-22,Ligue 1,17995,2021-12-12 12:00:00,Lille,Lyon,0,0,2.15596,0.422128
+2021-22,Ligue 1,17993,2021-12-12 14:00:00,Rennes,Nice,1,2,1.60766,1.8035
+2021-22,Ligue 1,17994,2021-12-12 14:00:00,Angers,Clermont Foot,0,1,1.52675,1.7067
+2021-22,Ligue 1,17997,2021-12-12 14:00:00,Troyes,Bordeaux,1,2,1.26919,1.13993
+2021-22,Ligue 1,18001,2021-12-12 14:00:00,Metz,Lorient,4,1,1.14227,1.70684
+2021-22,Ligue 1,17992,2021-12-12 16:00:00,Strasbourg,Marseille,0,2,1.7897,0.708922
+2021-22,Ligue 1,17999,2021-12-12 19:45:00,Paris Saint Germain,Monaco,2,0,1.90289,0.815473
+2021-22,Ligue 1,18002,2021-12-22 19:45:00,Bordeaux,Lille,2,3,1.00922,1.23123
+2021-22,Ligue 1,18004,2021-12-22 19:45:00,Lorient,Paris Saint Germain,1,1,1.47671,2.19929
+2021-22,Ligue 1,18005,2021-12-22 19:45:00,Lyon,Metz,1,1,2.79025,0.353946
+2021-22,Ligue 1,18006,2021-12-22 19:45:00,Marseille,Reims,1,1,1.70528,1.05686
+2021-22,Ligue 1,18007,2021-12-22 19:45:00,Monaco,Rennes,2,1,1.62819,1.29487
+2021-22,Ligue 1,18008,2021-12-22 19:45:00,Montpellier,Angers,4,1,0.998835,0.747023
+2021-22,Ligue 1,18009,2021-12-22 19:45:00,Nice,Lens,2,1,0.866194,1.72232
+2021-22,Ligue 1,18010,2021-12-22 19:45:00,Saint-Etienne,Nantes,0,1,1.00748,0.791261
+2021-22,Ligue 1,18011,2021-12-22 19:45:00,Troyes,Brest,1,1,1.05921,0.661085
+2021-22,Ligue 1,18016,2022-01-07 20:00:00,Bordeaux,Marseille,0,1,0.413069,2.1562
+2021-22,Ligue 1,18019,2022-01-08 20:00:00,Lens,Rennes,1,0,0.579974,0.32823
+2021-22,Ligue 1,18017,2022-01-09 12:00:00,Brest,Nice,0,3,1.61742,1.44947
+2021-22,Ligue 1,18012,2022-01-09 14:00:00,Metz,Strasbourg,0,2,0.2706,3.70382
+2021-22,Ligue 1,18018,2022-01-09 14:00:00,Clermont Foot,Reims,0,0,0.762901,0.808538
+2021-22,Ligue 1,18014,2022-01-09 16:05:00,Nantes,Monaco,0,0,0.364991,0.69482
+2021-22,Ligue 1,18021,2022-01-09 19:45:00,Lyon,Paris Saint Germain,1,1,1.03597,1.12874
+2021-22,Ligue 1,18025,2022-01-14 20:00:00,Nice,Nantes,2,1,2.27691,0.396645
+2021-22,Ligue 1,18029,2022-01-15 16:00:00,Saint-Etienne,Lens,1,2,0.950864,0.746899
+2021-22,Ligue 1,18026,2022-01-15 20:00:00,Paris Saint Germain,Brest,2,0,2.70951,0.724633
+2021-22,Ligue 1,18028,2022-01-16 12:00:00,Rennes,Bordeaux,6,0,4.07838,0.412647
+2021-22,Ligue 1,18022,2022-01-16 14:00:00,Lorient,Angers,0,0,0.480599,0.554657
+2021-22,Ligue 1,18024,2022-01-16 14:00:00,Monaco,Clermont Foot,4,0,4.25883,0.248903
+2021-22,Ligue 1,18027,2022-01-16 14:00:00,Reims,Metz,0,1,0.651857,0.713423
+2021-22,Ligue 1,18030,2022-01-16 14:00:00,Strasbourg,Montpellier,3,1,1.4597,1.02915
+2021-22,Ligue 1,18031,2022-01-16 16:05:00,Troyes,Lyon,0,1,0.485256,3.02674
+2021-22,Ligue 1,18023,2022-01-16 19:45:00,Marseille,Lille,1,1,1.62744,0.966892
+2021-22,Ligue 1,18003,2022-01-19 20:00:00,Clermont Foot,Strasbourg,0,2,0.348448,1.74904
+2021-22,Ligue 1,18013,2022-01-19 20:00:00,Montpellier,Troyes,0,1,0.575051,0.548481
+2021-22,Ligue 1,18020,2022-01-19 20:00:00,Lille,Lorient,3,1,1.58626,1.21798
+2021-22,Ligue 1,18037,2022-01-21 20:00:00,Lyon,Saint-Etienne,1,0,2.19008,0.242989
+2021-22,Ligue 1,18034,2022-01-22 16:00:00,Brest,Lille,2,0,1.29391,1.37501
+2021-22,Ligue 1,18036,2022-01-22 20:00:00,Lens,Marseille,0,2,0.618083,1.35491
+2021-22,Ligue 1,18038,2022-01-23 12:00:00,Metz,Nice,0,2,0.233858,1.94674
+2021-22,Ligue 1,18032,2022-01-23 14:00:00,Angers,Troyes,2,1,2.29724,1.63676
+2021-22,Ligue 1,18033,2022-01-23 14:00:00,Bordeaux,Strasbourg,4,3,1.65394,1.49036
+2021-22,Ligue 1,18035,2022-01-23 14:00:00,Clermont Foot,Rennes,2,1,1.09838,2.49108
+2021-22,Ligue 1,18040,2022-01-23 14:00:00,Nantes,Lorient,4,2,1.40263,2.03139
+2021-22,Ligue 1,18039,2022-01-23 16:05:00,Montpellier,Monaco,3,2,2.2292,1.24246
+2021-22,Ligue 1,18041,2022-01-23 19:45:00,Paris Saint Germain,Reims,4,0,2.95339,0.344474
+2021-22,Ligue 1,18015,2022-01-26 18:00:00,Angers,Saint-Etienne,0,1,0.354099,0.352428
+2021-22,Ligue 1,17955,2022-02-02 21:00:00,Lyon,Marseille,2,1,1.5519,1.12202
+2021-22,Ligue 1,18046,2022-02-04 20:00:00,Marseille,Angers,5,2,2.34718,0.686866
+2021-22,Ligue 1,18051,2022-02-05 16:00:00,Saint-Etienne,Montpellier,3,1,2.12286,0.698377
+2021-22,Ligue 1,18047,2022-02-05 20:00:00,Monaco,Lyon,2,0,2.28974,1.30679
+2021-22,Ligue 1,18045,2022-02-06 12:00:00,Lorient,Lens,2,0,1.57013,0.392243
+2021-22,Ligue 1,18042,2022-02-06 14:00:00,Strasbourg,Nantes,1,0,1.32815,0.261773
+2021-22,Ligue 1,18043,2022-02-06 14:00:00,Troyes,Metz,0,0,0.435111,0.566752
+2021-22,Ligue 1,18048,2022-02-06 14:00:00,Nice,Clermont Foot,0,1,0.698505,1.29927
+2021-22,Ligue 1,18049,2022-02-06 14:00:00,Reims,Bordeaux,5,0,2.05989,0.120599
+2021-22,Ligue 1,18050,2022-02-06 16:00:00,Rennes,Brest,2,0,2.77542,0.220673
+2021-22,Ligue 1,18044,2022-02-06 19:45:00,Lille,Paris Saint Germain,1,5,0.863815,3.0381
+2021-22,Ligue 1,18052,2022-02-11 20:00:00,Paris Saint Germain,Rennes,1,0,0.797795,0.589669
+2021-22,Ligue 1,18055,2022-02-12 16:00:00,Montpellier,Lille,0,1,0.740905,1.51288
+2021-22,Ligue 1,18060,2022-02-12 20:00:00,Lyon,Nice,2,0,2.75209,0.0804562
+2021-22,Ligue 1,18054,2022-02-13 12:00:00,Monaco,Lorient,0,0,1.31384,0.132654
+2021-22,Ligue 1,18053,2022-02-13 14:00:00,Nantes,Reims,1,0,0.660721,0.613315
+2021-22,Ligue 1,18056,2022-02-13 14:00:00,Angers,Strasbourg,0,1,0.258677,0.335367
+2021-22,Ligue 1,18057,2022-02-13 14:00:00,Brest,Troyes,5,1,2.76844,0.79069
+2021-22,Ligue 1,18058,2022-02-13 14:00:00,Clermont Foot,Saint-Etienne,1,2,0.834271,1.1863
+2021-22,Ligue 1,18059,2022-02-13 16:05:00,Lens,Bordeaux,3,2,2.18631,0.758048
+2021-22,Ligue 1,18061,2022-02-13 19:45:00,Metz,Marseille,1,2,0.792396,2.31854
+2021-22,Ligue 1,18067,2022-02-18 20:00:00,Lille,Metz,0,0,1.18868,0.279242
+2021-22,Ligue 1,18068,2022-02-19 16:00:00,Lens,Lyon,1,1,0.655911,1.18398
+2021-22,Ligue 1,18070,2022-02-19 20:00:00,Nantes,Paris Saint Germain,3,1,2.59589,3.65345
+2021-22,Ligue 1,18069,2022-02-20 12:00:00,Nice,Angers,1,0,1.29968,0.98327
+2021-22,Ligue 1,18062,2022-02-20 14:00:00,Saint-Etienne,Strasbourg,2,2,1.28968,1.51652
+2021-22,Ligue 1,18063,2022-02-20 14:00:00,Rennes,Troyes,4,1,3.26228,0.762222
+2021-22,Ligue 1,18064,2022-02-20 14:00:00,Reims,Brest,1,1,0.540071,1.69455
+2021-22,Ligue 1,18066,2022-02-20 14:00:00,Lorient,Montpellier,0,1,0.623848,0.376147
+2021-22,Ligue 1,18065,2022-02-20 16:05:00,Bordeaux,Monaco,1,1,0.85473,0.951923
+2021-22,Ligue 1,18071,2022-02-20 19:45:00,Marseille,Clermont Foot,0,2,1.02368,0.769815
+2021-22,Ligue 1,18073,2022-02-25 20:00:00,Montpellier,Rennes,2,4,1.16985,1.81992
+2021-22,Ligue 1,18076,2022-02-26 13:00:00,Strasbourg,Nice,0,0,1.03088,0.148653
+2021-22,Ligue 1,18075,2022-02-26 20:00:00,Paris Saint Germain,Saint-Etienne,3,1,2.81988,0.641957
+2021-22,Ligue 1,18074,2022-02-27 12:00:00,Monaco,Reims,1,2,1.7487,1.66986
+2021-22,Ligue 1,18077,2022-02-27 14:00:00,Angers,Lens,1,2,0.601212,0.688779
+2021-22,Ligue 1,18078,2022-02-27 14:00:00,Metz,Nantes,0,0,0.263909,0.61206
+2021-22,Ligue 1,18080,2022-02-27 14:00:00,Clermont Foot,Bordeaux,1,1,0.55263,0.894218
+2021-22,Ligue 1,18081,2022-02-27 14:00:00,Brest,Lorient,0,1,0.210366,2.16888
+2021-22,Ligue 1,18072,2022-02-27 16:05:00,Troyes,Marseille,1,1,2.00647,1.01636
+2021-22,Ligue 1,18079,2022-02-27 19:45:00,Lyon,Lille,0,1,1.48658,0.735102
+2021-22,Ligue 1,18088,2022-03-04 20:00:00,Lorient,Lyon,1,4,1.26241,2.61126
+2021-22,Ligue 1,18086,2022-03-05 16:00:00,Lens,Brest,0,1,1.83072,0.372083
+2021-22,Ligue 1,18091,2022-03-05 20:00:00,Nice,Paris Saint Germain,1,0,1.20526,0.652664
+2021-22,Ligue 1,18084,2022-03-06 12:00:00,Saint-Etienne,Metz,1,0,1.32057,0.313165
+2021-22,Ligue 1,18082,2022-03-06 14:00:00,Reims,Strasbourg,1,1,0.909924,0.744534
+2021-22,Ligue 1,18083,2022-03-06 14:00:00,Rennes,Angers,2,0,2.39062,0.316774
+2021-22,Ligue 1,18085,2022-03-06 14:00:00,Bordeaux,Troyes,0,2,0.884355,2.3042
+2021-22,Ligue 1,18090,2022-03-06 14:00:00,Nantes,Montpellier,2,0,1.55928,0.200382
+2021-22,Ligue 1,18087,2022-03-06 16:05:00,Lille,Clermont Foot,4,0,2.04079,0.477886
+2021-22,Ligue 1,18089,2022-03-06 19:45:00,Marseille,Monaco,0,1,0.865388,0.69435
+2021-22,Ligue 1,18095,2022-03-11 20:00:00,Lille,Saint-Etienne,0,0,1.24797,0.48678
+2021-22,Ligue 1,18098,2022-03-12 16:00:00,Montpellier,Nice,0,0,2.49092,0.757229
+2021-22,Ligue 1,18101,2022-03-12 20:00:00,Troyes,Nantes,1,0,1.18612,0.490874
+2021-22,Ligue 1,18099,2022-03-13 12:00:00,Paris Saint Germain,Bordeaux,3,0,2.05393,0.756536
+2021-22,Ligue 1,18092,2022-03-13 14:00:00,Angers,Reims,0,1,1.88223,1.52385
+2021-22,Ligue 1,18094,2022-03-13 14:00:00,Clermont Foot,Lorient,0,2,1.27083,1.39672
+2021-22,Ligue 1,18097,2022-03-13 14:00:00,Metz,Lens,0,0,0.696431,0.82202
+2021-22,Ligue 1,18100,2022-03-13 14:00:00,Strasbourg,Monaco,1,0,0.834621,0.695519
+2021-22,Ligue 1,18096,2022-03-13 16:05:00,Lyon,Rennes,2,4,1.18519,1.27931
+2021-22,Ligue 1,18093,2022-03-13 19:45:00,Brest,Marseille,1,4,0.424923,1.94529
+2021-22,Ligue 1,18108,2022-03-18 20:00:00,Saint-Etienne,Troyes,1,1,1.21267,1.06117
+2021-22,Ligue 1,18104,2022-03-19 16:00:00,Lens,Clermont Foot,3,1,1.06718,1.75053
+2021-22,Ligue 1,18111,2022-03-19 20:00:00,Nantes,Lille,0,1,0.53106,1.58475
+2021-22,Ligue 1,18107,2022-03-20 12:00:00,Monaco,Paris Saint Germain,3,0,2.4996,1.50615
+2021-22,Ligue 1,18102,2022-03-20 14:00:00,Angers,Brest,1,0,1.2018,0.562622
+2021-22,Ligue 1,18103,2022-03-20 14:00:00,Bordeaux,Montpellier,0,2,2.60974,0.70843
+2021-22,Ligue 1,18105,2022-03-20 14:00:00,Lorient,Strasbourg,0,0,0.410107,1.33873
+2021-22,Ligue 1,18109,2022-03-20 14:00:00,Rennes,Metz,6,1,3.3969,0.68535
+2021-22,Ligue 1,18110,2022-03-20 16:05:00,Reims,Lyon,0,0,0.546254,1.59498
+2021-22,Ligue 1,18106,2022-03-20 19:45:00,Marseille,Nice,2,1,1.58806,1.69113
+2021-22,Ligue 1,18117,2022-04-02 15:00:00,Nice,Rennes,1,1,1.06234,0.896308
+2021-22,Ligue 1,18113,2022-04-02 17:00:00,Lille,Bordeaux,0,0,3.17511,0.113867
+2021-22,Ligue 1,18120,2022-04-03 11:00:00,Strasbourg,Lens,1,0,2.66149,1.22404
+2021-22,Ligue 1,18112,2022-04-03 13:00:00,Clermont Foot,Nantes,2,3,0.918981,1.95586
+2021-22,Ligue 1,18115,2022-04-03 13:00:00,Metz,Monaco,1,2,0.704436,2.15545
+2021-22,Ligue 1,18116,2022-04-03 13:00:00,Montpellier,Brest,1,2,1.26492,0.703265
+2021-22,Ligue 1,18121,2022-04-03 13:00:00,Troyes,Reims,1,0,1.17209,0.480462
+2021-22,Ligue 1,18114,2022-04-03 15:05:00,Lyon,Angers,3,2,1.58017,1.67709
+2021-22,Ligue 1,18118,2022-04-03 18:45:00,Paris Saint Germain,Lorient,5,1,1.96317,0.841873
+2021-22,Ligue 1,18119,2022-04-03 19:00:00,Saint-Etienne,Marseille,2,4,0.208011,3.73912
+2021-22,Ligue 1,18127,2022-04-08 19:00:00,Lorient,Saint-Etienne,6,2,4.1419,1.17408
+2021-22,Ligue 1,18130,2022-04-09 15:00:00,Reims,Rennes,2,3,2.56613,1.12659
+2021-22,Ligue 1,18125,2022-04-09 19:00:00,Clermont Foot,Paris Saint Germain,1,6,1.02858,3.57375
+2021-22,Ligue 1,18123,2022-04-10 11:00:00,Bordeaux,Metz,3,1,2.28971,0.335155
+2021-22,Ligue 1,18122,2022-04-10 13:00:00,Angers,Lille,1,1,0.679878,0.898909
+2021-22,Ligue 1,18124,2022-04-10 13:00:00,Brest,Nantes,1,1,1.25604,0.778552
+2021-22,Ligue 1,18129,2022-04-10 13:00:00,Monaco,Troyes,2,1,0.441913,0.96754
+2021-22,Ligue 1,18126,2022-04-10 15:05:00,Lens,Nice,3,0,0.790168,1.3837
+2021-22,Ligue 1,18131,2022-04-10 17:00:00,Strasbourg,Lyon,1,1,1.45377,2.10099
+2021-22,Ligue 1,18128,2022-04-10 19:00:00,Marseille,Montpellier,2,0,2.81079,0.477841
+2021-22,Ligue 1,18139,2022-04-15 19:00:00,Rennes,Monaco,2,3,2.27865,2.95816
+2021-22,Ligue 1,18140,2022-04-16 15:00:00,Saint-Etienne,Brest,2,1,1.84462,0.488405
+2021-22,Ligue 1,18132,2022-04-16 19:00:00,Lille,Lens,1,2,0.662879,1.15118
+2021-22,Ligue 1,18137,2022-04-17 11:00:00,Nice,Lorient,2,1,2.19937,0.250443
+2021-22,Ligue 1,18134,2022-04-17 13:00:00,Metz,Clermont Foot,1,1,0.404435,2.74048
+2021-22,Ligue 1,18135,2022-04-17 13:00:00,Montpellier,Reims,0,0,0.909367,1.19445
+2021-22,Ligue 1,18136,2022-04-17 13:00:00,Nantes,Angers,1,1,3.40116,0.417241
+2021-22,Ligue 1,18141,2022-04-17 13:00:00,Troyes,Strasbourg,1,1,1.3267,1.83132
+2021-22,Ligue 1,18133,2022-04-17 15:05:00,Lyon,Bordeaux,6,1,2.49379,1.86392
+2021-22,Ligue 1,18138,2022-04-17 18:45:00,Paris Saint Germain,Marseille,2,1,1.39018,0.304776
+2021-22,Ligue 1,18143,2022-04-20 17:00:00,Bordeaux,Saint-Etienne,2,2,0.927753,0.858193
+2021-22,Ligue 1,18146,2022-04-20 17:00:00,Lorient,Metz,1,0,1.2504,1.69979
+2021-22,Ligue 1,18148,2022-04-20 17:00:00,Monaco,Nice,1,0,2.06975,0.762416
+2021-22,Ligue 1,18149,2022-04-20 17:00:00,Reims,Lille,2,1,0.727134,0.944946
+2021-22,Ligue 1,18151,2022-04-20 17:00:00,Troyes,Clermont Foot,0,1,0.996134,0.411065
+2021-22,Ligue 1,18142,2022-04-20 19:00:00,Angers,Paris Saint Germain,0,3,0.395666,1.41841
+2021-22,Ligue 1,18144,2022-04-20 19:00:00,Brest,Lyon,2,1,1.15279,2.63063
+2021-22,Ligue 1,18145,2022-04-20 19:00:00,Lens,Montpellier,2,0,0.98883,0.216737
+2021-22,Ligue 1,18147,2022-04-20 19:00:00,Marseille,Nantes,3,2,3.11851,0.607116
+2021-22,Ligue 1,18150,2022-04-20 19:00:00,Strasbourg,Rennes,2,1,2.62063,0.851224
+2021-22,Ligue 1,18154,2022-04-23 15:00:00,Lyon,Montpellier,5,2,3.38895,2.02417
+2021-22,Ligue 1,18161,2022-04-23 17:00:00,Saint-Etienne,Monaco,1,4,0.971737,3.28491
+2021-22,Ligue 1,18158,2022-04-23 19:00:00,Paris Saint Germain,Lens,1,1,2.18256,0.666328
+2021-22,Ligue 1,18160,2022-04-24 11:00:00,Rennes,Lorient,5,0,1.74528,0.533869
+2021-22,Ligue 1,18152,2022-04-24 13:00:00,Clermont Foot,Angers,2,2,1.74002,1.3986
+2021-22,Ligue 1,18155,2022-04-24 13:00:00,Metz,Brest,0,1,0.387087,1.93279
+2021-22,Ligue 1,18156,2022-04-24 13:00:00,Nantes,Bordeaux,5,3,2.54491,2.61153
+2021-22,Ligue 1,18157,2022-04-24 13:00:00,Nice,Troyes,1,0,2.36176,0.465645
+2021-22,Ligue 1,18153,2022-04-24 15:05:00,Lille,Strasbourg,1,0,0.354075,0.519111
+2021-22,Ligue 1,18159,2022-04-24 18:45:00,Reims,Marseille,0,1,0.661794,0.458087
+2021-22,Ligue 1,18168,2022-04-29 19:00:00,Strasbourg,Paris Saint Germain,3,3,1.62601,1.94951
+2021-22,Ligue 1,18162,2022-04-30 15:00:00,Lens,Nantes,2,2,1.80901,1.25803
+2021-22,Ligue 1,18167,2022-04-30 19:00:00,Rennes,Saint-Etienne,2,0,1.29378,0.568645
+2021-22,Ligue 1,18169,2022-05-01 11:00:00,Troyes,Lille,3,0,2.99625,0.598432
+2021-22,Ligue 1,18163,2022-05-01 13:00:00,Lorient,Reims,1,2,1.73735,1.40084
+2021-22,Ligue 1,18165,2022-05-01 13:00:00,Monaco,Angers,2,0,2.21937,0.614369
+2021-22,Ligue 1,18166,2022-05-01 13:00:00,Montpellier,Metz,2,2,1.99602,1.33111
+2021-22,Ligue 1,18171,2022-05-01 13:00:00,Brest,Clermont Foot,2,0,1.31508,0.993885
+2021-22,Ligue 1,18170,2022-05-01 15:05:00,Bordeaux,Nice,0,1,0.181557,2.5433
+2021-22,Ligue 1,18164,2022-05-01 18:45:00,Marseille,Lyon,0,3,1.25703,2.73856
+2021-22,Ligue 1,18179,2022-05-06 19:00:00,Lille,Monaco,1,2,0.955562,0.297053
+2021-22,Ligue 1,18181,2022-05-07 15:00:00,Brest,Strasbourg,0,1,0.774117,2.19446
+2021-22,Ligue 1,18176,2022-05-08 11:00:00,Metz,Lyon,3,2,1.95684,2.45822
+2021-22,Ligue 1,18175,2022-05-08 13:00:00,Reims,Lens,1,2,0.345633,1.31364
+2021-22,Ligue 1,18178,2022-05-08 13:00:00,Clermont Foot,Montpellier,2,1,1.81186,1.11037
+2021-22,Ligue 1,18180,2022-05-08 13:00:00,Angers,Bordeaux,4,1,2.39669,0.701993
+2021-22,Ligue 1,18177,2022-05-08 15:05:00,Lorient,Marseille,0,3,0.218659,2.43064
+2021-22,Ligue 1,18174,2022-05-08 18:45:00,Paris Saint Germain,Troyes,2,2,2.00221,1.95545
+2021-22,Ligue 1,18173,2022-05-11 17:00:00,Nice,Saint-Etienne,4,2,1.27732,1.90776
+2021-22,Ligue 1,18172,2022-05-11 19:00:00,Nantes,Rennes,2,1,1.23789,1.53731
+2021-22,Ligue 1,18182,2022-05-14 19:00:00,Troyes,Lens,1,3,0.198308,0.85636
+2021-22,Ligue 1,18183,2022-05-14 19:00:00,Strasbourg,Clermont Foot,1,0,0.635695,0.4006
+2021-22,Ligue 1,18184,2022-05-14 19:00:00,Saint-Etienne,Reims,1,2,1.63375,2.1296
+2021-22,Ligue 1,18185,2022-05-14 19:00:00,Bordeaux,Lorient,0,0,1.0391,0.605152
+2021-22,Ligue 1,18186,2022-05-14 19:00:00,Rennes,Marseille,2,0,1.19637,0.298071
+2021-22,Ligue 1,18187,2022-05-14 19:00:00,Nice,Lille,1,3,0.985813,2.52062
+2021-22,Ligue 1,18188,2022-05-14 19:00:00,Montpellier,Paris Saint Germain,0,4,0.292577,2.57935
+2021-22,Ligue 1,18189,2022-05-14 19:00:00,Monaco,Brest,4,2,3.84541,1.99445
+2021-22,Ligue 1,18190,2022-05-14 19:00:00,Metz,Angers,1,0,0.742006,0.609469
+2021-22,Ligue 1,18191,2022-05-14 19:00:00,Lyon,Nantes,3,2,3.12892,1.28359
+2021-22,Ligue 1,18192,2022-05-21 19:00:00,Lens,Monaco,2,2,1.54786,2.06385
+2021-22,Ligue 1,18193,2022-05-21 19:00:00,Lille,Rennes,2,2,1.7131,1.13675
+2021-22,Ligue 1,18194,2022-05-21 19:00:00,Lorient,Troyes,1,1,1.14699,0.597609
+2021-22,Ligue 1,18195,2022-05-21 19:00:00,Marseille,Strasbourg,4,0,2.10355,1.45881
+2021-22,Ligue 1,18196,2022-05-21 19:00:00,Nantes,Saint-Etienne,1,1,1.84905,1.78716
+2021-22,Ligue 1,18197,2022-05-21 19:00:00,Paris Saint Germain,Metz,5,0,5.5667,0.693173
+2021-22,Ligue 1,18198,2022-05-21 19:00:00,Reims,Nice,2,3,0.665065,1.88275
+2021-22,Ligue 1,18199,2022-05-21 19:00:00,Clermont Foot,Lyon,1,2,2.31455,2.47046
+2021-22,Ligue 1,18200,2022-05-21 19:00:00,Brest,Bordeaux,2,4,1.21971,3.43304
+2021-22,Ligue 1,18201,2022-05-21 19:00:00,Angers,Montpellier,2,0,2.26485,1.29748
+2021-22,Premier League,16376,2021-08-13 19:00:00,Brentford,Arsenal,2,0,1.88818,1.02385
+2021-22,Premier League,16377,2021-08-14 11:30:00,Manchester United,Leeds,5,1,1.64248,0.568342
+2021-22,Premier League,16378,2021-08-14 14:00:00,Burnley,Brighton,1,2,1.79548,1.6853
+2021-22,Premier League,16379,2021-08-14 14:00:00,Chelsea,Crystal Palace,3,0,1.18709,0.321701
+2021-22,Premier League,16380,2021-08-14 14:00:00,Everton,Southampton,3,1,2.38863,0.580601
+2021-22,Premier League,16381,2021-08-14 14:00:00,Leicester,Wolverhampton Wanderers,1,0,0.668082,1.32714
+2021-22,Premier League,16382,2021-08-14 14:00:00,Watford,Aston Villa,3,2,1.35036,1.13718
+2021-22,Premier League,16383,2021-08-14 16:30:00,Norwich,Liverpool,0,3,1.3333,1.78728
+2021-22,Premier League,16384,2021-08-15 13:00:00,Newcastle United,West Ham,2,4,1.67926,3.00939
+2021-22,Premier League,16385,2021-08-15 15:30:00,Tottenham,Manchester City,1,0,1.06014,2.10585
+2021-22,Premier League,16386,2021-08-21 11:30:00,Liverpool,Burnley,2,0,2.63945,0.690464
+2021-22,Premier League,16387,2021-08-21 14:00:00,Manchester City,Norwich,5,0,2.43928,0.0250088
+2021-22,Premier League,16388,2021-08-21 14:00:00,Aston Villa,Newcastle United,2,0,1.18426,0.63163
+2021-22,Premier League,16389,2021-08-21 14:00:00,Crystal Palace,Brentford,0,0,0.606313,0.712439
+2021-22,Premier League,16390,2021-08-21 14:00:00,Leeds,Everton,2,2,0.966093,1.85713
+2021-22,Premier League,16391,2021-08-21 16:30:00,Brighton,Watford,2,0,1.77896,0.407224
+2021-22,Premier League,16392,2021-08-22 13:00:00,Southampton,Manchester United,1,1,0.587526,2.26173
+2021-22,Premier League,16393,2021-08-22 13:00:00,Wolverhampton Wanderers,Tottenham,0,1,1.51127,1.72636
+2021-22,Premier League,16394,2021-08-22 15:30:00,Arsenal,Chelsea,0,2,0.630099,3.64132
+2021-22,Premier League,16395,2021-08-23 19:00:00,West Ham,Leicester,4,1,2.28613,0.62676
+2021-22,Premier League,16396,2021-08-28 11:30:00,Manchester City,Arsenal,5,0,4.47273,0.116805
+2021-22,Premier League,16397,2021-08-28 14:00:00,Newcastle United,Southampton,2,2,1.19077,3.46036
+2021-22,Premier League,16398,2021-08-28 14:00:00,Norwich,Leicester,1,2,1.44084,1.27371
+2021-22,Premier League,16399,2021-08-28 14:00:00,Aston Villa,Brentford,1,1,0.431464,1.13312
+2021-22,Premier League,16400,2021-08-28 14:00:00,Brighton,Everton,0,2,0.701622,1.54868
+2021-22,Premier League,16401,2021-08-28 14:00:00,West Ham,Crystal Palace,2,2,1.44748,1.67658
+2021-22,Premier League,16402,2021-08-28 16:30:00,Liverpool,Chelsea,1,1,2.08462,0.573638
+2021-22,Premier League,16403,2021-08-29 13:00:00,Burnley,Leeds,1,1,1.71102,1.52078
+2021-22,Premier League,16404,2021-08-29 13:00:00,Tottenham,Watford,1,0,0.920963,0.596016
+2021-22,Premier League,16405,2021-08-29 15:30:00,Wolverhampton Wanderers,Manchester United,0,1,1.79575,0.944083
+2021-22,Premier League,16406,2021-09-11 11:30:00,Crystal Palace,Tottenham,3,0,2.89372,0.0775646
+2021-22,Premier League,16407,2021-09-11 14:00:00,Arsenal,Norwich,1,0,2.68515,0.577292
+2021-22,Premier League,16408,2021-09-11 14:00:00,Brentford,Brighton,0,1,0.729786,0.287902
+2021-22,Premier League,16409,2021-09-11 14:00:00,Leicester,Manchester City,0,1,0.8001,2.75058
+2021-22,Premier League,16410,2021-09-11 14:00:00,Manchester United,Newcastle United,4,1,2.77326,0.622042
+2021-22,Premier League,16411,2021-09-11 14:00:00,Southampton,West Ham,0,0,0.692135,0.725407
+2021-22,Premier League,16412,2021-09-11 14:00:00,Watford,Wolverhampton Wanderers,0,2,0.185407,2.55922
+2021-22,Premier League,16413,2021-09-11 16:30:00,Chelsea,Aston Villa,3,0,1.22153,1.17349
+2021-22,Premier League,16414,2021-09-12 15:30:00,Leeds,Liverpool,0,3,0.652514,4.4016
+2021-22,Premier League,16415,2021-09-13 19:00:00,Everton,Burnley,3,1,1.80386,1.82061
+2021-22,Premier League,16416,2021-09-17 19:00:00,Newcastle United,Leeds,1,1,1.17668,1.42995
+2021-22,Premier League,16417,2021-09-18 11:30:00,Wolverhampton Wanderers,Brentford,0,2,1.02316,2.32741
+2021-22,Premier League,16418,2021-09-18 14:00:00,Norwich,Watford,1,3,0.782665,2.42487
+2021-22,Premier League,16419,2021-09-18 14:00:00,Burnley,Arsenal,0,1,0.775574,1.09928
+2021-22,Premier League,16420,2021-09-18 14:00:00,Liverpool,Crystal Palace,3,0,2.76793,0.644168
+2021-22,Premier League,16421,2021-09-18 14:00:00,Manchester City,Southampton,0,0,1.22451,0.490923
+2021-22,Premier League,16422,2021-09-18 16:30:00,Aston Villa,Everton,3,0,0.777716,0.755035
+2021-22,Premier League,16423,2021-09-19 13:00:00,Brighton,Leicester,2,1,1.47438,1.25373
+2021-22,Premier League,16424,2021-09-19 13:00:00,West Ham,Manchester United,1,2,1.6671,1.8954
+2021-22,Premier League,16425,2021-09-19 15:30:00,Tottenham,Chelsea,0,3,0.70567,2.5869
+2021-22,Premier League,16426,2021-09-25 11:30:00,Chelsea,Manchester City,0,1,0.194202,1.69244
+2021-22,Premier League,16431,2021-09-25 11:30:00,Manchester United,Aston Villa,0,1,1.9251,1.57249
+2021-22,Premier League,16427,2021-09-25 14:00:00,Watford,Newcastle United,1,1,0.904061,2.52338
+2021-22,Premier League,16428,2021-09-25 14:00:00,Everton,Norwich,2,0,2.26681,0.800903
+2021-22,Premier League,16429,2021-09-25 14:00:00,Leeds,West Ham,1,2,1.1967,1.98962
+2021-22,Premier League,16430,2021-09-25 14:00:00,Leicester,Burnley,2,2,2.16233,0.428866
+2021-22,Premier League,16432,2021-09-25 16:30:00,Brentford,Liverpool,3,3,2.94058,2.25736
+2021-22,Premier League,16433,2021-09-26 13:00:00,Southampton,Wolverhampton Wanderers,0,1,0.909342,0.909833
+2021-22,Premier League,16434,2021-09-26 15:30:00,Arsenal,Tottenham,3,1,1.44499,0.980166
+2021-22,Premier League,16435,2021-09-27 19:00:00,Crystal Palace,Brighton,1,1,1.36836,0.649566
+2021-22,Premier League,16442,2021-10-02 11:30:00,Manchester United,Everton,1,1,1.0496,1.32211
+2021-22,Premier League,16437,2021-10-02 14:00:00,Burnley,Norwich,0,0,0.584725,0.673617
+2021-22,Premier League,16438,2021-10-02 14:00:00,Chelsea,Southampton,3,1,3.79243,1.52634
+2021-22,Premier League,16440,2021-10-02 14:00:00,Leeds,Watford,1,0,1.57388,0.192794
+2021-22,Premier League,16445,2021-10-02 14:00:00,Wolverhampton Wanderers,Newcastle United,2,1,1.15849,0.865217
+2021-22,Premier League,16436,2021-10-02 16:30:00,Brighton,Arsenal,0,0,1.11551,0.36431
+2021-22,Premier League,16439,2021-10-03 13:00:00,Crystal Palace,Leicester,2,2,1.1703,1.04322
+2021-22,Premier League,16443,2021-10-03 13:00:00,Tottenham,Aston Villa,2,1,1.78187,1.07395
+2021-22,Premier League,16444,2021-10-03 13:00:00,West Ham,Brentford,1,2,1.37258,1.30098
+2021-22,Premier League,16441,2021-10-03 15:30:00,Liverpool,Manchester City,2,2,0.949368,1.04319
+2021-22,Premier League,16455,2021-10-16 11:30:00,Watford,Liverpool,0,5,0.302302,3.65553
+2021-22,Premier League,16447,2021-10-16 14:00:00,Aston Villa,Wolverhampton Wanderers,2,3,1.21276,2.19633
+2021-22,Premier League,16450,2021-10-16 14:00:00,Leicester,Manchester United,4,2,2.96611,1.02494
+2021-22,Premier League,16451,2021-10-16 14:00:00,Manchester City,Burnley,2,0,2.15712,1.07719
+2021-22,Premier League,16453,2021-10-16 14:00:00,Norwich,Brighton,0,0,1.16088,1.17572
+2021-22,Premier League,16454,2021-10-16 14:00:00,Southampton,Leeds,1,0,1.83082,0.446173
+2021-22,Premier League,16448,2021-10-16 16:30:00,Brentford,Chelsea,0,1,1.62169,0.248256
+2021-22,Premier League,16449,2021-10-17 13:00:00,Everton,West Ham,0,1,0.854165,2.03034
+2021-22,Premier League,16452,2021-10-17 15:30:00,Newcastle United,Tottenham,2,3,0.645658,1.55008
+2021-22,Premier League,16446,2021-10-18 19:00:00,Arsenal,Crystal Palace,2,2,1.7436,0.492239
+2021-22,Premier League,16456,2021-10-22 19:00:00,Arsenal,Aston Villa,3,1,3.4984,1.41088
+2021-22,Premier League,16459,2021-10-23 11:30:00,Chelsea,Norwich,7,0,3.10509,0.267429
+2021-22,Premier League,16460,2021-10-23 14:00:00,Crystal Palace,Newcastle United,1,1,2.25588,0.721813
+2021-22,Premier League,16461,2021-10-23 14:00:00,Everton,Watford,2,5,1.84089,3.10344
+2021-22,Premier League,16462,2021-10-23 14:00:00,Leeds,Wolverhampton Wanderers,1,1,1.71313,0.858644
+2021-22,Premier League,16464,2021-10-23 14:00:00,Southampton,Burnley,2,2,1.42567,0.673195
+2021-22,Premier League,16458,2021-10-23 16:30:00,Brighton,Manchester City,1,4,1.1695,3.57376
+2021-22,Premier League,16457,2021-10-24 13:00:00,Brentford,Leicester,1,2,1.16789,1.00254
+2021-22,Premier League,16465,2021-10-24 13:00:00,West Ham,Tottenham,1,0,1.73468,0.672198
+2021-22,Premier League,16463,2021-10-24 15:30:00,Manchester United,Liverpool,0,5,1.35584,4.04765
+2021-22,Premier League,16468,2021-10-30 11:30:00,Leicester,Arsenal,0,2,1.98801,1.10288
+2021-22,Premier League,16467,2021-10-30 14:00:00,Burnley,Brentford,3,1,2.72901,0.834312
+2021-22,Premier League,16469,2021-10-30 14:00:00,Liverpool,Brighton,2,2,1.39778,1.51032
+2021-22,Premier League,16470,2021-10-30 14:00:00,Manchester City,Crystal Palace,0,2,0.65739,1.05029
+2021-22,Premier League,16471,2021-10-30 14:00:00,Newcastle United,Chelsea,0,3,0.157616,2.16608
+2021-22,Premier League,16474,2021-10-30 14:00:00,Watford,Southampton,0,1,0.852556,1.90757
+2021-22,Premier League,16473,2021-10-30 16:30:00,Tottenham,Manchester United,0,3,1.15787,1.38612
+2021-22,Premier League,16472,2021-10-31 14:00:00,Norwich,Leeds,1,2,0.661887,1.16855
+2021-22,Premier League,16466,2021-10-31 16:30:00,Aston Villa,West Ham,1,4,0.687551,2.66391
+2021-22,Premier League,16475,2021-11-01 20:00:00,Wolverhampton Wanderers,Everton,2,1,1.69344,1.69767
+2021-22,Premier League,16484,2021-11-05 20:00:00,Southampton,Aston Villa,1,0,0.89818,0.536077
+2021-22,Premier League,16483,2021-11-06 12:30:00,Manchester United,Manchester City,0,2,0.759561,2.04202
+2021-22,Premier League,16477,2021-11-06 15:00:00,Brentford,Norwich,1,2,2.79229,1.15797
+2021-22,Premier League,16479,2021-11-06 15:00:00,Chelsea,Burnley,1,1,3.00585,0.674072
+2021-22,Premier League,16480,2021-11-06 15:00:00,Crystal Palace,Wolverhampton Wanderers,2,0,2.65161,0.25416
+2021-22,Premier League,16478,2021-11-06 17:30:00,Brighton,Newcastle United,1,1,1.43123,0.227321
+2021-22,Premier League,16476,2021-11-07 14:00:00,Arsenal,Watford,1,0,1.49208,0.491659
+2021-22,Premier League,16481,2021-11-07 14:00:00,Everton,Tottenham,0,0,0.597906,0.801798
+2021-22,Premier League,16482,2021-11-07 14:00:00,Leeds,Leicester,1,1,1.96551,0.795292
+2021-22,Premier League,16485,2021-11-07 16:30:00,West Ham,Liverpool,3,2,1.25298,1.45641
+2021-22,Premier League,16488,2021-11-20 12:30:00,Leicester,Chelsea,0,3,0.499504,2.57178
+2021-22,Premier League,16486,2021-11-20 15:00:00,Aston Villa,Brighton,2,0,1.06946,0.582787
+2021-22,Premier League,16487,2021-11-20 15:00:00,Burnley,Crystal Palace,3,3,1.04224,1.74839
+2021-22,Premier League,16491,2021-11-20 15:00:00,Newcastle United,Brentford,3,3,2.18388,1.23275
+2021-22,Premier League,16492,2021-11-20 15:00:00,Norwich,Southampton,2,1,0.43778,1.13118
+2021-22,Premier League,16494,2021-11-20 15:00:00,Watford,Manchester United,4,1,2.73393,1.66794
+2021-22,Premier League,16495,2021-11-20 15:00:00,Wolverhampton Wanderers,West Ham,1,0,1.31903,0.436331
+2021-22,Premier League,16489,2021-11-20 17:30:00,Liverpool,Arsenal,4,0,3.97374,0.268025
+2021-22,Premier League,16490,2021-11-21 14:00:00,Manchester City,Everton,3,0,2.61302,0.266894
+2021-22,Premier League,16493,2021-11-21 16:30:00,Tottenham,Leeds,2,1,2.31744,1.46689
+2021-22,Premier League,16496,2021-11-27 12:30:00,Arsenal,Newcastle United,2,0,2.84493,0.185383
+2021-22,Premier League,16501,2021-11-27 15:00:00,Crystal Palace,Aston Villa,1,2,0.962129,0.454305
+2021-22,Premier League,16503,2021-11-27 15:00:00,Liverpool,Southampton,4,0,3.07278,0.966132
+2021-22,Premier League,16505,2021-11-27 15:00:00,Norwich,Wolverhampton Wanderers,0,0,1.4047,0.297157
+2021-22,Premier League,16498,2021-11-27 17:30:00,Brighton,Leeds,0,0,1.90498,0.864829
+2021-22,Premier League,16497,2021-11-28 14:00:00,Brentford,Everton,1,0,1.19813,0.968075
+2021-22,Premier League,16502,2021-11-28 14:00:00,Leicester,Watford,4,2,2.16027,2.38383
+2021-22,Premier League,16504,2021-11-28 14:00:00,Manchester City,West Ham,2,1,2.72187,0.171763
+2021-22,Premier League,16500,2021-11-28 16:30:00,Chelsea,Manchester United,1,1,2.34525,0.563367
+2021-22,Premier League,16513,2021-11-30 19:30:00,Newcastle United,Norwich,1,1,1.15636,1.51084
+2021-22,Premier League,16508,2021-11-30 20:15:00,Leeds,Crystal Palace,1,0,1.9818,0.707328
+2021-22,Premier League,16509,2021-12-01 19:30:00,Watford,Chelsea,1,2,0.990877,0.908574
+2021-22,Premier League,16510,2021-12-01 19:30:00,West Ham,Brighton,1,1,1.14679,1.2607
+2021-22,Premier League,16511,2021-12-01 19:30:00,Wolverhampton Wanderers,Burnley,0,0,0.711691,0.195537
+2021-22,Premier League,16514,2021-12-01 19:30:00,Southampton,Leicester,2,2,1.91169,1.4401
+2021-22,Premier League,16506,2021-12-01 20:15:00,Aston Villa,Manchester City,1,2,0.772083,1.01897
+2021-22,Premier League,16507,2021-12-01 20:15:00,Everton,Liverpool,1,4,0.512263,2.86067
+2021-22,Premier League,16515,2021-12-02 19:30:00,Tottenham,Brentford,2,0,2.07248,0.225492
+2021-22,Premier League,16512,2021-12-02 20:15:00,Manchester United,Arsenal,3,2,1.85597,1.16638
+2021-22,Premier League,16524,2021-12-04 12:30:00,West Ham,Chelsea,3,2,2.0174,1.37049
+2021-22,Premier League,16520,2021-12-04 15:00:00,Newcastle United,Burnley,1,0,1.70609,0.604599
+2021-22,Premier League,16521,2021-12-04 15:00:00,Southampton,Brighton,1,1,1.34236,1.4872
+2021-22,Premier League,16525,2021-12-04 15:00:00,Wolverhampton Wanderers,Liverpool,0,1,0.095167,2.42332
+2021-22,Premier League,16523,2021-12-04 17:30:00,Watford,Manchester City,1,3,0.675105,4.03223
+2021-22,Premier League,16518,2021-12-05 14:00:00,Leeds,Brentford,2,2,1.41896,1.19959
+2021-22,Premier League,16519,2021-12-05 14:00:00,Manchester United,Crystal Palace,1,0,0.870376,0.520593
+2021-22,Premier League,16522,2021-12-05 14:00:00,Tottenham,Norwich,3,0,2.00668,1.06562
+2021-22,Premier League,16516,2021-12-05 16:30:00,Aston Villa,Leicester,2,1,1.84818,0.982614
+2021-22,Premier League,16517,2021-12-06 20:00:00,Everton,Arsenal,2,1,1.06108,1.05723
+2021-22,Premier League,16527,2021-12-10 20:00:00,Brentford,Watford,2,1,1.82799,0.561554
+2021-22,Premier League,16534,2021-12-11 12:30:00,Manchester City,Wolverhampton Wanderers,1,0,2.99915,0.0762839
+2021-22,Premier League,16526,2021-12-11 15:00:00,Arsenal,Southampton,3,0,2.08429,0.502215
+2021-22,Premier League,16530,2021-12-11 15:00:00,Chelsea,Leeds,3,2,2.74844,1.72934
+2021-22,Premier League,16533,2021-12-11 15:00:00,Liverpool,Aston Villa,1,0,2.71181,0.140573
+2021-22,Premier League,16535,2021-12-11 17:30:00,Norwich,Manchester United,0,1,0.986107,2.09817
+2021-22,Premier League,16529,2021-12-12 14:00:00,Burnley,West Ham,0,0,0.54801,0.998813
+2021-22,Premier League,16532,2021-12-12 14:00:00,Leicester,Newcastle United,4,0,2.05771,0.511934
+2021-22,Premier League,16531,2021-12-12 16:30:00,Crystal Palace,Everton,3,1,2.09864,1.27556
+2021-22,Premier League,16541,2021-12-14 19:45:00,Norwich,Aston Villa,0,2,0.502647,1.96261
+2021-22,Premier League,16545,2021-12-14 20:00:00,Manchester City,Leeds,7,0,3.31349,0.227498
+2021-22,Premier League,16538,2021-12-15 19:30:00,Brighton,Wolverhampton Wanderers,0,1,1.20118,1.11736
+2021-22,Premier League,16542,2021-12-15 19:30:00,Crystal Palace,Southampton,2,2,1.49244,0.625183
+2021-22,Premier League,16536,2021-12-15 20:00:00,Arsenal,West Ham,2,0,2.81482,0.338855
+2021-22,Premier League,16543,2021-12-16 19:45:00,Chelsea,Everton,1,1,3.20239,0.627528
+2021-22,Premier League,16544,2021-12-16 20:00:00,Liverpool,Newcastle United,3,1,2.93912,0.2064
+2021-22,Premier League,16548,2021-12-18 17:30:00,Leeds,Arsenal,1,4,1.31408,3.69008
+2021-22,Premier League,16555,2021-12-19 14:00:00,Wolverhampton Wanderers,Chelsea,0,0,0.321371,0.793952
+2021-22,Premier League,16550,2021-12-19 14:15:00,Newcastle United,Manchester City,0,4,0.174208,3.64686
+2021-22,Premier League,16552,2021-12-19 16:30:00,Tottenham,Liverpool,2,2,2.79777,1.54944
+2021-22,Premier League,16560,2021-12-26 15:00:00,Manchester City,Leicester,6,3,3.82869,2.43425
+2021-22,Premier League,16562,2021-12-26 15:00:00,Norwich,Arsenal,0,5,0.154212,2.87539
+2021-22,Premier League,16563,2021-12-26 15:00:00,Tottenham,Crystal Palace,3,0,2.82148,0.178324
+2021-22,Premier League,16564,2021-12-26 15:00:00,West Ham,Southampton,2,3,1.53745,1.35643
+2021-22,Premier League,16556,2021-12-26 17:30:00,Aston Villa,Chelsea,1,3,0.474029,2.8285
+2021-22,Premier League,16557,2021-12-26 20:00:00,Brighton,Brentford,2,0,0.943363,1.10342
+2021-22,Premier League,16561,2021-12-27 20:00:00,Newcastle United,Manchester United,1,1,1.26586,1.75587
+2021-22,Premier League,16569,2021-12-28 15:00:00,Watford,West Ham,1,4,1.0143,2.84084
+2021-22,Premier League,16570,2021-12-28 15:00:00,Crystal Palace,Norwich,3,0,2.38978,0.594134
+2021-22,Premier League,16575,2021-12-28 15:00:00,Southampton,Tottenham,1,1,0.353043,2.80917
+2021-22,Premier League,16573,2021-12-28 20:00:00,Leicester,Liverpool,1,0,0.615892,2.72682
+2021-22,Premier League,16568,2021-12-29 19:30:00,Chelsea,Brighton,1,1,0.763458,0.78663
+2021-22,Premier League,16567,2021-12-29 20:15:00,Brentford,Manchester City,0,1,0.238829,1.01763
+2021-22,Premier League,16574,2021-12-30 20:15:00,Manchester United,Burnley,3,1,1.80776,0.871738
+2021-22,Premier League,16576,2022-01-01 12:30:00,Arsenal,Manchester City,1,2,0.836949,1.94623
+2021-22,Premier League,16585,2022-01-01 15:00:00,Watford,Tottenham,0,1,0.303514,1.93752
+2021-22,Premier League,16579,2022-01-01 17:30:00,Crystal Palace,West Ham,2,3,2.69204,2.23146
+2021-22,Premier League,16577,2022-01-02 14:00:00,Brentford,Aston Villa,2,1,0.501329,1.13821
+2021-22,Premier League,16580,2022-01-02 14:00:00,Everton,Brighton,2,3,1.82698,1.48397
+2021-22,Premier League,16581,2022-01-02 14:00:00,Leeds,Burnley,3,1,2.04186,0.960493
+2021-22,Premier League,16578,2022-01-02 16:30:00,Chelsea,Liverpool,2,2,1.389,1.78897
+2021-22,Premier League,16583,2022-01-03 17:30:00,Manchester United,Wolverhampton Wanderers,0,1,0.768752,0.840925
+2021-22,Premier League,16551,2022-01-11 21:45:00,Southampton,Brentford,4,1,1.59306,0.621466
+2021-22,Premier League,16554,2022-01-12 21:45:00,West Ham,Norwich,2,0,2.89217,0.343347
+2021-22,Premier League,16587,2022-01-14 20:00:00,Brighton,Crystal Palace,1,1,2.18053,0.509681
+2021-22,Premier League,16590,2022-01-15 12:30:00,Manchester City,Chelsea,1,0,0.901703,0.613757
+2021-22,Premier League,16591,2022-01-15 15:00:00,Newcastle United,Watford,1,1,1.03855,1.49623
+2021-22,Premier League,16592,2022-01-15 15:00:00,Norwich,Everton,2,1,1.00153,0.541027
+2021-22,Premier League,16595,2022-01-15 15:00:00,Wolverhampton Wanderers,Southampton,3,1,2.29917,0.91728
+2021-22,Premier League,16586,2022-01-15 17:30:00,Aston Villa,Manchester United,2,2,1.82784,1.35378
+2021-22,Premier League,16589,2022-01-16 14:00:00,Liverpool,Brentford,3,0,3.49099,0.376656
+2021-22,Premier League,16594,2022-01-16 14:00:00,West Ham,Leeds,2,3,2.3549,2.26884
+2021-22,Premier League,16607,2022-01-18 09:45:00,Brighton,Chelsea,1,1,0.747557,0.572994
+2021-22,Premier League,16540,2022-01-19 19:30:00,Leicester,Tottenham,2,3,1.95031,4.24711
+2021-22,Premier League,16537,2022-01-19 20:00:00,Brentford,Manchester United,1,3,2.081,2.05969
+2021-22,Premier League,16605,2022-01-21 20:00:00,Watford,Norwich,0,3,1.30606,0.925212
+2021-22,Premier League,16600,2022-01-22 12:30:00,Everton,Aston Villa,0,1,1.2384,0.860245
+2021-22,Premier League,16597,2022-01-22 15:00:00,Brentford,Wolverhampton Wanderers,1,2,0.742573,0.218211
+2021-22,Premier League,16601,2022-01-22 15:00:00,Leeds,Newcastle United,0,1,1.12992,1.15904
+2021-22,Premier League,16603,2022-01-22 15:00:00,Manchester United,West Ham,1,0,1.75857,0.238027
+2021-22,Premier League,16604,2022-01-22 17:30:00,Southampton,Manchester City,1,1,1.00222,1.62907
+2021-22,Premier League,16596,2022-01-23 14:00:00,Arsenal,Burnley,0,0,1.35507,0.388963
+2021-22,Premier League,16599,2022-01-23 14:00:00,Crystal Palace,Liverpool,1,3,1.62615,1.49697
+2021-22,Premier League,16602,2022-01-23 14:00:00,Leicester,Brighton,1,1,1.70979,1.19738
+2021-22,Premier League,16598,2022-01-23 16:30:00,Chelsea,Tottenham,2,0,1.04212,0.328818
+2021-22,Premier League,16539,2022-02-05 18:00:00,Burnley,Watford,0,0,0.765905,0.933965
+2021-22,Premier League,16610,2022-02-08 19:45:00,West Ham,Watford,1,0,0.905143,0.335474
+2021-22,Premier League,16612,2022-02-08 19:45:00,Newcastle United,Everton,3,1,2.68732,0.823607
+2021-22,Premier League,16608,2022-02-08 20:00:00,Burnley,Manchester United,1,1,0.772721,1.83387
+2021-22,Premier League,16609,2022-02-09 19:45:00,Norwich,Crystal Palace,1,1,0.296411,1.22883
+2021-22,Premier League,16613,2022-02-09 19:45:00,Tottenham,Southampton,2,3,1.74286,1.73293
+2021-22,Premier League,16615,2022-02-09 19:45:00,Manchester City,Brentford,2,0,1.98246,0.461305
+2021-22,Premier League,16606,2022-02-09 20:00:00,Aston Villa,Leeds,3,3,1.5013,2.52914
+2021-22,Premier League,16611,2022-02-10 19:45:00,Wolverhampton Wanderers,Arsenal,0,1,0.641359,1.45247
+2021-22,Premier League,16614,2022-02-10 19:45:00,Liverpool,Leicester,2,0,2.72997,0.544954
+2021-22,Premier League,16621,2022-02-12 12:30:00,Manchester United,Southampton,1,1,2.99207,0.677386
+2021-22,Premier League,16616,2022-02-12 15:00:00,Brentford,Crystal Palace,0,0,1.97576,0.49802
+2021-22,Premier League,16619,2022-02-12 15:00:00,Everton,Leeds,3,0,2.58561,0.242668
+2021-22,Premier League,16625,2022-02-12 15:00:00,Watford,Brighton,0,2,0.532979,1.80456
+2021-22,Premier League,16623,2022-02-12 17:30:00,Norwich,Manchester City,0,4,0.356755,4.44653
+2021-22,Premier League,16617,2022-02-13 14:00:00,Burnley,Liverpool,0,1,1.16081,1.95722
+2021-22,Premier League,16622,2022-02-13 14:00:00,Newcastle United,Aston Villa,1,0,0.527571,0.455206
+2021-22,Premier League,16624,2022-02-13 14:00:00,Tottenham,Wolverhampton Wanderers,0,2,0.838197,1.87026
+2021-22,Premier League,16620,2022-02-13 16:30:00,Leicester,West Ham,2,2,1.40693,0.745068
+2021-22,Premier League,16549,2022-02-15 20:15:00,Manchester United,Brighton,2,0,2.74936,1.26179
+2021-22,Premier League,16634,2022-02-19 12:30:00,West Ham,Newcastle United,1,1,0.847948,0.932574
+2021-22,Premier League,16626,2022-02-19 15:00:00,Arsenal,Brentford,2,1,1.52247,0.640726
+2021-22,Premier League,16627,2022-02-19 15:00:00,Aston Villa,Watford,0,1,1.0267,1.82051
+2021-22,Premier League,16628,2022-02-19 15:00:00,Brighton,Burnley,0,3,0.44587,0.821228
+2021-22,Premier League,16629,2022-02-19 15:00:00,Crystal Palace,Chelsea,0,1,0.624023,1.12339
+2021-22,Premier League,16631,2022-02-19 15:00:00,Liverpool,Norwich,3,1,3.15449,0.66975
+2021-22,Premier League,16633,2022-02-19 15:00:00,Southampton,Everton,2,0,2.72851,0.19991
+2021-22,Premier League,16632,2022-02-19 17:30:00,Manchester City,Tottenham,2,3,2.31773,2.00235
+2021-22,Premier League,16630,2022-02-20 14:00:00,Leeds,Manchester United,2,4,1.74476,2.60999
+2021-22,Premier League,16635,2022-02-20 16:30:00,Wolverhampton Wanderers,Leicester,2,1,0.472777,1.55048
+2021-22,Premier League,16499,2022-02-23 19:30:00,Burnley,Tottenham,1,0,1.55576,0.691655
+2021-22,Premier League,16553,2022-02-23 19:30:00,Watford,Crystal Palace,1,4,1.71917,0.818403
+2021-22,Premier League,16559,2022-02-23 19:45:00,Liverpool,Leeds,6,0,5.3303,0.141547
+2021-22,Premier League,16566,2022-02-24 19:45:00,Arsenal,Wolverhampton Wanderers,2,1,2.50961,1.10934
+2021-22,Premier League,16644,2022-02-25 20:00:00,Southampton,Norwich,2,0,3.08863,0.424877
+2021-22,Premier League,16642,2022-02-26 12:30:00,Leeds,Tottenham,0,4,1.89569,2.47025
+2021-22,Premier League,16637,2022-02-26 15:00:00,Brentford,Newcastle United,0,2,0.494232,2.25373
+2021-22,Premier League,16640,2022-02-26 15:00:00,Crystal Palace,Burnley,1,1,1.03765,0.255988
+2021-22,Premier League,16643,2022-02-26 15:00:00,Manchester United,Watford,0,0,2.41457,0.437185
+2021-22,Premier League,16638,2022-02-26 15:30:00,Brighton,Aston Villa,0,2,0.627107,1.3027
+2021-22,Premier League,16641,2022-02-26 17:30:00,Everton,Manchester City,0,1,0.770819,1.93422
+2021-22,Premier League,16645,2022-02-27 14:00:00,West Ham,Wolverhampton Wanderers,1,0,1.62241,0.892018
+2021-22,Premier League,16588,2022-03-01 19:45:00,Burnley,Leicester,0,2,1.04214,1.79558
+2021-22,Premier League,16648,2022-03-05 12:30:00,Leicester,Leeds,1,0,0.359129,2.14389
+2021-22,Premier League,16646,2022-03-05 15:00:00,Aston Villa,Southampton,4,0,2.85379,1.32947
+2021-22,Premier League,16647,2022-03-05 15:00:00,Burnley,Chelsea,0,4,0.849232,2.2868
+2021-22,Premier League,16651,2022-03-05 15:00:00,Newcastle United,Brighton,2,1,1.58028,1.64995
+2021-22,Premier League,16652,2022-03-05 15:00:00,Norwich,Brentford,1,3,0.77334,2.22064
+2021-22,Premier League,16655,2022-03-05 15:00:00,Wolverhampton Wanderers,Crystal Palace,0,2,0.710865,2.53759
+2021-22,Premier League,16649,2022-03-05 17:30:00,Liverpool,West Ham,1,0,2.18865,1.33829
+2021-22,Premier League,16654,2022-03-06 14:00:00,Watford,Arsenal,2,3,1.29603,1.00457
+2021-22,Premier League,16650,2022-03-06 16:30:00,Manchester City,Manchester United,4,1,2.74434,0.361782
+2021-22,Premier League,16653,2022-03-07 20:00:00,Tottenham,Everton,5,0,3.24279,0.208263
+2021-22,Premier League,16565,2022-03-10 19:30:00,Wolverhampton Wanderers,Watford,4,0,1.55037,0.498696
+2021-22,Premier League,16584,2022-03-10 19:30:00,Southampton,Newcastle United,1,2,1.79835,0.812233
+2021-22,Premier League,16672,2022-03-10 19:30:00,Norwich,Chelsea,1,3,0.965723,2.1308
+2021-22,Premier League,16572,2022-03-10 19:45:00,Leeds,Aston Villa,0,3,0.194028,1.2729
+2021-22,Premier League,16658,2022-03-12 12:30:00,Brighton,Liverpool,0,2,0.629316,2.48312
+2021-22,Premier League,16657,2022-03-12 15:00:00,Brentford,Burnley,2,0,1.82002,0.825311
+2021-22,Premier League,16663,2022-03-12 17:30:00,Manchester United,Tottenham,3,2,1.0181,1.62374
+2021-22,Premier League,16659,2022-03-13 14:00:00,Chelsea,Newcastle United,1,0,1.07072,0.246037
+2021-22,Premier League,16661,2022-03-13 14:00:00,Everton,Wolverhampton Wanderers,0,1,0.397268,0.712135
+2021-22,Premier League,16662,2022-03-13 14:00:00,Leeds,Norwich,2,1,3.11755,1.40148
+2021-22,Premier League,16664,2022-03-13 14:00:00,Southampton,Watford,1,2,1.25696,1.29385
+2021-22,Premier League,16665,2022-03-13 14:00:00,West Ham,Aston Villa,2,1,1.58468,1.05391
+2021-22,Premier League,16656,2022-03-13 16:30:00,Arsenal,Leicester,2,0,2.93665,0.54911
+2021-22,Premier League,16660,2022-03-14 20:00:00,Crystal Palace,Manchester City,0,0,0.474002,2.04021
+2021-22,Premier League,16528,2022-03-16 19:30:00,Brighton,Tottenham,0,2,1.04171,2.05196
+2021-22,Premier League,16636,2022-03-16 20:15:00,Arsenal,Liverpool,0,2,0.534265,1.27681
+2021-22,Premier League,16571,2022-03-17 19:45:00,Everton,Newcastle United,1,0,0.708809,0.75803
+2021-22,Premier League,16675,2022-03-18 20:00:00,Wolverhampton Wanderers,Leeds,2,3,1.24075,2.82103
+2021-22,Premier League,16666,2022-03-19 12:30:00,Aston Villa,Arsenal,0,1,0.309375,1.14522
+2021-22,Premier League,16668,2022-03-20 14:00:00,Leicester,Brentford,2,1,1.27865,1.72466
+2021-22,Premier League,16673,2022-03-20 16:30:00,Tottenham,West Ham,3,1,2.54795,0.644964
+2021-22,Premier League,16680,2022-04-02 11:30:00,Liverpool,Watford,2,0,2.23651,0.753307
+2021-22,Premier League,16676,2022-04-02 14:00:00,Wolverhampton Wanderers,Aston Villa,2,1,1.62151,1.91256
+2021-22,Premier League,16681,2022-04-02 14:00:00,Leeds,Southampton,1,1,1.50715,2.06387
+2021-22,Premier League,16683,2022-04-02 14:00:00,Chelsea,Brentford,1,4,1.29014,2.43422
+2021-22,Premier League,16684,2022-04-02 14:00:00,Burnley,Manchester City,0,2,0.0591223,1.62008
+2021-22,Premier League,16685,2022-04-02 14:00:00,Brighton,Norwich,0,0,2.38297,0.494112
+2021-22,Premier League,16679,2022-04-02 16:30:00,Manchester United,Leicester,1,1,0.902127,1.07638
+2021-22,Premier League,16677,2022-04-03 13:00:00,West Ham,Everton,2,1,1.49657,0.657846
+2021-22,Premier League,16678,2022-04-03 15:30:00,Tottenham,Newcastle United,5,1,3.6081,0.538152
+2021-22,Premier League,16682,2022-04-04 19:00:00,Crystal Palace,Arsenal,3,0,1.39707,1.05199
+2021-22,Premier League,16558,2022-04-06 18:30:00,Burnley,Everton,3,2,2.24439,2.31574
+2021-22,Premier League,16689,2022-04-08 19:00:00,Newcastle United,Wolverhampton Wanderers,1,0,1.43878,0.306867
+2021-22,Premier League,16692,2022-04-09 11:30:00,Everton,Manchester United,1,0,0.357295,0.762357
+2021-22,Premier League,16686,2022-04-09 14:00:00,Watford,Leeds,0,3,1.07422,0.895612
+2021-22,Premier League,16687,2022-04-09 14:00:00,Southampton,Chelsea,0,6,0.564726,4.39683
+2021-22,Premier League,16695,2022-04-09 14:00:00,Arsenal,Brighton,1,2,2.35153,0.596106
+2021-22,Premier League,16694,2022-04-09 16:30:00,Aston Villa,Tottenham,0,4,1.48712,0.983601
+2021-22,Premier League,16688,2022-04-10 13:00:00,Norwich,Burnley,2,0,1.6723,1.44652
+2021-22,Premier League,16691,2022-04-10 13:00:00,Leicester,Crystal Palace,2,1,0.879235,1.52767
+2021-22,Premier League,16693,2022-04-10 13:00:00,Brentford,West Ham,2,0,1.85534,0.244824
+2021-22,Premier League,16690,2022-04-10 15:30:00,Manchester City,Liverpool,2,2,1.34647,1.29983
+2021-22,Premier League,16699,2022-04-16 11:30:00,Tottenham,Brighton,0,1,0.58624,0.711155
+2021-22,Premier League,16698,2022-04-16 14:00:00,Watford,Brentford,1,2,1.50381,2.12457
+2021-22,Premier League,16700,2022-04-16 14:00:00,Southampton,Arsenal,1,0,1.04007,1.35002
+2021-22,Premier League,16702,2022-04-16 14:00:00,Manchester United,Norwich,3,2,1.66737,1.79754
+2021-22,Premier League,16697,2022-04-17 13:15:00,West Ham,Burnley,1,1,2.79175,1.88137
+2021-22,Premier League,16701,2022-04-17 13:15:00,Newcastle United,Leicester,2,1,2.54294,0.541084
+2021-22,Premier League,16669,2022-04-19 19:00:00,Liverpool,Manchester United,4,0,2.25967,0.110227
+2021-22,Premier League,16547,2022-04-20 18:45:00,Everton,Leicester,1,1,1.68819,0.786333
+2021-22,Premier League,16618,2022-04-20 18:45:00,Chelsea,Arsenal,2,4,0.593801,1.87331
+2021-22,Premier League,16671,2022-04-20 18:45:00,Newcastle United,Crystal Palace,1,0,0.767855,0.432788
+2021-22,Premier League,16670,2022-04-20 19:00:00,Manchester City,Brighton,3,0,1.52844,0.117354
+2021-22,Premier League,16667,2022-04-21 18:45:00,Burnley,Southampton,2,0,2.14743,1.31837
+2021-22,Premier League,16715,2022-04-23 11:30:00,Arsenal,Manchester United,3,1,2.54173,2.04244
+2021-22,Premier League,16706,2022-04-23 14:00:00,Norwich,Newcastle United,0,3,0.657661,1.87558
+2021-22,Premier League,16707,2022-04-23 14:00:00,Manchester City,Watford,5,1,3.68,0.42632
+2021-22,Premier League,16709,2022-04-23 14:00:00,Leicester,Aston Villa,0,0,0.235635,0.593202
+2021-22,Premier League,16714,2022-04-23 16:30:00,Brentford,Tottenham,0,0,1.3153,0.517755
+2021-22,Premier League,16711,2022-04-24 13:00:00,Chelsea,West Ham,1,0,2.34959,0.388975
+2021-22,Premier League,16712,2022-04-24 13:00:00,Burnley,Wolverhampton Wanderers,1,0,1.27298,0.592902
+2021-22,Premier League,16713,2022-04-24 13:00:00,Brighton,Southampton,2,2,1.87343,0.926764
+2021-22,Premier League,16708,2022-04-24 15:30:00,Liverpool,Everton,2,0,1.70397,0.424961
+2021-22,Premier League,16710,2022-04-25 19:00:00,Crystal Palace,Leeds,0,0,1.61656,0.374044
+2021-22,Premier League,16742,2022-04-28 18:45:00,Manchester United,Chelsea,1,1,0.618456,2.46868
+2021-22,Premier League,16721,2022-04-30 11:30:00,Newcastle United,Liverpool,0,1,0.115353,2.73435
+2021-22,Premier League,16716,2022-04-30 14:00:00,Wolverhampton Wanderers,Brighton,0,3,0.525912,2.90679
+2021-22,Premier League,16718,2022-04-30 14:00:00,Watford,Burnley,1,2,0.785742,1.37022
+2021-22,Premier League,16720,2022-04-30 14:00:00,Southampton,Crystal Palace,1,2,0.650256,0.756217
+2021-22,Premier League,16725,2022-04-30 14:00:00,Aston Villa,Norwich,2,0,2.31192,0.352212
+2021-22,Premier League,16723,2022-04-30 16:30:00,Leeds,Manchester City,0,4,1.03608,3.01431
+2021-22,Premier League,16719,2022-05-01 13:00:00,Tottenham,Leicester,3,1,1.65338,0.274133
+2021-22,Premier League,16724,2022-05-01 13:00:00,Everton,Chelsea,1,0,1.11712,1.21141
+2021-22,Premier League,16717,2022-05-01 15:30:00,West Ham,Arsenal,1,2,0.451976,0.964564
+2021-22,Premier League,16722,2022-05-02 19:00:00,Manchester United,Brentford,3,0,1.84111,0.681425
+2021-22,Premier League,16730,2022-05-07 14:00:00,Crystal Palace,Watford,1,0,2.49142,0.255373
+2021-22,Premier League,16731,2022-05-07 14:00:00,Chelsea,Wolverhampton Wanderers,2,2,1.82098,1.6842
+2021-22,Premier League,16732,2022-05-07 14:00:00,Burnley,Aston Villa,1,3,1.31028,1.81256
+2021-22,Premier League,16734,2022-05-07 14:00:00,Brentford,Southampton,3,0,3.68223,0.988574
+2021-22,Premier League,16733,2022-05-07 16:30:00,Brighton,Manchester United,4,0,2.82636,0.930715
+2021-22,Premier League,16728,2022-05-07 18:45:00,Liverpool,Tottenham,1,1,1.0481,0.982635
+2021-22,Premier League,16726,2022-05-08 13:00:00,Norwich,West Ham,0,4,0.77895,3.25894
+2021-22,Premier League,16729,2022-05-08 13:00:00,Leicester,Everton,1,2,1.47479,1.55635
+2021-22,Premier League,16735,2022-05-08 13:00:00,Arsenal,Leeds,2,1,2.7227,0.696785
+2021-22,Premier League,16727,2022-05-08 15:30:00,Manchester City,Newcastle United,5,0,4.05613,0.995099
+2021-22,Premier League,16705,2022-05-10 19:00:00,Aston Villa,Liverpool,1,2,1.44726,1.75417
+2021-22,Premier League,16703,2022-05-11 18:30:00,Leeds,Chelsea,0,3,0.499789,1.46853
+2021-22,Premier League,16582,2022-05-11 18:45:00,Leicester,Norwich,3,0,2.57058,1.21966
+2021-22,Premier League,16674,2022-05-11 18:45:00,Watford,Everton,0,0,0.232236,0.812193
+2021-22,Premier League,16696,2022-05-11 19:15:00,Wolverhampton Wanderers,Manchester City,1,5,0.411857,3.39304
+2021-22,Premier League,16593,2022-05-12 18:45:00,Tottenham,Arsenal,3,0,3.42522,0.387446
+2021-22,Premier League,16739,2022-05-15 11:00:00,Tottenham,Burnley,1,0,2.39449,0.629888
+2021-22,Premier League,16736,2022-05-15 13:00:00,Wolverhampton Wanderers,Norwich,1,1,0.999066,1.53212
+2021-22,Premier League,16737,2022-05-15 13:00:00,West Ham,Manchester City,2,2,1.0088,2.14723
+2021-22,Premier League,16738,2022-05-15 13:00:00,Watford,Leicester,1,5,2.58968,2.27297
+2021-22,Premier League,16743,2022-05-15 13:00:00,Leeds,Brighton,1,1,2.22282,2.25898
+2021-22,Premier League,16745,2022-05-15 13:00:00,Aston Villa,Crystal Palace,1,1,0.799443,1.39009
+2021-22,Premier League,16744,2022-05-15 15:30:00,Everton,Brentford,2,3,2.69589,1.81626
+2021-22,Premier League,16741,2022-05-16 19:00:00,Newcastle United,Arsenal,2,0,1.68299,0.492454
+2021-22,Premier League,16740,2022-05-17 18:45:00,Southampton,Liverpool,1,2,0.121506,1.19178
+2021-22,Premier League,16704,2022-05-19 18:45:00,Everton,Crystal Palace,3,2,0.813157,1.6023
+2021-22,Premier League,16546,2022-05-19 19:00:00,Aston Villa,Burnley,1,1,0.996403,1.63117
+2021-22,Premier League,16639,2022-05-19 19:00:00,Chelsea,Leicester,1,1,1.61996,0.0417972
+2021-22,Premier League,16746,2022-05-22 15:00:00,Arsenal,Everton,5,1,4.35597,1.08601
+2021-22,Premier League,16747,2022-05-22 15:00:00,Brentford,Leeds,1,2,0.844985,1.47786
+2021-22,Premier League,16748,2022-05-22 15:00:00,Brighton,West Ham,3,1,1.67774,0.268845
+2021-22,Premier League,16749,2022-05-22 15:00:00,Burnley,Newcastle United,1,2,1.49164,1.74291
+2021-22,Premier League,16750,2022-05-22 15:00:00,Chelsea,Watford,2,1,2.59231,0.575755
+2021-22,Premier League,16751,2022-05-22 15:00:00,Crystal Palace,Manchester United,1,0,0.354618,0.782005
+2021-22,Premier League,16752,2022-05-22 15:00:00,Leicester,Southampton,4,1,3.42058,1.05141
+2021-22,Premier League,16753,2022-05-22 15:00:00,Liverpool,Wolverhampton Wanderers,3,1,3.19385,1.11708
+2021-22,Premier League,16754,2022-05-22 15:00:00,Manchester City,Aston Villa,3,2,3.3209,0.247841
+2021-22,Premier League,16755,2022-05-22 15:00:00,Norwich,Tottenham,0,5,0.310789,3.815
+2021-22,Serie A,16756,2021-08-21 16:30:00,Verona,Sassuolo,2,3,2.25155,1.86679
+2021-22,Serie A,16757,2021-08-21 16:30:00,Inter,Genoa,4,0,2.20707,0.967177
+2021-22,Serie A,16758,2021-08-21 18:45:00,Torino,Atalanta,1,2,0.864837,1.01343
+2021-22,Serie A,16759,2021-08-21 18:45:00,Empoli,Lazio,1,3,1.13436,1.78152
+2021-22,Serie A,16760,2021-08-22 16:30:00,Bologna,Salernitana,3,2,1.72577,1.63711
+2021-22,Serie A,16761,2021-08-22 16:30:00,Udinese,Juventus,2,2,2.08573,1.49379
+2021-22,Serie A,16762,2021-08-22 18:45:00,Napoli,Venezia,2,0,2.39159,0.60988
+2021-22,Serie A,16763,2021-08-22 18:45:00,Roma,Fiorentina,3,1,2.75414,0.867167
+2021-22,Serie A,16764,2021-08-23 16:30:00,Cagliari,Spezia,2,2,3.28935,1.03088
+2021-22,Serie A,16765,2021-08-23 18:45:00,Sampdoria,AC Milan,0,1,1.24757,0.804449
+2021-22,Serie A,16766,2021-08-27 16:30:00,Udinese,Venezia,3,0,3.01783,0.908926
+2021-22,Serie A,16767,2021-08-27 18:45:00,Verona,Inter,1,3,0.603998,1.8369
+2021-22,Serie A,16768,2021-08-28 16:30:00,Lazio,Spezia,6,1,2.71713,0.735352
+2021-22,Serie A,16769,2021-08-28 16:30:00,Atalanta,Bologna,0,0,0.989249,0.41987
+2021-22,Serie A,16770,2021-08-28 18:45:00,Fiorentina,Torino,2,1,0.53999,0.293784
+2021-22,Serie A,16771,2021-08-28 18:45:00,Juventus,Empoli,0,1,1.81566,1.10327
+2021-22,Serie A,16772,2021-08-29 16:30:00,Sassuolo,Sampdoria,0,0,1.22815,0.577075
+2021-22,Serie A,16773,2021-08-29 16:30:00,Genoa,Napoli,1,2,0.339332,1.15407
+2021-22,Serie A,16774,2021-08-29 18:45:00,AC Milan,Cagliari,4,1,2.67169,0.406709
+2021-22,Serie A,16775,2021-08-29 18:45:00,Salernitana,Roma,0,4,0.221399,1.88679
+2021-22,Serie A,16779,2021-09-11 13:00:00,Empoli,Venezia,1,2,1.88537,2.43118
+2021-22,Serie A,16781,2021-09-11 16:00:00,Napoli,Juventus,2,1,2.18708,1.56057
+2021-22,Serie A,16776,2021-09-11 18:45:00,Atalanta,Fiorentina,1,2,2.11526,1.81465
+2021-22,Serie A,16783,2021-09-12 10:30:00,Sampdoria,Inter,2,2,1.46613,0.965476
+2021-22,Serie A,16778,2021-09-12 13:00:00,Cagliari,Genoa,2,3,1.83111,1.25494
+2021-22,Serie A,16784,2021-09-12 13:00:00,Spezia,Udinese,0,1,0.788419,0.78059
+2021-22,Serie A,16785,2021-09-12 13:00:00,Torino,Salernitana,4,0,2.9969,0.252452
+2021-22,Serie A,16780,2021-09-12 16:00:00,AC Milan,Lazio,2,0,3.47807,0.24655
+2021-22,Serie A,16782,2021-09-12 18:45:00,Roma,Sassuolo,2,1,2.32713,2.09991
+2021-22,Serie A,16777,2021-09-13 18:45:00,Bologna,Verona,1,0,1.25512,0.315142
+2021-22,Serie A,16793,2021-09-17 18:45:00,Sassuolo,Torino,0,1,0.79628,2.48473
+2021-22,Serie A,16787,2021-09-18 13:00:00,Genoa,Fiorentina,1,2,1.28373,1.12359
+2021-22,Serie A,16789,2021-09-18 16:00:00,Inter,Bologna,6,1,4.28011,0.855616
+2021-22,Serie A,16792,2021-09-18 18:45:00,Salernitana,Atalanta,0,1,0.792486,1.38299
+2021-22,Serie A,16786,2021-09-19 10:30:00,Empoli,Sampdoria,0,3,0.927264,1.34865
+2021-22,Serie A,16795,2021-09-19 13:00:00,Venezia,Spezia,1,2,0.805717,0.478482
+2021-22,Serie A,16788,2021-09-19 16:00:00,Verona,Roma,3,2,1.02132,0.661729
+2021-22,Serie A,16791,2021-09-19 16:00:00,Lazio,Cagliari,2,2,1.72557,1.91594
+2021-22,Serie A,16790,2021-09-19 18:45:00,Juventus,AC Milan,1,1,1.31518,1.04896
+2021-22,Serie A,16794,2021-09-20 18:45:00,Udinese,Napoli,0,4,0.243458,3.30273
+2021-22,Serie A,16797,2021-09-21 16:30:00,Bologna,Genoa,2,2,2.2881,1.69881
+2021-22,Serie A,16796,2021-09-21 18:45:00,Atalanta,Sassuolo,2,1,2.10813,0.911464
+2021-22,Serie A,16799,2021-09-21 18:45:00,Fiorentina,Inter,1,3,1.733,2.73737
+2021-22,Serie A,16802,2021-09-22 16:30:00,Salernitana,Verona,2,2,2.68942,2.06188
+2021-22,Serie A,16804,2021-09-22 16:30:00,Spezia,Juventus,2,3,1.03395,2.54565
+2021-22,Serie A,16798,2021-09-22 18:45:00,Cagliari,Empoli,0,2,0.754694,1.14537
+2021-22,Serie A,16800,2021-09-22 18:45:00,AC Milan,Venezia,2,0,2.11409,0.581225
+2021-22,Serie A,16803,2021-09-23 16:30:00,Sampdoria,Napoli,0,4,0.56857,2.10601
+2021-22,Serie A,16805,2021-09-23 16:30:00,Torino,Lazio,1,1,1.27244,0.846161
+2021-22,Serie A,16801,2021-09-23 18:45:00,Roma,Udinese,1,0,1.383,0.809534
+2021-22,Serie A,16812,2021-09-25 13:00:00,Spezia,AC Milan,1,2,0.953769,1.74102
+2021-22,Serie A,16808,2021-09-25 16:00:00,Inter,Atalanta,2,2,3.52091,1.50237
+2021-22,Serie A,16807,2021-09-25 18:45:00,Genoa,Verona,3,3,1.43713,2.07264
+2021-22,Serie A,16809,2021-09-26 10:30:00,Juventus,Sampdoria,3,2,2.62795,0.600946
+2021-22,Serie A,16806,2021-09-26 13:00:00,Empoli,Bologna,4,2,1.47687,2.49784
+2021-22,Serie A,16811,2021-09-26 13:00:00,Sassuolo,Salernitana,1,0,1.60845,1.16385
+2021-22,Serie A,16813,2021-09-26 13:00:00,Udinese,Fiorentina,0,1,0.492029,1.13861
+2021-22,Serie A,16810,2021-09-26 16:00:00,Lazio,Roma,3,2,2.48417,1.84369
+2021-22,Serie A,16815,2021-09-26 18:45:00,Napoli,Cagliari,2,0,2.05833,0.153322
+2021-22,Serie A,16814,2021-09-27 18:45:00,Venezia,Torino,1,1,1.5265,0.8526
+2021-22,Serie A,16818,2021-10-01 18:45:00,Cagliari,Venezia,1,1,0.658426,0.486148
+2021-22,Serie A,16822,2021-10-02 13:00:00,Salernitana,Genoa,1,0,0.547267,1.58603
+2021-22,Serie A,16825,2021-10-02 16:00:00,Torino,Juventus,0,1,0.908329,1.89552
+2021-22,Serie A,16824,2021-10-02 18:45:00,Sassuolo,Inter,1,2,1.61921,2.04169
+2021-22,Serie A,16817,2021-10-03 10:30:00,Bologna,Lazio,3,0,0.778479,0.96271
+2021-22,Serie A,16820,2021-10-03 13:00:00,Verona,Spezia,4,0,0.690616,1.57689
+2021-22,Serie A,16823,2021-10-03 13:00:00,Sampdoria,Udinese,3,3,1.52931,3.28192
+2021-22,Serie A,16819,2021-10-03 16:00:00,Fiorentina,Napoli,1,2,0.383136,1.64223
+2021-22,Serie A,16821,2021-10-03 16:00:00,Roma,Empoli,2,0,1.8551,0.43764
+2021-22,Serie A,16816,2021-10-03 18:45:00,Atalanta,AC Milan,2,3,2.63096,2.50955
+2021-22,Serie A,16833,2021-10-16 13:00:00,Spezia,Salernitana,2,1,1.67718,1.60938
+2021-22,Serie A,16830,2021-10-16 16:00:00,Lazio,Inter,3,1,2.31397,1.44791
+2021-22,Serie A,16831,2021-10-16 18:45:00,AC Milan,Verona,3,2,1.51852,1.58319
+2021-22,Serie A,16826,2021-10-17 10:30:00,Cagliari,Sampdoria,3,1,1.50713,1.78619
+2021-22,Serie A,16827,2021-10-17 13:00:00,Empoli,Atalanta,1,4,0.575048,3.83506
+2021-22,Serie A,16828,2021-10-17 13:00:00,Genoa,Sassuolo,2,2,1.38414,2.8217
+2021-22,Serie A,16834,2021-10-17 13:00:00,Udinese,Bologna,1,1,1.35716,1.49614
+2021-22,Serie A,16832,2021-10-17 16:00:00,Napoli,Torino,1,0,1.32917,1.07482
+2021-22,Serie A,16829,2021-10-17 18:45:00,Juventus,Roma,1,0,1.46974,1.4565
+2021-22,Serie A,16835,2021-10-18 18:45:00,Venezia,Fiorentina,1,0,0.794394,0.42719
+2021-22,Serie A,16845,2021-10-22 16:30:00,Torino,Genoa,3,2,2.2411,2.35473
+2021-22,Serie A,16843,2021-10-22 18:45:00,Sampdoria,Spezia,2,1,0.974056,1.05608
+2021-22,Serie A,16842,2021-10-23 13:00:00,Salernitana,Empoli,2,4,1.37213,2.83049
+2021-22,Serie A,16844,2021-10-23 16:00:00,Sassuolo,Venezia,3,1,2.13069,0.506648
+2021-22,Serie A,16837,2021-10-23 18:45:00,Bologna,AC Milan,2,4,0.631007,0.90866
+2021-22,Serie A,16836,2021-10-24 10:30:00,Atalanta,Udinese,1,1,0.629032,0.667553
+2021-22,Serie A,16838,2021-10-24 13:00:00,Fiorentina,Cagliari,3,0,3.1216,0.119909
+2021-22,Serie A,16839,2021-10-24 13:00:00,Verona,Lazio,4,1,3.536,1.42458
+2021-22,Serie A,16841,2021-10-24 16:00:00,Roma,Napoli,0,0,1.6324,0.593957
+2021-22,Serie A,16840,2021-10-24 18:45:00,Inter,Juventus,1,1,0.961912,1.34492
+2021-22,Serie A,16853,2021-10-26 16:30:00,Spezia,Genoa,1,1,2.40615,1.0654
+2021-22,Serie A,16855,2021-10-26 16:30:00,Venezia,Salernitana,1,2,0.62413,1.52483
+2021-22,Serie A,16850,2021-10-26 18:45:00,AC Milan,Torino,1,0,1.12486,0.488007
+2021-22,Serie A,16848,2021-10-27 16:30:00,Juventus,Sassuolo,1,2,1.15204,1.12654
+2021-22,Serie A,16852,2021-10-27 16:30:00,Sampdoria,Atalanta,1,3,0.984824,1.98512
+2021-22,Serie A,16854,2021-10-27 16:30:00,Udinese,Verona,1,1,0.940667,0.843224
+2021-22,Serie A,16846,2021-10-27 18:45:00,Cagliari,Roma,1,2,1.31963,2.49703
+2021-22,Serie A,16847,2021-10-27 18:45:00,Empoli,Inter,0,2,0.542985,3.07924
+2021-22,Serie A,16849,2021-10-27 18:45:00,Lazio,Fiorentina,1,0,0.637443,0.517761
+2021-22,Serie A,16851,2021-10-28 18:45:00,Napoli,Bologna,3,0,2.67727,0.251648
+2021-22,Serie A,16856,2021-10-30 13:00:00,Atalanta,Lazio,2,2,0.723746,1.4355
+2021-22,Serie A,16860,2021-10-30 16:00:00,Verona,Juventus,2,1,1.57716,1.78968
+2021-22,Serie A,16865,2021-10-30 18:45:00,Torino,Sampdoria,3,0,2.61562,0.249004
+2021-22,Serie A,16861,2021-10-31 11:30:00,Inter,Udinese,2,0,2.0569,0.303819
+2021-22,Serie A,16858,2021-10-31 14:00:00,Fiorentina,Spezia,3,0,2.8175,0.0882599
+2021-22,Serie A,16859,2021-10-31 14:00:00,Genoa,Venezia,0,0,0.720997,0.488128
+2021-22,Serie A,16864,2021-10-31 14:00:00,Sassuolo,Empoli,1,2,1.24312,1.4834
+2021-22,Serie A,16863,2021-10-31 17:00:00,Salernitana,Napoli,0,1,0.405769,1.54055
+2021-22,Serie A,16862,2021-10-31 19:45:00,Roma,AC Milan,1,2,1.25894,1.86101
+2021-22,Serie A,16857,2021-11-01 19:45:00,Bologna,Cagliari,2,0,1.7361,0.403517
+2021-22,Serie A,16867,2021-11-05 19:45:00,Empoli,Genoa,2,2,0.745284,1.69731
+2021-22,Serie A,16873,2021-11-06 14:00:00,Spezia,Torino,1,0,0.333765,0.420439
+2021-22,Serie A,16868,2021-11-06 17:00:00,Juventus,Fiorentina,1,0,0.984607,0.320219
+2021-22,Serie A,16866,2021-11-06 19:45:00,Cagliari,Atalanta,1,2,0.510728,3.54195
+2021-22,Serie A,16875,2021-11-07 11:30:00,Venezia,Roma,3,2,3.22538,2.76533
+2021-22,Serie A,16872,2021-11-07 14:00:00,Sampdoria,Bologna,1,2,1.05575,1.86418
+2021-22,Serie A,16874,2021-11-07 14:00:00,Udinese,Sassuolo,3,2,1.59111,0.694033
+2021-22,Serie A,16869,2021-11-07 17:00:00,Lazio,Salernitana,3,0,1.67971,0.239577
+2021-22,Serie A,16871,2021-11-07 17:00:00,Napoli,Verona,1,1,0.800943,1.22561
+2021-22,Serie A,16870,2021-11-07 19:45:00,AC Milan,Inter,1,1,1.15715,2.34764
+2021-22,Serie A,16876,2021-11-20 14:00:00,Atalanta,Spezia,5,2,2.5762,0.928225
+2021-22,Serie A,16882,2021-11-20 17:00:00,Lazio,Juventus,0,2,0.254933,2.76719
+2021-22,Serie A,16878,2021-11-20 19:45:00,Fiorentina,AC Milan,4,3,1.50869,1.57419
+2021-22,Serie A,16884,2021-11-21 11:30:00,Sassuolo,Cagliari,2,2,3.47952,1.23102
+2021-22,Serie A,16877,2021-11-21 14:00:00,Bologna,Venezia,0,1,0.995082,1.01889
+2021-22,Serie A,16883,2021-11-21 14:00:00,Salernitana,Sampdoria,0,2,0.982098,1.52856
+2021-22,Serie A,16881,2021-11-21 17:00:00,Inter,Napoli,3,2,2.19596,0.941603
+2021-22,Serie A,16879,2021-11-21 19:45:00,Genoa,Roma,0,2,0.102684,2.34272
+2021-22,Serie A,16880,2021-11-22 17:30:00,Verona,Empoli,2,1,1.30231,1.56263
+2021-22,Serie A,16885,2021-11-22 19:45:00,Torino,Udinese,2,1,1.93566,1.00294
+2021-22,Serie A,16886,2021-11-26 19:45:00,Cagliari,Salernitana,1,1,1.71881,0.238047
+2021-22,Serie A,16887,2021-11-27 14:00:00,Empoli,Fiorentina,2,1,2.14107,2.39546
+2021-22,Serie A,16892,2021-11-27 14:00:00,Sampdoria,Verona,3,1,0.75047,0.697659
+2021-22,Serie A,16888,2021-11-27 17:00:00,Juventus,Atalanta,0,1,0.818174,0.573467
+2021-22,Serie A,16895,2021-11-27 19:45:00,Venezia,Inter,0,2,0.192519,2.60343
+2021-22,Serie A,16894,2021-11-28 11:30:00,Udinese,Genoa,0,0,0.782758,0.602047
+2021-22,Serie A,16889,2021-11-28 14:00:00,AC Milan,Sassuolo,1,3,0.880541,1.18489
+2021-22,Serie A,16893,2021-11-28 14:00:00,Spezia,Bologna,0,1,0.638423,2.54608
+2021-22,Serie A,16891,2021-11-28 17:00:00,Roma,Torino,1,0,0.962178,0.798443
+2021-22,Serie A,16890,2021-11-28 19:45:00,Napoli,Lazio,4,0,1.19531,0.272761
+2021-22,Serie A,16896,2021-11-30 17:30:00,Atalanta,Venezia,4,0,2.90312,0.520194
+2021-22,Serie A,16898,2021-11-30 17:30:00,Fiorentina,Sampdoria,3,1,2.87335,0.634027
+2021-22,Serie A,16900,2021-11-30 19:45:00,Verona,Cagliari,0,0,1.16014,0.575054
+2021-22,Serie A,16903,2021-11-30 19:45:00,Salernitana,Juventus,0,2,0.461655,2.54436
+2021-22,Serie A,16897,2021-12-01 17:30:00,Bologna,Roma,1,0,0.220551,0.90512
+2021-22,Serie A,16901,2021-12-01 17:30:00,Inter,Spezia,2,0,2.85144,0.25153
+2021-22,Serie A,16899,2021-12-01 19:45:00,Genoa,AC Milan,0,3,0.357508,1.10251
+2021-22,Serie A,16904,2021-12-01 19:45:00,Sassuolo,Napoli,2,2,0.306603,0.922552
+2021-22,Serie A,16905,2021-12-02 17:30:00,Torino,Empoli,2,2,1.37796,0.972492
+2021-22,Serie A,16902,2021-12-02 19:45:00,Lazio,Udinese,4,4,1.45921,2.04224
+2021-22,Serie A,16910,2021-12-04 14:00:00,AC Milan,Salernitana,2,0,2.58223,0.194258
+2021-22,Serie A,16912,2021-12-04 17:00:00,Roma,Inter,0,3,0.530518,1.67407
+2021-22,Serie A,16911,2021-12-04 19:45:00,Napoli,Atalanta,2,3,1.11737,1.52971
+2021-22,Serie A,16906,2021-12-05 11:30:00,Bologna,Fiorentina,2,3,0.587444,1.21379
+2021-22,Serie A,16914,2021-12-05 14:00:00,Spezia,Sassuolo,2,2,2.36057,1.4473
+2021-22,Serie A,16915,2021-12-05 14:00:00,Venezia,Verona,3,4,1.48718,2.08845
+2021-22,Serie A,16913,2021-12-05 17:00:00,Sampdoria,Lazio,1,3,1.14767,1.15156
+2021-22,Serie A,16909,2021-12-05 19:45:00,Juventus,Genoa,2,0,3.00541,0.0
+2021-22,Serie A,16908,2021-12-06 17:30:00,Empoli,Udinese,3,1,2.02523,2.08721
+2021-22,Serie A,16907,2021-12-06 19:45:00,Cagliari,Torino,1,1,1.20956,1.90192
+2021-22,Serie A,16917,2021-12-10 19:45:00,Genoa,Sampdoria,1,3,1.01041,2.02929
+2021-22,Serie A,16916,2021-12-11 14:00:00,Fiorentina,Salernitana,4,0,2.74247,0.924612
+2021-22,Serie A,16925,2021-12-11 17:00:00,Venezia,Juventus,1,1,0.433734,1.53897
+2021-22,Serie A,16924,2021-12-11 19:45:00,Udinese,AC Milan,1,1,2.28394,1.15102
+2021-22,Serie A,16923,2021-12-12 11:30:00,Torino,Bologna,2,1,2.12527,0.945252
+2021-22,Serie A,16918,2021-12-12 14:00:00,Verona,Atalanta,1,2,0.996933,1.01933
+2021-22,Serie A,16920,2021-12-12 17:00:00,Napoli,Empoli,0,1,1.61708,0.644488
+2021-22,Serie A,16922,2021-12-12 17:00:00,Sassuolo,Lazio,2,1,0.893952,0.733536
+2021-22,Serie A,16919,2021-12-12 19:45:00,Inter,Cagliari,4,0,3.63912,0.222398
+2021-22,Serie A,16921,2021-12-13 19:45:00,Roma,Spezia,2,0,2.29875,0.609287
+2021-22,Serie A,16930,2021-12-17 17:30:00,Lazio,Genoa,3,1,2.07083,0.172789
+2021-22,Serie A,16932,2021-12-17 19:45:00,Salernitana,Inter,0,5,1.09173,3.31333
+2021-22,Serie A,16926,2021-12-18 14:00:00,Atalanta,Roma,1,4,1.47111,1.99516
+2021-22,Serie A,16927,2021-12-18 17:00:00,Bologna,Juventus,0,2,0.844256,1.39683
+2021-22,Serie A,16928,2021-12-18 19:45:00,Cagliari,Udinese,0,4,0.183657,0.521701
+2021-22,Serie A,16929,2021-12-19 11:30:00,Fiorentina,Sassuolo,2,2,2.26952,1.00122
+2021-22,Serie A,16934,2021-12-19 14:00:00,Spezia,Empoli,1,1,1.36967,1.224
+2021-22,Serie A,16933,2021-12-19 17:00:00,Sampdoria,Venezia,1,1,1.80875,0.811355
+2021-22,Serie A,16935,2021-12-19 17:00:00,Torino,Verona,1,0,0.860761,0.261412
+2021-22,Serie A,16931,2021-12-19 19:45:00,AC Milan,Napoli,0,1,0.369086,0.994378
+2021-22,Serie A,16937,2021-12-21 19:45:00,Genoa,Atalanta,0,0,0.0227283,1.41779
+2021-22,Serie A,16940,2021-12-21 19:45:00,Juventus,Cagliari,2,0,2.24385,1.13484
+2021-22,Serie A,16943,2021-12-22 15:30:00,Sassuolo,Bologna,0,3,0.775996,1.4889
+2021-22,Serie A,16945,2021-12-22 15:30:00,Venezia,Lazio,1,3,0.755959,1.55202
+2021-22,Serie A,16938,2021-12-22 17:30:00,Verona,Fiorentina,1,1,0.948779,1.28925
+2021-22,Serie A,16939,2021-12-22 17:30:00,Inter,Torino,1,0,1.02989,0.536356
+2021-22,Serie A,16942,2021-12-22 17:30:00,Roma,Sampdoria,1,1,1.45266,1.18082
+2021-22,Serie A,16936,2021-12-22 19:45:00,Empoli,AC Milan,2,4,1.66086,1.96497
+2021-22,Serie A,16941,2021-12-22 19:45:00,Napoli,Spezia,0,1,1.45364,0.355079
+2021-22,Serie A,16953,2022-01-06 11:30:00,Sampdoria,Cagliari,1,2,0.731494,2.18965
+2021-22,Serie A,16950,2022-01-06 13:30:00,Lazio,Empoli,3,3,3.09009,2.15425
+2021-22,Serie A,16955,2022-01-06 13:30:00,Spezia,Verona,1,2,1.32415,2.16034
+2021-22,Serie A,16954,2022-01-06 15:30:00,Sassuolo,Genoa,1,1,2.1565,0.213242
+2021-22,Serie A,16951,2022-01-06 17:30:00,AC Milan,Roma,3,1,3.01902,0.861234
+2021-22,Serie A,16949,2022-01-06 19:45:00,Juventus,Napoli,1,1,1.07965,0.884683
+2021-22,Serie A,16965,2022-01-09 11:30:00,Venezia,AC Milan,0,3,0.511301,3.87292
+2021-22,Serie A,16957,2022-01-09 13:30:00,Empoli,Sassuolo,1,5,1.02555,4.0481
+2021-22,Serie A,16961,2022-01-09 15:30:00,Napoli,Sampdoria,1,0,1.42942,0.369245
+2021-22,Serie A,16964,2022-01-09 15:30:00,Udinese,Atalanta,2,6,0.725694,3.65946
+2021-22,Serie A,16958,2022-01-09 17:30:00,Genoa,Spezia,0,1,0.956415,1.75709
+2021-22,Serie A,16962,2022-01-09 17:30:00,Roma,Juventus,3,4,2.53255,1.45001
+2021-22,Serie A,16959,2022-01-09 19:45:00,Verona,Salernitana,1,2,1.38469,1.28422
+2021-22,Serie A,16960,2022-01-09 19:45:00,Inter,Lazio,2,1,2.15451,0.747451
+2021-22,Serie A,16963,2022-01-10 16:00:00,Torino,Fiorentina,4,0,2.52401,0.472644
+2021-22,Serie A,16956,2022-01-11 19:45:00,Cagliari,Bologna,2,1,1.47121,0.693001
+2021-22,Serie A,16973,2022-01-15 14:00:00,Sampdoria,Torino,1,2,1.28669,1.31237
+2021-22,Serie A,16972,2022-01-15 17:00:00,Salernitana,Lazio,0,3,0.232152,1.73777
+2021-22,Serie A,16969,2022-01-15 19:45:00,Juventus,Udinese,2,0,1.70532,0.552532
+2021-22,Serie A,16974,2022-01-16 11:30:00,Sassuolo,Verona,2,4,0.85553,4.11644
+2021-22,Serie A,16975,2022-01-16 14:00:00,Venezia,Empoli,1,1,1.03771,1.12304
+2021-22,Serie A,16971,2022-01-16 17:00:00,Roma,Cagliari,1,0,2.01468,0.642616
+2021-22,Serie A,16966,2022-01-16 19:45:00,Atalanta,Inter,0,0,1.51513,1.50653
+2021-22,Serie A,16967,2022-01-17 17:30:00,Bologna,Napoli,0,2,0.80171,2.20066
+2021-22,Serie A,16970,2022-01-17 17:30:00,AC Milan,Spezia,1,2,2.85028,1.56746
+2021-22,Serie A,16968,2022-01-17 19:45:00,Fiorentina,Genoa,6,0,3.75618,0.0786195
+2021-22,Serie A,16979,2022-01-21 19:45:00,Verona,Bologna,2,1,2.05174,0.416668
+2021-22,Serie A,16978,2022-01-22 14:00:00,Genoa,Udinese,0,0,1.73379,0.0599026
+2021-22,Serie A,16980,2022-01-22 17:00:00,Inter,Venezia,2,1,2.86895,0.222828
+2021-22,Serie A,16981,2022-01-22 19:45:00,Lazio,Atalanta,0,0,0.272931,0.310955
+2021-22,Serie A,16976,2022-01-23 11:30:00,Cagliari,Fiorentina,1,1,2.42279,2.56091
+2021-22,Serie A,16983,2022-01-23 14:00:00,Napoli,Salernitana,4,1,4.54865,0.0822889
+2021-22,Serie A,16984,2022-01-23 14:00:00,Spezia,Sampdoria,1,0,0.529956,0.438332
+2021-22,Serie A,16985,2022-01-23 14:00:00,Torino,Sassuolo,1,1,3.25065,0.628281
+2021-22,Serie A,16977,2022-01-23 17:00:00,Empoli,Roma,2,4,1.23141,2.17975
+2021-22,Serie A,16982,2022-01-23 19:45:00,AC Milan,Juventus,0,0,0.705495,0.352915
+2021-22,Serie A,16991,2022-02-05 14:00:00,Roma,Genoa,0,0,1.4581,0.537092
+2021-22,Serie A,16989,2022-02-05 17:00:00,Inter,AC Milan,1,2,1.06379,1.17012
+2021-22,Serie A,16988,2022-02-05 19:45:00,Fiorentina,Lazio,0,3,0.709615,2.48806
+2021-22,Serie A,16986,2022-02-06 11:30:00,Atalanta,Cagliari,1,2,0.983984,1.62586
+2021-22,Serie A,16987,2022-02-06 14:00:00,Bologna,Empoli,0,0,0.553308,1.87705
+2021-22,Serie A,16993,2022-02-06 14:00:00,Sampdoria,Sassuolo,4,0,2.41944,1.32565
+2021-22,Serie A,16995,2022-02-06 14:00:00,Venezia,Napoli,0,2,0.387253,1.79731
+2021-22,Serie A,16994,2022-02-06 17:00:00,Udinese,Torino,2,0,1.18272,0.231176
+2021-22,Serie A,16990,2022-02-06 19:45:00,Juventus,Verona,2,0,1.38424,0.434667
+2021-22,Serie A,16992,2022-02-07 19:45:00,Salernitana,Spezia,2,2,0.419799,1.99832
+2021-22,Serie A,17000,2022-02-12 14:00:00,Lazio,Bologna,3,0,2.15933,0.975118
+2021-22,Serie A,17002,2022-02-12 17:00:00,Napoli,Inter,1,1,1.87896,0.770409
+2021-22,Serie A,17005,2022-02-12 19:45:00,Torino,Venezia,1,2,0.545957,0.468815
+2021-22,Serie A,17001,2022-02-13 11:30:00,AC Milan,Sampdoria,1,0,1.58606,0.171196
+2021-22,Serie A,16997,2022-02-13 14:00:00,Empoli,Cagliari,1,1,0.62072,0.833332
+2021-22,Serie A,16998,2022-02-13 14:00:00,Genoa,Salernitana,1,1,2.59108,0.96554
+2021-22,Serie A,16999,2022-02-13 14:00:00,Verona,Udinese,4,0,0.622109,1.01066
+2021-22,Serie A,17003,2022-02-13 17:00:00,Sassuolo,Roma,2,2,1.08187,1.74236
+2021-22,Serie A,16996,2022-02-13 19:45:00,Atalanta,Juventus,1,1,2.4593,1.04207
+2021-22,Serie A,17004,2022-02-14 19:45:00,Spezia,Fiorentina,1,2,0.489481,2.36382
+2021-22,Serie A,17010,2022-02-18 19:45:00,Juventus,Torino,1,1,0.773842,0.848296
+2021-22,Serie A,17013,2022-02-19 14:00:00,Sampdoria,Empoli,2,0,0.565043,1.31858
+2021-22,Serie A,17011,2022-02-19 17:00:00,Roma,Verona,2,2,0.31384,0.82269
+2021-22,Serie A,17012,2022-02-19 19:45:00,Salernitana,AC Milan,2,2,0.602765,1.20115
+2021-22,Serie A,17008,2022-02-20 11:30:00,Fiorentina,Atalanta,1,0,0.71376,0.402145
+2021-22,Serie A,17015,2022-02-20 14:00:00,Venezia,Genoa,1,1,1.09963,1.76519
+2021-22,Serie A,17009,2022-02-20 17:00:00,Inter,Sassuolo,0,2,3.34692,1.94409
+2021-22,Serie A,17014,2022-02-20 19:45:00,Udinese,Lazio,1,1,1.84915,1.33877
+2021-22,Serie A,17007,2022-02-21 18:00:00,Cagliari,Napoli,1,1,2.24847,1.45257
+2021-22,Serie A,17006,2022-02-21 20:00:00,Bologna,Spezia,2,1,2.0119,0.262135
+2021-22,Serie A,17021,2022-02-25 17:45:00,AC Milan,Udinese,1,1,0.778008,0.698483
+2021-22,Serie A,17018,2022-02-25 20:00:00,Genoa,Inter,0,0,0.770871,1.15904
+2021-22,Serie A,17022,2022-02-26 14:00:00,Salernitana,Bologna,1,1,1.32318,0.611632
+2021-22,Serie A,17017,2022-02-26 17:00:00,Empoli,Juventus,2,3,1.37121,2.13647
+2021-22,Serie A,17023,2022-02-26 19:45:00,Sassuolo,Fiorentina,2,1,1.72605,2.13772
+2021-22,Serie A,17025,2022-02-27 11:30:00,Torino,Cagliari,1,2,1.3681,1.69853
+2021-22,Serie A,17019,2022-02-27 14:00:00,Verona,Venezia,3,1,3.53339,0.974017
+2021-22,Serie A,17024,2022-02-27 17:00:00,Spezia,Roma,0,1,0.364313,4.55711
+2021-22,Serie A,17020,2022-02-27 19:45:00,Lazio,Napoli,1,2,1.43139,0.849244
+2021-22,Serie A,17016,2022-02-28 19:45:00,Atalanta,Sampdoria,4,0,2.69433,0.476071
+2021-22,Serie A,17030,2022-03-04 19:45:00,Inter,Salernitana,5,0,4.69296,0.836976
+2021-22,Serie A,17034,2022-03-05 14:00:00,Udinese,Sampdoria,2,1,2.57043,0.661531
+2021-22,Serie A,17033,2022-03-05 17:00:00,Roma,Atalanta,1,0,1.74727,1.05953
+2021-22,Serie A,17027,2022-03-05 19:45:00,Cagliari,Lazio,0,3,0.596491,2.68261
+2021-22,Serie A,17029,2022-03-06 11:30:00,Genoa,Empoli,0,0,1.26288,0.319298
+2021-22,Serie A,17026,2022-03-06 14:00:00,Bologna,Torino,0,0,0.24493,0.754248
+2021-22,Serie A,17028,2022-03-06 14:00:00,Fiorentina,Verona,1,1,1.53524,0.97388
+2021-22,Serie A,17035,2022-03-06 14:00:00,Venezia,Sassuolo,1,4,3.09905,3.70614
+2021-22,Serie A,17031,2022-03-06 17:00:00,Juventus,Spezia,1,0,1.41795,0.984779
+2021-22,Serie A,17032,2022-03-06 19:45:00,Napoli,AC Milan,0,1,0.377216,1.29857
+2021-22,Serie A,17041,2022-03-12 14:00:00,Salernitana,Sassuolo,2,2,1.63738,1.5945
+2021-22,Serie A,17043,2022-03-12 14:00:00,Spezia,Cagliari,2,0,2.30067,0.490723
+2021-22,Serie A,17042,2022-03-12 17:00:00,Sampdoria,Juventus,1,3,1.39467,1.43772
+2021-22,Serie A,17040,2022-03-12 19:45:00,AC Milan,Empoli,1,0,0.868404,0.69889
+2021-22,Serie A,17037,2022-03-13 11:30:00,Fiorentina,Bologna,1,0,2.74019,0.966761
+2021-22,Serie A,17038,2022-03-13 14:00:00,Verona,Napoli,1,2,0.870895,2.06949
+2021-22,Serie A,17036,2022-03-13 17:00:00,Atalanta,Genoa,0,0,1.1714,0.731994
+2021-22,Serie A,17045,2022-03-13 17:00:00,Udinese,Roma,1,1,0.92821,1.07674
+2021-22,Serie A,17044,2022-03-13 19:45:00,Torino,Inter,1,1,2.30248,2.6573
+2021-22,Serie A,17039,2022-03-14 19:45:00,Lazio,Venezia,1,0,1.45542,0.399391
+2021-22,Serie A,17054,2022-03-18 17:45:00,Sassuolo,Spezia,4,1,2.44051,0.28431
+2021-22,Serie A,17049,2022-03-18 20:00:00,Genoa,Torino,1,0,0.953473,0.517226
+2021-22,Serie A,17052,2022-03-19 14:00:00,Napoli,Udinese,2,1,1.28206,0.771369
+2021-22,Serie A,17050,2022-03-19 17:00:00,Inter,Fiorentina,1,1,0.996394,1.05358
+2021-22,Serie A,17047,2022-03-19 19:45:00,Cagliari,AC Milan,0,1,0.748068,2.41621
+2021-22,Serie A,17055,2022-03-20 11:30:00,Venezia,Sampdoria,0,2,1.64587,1.39567
+2021-22,Serie A,17048,2022-03-20 14:00:00,Empoli,Verona,1,1,0.934289,1.54465
+2021-22,Serie A,17051,2022-03-20 14:00:00,Juventus,Salernitana,2,0,2.40548,0.438066
+2021-22,Serie A,17053,2022-03-20 17:00:00,Roma,Lazio,3,0,2.47701,0.358377
+2021-22,Serie A,17046,2022-03-20 19:45:00,Bologna,Atalanta,0,1,1.59506,1.58088
+2021-22,Serie A,17064,2022-04-02 13:00:00,Spezia,Venezia,1,0,1.14124,0.53455
+2021-22,Serie A,17060,2022-04-02 16:00:00,Lazio,Sassuolo,2,1,2.09117,1.71478
+2021-22,Serie A,17062,2022-04-02 18:45:00,Salernitana,Torino,0,1,1.08204,1.45234
+2021-22,Serie A,17057,2022-04-03 10:30:00,Fiorentina,Empoli,1,0,1.71922,0.207616
+2021-22,Serie A,17056,2022-04-03 13:00:00,Atalanta,Napoli,1,3,1.66786,1.84682
+2021-22,Serie A,17065,2022-04-03 13:00:00,Udinese,Cagliari,5,1,5.37396,0.256503
+2021-22,Serie A,17063,2022-04-03 16:00:00,Sampdoria,Roma,0,1,0.449626,1.1837
+2021-22,Serie A,17059,2022-04-03 18:45:00,Juventus,Inter,0,1,1.89815,1.0453
+2021-22,Serie A,17058,2022-04-04 16:30:00,Verona,Genoa,1,0,1.209,0.709184
+2021-22,Serie A,17061,2022-04-04 18:45:00,AC Milan,Bologna,0,0,1.83563,0.79281
+2021-22,Serie A,17068,2022-04-09 13:00:00,Empoli,Spezia,0,0,0.888808,1.52229
+2021-22,Serie A,17070,2022-04-09 16:00:00,Inter,Verona,2,0,2.68092,0.916591
+2021-22,Serie A,17067,2022-04-09 18:45:00,Cagliari,Juventus,1,2,0.213416,1.58167
+2021-22,Serie A,17069,2022-04-10 10:30:00,Genoa,Lazio,1,4,0.57986,2.15663
+2021-22,Serie A,17071,2022-04-10 13:00:00,Napoli,Fiorentina,2,3,1.45436,0.894842
+2021-22,Serie A,17073,2022-04-10 13:00:00,Sassuolo,Atalanta,2,1,1.66107,1.85636
+2021-22,Serie A,17075,2022-04-10 13:00:00,Venezia,Udinese,1,2,1.18437,3.08444
+2021-22,Serie A,17072,2022-04-10 16:00:00,Roma,Salernitana,2,1,1.95563,0.544663
+2021-22,Serie A,17074,2022-04-10 18:45:00,Torino,AC Milan,0,0,0.635906,0.691935
+2021-22,Serie A,17066,2022-04-11 18:45:00,Bologna,Sampdoria,2,0,2.56257,0.566838
+2021-22,Serie A,17084,2022-04-15 17:00:00,Spezia,Inter,1,3,0.413811,2.74371
+2021-22,Serie A,17081,2022-04-15 19:00:00,AC Milan,Genoa,2,0,1.81517,0.252167
+2021-22,Serie A,17077,2022-04-16 10:30:00,Cagliari,Sassuolo,1,0,1.90806,0.294539
+2021-22,Serie A,17083,2022-04-16 12:30:00,Sampdoria,Salernitana,1,2,0.90485,0.505369
+2021-22,Serie A,17085,2022-04-16 12:30:00,Udinese,Empoli,4,1,1.12137,1.96032
+2021-22,Serie A,17078,2022-04-16 14:30:00,Fiorentina,Venezia,1,0,3.78568,0.131667
+2021-22,Serie A,17079,2022-04-16 16:30:00,Juventus,Bologna,1,1,2.24238,0.991401
+2021-22,Serie A,17080,2022-04-16 18:45:00,Lazio,Torino,1,1,0.987224,0.981319
+2021-22,Serie A,17082,2022-04-18 17:00:00,Napoli,Roma,1,1,1.2951,1.34625
+2021-22,Serie A,17076,2022-04-18 19:00:00,Atalanta,Verona,1,2,1.27003,3.74719
+2021-22,Serie A,16944,2022-04-20 16:45:00,Udinese,Salernitana,0,1,0.480919,1.09235
+2021-22,Serie A,17094,2022-04-23 13:00:00,Torino,Spezia,2,1,2.68611,0.989529
+2021-22,Serie A,17095,2022-04-23 13:00:00,Venezia,Atalanta,1,3,0.703396,3.55103
+2021-22,Serie A,17090,2022-04-23 16:00:00,Inter,Roma,3,1,1.78507,1.23184
+2021-22,Serie A,17089,2022-04-23 18:45:00,Verona,Sampdoria,1,1,1.42671,0.913747
+2021-22,Serie A,17092,2022-04-24 10:30:00,Salernitana,Fiorentina,2,1,1.32457,0.507881
+2021-22,Serie A,17086,2022-04-24 13:00:00,Bologna,Udinese,2,2,0.933408,1.71422
+2021-22,Serie A,17087,2022-04-24 13:00:00,Empoli,Napoli,3,2,1.80347,1.30674
+2021-22,Serie A,17088,2022-04-24 16:00:00,Genoa,Cagliari,1,0,0.72812,0.923392
+2021-22,Serie A,17091,2022-04-24 18:45:00,Lazio,AC Milan,1,2,0.75325,2.45325
+2021-22,Serie A,17093,2022-04-25 18:45:00,Sassuolo,Juventus,1,2,1.3833,0.54335
+2021-22,Serie A,16948,2022-04-27 16:00:00,Fiorentina,Udinese,0,4,2.81473,3.3303
+2021-22,Serie A,16947,2022-04-27 18:15:00,Bologna,Inter,2,1,1.38147,2.44323
+2021-22,Serie A,16946,2022-04-27 20:15:00,Atalanta,Torino,4,4,2.63289,2.44099
+2021-22,Serie A,17097,2022-04-30 13:00:00,Cagliari,Verona,1,2,0.698699,1.5873
+2021-22,Serie A,17101,2022-04-30 13:00:00,Napoli,Sassuolo,6,1,3.24407,1.15108
+2021-22,Serie A,17103,2022-04-30 16:00:00,Sampdoria,Genoa,1,0,1.54966,1.54661
+2021-22,Serie A,17104,2022-04-30 18:45:00,Spezia,Lazio,3,4,1.59858,3.13613
+2021-22,Serie A,17099,2022-05-01 10:30:00,Juventus,Venezia,2,1,2.2771,0.746217
+2021-22,Serie A,17098,2022-05-01 13:00:00,Empoli,Torino,1,3,0.722045,3.02504
+2021-22,Serie A,17100,2022-05-01 13:00:00,AC Milan,Fiorentina,1,0,1.54898,0.516032
+2021-22,Serie A,17105,2022-05-01 16:00:00,Udinese,Inter,1,2,1.22718,2.52307
+2021-22,Serie A,17102,2022-05-01 18:45:00,Roma,Bologna,0,0,0.985697,1.44805
+2021-22,Serie A,17096,2022-05-02 18:45:00,Atalanta,Salernitana,1,1,1.48441,1.4366
+2021-22,Serie A,16952,2022-05-05 16:00:00,Salernitana,Venezia,2,1,1.97941,1.32167
+2021-22,Serie A,17109,2022-05-06 16:45:00,Inter,Empoli,4,2,5.56052,0.682871
+2021-22,Serie A,17107,2022-05-06 19:00:00,Genoa,Juventus,2,1,3.11452,1.95852
+2021-22,Serie A,17114,2022-05-07 13:00:00,Torino,Napoli,0,1,0.569398,1.5765
+2021-22,Serie A,17112,2022-05-07 16:00:00,Sassuolo,Udinese,1,1,1.50599,2.43382
+2021-22,Serie A,17110,2022-05-07 18:45:00,Lazio,Sampdoria,2,0,2.35961,0.726496
+2021-22,Serie A,17113,2022-05-08 10:30:00,Spezia,Atalanta,1,3,1.09582,2.4171
+2021-22,Serie A,17115,2022-05-08 13:00:00,Venezia,Bologna,4,3,2.47386,2.42822
+2021-22,Serie A,17111,2022-05-08 16:00:00,Salernitana,Cagliari,1,1,1.62897,0.382997
+2021-22,Serie A,17108,2022-05-08 18:45:00,Verona,AC Milan,1,3,1.07974,3.12506
+2021-22,Serie A,17106,2022-05-09 18:45:00,Fiorentina,Roma,2,0,1.70341,0.580624
+2021-22,Serie A,17118,2022-05-14 13:00:00,Empoli,Salernitana,1,1,1.76936,3.34278
+2021-22,Serie A,17119,2022-05-14 16:00:00,Verona,Torino,0,1,0.692798,1.74109
+2021-22,Serie A,17125,2022-05-14 16:00:00,Udinese,Spezia,2,3,1.40244,2.64896
+2021-22,Serie A,17123,2022-05-14 18:45:00,Roma,Venezia,1,1,3.01714,0.343274
+2021-22,Serie A,17116,2022-05-15 10:30:00,Bologna,Sassuolo,1,3,1.64743,2.61319
+2021-22,Serie A,17122,2022-05-15 13:00:00,Napoli,Genoa,3,0,2.3453,1.0345
+2021-22,Serie A,17121,2022-05-15 16:00:00,AC Milan,Atalanta,2,0,1.53356,0.779491
+2021-22,Serie A,17117,2022-05-15 18:45:00,Cagliari,Inter,1,3,0.669726,2.63086
+2021-22,Serie A,17124,2022-05-16 16:30:00,Sampdoria,Fiorentina,4,1,1.7651,1.57284
+2021-22,Serie A,17120,2022-05-16 18:45:00,Juventus,Lazio,2,2,0.767731,0.839523
+2021-22,Serie A,17134,2022-05-20 18:45:00,Torino,Roma,0,3,0.516826,2.72468
+2021-22,Serie A,17128,2022-05-21 15:15:00,Genoa,Bologna,0,1,0.916093,1.06929
+2021-22,Serie A,17126,2022-05-21 18:45:00,Atalanta,Empoli,0,1,3.27816,0.290017
+2021-22,Serie A,17127,2022-05-21 18:45:00,Fiorentina,Juventus,2,0,1.38571,0.0655878
+2021-22,Serie A,17130,2022-05-21 18:45:00,Lazio,Verona,3,3,3.45526,1.97266
+2021-22,Serie A,17133,2022-05-22 10:30:00,Spezia,Napoli,0,3,1.70411,1.7779
+2021-22,Serie A,17129,2022-05-22 16:00:00,Inter,Sampdoria,3,0,2.96426,0.836763
+2021-22,Serie A,17132,2022-05-22 16:00:00,Sassuolo,AC Milan,0,3,0.293355,4.00571
+2021-22,Serie A,17131,2022-05-22 19:00:00,Salernitana,Udinese,0,4,2.38256,2.36064
+2021-22,Serie A,17135,2022-05-22 19:00:00,Venezia,Cagliari,0,0,0.665291,1.57535
