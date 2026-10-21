@@ -21,7 +21,10 @@ de temporada de fbref; para xG hay que ir a Understat.
 Uso:
     python fetch_fbref.py                 # todas las temporadas que falten
     python fetch_fbref.py 2023-24 2022-23 # solo esas
-    python fetch_fbref.py --force 2024-25 # re-baja aunque ya existan los CSV
+    python fetch_fbref.py --force 2024-25 # rehace los CSV aunque ya existan
+    python fetch_fbref.py --refrescar 2026-27  # además vuelve a pedir las páginas a
+                                          # fbref (temporada en curso: el caché
+                                          # nunca expira por su cuenta)
 """
 
 import io
@@ -66,7 +69,20 @@ TABLES = {
 SEASONS = ["2021-22", "2022-23", "2023-24", "2024-25", "2025-26", "2026-27"]
 
 DELAY_SECONDS = 4  # entre páginas nuevas; las cacheadas no esperan
+INTENTOS_PAGINA = 3  # por página, reiniciando el navegador entre uno y otro
 _reader = None
+
+
+def reiniciar_reader():
+    """Descarta el navegador actual (esté vivo o muerto) para que la próxima
+    petición levante uno nuevo."""
+    global _reader
+    if _reader is not None:
+        try:
+            _reader._driver.quit()
+        except Exception:
+            pass
+        _reader = None
 
 
 def season_to_fbref(season):
@@ -86,26 +102,55 @@ def get_reader():
     return _reader
 
 
-def fetch_page(liga, comp_id, slug, season):
+def fetch_page(liga, comp_id, slug, season, refrescar=False):
     """HTML de la página de temporada de una liga, cacheado en disco.
 
     Las temporadas cerradas no cambian, así que una vez bajada la página no se
-    vuelve a pedir nunca (`max_age` largo)."""
+    vuelve a pedir nunca (`max_age` largo). La temporada en curso sí cambia
+    cada fin de semana: con `refrescar` se vuelve a pedir aunque haya caché.
+
+    Al refrescar, la copia vieja se aparta en vez de borrarse: si la descarga
+    falla (o trae una página que no es la tabla, que es lo que pasa cuando
+    Cloudflare se interpone), se restaura y la corrida falla en voz alta en vez
+    de dejar el caché envenenado."""
     fb_season = season_to_fbref(season)
     url = f"https://fbref.com/en/comps/{comp_id}/{fb_season}/{fb_season}-{slug}-Stats"
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
     cached = CACHE_DIR / f"{season}_{slug}.html"
 
-    if cached.exists():
+    if cached.exists() and not refrescar:
         print(f"    {liga:15s} (caché)")
         return cached.read_text(encoding="utf-8")
 
     print(f"    {liga:15s} descargando...", flush=True)
-    reader = get_reader()
-    with reader.get(url, filepath=cached, max_age=3650) as fh:
-        html = fh.read()
-    if isinstance(html, bytes):
-        html = html.decode("utf-8", errors="replace")
+    respaldo = cached.with_name(cached.name + ".bak")
+    if cached.exists():
+        cached.replace(respaldo)
+    for intento in range(1, INTENTOS_PAGINA + 1):
+        try:
+            reader = get_reader()
+            with reader.get(url, filepath=cached, max_age=3650) as fh:
+                html = fh.read()
+            if isinstance(html, bytes):
+                html = html.decode("utf-8", errors="replace")
+            if TABLES["leagues_overall"] not in html.replace("<!--", ""):
+                raise ValueError(f"{liga} {season}: la página no trae la tabla de equipos "
+                                 f"({len(html) // 1024} KB)")
+            break
+        except Exception as exc:
+            cached.unlink(missing_ok=True)
+            if intento == INTENTOS_PAGINA:
+                if respaldo.exists():
+                    respaldo.replace(cached)
+                raise
+            # Chrome se cae a veces a media corrida y `soccerdata` sigue
+            # reintentando contra el mismo navegador muerto ("conexión rechazada"
+            # al chromedriver): hay que tirarlo y levantar uno nuevo.
+            print(f"      intento {intento}/{INTENTOS_PAGINA} falló ({type(exc).__name__}), "
+                  "se reinicia el navegador", flush=True)
+            reiniciar_reader()
+            time.sleep(10)
+    respaldo.unlink(missing_ok=True)
     time.sleep(DELAY_SECONDS)
     return html
 
@@ -140,19 +185,27 @@ def extract_table(html, table_id, contexto):
     return df
 
 
-def build_season(season, force=False):
-    """Escribe los 10 CSV de una temporada. Devuelve cuántos escribió."""
+def build_season(season, force=False, refrescar=False):
+    """Escribe los 10 CSV de una temporada. Devuelve cuántos escribió.
+
+    `refrescar` es `force` más volver a pedir las páginas a fbref en vez de
+    leerlas del caché: lo que hace falta para la temporada en curso."""
     out_dir = DATA_DIR / season
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    force = force or refrescar
     pendientes = [n for n in TABLES if force or not (out_dir / f"{n}.csv").exists()]
     if not pendientes:
         print(f"  ya están los 10 CSV, se salta (usa --force para rehacerlos)")
         return 0
 
-    pages = {liga: fetch_page(liga, cid, slug, season) for liga, cid, slug in LEAGUES}
+    pages = {liga: fetch_page(liga, cid, slug, season, refrescar)
+             for liga, cid, slug in LEAGUES}
 
-    escritos = 0
+    # Primero se extraen y validan las 10 tablas y recién después se escribe:
+    # si una falla a la mitad, no queda la temporada con unos CSV nuevos y otros
+    # viejos (jornadas distintas en cada tabla).
+    tablas = {}
     for nombre in pendientes:
         table_id = TABLES[nombre]
         bloques = []
@@ -166,17 +219,19 @@ def build_season(season, force=False):
         anchos = {len(b.columns) for b in bloques}
         if len(anchos) != 1:
             raise ValueError(f"{season} {nombre}: las ligas traen distinto nº de columnas: {anchos}")
+        tablas[nombre] = full
 
+    for nombre, full in tablas.items():
         full.to_csv(out_dir / f"{nombre}.csv", index=False, encoding="utf-8")
-        escritos += 1
         print(f"    {nombre + '.csv':24s} {full.shape[0]:3d} equipos x {full.shape[1]} columnas")
 
-    return escritos
+    return len(tablas)
 
 
 def main():
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     force = "--force" in sys.argv
+    refrescar = "--refrescar" in sys.argv
     seasons = args or SEASONS
 
     desconocidas = [s for s in seasons if s not in SEASONS]
@@ -186,7 +241,7 @@ def main():
     total = 0
     for season in seasons:
         print(f"\n{season}  ({season_to_fbref(season)})")
-        total += build_season(season, force=force)
+        total += build_season(season, force=force, refrescar=refrescar)
 
     print(f"\n{total} CSV escritos. Siguiente paso: python consolidate_data.py")
 

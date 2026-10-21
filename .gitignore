@@ -28,3 +28,4 @@ img/
 web/react/node_modules/
 # Fixtures de la prueba de paridad JS/Python (se regeneran con web/react/test/gen_paridad.py)
 web/react/test/fixtures/
+logs/
