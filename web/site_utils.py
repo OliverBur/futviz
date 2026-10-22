@@ -90,10 +90,6 @@ def nivel_filter(df, hint):
     return {**NIVEL_FILTER, "options": opciones, "hint": hint}
 
 
-FUENTES_SITIO = (f"Datos: FBref (equipos) y Understat (jugadores y tiros) · "
-                 f"Las 5 grandes ligas de Europa, temporadas "
-                 f"{SEASONS[0]} a {SEASONS[-1]}")
-
 sys.path.insert(0, str(CODE_DIR))
 
 from viz_theme import INK, LEAGUE_COLORS, LEAGUE_COLORS_DARK  # noqa: E402
@@ -478,10 +474,8 @@ CHART_ICONS = {
 }
 
 
-# Slug de archivo para la página de cada sección (dist/{slug}.html) y
-# metadatos de la card correspondiente en la landing. `preview` es el
-# thumbnail que se genera en `build.py` (`build_previews()`) — real si
-# existe `img/preview-{slug}.png`, si no un placeholder generado.
+# Slug de archivo para la página de cada sección (dist/{slug}.html), su título y su bajada. La landing
+# (`landing.py`) toma de aquí los enlaces del menú y la lectura destacada.
 SECTION_META = {
     # Equipos y Jugadores ya no tienen página propia: viven juntos en "Análisis exploratorio"
     # (`section_views.py`). Siguen aquí porque `slug` nombra la carpeta de sus
@@ -492,19 +486,13 @@ SECTION_META = {
         "slug": "analisis-exploratorio",
         "description": "Rendimiento, estilo y nivel de jugadores y equipos de las 5 grandes ligas, "
                        "con filtros y un explorador para cruzar cualquier par de variables.",
-        "preview": "preview-analisis-exploratorio.png",
         "views": True,
         "entidades": ["Jugadores", "Equipos"],  # orden de la fila de arriba; la primera abre la página
     },
-    # `noun` es lo que se cuenta en la card de la landing: las otras dos
-    # secciones ofrecen gráficos sueltos para explorar, esta ofrece
-    # análisis para leer de principio a fin.
     "Machine Learning": {
         "slug": "machine-learning",
         "description": "Aplicación de modelos de Machine Learning para buscar patrones "
                         "que no estén a simple vista.",
-        "preview": "preview-machine-learning.png",
-        "noun": "análisis",
         "reader": True,   # una sola página con lector (`ml_reader.py`), no una grilla de cards
         # Artículos en preparación: salen en el carrusel como "Próximamente" y no cuentan en la
         # landing. Cuando uno se publique, se borra de aquí y entra solo como `ArticlePage`.
@@ -648,161 +636,6 @@ BRAND_ROOT_CSS = """
   html[data-theme="dark"] img.logo-theme-light { display: none; }
   html[data-theme="dark"] img.logo-theme-dark { display: block; }
 """.replace("__BG_CLARO__", COLOR_BG_CLARO).replace("__BORDE_CLARO__", COLOR_BORDE_CLARO)
-
-INDEX_TEMPLATE = """<!doctype html>
-<html lang="es">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-{theme_color}
-<title>FutViz — EDA 5 grandes ligas</title>
-{favicon}
-{theme_init_script}
-{font_links}
-<style>
-{brand_root}
-  /* La landing no tiene barra de nav — el toggle queda fijo arriba a la
-     derecha de toda la página, no dentro del header centrado. */
-  .theme-toggle--floating {{ position: fixed; top: 16px; right: 16px; z-index: 20;
-    box-shadow: 0 2px 10px rgba(18, 24, 26, 0.10); }}
-
-  /* Textura de puntos (misma pareja de colores del logo) en toda la
-     página, muy tenue — no es ningún motivo futbolero, es un patrón
-     geométrico abstracto — más los dos degradados suaves de siempre.
-     Los dos resplandores son slate: con el fondo claro casi blanco, el verde
-     de la esquina se leía como una mancha verdosa. */
-  body {{
-    min-height: 100vh;
-    background:
-      radial-gradient(640px circle at 12% 10%, rgba(44, 76, 84, 0.07), transparent 60%),
-      radial-gradient(720px circle at 88% 14%, rgba(44, 76, 84, 0.06), transparent 60%),
-      radial-gradient(rgba(44, 76, 84, 0.077) 1.4px, transparent 1.6px),
-      radial-gradient(rgba(57, 153, 6, 0.066) 1.4px, transparent 1.6px),
-      var(--color-bg);
-    background-size: auto, auto, 22px 22px, 22px 22px, auto;
-    background-position: 0 0, 0 0, 0 0, 11px 11px, 0 0;
-  }}
-
-  .hero-header {{ text-align: center; padding: 56px 20px 40px; }}
-  .logo-large {{ display: block; width: min(460px, 88vw); height: auto; margin: 0 auto 28px; }}
-
-  /* Motivación: es una frase, no una cifra, así que va en tamaño de
-     subtítulo y en --color-text-body — el verde queda reservado a las
-     dos palabras clave (--color-interactive, no --color-brand-accent:
-     es texto chico, tiene que pasar AA). */
-  .motivation {{ color: var(--color-text-body); font-size: 14.5px; line-height: 1.6;
-    max-width: 56ch; margin: 0 auto; }}
-  .motivation .accent-word {{ color: var(--color-interactive); font-weight: 600; }}
-
-  /* "Quién hizo esto". Va en el hero y no en el pie: en un sitio de una
-     persona la autoría es parte de la presentación, no una nota al pie —
-     y el pie de la landing ya está ocupado por el crédito de las fuentes,
-     que es otra cosa. */
-  .author {{ color: var(--color-muted); font-size: 13.5px; margin: 24px 0 0; }}
-  .author strong {{ color: var(--color-text-body); font-weight: 600; }}
-  .social {{ display: flex; justify-content: center; gap: 10px; margin-top: 12px; }}
-  /* Píldoras con logo + nombre, no el logo solo: los dos glifos son
-     reconocibles pero el texto es lo que hace que el link se entienda sin
-     tener que reconocerlos, y da un objetivo táctil de tamaño decente. */
-  .social-link {{ display: inline-flex; align-items: center; gap: 7px;
-    padding: 7px 14px; border-radius: 999px; text-decoration: none;
-    font-size: 13px; font-weight: 600; color: var(--color-primary);
-    background: var(--color-surface); border: 1px solid var(--color-border);
-    transition: transform .18s ease, box-shadow .18s ease,
-      border-color .18s ease, color .18s ease; }}
-  .social-link svg {{ width: 16px; height: 16px; fill: currentColor; flex: none; }}
-  .social-link:hover {{ transform: translateY(-2px); color: var(--color-interactive);
-    border-color: var(--color-interactive);
-    box-shadow: 0 6px 16px rgba(44, 76, 84, 0.14); }}
-  .social-link:focus-visible {{ outline: 2px solid var(--color-interactive);
-    outline-offset: 2px; }}
-
-  .hub-main {{ max-width: 900px; margin: 0 auto; padding: 44px 20px 56px; text-align: center; }}
-  .cards {{ display: flex; flex-direction: column; align-items: center; gap: 20px; }}
-  .foot {{ color: var(--color-muted); font-size: 12.5px; margin: 48px 0 0; }}
-
-  /* Columna flex (no block) para que el chip de abajo se pueda empujar al
-     fondo de la tarjeta — ver .hub-count. */
-  a.hub-card {{ display: flex; flex-direction: column; width: 100%; max-width: 380px;
-    text-align: left;
-    text-decoration: none; color: inherit; cursor: pointer; overflow: hidden;
-    background: var(--color-surface); border: 1px solid var(--color-border);
-    border-radius: 18px;
-    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }}
-  a.hub-card:hover, a.hub-card:focus-visible {{
-    transform: translateY(-4px);
-    box-shadow: 0 18px 34px rgba(44, 76, 84, 0.16);
-    border-color: var(--color-interactive);
-  }}
-  a.hub-card:focus-visible {{ outline: 2px solid var(--color-interactive); outline-offset: 3px; }}
-  .hub-thumb {{ display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover;
-    background: var(--color-bg); }}
-  /* Igual criterio que el toggle sol/luna: dos <img>, se muestra una u
-     otra según el tema — el thumbnail oscuro es una captura real en
-     oscuro (ver build_previews() en build.py), no un filtro CSS. */
-  .hub-thumb-dark {{ display: none; }}
-  html[data-theme="dark"] .hub-thumb-light {{ display: none; }}
-  html[data-theme="dark"] .hub-thumb-dark {{ display: block; }}
-  .hub-body {{ padding: 22px 24px 26px; display: flex; flex-direction: column; flex: 1; }}
-  .hub-title {{ font-size: 21px; font-weight: 700; color: var(--color-primary); margin-bottom: 8px; }}
-  .hub-sub {{ font-size: 14px; color: var(--color-text-body); line-height: 1.5; margin-bottom: 18px; }}
-  /* `margin-top: auto` pega el chip al fondo de la tarjeta: así los tres
-     quedan alineados entre sí aunque una descripción ocupe un renglón más
-     que las otras (antes el chip flotaba justo debajo del texto y se veía
-     desparejo). `align-self` evita que el flex lo estire a todo el ancho. */
-  .hub-count {{ display: inline-block; align-self: flex-start; margin-top: auto;
-    font-size: 12px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: .05em; color: var(--color-primary); background: var(--color-brand-accent-soft);
-    border: 1px solid rgba(57, 153, 6, 0.35); border-radius: 999px; padding: 5px 12px; }}
-
-  @media (min-width: 640px) {{
-    .hero-header {{ padding: 64px 20px 48px; }}
-    .logo-large {{ width: min(560px, 60vw); }}
-    .motivation {{ font-size: 16px; }}
-    .cards {{ flex-direction: row; justify-content: center; align-items: stretch; gap: 24px; }}
-    a.hub-card {{ flex: 1 1 320px; }}
-  }}
-</style>
-</head>
-<body>
-<div class="theme-toggle--floating">{theme_toggle}</div>
-<header class="hero-header">
-  {logo}
-  <p class="motivation">Nació de juntar mi pasión por el <span class="accent-word">fútbol</span> con la
-    <span class="accent-word">ciencia de datos</span>.</p>
-  <p class="author">Autor: <strong>Oliver Burguete</strong></p>
-  <div class="social">
-    <a class="social-link" href="https://github.com/OliverBur"
-       target="_blank" rel="noopener noreferrer">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
-      GitHub
-    </a>
-    <a class="social-link" href="https://www.linkedin.com/in/oliburguete"
-       target="_blank" rel="noopener noreferrer">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/></svg>
-      LinkedIn
-    </a>
-  </div>
-</header>
-<main class="hub-main">
-  <div class="cards">{cards}</div>
-  <p class="foot">{fuentes}</p>
-</main>
-{theme_toggle_script}
-</body>
-</html>
-"""
-
-HUB_CARD_TEMPLATE = """<a class="hub-card" href="{slug}.html">
-  <img class="hub-thumb hub-thumb-light" src="assets/{preview}" alt="Vista previa — {name}">
-  <img class="hub-thumb hub-thumb-dark" src="assets/{preview_dark}" alt="Vista previa — {name}">
-  <div class="hub-body">
-    <div class="hub-title">{name}</div>
-    <div class="hub-sub">{description}</div>
-    <div class="hub-count">{count} {noun}</div>
-  </div>
-</a>
-"""
 
 SECTION_PAGE_TEMPLATE = """<!doctype html>
 <html lang="es">
@@ -1279,40 +1112,6 @@ def write_section_pages(pages: list[ChartPage], dist_dir: Path) -> list[Path]:
         out_path.write_text(html, encoding="utf-8")
         out_paths.append(out_path)
     return out_paths
-
-
-def write_index(pages: list[ChartPage], dist_dir: Path) -> Path:
-    counts: dict[str, int] = {}
-    for page in pages:
-        # Las secciones con `hub` cuentan para la página que las reúne.
-        destino = SECTION_META.get(page.section, {}).get("hub", page.section)
-        counts[destino] = counts.get(destino, 0) + 1
-
-    def _noun(meta, n):
-        # "análisis" es invariable en plural, "gráfica" no — por eso el
-        # plural se resuelve acá y no concatenando una "s" en la plantilla.
-        singular = meta.get("noun", "gráfica")
-        return singular if n == 1 else ("análisis" if singular == "análisis" else f"{singular}s")
-
-    cards = "".join(
-        HUB_CARD_TEMPLATE.format(
-            slug=meta["slug"], name=name, description=meta["description"], preview=meta["preview"],
-            preview_dark=meta["preview"].replace(".png", "-dark.png"),
-            count=counts.get(name, 0), noun=_noun(meta, counts.get(name, 0)),
-        )
-        for name, meta in SECTION_META.items()
-        if name in counts
-    )
-
-    html = INDEX_TEMPLATE.format(
-        cards=cards, fuentes=FUENTES_SITIO, brand_root=BRAND_ROOT_CSS, font_links=FONT_LINKS,
-        theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML, theme_color=THEME_COLOR_META,
-        logo=logo_img(clase="logo-large", alt="FutViz"), favicon=favicon_links(),
-        theme_toggle_script=THEME_TOGGLE_SCRIPT,
-    )
-    out_path = dist_dir / "index.html"
-    out_path.write_text(html, encoding="utf-8")
-    return out_path
 
 
 def matplotlib_chart_body(fig, slug: str, assets_dir: Path, alt_text: str, variant: str = "light") -> str:
