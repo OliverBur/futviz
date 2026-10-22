@@ -94,14 +94,39 @@ sys.path.insert(0, str(CODE_DIR))
 
 from viz_theme import INK, LEAGUE_COLORS, LEAGUE_COLORS_DARK  # noqa: E402
 
-# Un solo <link> de Google Fonts, con todos los pesos que usa cualquier
-# plantilla del sitio (landing, secciones, páginas de chart) — se inyecta
-# igual en las tres para que la tipografía no cambie de una capa a otra.
-# Sansita se usa SOLO donde aparece la palabra "FutViz" como texto (no hay
-# logo de imagen a mano) — el resto del sitio sigue en Inter.
-FONT_LINKS = """<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sansita:wght@700;800&display=swap" rel="stylesheet">"""
+# Las fuentes se sirven desde el propio sitio (`web/static/fonts`, licencia OFL; `build.py` las copia a
+# `dist/assets/fonts`). Antes venían de Google Fonts: eso eran dos orígenes más (conexión, TLS) antes de
+# poder pintar el texto. Inter es variable (un archivo cubre los pesos 400 a 800) y va partida como en Google:
+# `latin` alcanza para el español y es la única que se precarga; `latin-ext` solo se pide si aparece un
+# carácter fuera de ese rango (un nombre de jugador con ł, ő, ğ...). Sansita se usa SOLO donde aparece la
+# palabra "FutViz" como texto (el resto del sitio es Inter). Abierto con doble clic (`file://`) el navegador
+# bloquea fuentes locales y el texto cae en la fuente del sistema: se ve distinto, pero no se rompe nada.
+_RANGO_LATIN = ("U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, "
+                "U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD")
+_RANGO_LATIN_EXT = ("U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, "
+                    "U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, "
+                    "U+2C60-2C7F, U+A720-A7FF")
+FUENTES = [   # (familia, peso, archivo, rango)
+    ("Inter", "400 800", "inter-400-800-latin.woff2", _RANGO_LATIN),
+    ("Inter", "400 800", "inter-400-800-latin-ext.woff2", _RANGO_LATIN_EXT),
+    ("Sansita", "700", "sansita-700-latin.woff2", _RANGO_LATIN),
+    ("Sansita", "700", "sansita-700-latin-ext.woff2", _RANGO_LATIN_EXT),
+    ("Sansita", "800", "sansita-800-latin.woff2", _RANGO_LATIN),
+    ("Sansita", "800", "sansita-800-latin-ext.woff2", _RANGO_LATIN_EXT),
+]
+
+
+def font_links(prefijo=""):
+    """Las fuentes de una página. `prefijo` es la ruta de la página a la raíz del sitio ("" o "../")."""
+    caras = "".join(
+        f"@font-face{{font-family:'{fam}';font-style:normal;font-weight:{peso};font-display:swap;"
+        f"src:url({prefijo}assets/fonts/{archivo}) format('woff2');unicode-range:{rango};}}"
+        for fam, peso, archivo, rango in FUENTES)
+    return (f'<link rel="preload" href="{prefijo}assets/fonts/{FUENTES[0][2]}" as="font" type="font/woff2" crossorigin>\n'
+            f"<style>{caras}</style>")
+
+
+FONT_LINKS = font_links()   # para las páginas que cuelgan de la raíz
 
 # El logo tiene dos versiones: `assets/logo.png` (slate, para el tema claro) y `assets/logo-dark.png`
 # (el slate pasa a `--color-primary` oscuro; ver `build.py:_trim_oscuro`). Van las dos <img> y el CSS de
@@ -1048,7 +1073,7 @@ def write_article_page(page: "ArticlePage", dist_dir: Path) -> Path:
         slug=page.slug, title=page.title, subtitle=page.subtitle, deck=page.deck, body=page.body_html,
         meta=meta_html, fuente=page.fuente, section_name=page.section,
         section_slug=section_meta.get("slug", "index"),
-        brand_root=BRAND_ROOT_CSS, font_links=FONT_LINKS, article_css=ARTICLE_CSS,
+        brand_root=BRAND_ROOT_CSS, font_links=font_links("../"), article_css=ARTICLE_CSS,
         theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML, theme_color=THEME_COLOR_META,
         logo=logo_img("../"), favicon=favicon_links("../"), ink_claro=INK["secondary"],
         react_scripts=(
@@ -1073,7 +1098,7 @@ def write_chart_page(page: ChartPage, charts_dir: Path) -> Path:
     html = PAGE_TEMPLATE.format(
         title=page.title, body=page.body_html,
         section_slug=section_slug, section_name=page.section,
-        font_links=FONT_LINKS, brand_root=BRAND_ROOT_CSS,
+        font_links=font_links("../"), brand_root=BRAND_ROOT_CSS,
         theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML, theme_color=THEME_COLOR_META,
         logo=logo_img("../"), favicon=favicon_links("../"),
         theme_toggle_script=PLOTLY_THEME_SCRIPT,

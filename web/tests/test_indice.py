@@ -62,6 +62,28 @@ class TestIndice(unittest.TestCase):
                     self.assertEqual(vistas[v][3], entidad, f"{nombre} -> {vistas[v][0]} no es de {entidad}")
                     self.assertIn(temporadas[ti], filas[nombre], f"{nombre} no tiene fila en {temporadas[ti]}")
 
+    def test_sugerencias(self):
+        """Las sugerencias del campo vacío: jugadores que están en el índice, con sus goles reales en esa
+        temporada, y vistas que existen."""
+        s = self.ix["s"]
+        nombres = {x[0] for x in self.ix["j"]}
+        t = _tabla("jugadores")
+        temporada = s["titulo"].rsplit(" ", 1)[-1]
+        self.assertIn(temporada, t["temporadas"])
+        ti = t["temporadas"].index(temporada)
+        goles = {}
+        for r in range(t["n"]):
+            if t["f"]["t"][r] == ti and t["c"]["goals"][r] is not None:
+                n = t["nombres"][t["f"]["j"][r]]
+                goles[n] = max(goles.get(n, 0), t["c"]["goals"][r])
+        self.assertTrue(s["j"])
+        for nombre, g in s["j"]:
+            self.assertIn(nombre, nombres)
+            self.assertEqual(g, goles[nombre], f"{nombre}: goles distintos a los de la tabla")
+        self.assertEqual(max(g for _, g in s["j"]), max(goles.values()), "falta el máximo goleador")
+        for i in s["v"]:
+            self.assertLess(i, len(self.ix["v"]))
+
     def test_enlaces_de_la_portada(self):
         slugs = {v[0] for v in self.ix["v"]}
         enlaces = re.findall(r'href="analisis-exploratorio\.html#([^"?]+)"', self.html)
