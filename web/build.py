@@ -74,14 +74,14 @@ def _caja_contenido(diff, pad):
 
 
 # Colores del logo fuente. El slate ("Fut" y el arco) es lo único que se recolorea para el tema oscuro: sobre
-# #12181A daba ~1.9:1. El destino es el MISMO slate aclarado lo mínimo para que se vea, no el casi blanco de
-# `--color-primary`: mismo matiz (~193°) y saturación (30 %), luminosidad de 25 % a 44 %, para que el logo siga siendo
-# el azul-teal de la marca y se parezca al del tema claro. Da 4.3:1 sobre #12181A y 3.8:1 sobre #1B2426 (sobre
-# 3:1, el mínimo para un gráfico; a 40 % ya se apaga: 3.2:1 sobre la superficie). Se probó antes #6099A9 (52 %) y
-# #568F9F (48 %): legibles pero demasiado claros frente al logo claro.
+# #12181A daba ~1.9:1. El destino es el MISMO slate aclarado, no el casi blanco de `--color-primary`: mismo matiz
+# (~193°) y saturación (30 %), luminosidad de 25 % a 36 %, para que el logo siga siendo el azul-teal de la marca y
+# quede lo más cerca posible del logo claro. Es una decisión de diseño que prioriza parecerse al original sobre el
+# contraste: da 3.06:1 sobre #12181A y 2.70:1 sobre #1B2426, o sea por debajo del 3:1 que se pide a un gráfico
+# sobre la superficie oscura (con #4F8392, 44 %, daba 4.26:1 y 3.76:1; con #6099A9, 52 %, 5.7:1 y 5.0:1).
 # Los verdes se quedan como están (son ≥ 4.3:1 sobre los dos fondos oscuros).
 LOGO_SLATE = (44, 76, 84)             # #2C4C54
-LOGO_SLATE_OSCURO = (79, 131, 146)    # #4F8392
+LOGO_SLATE_OSCURO = (63, 107, 120)    # #3F6B78
 
 
 def _trim_oscuro(im, pad=30):
