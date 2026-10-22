@@ -604,11 +604,6 @@
   window.addEventListener('hashchange', alHash);
   document.getElementById('skip').addEventListener('click', function(e) { e.preventDefault(); pane.focus({preventScroll: false}); });
 
-  // El theme-color de la barra del navegador sigue al fondo de la página, también al cambiar de tema a mano.
-  var metaTema = document.querySelector('meta[name="theme-color"]');
-  function sincronizarTema() { metaTema.content = getComputedStyle(document.documentElement).getPropertyValue('--color-bg').trim(); }
-  document.addEventListener('futviz-theme-change', sincronizarTema);
-  sincronizarTema();
 
   alHash();
 })();
@@ -750,6 +745,14 @@
   // Las páginas con vistas montan gráficos DESPUÉS de cargar (ver section_views.py):
   // al montarlos llaman a esto para que nazcan con la tinta del tema actual.
   window.futvizSyncPlotly = syncPlotly;
+
+  var metaTema = document.querySelector('meta[name="theme-color"]');
+  function sincronizarThemeColor() {
+    if (metaTema) metaTema.content = getComputedStyle(document.documentElement).getPropertyValue('--color-bg').trim();
+  }
+  document.addEventListener('futviz-theme-change', sincronizarThemeColor);
+  sincronizarThemeColor();
+
 
   var btn = document.getElementById('theme-toggle');
   if (btn) {

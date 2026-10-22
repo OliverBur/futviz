@@ -148,8 +148,28 @@ THEME_TOGGLE_HTML = """<button type="button" class="theme-toggle" id="theme-togg
   </svg>
 </button>"""
 
+# El <meta name="theme-color"> de todas las páginas (barra del navegador en móvil). El valor es solo el de
+# arranque, el del tema claro: `THEME_SYNC_JS` lo reescribe con el `--color-bg` del tema en uso.
+THEME_COLOR_META = '<meta name="theme-color" content="#EFEDF7">'
+
+# Lo que TODAS las páginas hacen con el tema además del botón, en un solo lugar: se inserta (con
+# `.replace("__THEME_SYNC__", ...)`) dentro del IIFE de `THEME_TOGGLE_SCRIPT` y de `PLOTLY_THEME_SCRIPT`,
+# que son los dos scripts de tema que existen (cada página lleva uno).
+#  1. theme-color: la barra del navegador sigue al fondo de la página, al cargar y en cada
+#     `futviz-theme-change`. Se lee la variable CSS (`--color-bg`) y no el fondo del <body>, que tiene
+#     una transición y justo al cambiar de tema todavía devuelve el color viejo.
+THEME_SYNC_JS = """  var metaTema = document.querySelector('meta[name="theme-color"]');
+  function sincronizarThemeColor() {
+    if (metaTema) metaTema.content = getComputedStyle(document.documentElement).getPropertyValue('--color-bg').trim();
+  }
+  document.addEventListener('futviz-theme-change', sincronizarThemeColor);
+  sincronizarThemeColor();
+
+"""
+
 THEME_TOGGLE_SCRIPT = """<script>
 (function() {
+__THEME_SYNC__
   var btn = document.getElementById('theme-toggle');
   if (!btn) return;
   btn.addEventListener('click', function() {
@@ -160,7 +180,7 @@ THEME_TOGGLE_SCRIPT = """<script>
     document.dispatchEvent(new CustomEvent('futviz-theme-change', {detail: {theme: next}}));
   });
 })();
-</script>"""
+</script>""".replace("__THEME_SYNC__", THEME_SYNC_JS)
 
 # Solo para páginas de chart con un gráfico Plotly (kind != radar/bar — ver
 # write_chart_page). El fondo del gráfico ya es transparente (paper/plot
@@ -307,6 +327,7 @@ PLOTLY_THEME_SCRIPT = """<script>
   // al montarlos llaman a esto para que nazcan con la tinta del tema actual.
   window.futvizSyncPlotly = syncPlotly;
 
+__THEME_SYNC__
   var btn = document.getElementById('theme-toggle');
   if (btn) {
     btn.addEventListener('click', function() {
@@ -328,7 +349,7 @@ PLOTLY_THEME_SCRIPT = PLOTLY_THEME_SCRIPT.replace(
     "__LEAGUE_COLORS__",
     json.dumps({liga: [LEAGUE_COLORS[liga].lower(), LEAGUE_COLORS_DARK[liga].lower()]
                  for liga in LEAGUE_COLORS}, ensure_ascii=False),
-)
+).replace("__THEME_SYNC__", THEME_SYNC_JS)
 
 
 @dataclass
@@ -476,6 +497,7 @@ PAGE_TEMPLATE = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+{theme_color}
 <title>{title} · FutViz</title>
 {favicon}
 {theme_init_script}
@@ -609,6 +631,7 @@ INDEX_TEMPLATE = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+{theme_color}
 <title>FutViz — EDA 5 grandes ligas</title>
 {favicon}
 {theme_init_script}
@@ -761,6 +784,7 @@ SECTION_PAGE_TEMPLATE = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+{theme_color}
 <title>{name} · FutViz</title>
 {favicon}
 {theme_init_script}
@@ -1046,6 +1070,7 @@ ARTICLE_PAGE_TEMPLATE = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+{theme_color}
 <title>{title} · FutViz</title>
 {favicon}
 <meta name="description" content="{subtitle}">
@@ -1166,7 +1191,7 @@ def write_article_page(page: "ArticlePage", dist_dir: Path) -> Path:
         meta=meta_html, fuente=page.fuente, section_name=page.section,
         section_slug=section_meta.get("slug", "index"),
         brand_root=BRAND_ROOT_CSS, font_links=FONT_LINKS, article_css=ARTICLE_CSS,
-        theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML,
+        theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML, theme_color=THEME_COLOR_META,
         logo=logo_img("../"), favicon=favicon_links("../"),
         react_scripts=(
             '<script>window.futvizBase="../";</script>\n'
@@ -1191,7 +1216,7 @@ def write_chart_page(page: ChartPage, charts_dir: Path) -> Path:
         title=page.title, body=page.body_html,
         section_slug=section_slug, section_name=page.section,
         font_links=FONT_LINKS, brand_root=BRAND_ROOT_CSS,
-        theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML,
+        theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML, theme_color=THEME_COLOR_META,
         logo=logo_img("../"), favicon=favicon_links("../"),
         theme_toggle_script=PLOTLY_THEME_SCRIPT,
     )
@@ -1221,7 +1246,7 @@ def write_section_pages(pages: list[ChartPage], dist_dir: Path) -> list[Path]:
         html = SECTION_PAGE_TEMPLATE.format(
             name=name, description=meta["description"], cards=cards,
             brand_root=BRAND_ROOT_CSS, font_links=FONT_LINKS,
-            theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML,
+            theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML, theme_color=THEME_COLOR_META,
             logo=logo_img(), favicon=favicon_links(),
             theme_toggle_script=THEME_TOGGLE_SCRIPT,
         )
@@ -1256,7 +1281,7 @@ def write_index(pages: list[ChartPage], dist_dir: Path) -> Path:
 
     html = INDEX_TEMPLATE.format(
         cards=cards, fuentes=FUENTES_SITIO, brand_root=BRAND_ROOT_CSS, font_links=FONT_LINKS,
-        theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML,
+        theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML, theme_color=THEME_COLOR_META,
         logo=logo_img(clase="logo-large", alt="FutViz"), favicon=favicon_links(),
         theme_toggle_script=THEME_TOGGLE_SCRIPT,
     )

@@ -29,7 +29,7 @@ import json
 from pathlib import Path
 
 from site_utils import (
-    BRAND_ROOT_CSS, FONT_LINKS, favicon_links, PAGE_HEADER_CSS, PAGE_HEADER_HTML, PLOTLY_THEME_SCRIPT, SECTION_META,
+    BRAND_ROOT_CSS, FONT_LINKS, THEME_COLOR_META, favicon_links, PAGE_HEADER_CSS, PAGE_HEADER_HTML, PLOTLY_THEME_SCRIPT, SECTION_META,
     THEME_INIT_SCRIPT, THEME_TOGGLE_HTML,
 )
 
@@ -40,7 +40,7 @@ VIEWS_PAGE_TEMPLATE = """<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>__NAME__ · FutViz</title>
 <meta name="description" content="__DESCRIPTION__">
-<meta name="theme-color" content="#EFEDF7">
+__THEME_COLOR__
 __FAVICON__
 __THEME_INIT__
 __FONT_LINKS__
@@ -294,11 +294,6 @@ __PAGE_HEADER__
   });
   document.getElementById('skip').addEventListener('click', function(e) { e.preventDefault(); contenido.focus(); });
 
-  // El theme-color de la barra del navegador sigue al fondo de la página, también al cambiar de tema a mano.
-  var metaTema = document.querySelector('meta[name="theme-color"]');
-  function sincronizarTema() { metaTema.content = getComputedStyle(document.documentElement).getPropertyValue('--color-bg').trim(); }
-  document.addEventListener('futviz-theme-change', sincronizarTema);
-  sincronizarTema();
 
   window.addEventListener('hashchange', function() { activar(slugDe(location.hash.slice(1))); });
   activar(slugDe(location.hash.slice(1)) || DEFECTO);
@@ -360,6 +355,7 @@ def write_section_views(section, entities, dist_dir: Path):
 
     ids = json.dumps(vistas, ensure_ascii=False).replace("</", "<\\/")
     html = (VIEWS_PAGE_TEMPLATE
+            .replace("__THEME_COLOR__", THEME_COLOR_META)
             .replace("__FAVICON__", favicon_links())
             .replace("__PAGE_HEADER_CSS__", PAGE_HEADER_CSS)
             .replace("__PAGE_HEADER__", PAGE_HEADER_HTML)
