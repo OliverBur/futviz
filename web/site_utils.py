@@ -668,11 +668,13 @@ INDEX_TEMPLATE = """<!doctype html>
 
   /* Textura de puntos (misma pareja de colores del logo) en toda la
      página, muy tenue — no es ningún motivo futbolero, es un patrón
-     geométrico abstracto — más los dos degradados suaves de siempre. */
+     geométrico abstracto — más los dos degradados suaves de siempre.
+     Los dos resplandores son slate: con el fondo claro casi blanco, el verde
+     de la esquina se leía como una mancha verdosa. */
   body {{
     min-height: 100vh;
     background:
-      radial-gradient(640px circle at 12% 10%, rgba(57, 153, 6, 0.07), transparent 60%),
+      radial-gradient(640px circle at 12% 10%, rgba(44, 76, 84, 0.07), transparent 60%),
       radial-gradient(720px circle at 88% 14%, rgba(44, 76, 84, 0.06), transparent 60%),
       radial-gradient(rgba(44, 76, 84, 0.077) 1.4px, transparent 1.6px),
       radial-gradient(rgba(57, 153, 6, 0.066) 1.4px, transparent 1.6px),

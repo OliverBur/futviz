@@ -81,13 +81,15 @@ DIVERGING = {"pos": "#2a78d6", "neg": "#e34948", "mid": "#C7CFD3"}
 # Tinta del tema claro. Antes eran grises cálidos (#0b0b0b, #52514e, #898781, #e1e0d9, #c3c2b7) y el sitio
 # es slate + verde sobre un fondo azul-gris (--color-bg #F2F6F8): cada tinta pasó a un gris de matiz ~195-200°
 # con la MISMA luminancia relativa que la que reemplaza, así que los gráficos no cambian de peso visual, solo de
-# matiz (contraste sobre el fondo: primary 18:1, secondary 7.3:1, muted 3.3:1). El `surface` es el
-# --color-surface del sitio. `PLOTLY_THEME_SCRIPT` (web/site_utils.py) toma estos valores de aquí.
+# matiz (contraste sobre el fondo: primary 18:1, secondary 7.3:1). La excepción es `muted`: es el
+# --color-muted del sitio (#57707A, 4.8:1), no el equivalente en luminancia (#798A91, 3.3:1), porque es la tinta
+# de los números de los ejes y a 11 px tiene que pasar 4.5:1. El `surface` es el --color-surface del sitio.
+# `PLOTLY_THEME_SCRIPT` (web/site_utils.py) toma estos valores de aquí.
 INK = {
     "surface": "#FFFFFF",
     "primary": "#070C0E",
     "secondary": "#44535A",
-    "muted": "#798A91",
+    "muted": "#57707A",
     "grid": "#D7E1E7",
     "axis": "#B6C4CA",
 }
