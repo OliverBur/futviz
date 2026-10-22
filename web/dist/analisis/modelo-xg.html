@@ -362,6 +362,8 @@
   // Las páginas con vistas montan gráficos DESPUÉS de cargar (ver section_views.py):
   // al montarlos llaman a esto para que nazcan con la tinta del tema actual.
   window.futvizSyncPlotly = syncPlotly;
+  // El botón ya llama a syncPlotly; esto cubre el cambio que viene del sistema operativo (es idempotente).
+  document.addEventListener('futviz-theme-change', syncPlotly);
 
   var metaTema = document.querySelector('meta[name="theme-color"]');
   function sincronizarThemeColor() {
@@ -370,6 +372,16 @@
   document.addEventListener('futviz-theme-change', sincronizarThemeColor);
   sincronizarThemeColor();
 
+  var oscuroSO = window.matchMedia('(prefers-color-scheme: dark)');
+  function alCambiarElSistema(e) {
+    try { if (localStorage.getItem('futviz-theme')) return; } catch (err) {}
+    var tema = e.matches ? 'dark' : 'light';
+    if (document.documentElement.getAttribute('data-theme') === tema) return;
+    document.documentElement.setAttribute('data-theme', tema);
+    document.dispatchEvent(new CustomEvent('futviz-theme-change', {detail: {theme: tema}}));
+  }
+  if (oscuroSO.addEventListener) oscuroSO.addEventListener('change', alCambiarElSistema);
+  else if (oscuroSO.addListener) oscuroSO.addListener(alCambiarElSistema);
 
   var btn = document.getElementById('theme-toggle');
   if (btn) {

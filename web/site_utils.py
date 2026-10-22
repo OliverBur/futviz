@@ -158,6 +158,10 @@ THEME_COLOR_META = '<meta name="theme-color" content="#EFEDF7">'
 #  1. theme-color: la barra del navegador sigue al fondo de la página, al cargar y en cada
 #     `futviz-theme-change`. Se lee la variable CSS (`--color-bg`) y no el fondo del <body>, que tiene
 #     una transición y justo al cambiar de tema todavía devuelve el color viejo.
+#  2. Sistema operativo: mientras NO haya preferencia guardada (`futviz-theme`), un cambio del tema del
+#     SO con la página abierta cambia el de la página, igual que el botón (mismo evento). En cuanto la
+#     persona usa el botón queda una preferencia guardada y el SO deja de mandar. Si el navegador no
+#     deja leer localStorage cuenta como "sin preferencia".
 THEME_SYNC_JS = """  var metaTema = document.querySelector('meta[name="theme-color"]');
   function sincronizarThemeColor() {
     if (metaTema) metaTema.content = getComputedStyle(document.documentElement).getPropertyValue('--color-bg').trim();
@@ -165,6 +169,16 @@ THEME_SYNC_JS = """  var metaTema = document.querySelector('meta[name="theme-col
   document.addEventListener('futviz-theme-change', sincronizarThemeColor);
   sincronizarThemeColor();
 
+  var oscuroSO = window.matchMedia('(prefers-color-scheme: dark)');
+  function alCambiarElSistema(e) {
+    try { if (localStorage.getItem('futviz-theme')) return; } catch (err) {}
+    var tema = e.matches ? 'dark' : 'light';
+    if (document.documentElement.getAttribute('data-theme') === tema) return;
+    document.documentElement.setAttribute('data-theme', tema);
+    document.dispatchEvent(new CustomEvent('futviz-theme-change', {detail: {theme: tema}}));
+  }
+  if (oscuroSO.addEventListener) oscuroSO.addEventListener('change', alCambiarElSistema);
+  else if (oscuroSO.addListener) oscuroSO.addListener(alCambiarElSistema);
 """
 
 THEME_TOGGLE_SCRIPT = """<script>
@@ -326,6 +340,8 @@ PLOTLY_THEME_SCRIPT = """<script>
   // Las páginas con vistas montan gráficos DESPUÉS de cargar (ver section_views.py):
   // al montarlos llaman a esto para que nazcan con la tinta del tema actual.
   window.futvizSyncPlotly = syncPlotly;
+  // El botón ya llama a syncPlotly; esto cubre el cambio que viene del sistema operativo (es idempotente).
+  document.addEventListener('futviz-theme-change', syncPlotly);
 
 __THEME_SYNC__
   var btn = document.getElementById('theme-toggle');
