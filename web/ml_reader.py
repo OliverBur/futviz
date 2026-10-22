@@ -22,7 +22,7 @@ import re
 from pathlib import Path
 
 from site_utils import (
-    ARTICLE_CSS, BRAND_ROOT_CSS, FONT_LINKS, PLOTLY_THEME_SCRIPT, SECTION_META,
+    ARTICLE_CSS, BRAND_ROOT_CSS, FONT_LINKS, PAGE_HEADER_CSS, PAGE_HEADER_HTML, PLOTLY_THEME_SCRIPT, SECTION_META,
     THEME_INIT_SCRIPT, THEME_TOGGLE_HTML, ArticlePage,
 )
 
@@ -55,23 +55,7 @@ __FONT_LINKS__
 <link rel="preload" as="script" href="__PRELOAD__">
 <style>
 __BRAND_ROOT__
-  html { -webkit-tap-highlight-color: transparent; }
-  header { padding: 20px 20px 22px; border-bottom: 1px solid var(--color-border);
-    background-image:
-      radial-gradient(rgba(44, 76, 84, 0.077) 1.4px, transparent 1.6px),
-      radial-gradient(rgba(57, 153, 6, 0.066) 1.4px, transparent 1.6px);
-    background-size: 22px 22px, 22px 22px; background-position: 0 0, 11px 11px; }
-  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-  .crumb-current { color: var(--color-muted); font-size: 13px; font-weight: 500; }
-  .crumb-current .wordmark { font-weight: 700; }
-  .header-right { display: flex; align-items: center; gap: 14px; }
-  .site-logo-link { flex: none; line-height: 0; }
-  .site-logo { height: 30px; width: auto; display: block; }
-  h1.page-title { position: relative; font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
-    color: var(--color-primary); margin: 16px 0 8px; padding-left: 14px; }
-  h1.page-title::before { content: ""; position: absolute; left: 0; top: 3px; bottom: 3px;
-    width: 4px; border-radius: 2px; background: var(--color-brand-accent); }
-  .lead { color: var(--color-muted); font-size: 14px; line-height: 1.55; max-width: 760px; }
+__PAGE_HEADER_CSS__
 
   /* Barra de progreso de lectura del artículo abierto (no de la página: el encabezado y el
      carrusel no cuentan). */
@@ -79,12 +63,6 @@ __BRAND_ROOT__
     background: var(--color-brand-accent); transform: scaleX(0); transform-origin: left;
     transition: transform .1s linear; }
 
-  .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden;
-    clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
-  .skip { position: absolute; left: 12px; top: -48px; z-index: 40; padding: 9px 14px; border-radius: 8px;
-    background: var(--color-primary); color: var(--color-bg); font-size: 13px; font-weight: 600; text-decoration: none;
-    transition: transform .15s ease; }
-  .skip:focus-visible { transform: translateY(60px); outline: 2px solid var(--color-interactive); outline-offset: 2px; }
   .pane:focus { outline: none; }   /* destino del salto: se enfoca por código, no con el teclado */
 
   /* Pantalla ancha: lista de artículos | lectura | índice, casi de borde a borde. */
@@ -168,9 +146,6 @@ __BRAND_ROOT__
     border: 1px solid var(--color-interactive); background: var(--color-surface); color: var(--color-primary); }
 
   @media (min-width: 640px) {
-    header { padding: 20px 24px 26px; }
-    h1.page-title { font-size: 28px; }
-    .lead { font-size: 15px; }
     .reader { padding: 0 24px 80px; }
   }
 
@@ -198,8 +173,6 @@ __BRAND_ROOT__
       overflow-y: auto; overscroll-behavior: contain; padding: 28px 0; scrollbar-width: thin; scrollbar-color: var(--color-border) transparent; }
   }
   @media (max-width: 640px) {
-    header { padding: 16px 16px 20px; }
-    .site-logo { height: 24px; }
     .reader { padding: 0 16px 56px; }
     .hero h2.hero-title { font-size: 25px; }
     .soon-panel { padding-top: 36px; }
@@ -218,19 +191,7 @@ __ARTICLE_CSS__
 <a class="skip" href="#pane" id="skip">Saltar al artículo</a>
 <div id="progress" role="presentation"></div>
 <div class="sr-only" id="anuncio" role="status" aria-live="polite"></div>
-<header>
-  <div class="topbar">
-    <span class="crumb-current"><span class="wordmark" translate="no">FutViz</span> / __NAME__</span>
-    <div class="header-right">
-      <a class="site-logo-link" href="index.html">
-        <img class="site-logo" src="assets/logo.png" alt="FutViz — volver al inicio">
-      </a>
-      __THEME_TOGGLE__
-    </div>
-  </div>
-  <h1 class="page-title">__NAME__</h1>
-  <div class="lead">__DESCRIPTION__</div>
-</header>
+__PAGE_HEADER__
 <div class="reader">
   <nav class="rail" aria-label="Artículos de __NAME__" id="rail">
     <div class="rail-head">
@@ -428,6 +389,7 @@ __ARTICLE_CSS__
     if (!articulo(slug)) slug = DEFECTO;
     if (slug === actual) { if (sec) irASeccion(sec); else irArriba(); return; }
     var primera = actual === null;
+    movio = false;   // lo que cuenta es lo que la persona haga a partir de ahora
     actual = slug;
     ARTICULOS.forEach(function(a) { panel(a.slug).hidden = a.slug !== slug; });
     cards.forEach(function(c) {
@@ -445,7 +407,12 @@ __ARTICLE_CSS__
     if (!primera) irArriba();
     anuncio.textContent = articulo(slug).title;
     barra.style.transform = 'scaleX(0)';
-    montar(slug).then(function() { if (actual === slug) { armarIndice(); if (sec) anclar(sec); } });
+    montar(slug).then(function() {
+      if (actual !== slug) return;
+      armarIndice();
+      if (sec) anclar(sec);
+      else if (!primera && !movio) irArriba();   // el navegador puede haber "anclado" la página al terminar de cargar
+    });
     // Adelantar el siguiente mientras se lee este.
     var sig = ARTICULOS[i + 1];
     if (sig && sig.src) setTimeout(function() { pedir(sig.slug).catch(function() {}); }, 1200);
@@ -557,6 +524,8 @@ def write_ml_reader(section: str, articles: list, dist_dir: Path):
 
     datos = json.dumps(todos, ensure_ascii=False).replace("</", "<\\/")
     pagina = (READER_PAGE_TEMPLATE
+              .replace("__PAGE_HEADER_CSS__", PAGE_HEADER_CSS)
+              .replace("__PAGE_HEADER__", PAGE_HEADER_HTML)
               .replace("__NAME__", section)
               .replace("__DESCRIPTION__", html.escape(meta["description"]))
               .replace("__PRELOAD__", todos[0]["src"])

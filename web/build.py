@@ -160,7 +160,9 @@ def _screenshot_chart_card(source, base_url, dark=False):
 
         with sync_playwright() as p:
             browser = p.chromium.launch()
-            page = browser.new_page(viewport={"width": 1100, "height": 900})
+            # 1360 y no 1100: la página del análisis exploratorio tiene un menú de 250 px a la izquierda y con
+            # 1100 el gráfico del thumbnail salía más chico que el cuadro que lo muestra.
+            page = browser.new_page(viewport={"width": 1360, "height": 900})
             page.goto(f"{base_url}/{rel_path}")
             page.wait_for_timeout(600)
             if dark:

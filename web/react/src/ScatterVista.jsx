@@ -7,6 +7,7 @@
 // buscador con varios jugadores fijados, tabla (DataGrid) y panel de filtros en móvil. Zoom, pan y su
 // barra de botones son propios (los de MUI son Pro): ver ZoomLayer.jsx.
 import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import { entre, leerParams, usePublicarParams } from "./urlEstado.js";
 import { ThemeProvider, useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
@@ -77,9 +78,13 @@ function Vista({ cfg, T, modo, tk }) {
   const filtros = cfg.filtros || {};
   const ayudas = T.ayudas || {};
 
+  // Los filtros de la URL (ver urlEstado.js): se leen una vez, al montarse, y cada estado de abajo arranca de ahí.
+  const [P] = useState(() => leerParams(cfg.id));
+
   // --- los ejes ----------------------------------------------------------------------------------
-  const [colX, setColX] = useState(exp ? exp.x : cfg.x.col);
-  const [colY, setColY] = useState(exp ? exp.y : cfg.y.col);
+  const colesExp = exp ? exp.variables.map((v) => v.col) : [];
+  const [colX, setColX] = useState(exp ? entre(P.get("x"), colesExp, exp.x) : cfg.x.col);
+  const [colY, setColY] = useState(exp ? entre(P.get("y"), colesExp, exp.y) : cfg.y.col);
   const infoVar = useMemo(() => (exp ? Object.fromEntries(exp.variables.map((v) => [v.col, v])) : null), [exp]);
   const X = exp ? { col: colX, label: infoVar[colX].label, corto: "Eje X", dec: infoVar[colX].dec } : cfg.x;
   const Y = exp ? { col: colY, label: infoVar[colY].label, corto: "Eje Y", dec: infoVar[colY].dec } : cfg.y;
@@ -91,21 +96,28 @@ function Vista({ cfg, T, modo, tk }) {
   const difEt = diag ? ref.dif[0].toUpperCase() + ref.dif.slice(1) : null;
 
   // --- estado de los filtros ------------------------------------------------------------------
-  const [temporada, setTemporada] = useState(null);                // se resuelve abajo con las que tienen datos
-  const [ligasOn, setLigasOn] = useState(() => new Set(T.ligas.map((_, i) => i)));
-  const [posiciones, setPosiciones] = useState([]);                // vacío = todas
-  const [nivel, setNivel] = useState("todos");
-  const [sub21, setSub21] = useState(false);
-  const [colorPor, setColorPor] = useState("liga");
+  const [temporada, setTemporada] = useState(() => {                // null: se resuelve abajo con las que tienen datos
+    const i = T.temporadas.indexOf(P.get("t"));
+    return i >= 0 ? i : null;
+  });
+  const [ligasOn, setLigasOn] = useState(() => {
+    const ligas = P.getAll("ligas").map((n) => T.ligas.indexOf(n)).filter((i) => i >= 0);
+    return new Set(ligas.length ? ligas : T.ligas.map((_, i) => i));
+  });
+  const [posiciones, setPosiciones] = useState(() => P.getAll("pos").filter((p) => (T.posiciones || []).includes(p)));  // vacío = todas
+  const [nivel, setNivel] = useState(() => entre(P.get("nivel"), T.niveles || [], "todos"));
+  const [sub21, setSub21] = useState(() => P.get("sub21") === "1");
+  const [colorPor, setColorPor] = useState(() => entre(P.get("color"), ["rendimiento"], "liga"));
   // Fijados: índices de JUGADOR (o equipo), no de fila, para que sobrevivan al cambio de temporada.
-  const [fijados, setFijados] = useState([]);
+  // En la URL van por nombre: el índice cambia cuando se actualizan los datos.
+  const [fijados, setFijados] = useState(() => P.getAll("fijar").map((n) => T.nombres.indexOf(n)).filter((j) => j >= 0).slice(-MAX_PINES));
   const [hoverBruto, setHoverBruto] = useState(null);
   const [hoverLiga, setHoverLiga] = useState(null);
   const metricas = useMemo(() => (exp ? [
     { id: "x", etiqueta: "Eje X", ayuda: `Los de mayor ${X.label}` },
     { id: "y", etiqueta: "Eje Y", ayuda: `Los de mayor ${Y.label}` },
   ] : cfg.metricas), [exp, cfg, X.label, Y.label]);
-  const [metrica, setMetrica] = useState(metricas[0].id);          // por qué se ordena el Top 5 (y qué se rotula)
+  const [metrica, setMetrica] = useState(() => entre(P.get("top"), metricas.map((m) => m.id), metricas[0].id));  // por qué se ordena el Top 5 (y qué se rotula)
   const [hoverFila, setHoverFila] = useState(null);                // fila de la lista bajo el mouse
   const [pista, setPista] = useState(false);
   const [tablaAbierta, setTablaAbierta] = useState(false);
@@ -337,6 +349,20 @@ function Vista({ cfg, T, modo, tk }) {
     return GENERADORES[cfg.insight](T, visibles, ambito);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exp, cfg, visibles, T, ambito, xs, ys, X.label, Y.label]);
+  // Los filtros a la URL. La temporada va siempre (un enlace compartido no debe saltar a otra cuando salga una
+  // nueva); lo demás solo si no es lo de por defecto.
+  usePublicarParams(cfg.id, {
+    t: tLabel,
+    ligas: todasLigas ? [] : [...ligasOn].sort((a, b) => a - b).map((i) => T.ligas[i]),
+    pos: posiciones,
+    nivel: nivel === "todos" ? null : nivel,
+    sub21: sub21 ? "1" : null,
+    color: colorPor === "liga" ? null : colorPor,
+    fijar: fijados.map((j) => T.nombres[j]),
+    top: metrica === metricas[0].id ? null : metrica,
+    x: exp && colX !== exp.x ? colX : null,
+    y: exp && colY !== exp.y ? colY : null,
+  });
   const estado = [tLabel, todasLigas ? "todas las ligas" : ambito,
     ...posiciones, nivel !== "todos" ? nivel.replace("Clubes ", "clubes ") : null, sub21 ? "sub-21" : null]
     .filter(Boolean).join(" · ");
@@ -625,7 +651,7 @@ function Vista({ cfg, T, modo, tk }) {
       </Box>
 
       {/* ---------------- caja de lectura ---------------- */}
-      <Box sx={{ mt: 3, maxWidth: 820 }}>
+      <Box sx={{ mt: 3, maxWidth: 1040 }}>
         {cfg.queMirar && (
           <>
             <Rotulo>Qué mirar aquí</Rotulo>

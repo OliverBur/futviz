@@ -9,6 +9,7 @@
 // no recibe los 225.000 tiros. Mismos datos, geometría y textos que la versión de Plotly; el eje del mapa
 // y la cancha están en METROS (el viewBox del SVG), y los trazos de las líneas no escalan.
 import { useMemo, useRef, useState } from "react";
+import { entre, leerParams, usePublicarParams } from "./urlEstado.js";
 import { ThemeProvider, useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Box from "@mui/material/Box";
@@ -40,8 +41,14 @@ function colorRampa(rampa, t) {
 
 function Vista({ cfg, T, modo, tk }) {
   const esAngosta = useMediaQuery(useTheme().breakpoints.down("sm"), { noSsr: true });
-  const [temporada, setTemporada] = useState(TODAS);
-  const [tipoId, setTipoId] = useState(TODOS);
+  // Los filtros de la URL (ver urlEstado.js): se leen una vez, al montarse.
+  const [P] = useState(() => leerParams(cfg.id));
+  const [temporada, setTemporada] = useState(() => entre(P.get("t"), T.temporadas, TODAS));
+  const [tipoId, setTipoId] = useState(() => entre(P.get("tipo"), T.tipos.map((t) => t.id), TODOS));
+  usePublicarParams(cfg.id, {
+    t: temporada === TODAS ? null : temporada,
+    tipo: tipoId === TODOS ? null : tipoId,
+  });
   const [celdaSobre, setCeldaSobre] = useState(null);
   const svgRef = useRef(null);
 
@@ -93,7 +100,7 @@ function Vista({ cfg, T, modo, tk }) {
           <Typography sx={{ fontSize: 13, color: "text.secondary", mb: 1.5 }}>{subtitulo}</Typography>
 
           <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2, alignItems: "stretch" }}>
-            <Box sx={{ flex: 1, minWidth: 0, maxWidth: 780, position: "relative" }}>
+            <Box sx={{ flex: 1, minWidth: 0, maxWidth: 1000, position: "relative" }}>
               <svg ref={svgRef} role="img" aria-label={`Mapa de calor de los tiros: ${subtitulo}`}
                 viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`} style={{ width: "100%", height: "auto", display: "block", touchAction: "pan-y" }}
                 onPointerMove={alMover} onPointerLeave={() => setCeldaSobre(null)} onPointerDown={alMover}>
@@ -184,7 +191,7 @@ function Vista({ cfg, T, modo, tk }) {
         </Box>
       </Box>
 
-      <Box sx={{ mt: 3, maxWidth: 820 }}>
+      <Box sx={{ mt: 3, maxWidth: 1040 }}>
         <Rotulo>Qué mirar aquí</Rotulo>
         <Parrafos texto={cfg.queMirar} sx={{ color: "text.primary" }} />
         <Box sx={{ mt: 2, pl: 2, borderLeft: 3, borderColor: "success.main" }}>
