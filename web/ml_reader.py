@@ -22,7 +22,7 @@ import re
 from pathlib import Path
 
 from site_utils import (
-    ARTICLE_CSS, BRAND_ROOT_CSS, FONT_LINKS, PAGE_HEADER_CSS, PAGE_HEADER_HTML, PLOTLY_THEME_SCRIPT, SECTION_META,
+    ARTICLE_CSS, BRAND_ROOT_CSS, FONT_LINKS, favicon_links, PAGE_HEADER_CSS, PAGE_HEADER_HTML, PLOTLY_THEME_SCRIPT, SECTION_META,
     THEME_INIT_SCRIPT, THEME_TOGGLE_HTML, ArticlePage,
 )
 
@@ -48,7 +48,7 @@ READER_PAGE_TEMPLATE = """<!doctype html>
 <title>__NAME__ · FutViz</title>
 <meta name="description" content="__DESCRIPTION__">
 <meta name="theme-color" content="#EFEDF7">
-<link rel="icon" type="image/png" href="favicon.png">
+__FAVICON__
 __THEME_INIT__
 __FONT_LINKS__
 <script src="react/futviz-react.js" defer></script>
@@ -524,6 +524,7 @@ def write_ml_reader(section: str, articles: list, dist_dir: Path):
 
     datos = json.dumps(todos, ensure_ascii=False).replace("</", "<\\/")
     pagina = (READER_PAGE_TEMPLATE
+              .replace("__FAVICON__", favicon_links())
               .replace("__PAGE_HEADER_CSS__", PAGE_HEADER_CSS)
               .replace("__PAGE_HEADER__", PAGE_HEADER_HTML)
               .replace("__NAME__", section)

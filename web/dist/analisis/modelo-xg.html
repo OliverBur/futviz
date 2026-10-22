@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Construyendo un modelo de xG · FutViz</title>
 <link rel="icon" type="image/png" href="../favicon.png">
+<link rel="icon" type="image/png" href="../favicon-dark.png" media="(prefers-color-scheme: dark)">
 <meta name="description" content="La idea es trasladar todos los datos (que tengo) alrededor de un tiro para construir un modelo que genere la estadística de goles esperados.">
 <script>
 (function() {
@@ -72,6 +73,12 @@
   .theme-toggle .icon-sun { display: none; }
   html[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
   html[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+
+  /* Logo: dos <img> (ver `logo_img`), se muestra la del tema. El selector lleva `img.` para ganarle a
+     `.site-logo { display: block }` y `.logo-large`, que las plantillas definen después. */
+  img.logo-theme-dark { display: none; }
+  html[data-theme="dark"] img.logo-theme-light { display: none; }
+  html[data-theme="dark"] img.logo-theme-dark { display: block; }
 
   header { padding: 14px 20px; border-bottom: 1px solid var(--color-border);
     display: flex; align-items: center; justify-content: space-between; gap: 12px;
@@ -192,7 +199,7 @@
   <a class="crumb" href="../machine-learning.html#modelo-xg">&larr; Machine Learning</a>
   <div class="header-right">
     <a class="site-logo-link" href="../index.html">
-      <img class="site-logo" src="../assets/logo.png" alt="FutViz — volver al inicio">
+      <img class="site-logo logo-theme-light" src="../assets/logo.png" alt="FutViz — volver al inicio"><img class="site-logo logo-theme-dark" src="../assets/logo-dark.png" alt="" aria-hidden="true">
     </a>
     <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Cambiar entre modo claro y oscuro">
   <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

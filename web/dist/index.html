@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FutViz — EDA 5 grandes ligas</title>
 <link rel="icon" type="image/png" href="favicon.png">
+<link rel="icon" type="image/png" href="favicon-dark.png" media="(prefers-color-scheme: dark)">
 <script>
 (function() {
   try {
@@ -69,6 +70,12 @@
   .theme-toggle .icon-sun { display: none; }
   html[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
   html[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+
+  /* Logo: dos <img> (ver `logo_img`), se muestra la del tema. El selector lleva `img.` para ganarle a
+     `.site-logo { display: block }` y `.logo-large`, que las plantillas definen después. */
+  img.logo-theme-dark { display: none; }
+  html[data-theme="dark"] img.logo-theme-light { display: none; }
+  html[data-theme="dark"] img.logo-theme-dark { display: block; }
 
   /* La landing no tiene barra de nav — el toggle queda fijo arriba a la
      derecha de toda la página, no dentro del header centrado. */
@@ -181,7 +188,7 @@
   </svg>
 </button></div>
 <header class="hero-header">
-  <img class="logo-large" src="assets/logo.png" alt="FutViz">
+  <img class="logo-large logo-theme-light" src="assets/logo.png" alt="FutViz"><img class="logo-large logo-theme-dark" src="assets/logo-dark.png" alt="" aria-hidden="true">
   <p class="motivation">Nació de juntar mi pasión por el <span class="accent-word">fútbol</span> con la
     <span class="accent-word">ciencia de datos</span>.</p>
   <p class="author">Autor: <strong>Oliver Burguete</strong></p>

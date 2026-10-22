@@ -107,6 +107,22 @@ FONT_LINKS = """<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sansita:wght@700;800&display=swap" rel="stylesheet">"""
 
+# El logo tiene dos versiones: `assets/logo.png` (slate, para el tema claro) y `assets/logo-dark.png`
+# (el slate pasa a `--color-primary` oscuro; ver `build.py:_trim_oscuro`). Van las dos <img> y el CSS de
+# `BRAND_ROOT_CSS` muestra una según `html[data-theme]`, el mismo patrón que los thumbnails de la landing.
+# `prefijo` es la ruta de la raíz del sitio a la página ("" o "../").
+def logo_img(prefijo="", clase="site-logo", alt="FutViz — volver al inicio"):
+    return (f'<img class="{clase} logo-theme-light" src="{prefijo}assets/logo.png" alt="{alt}">'
+            f'<img class="{clase} logo-theme-dark" src="{prefijo}assets/logo-dark.png" alt="" aria-hidden="true">')
+
+
+# El favicon claro y, para pestañas oscuras, el de `favicon-dark.png`. Este sigue el tema del SISTEMA
+# (`prefers-color-scheme`), no el botón de la página: la pestaña del navegador no la controla la página.
+def favicon_links(prefijo=""):
+    return (f'<link rel="icon" type="image/png" href="{prefijo}favicon.png">\n'
+            f'<link rel="icon" type="image/png" href="{prefijo}favicon-dark.png" media="(prefers-color-scheme: dark)">')
+
+
 # Se corre lo antes posible en <head> (antes de pintar) para que la página
 # no "flashee" en claro y después salte a oscuro. Lee la preferencia
 # guardada; si no hay ninguna, usa la del sistema operativo/navegador.
@@ -461,7 +477,7 @@ PAGE_TEMPLATE = """<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title} · FutViz</title>
-<link rel="icon" type="image/png" href="../favicon.png">
+{favicon}
 {theme_init_script}
 {font_links}
 <style>
@@ -505,7 +521,7 @@ PAGE_TEMPLATE = """<!doctype html>
   <a class="crumb" href="../{section_slug}.html">&larr; {section_name}</a>
   <div class="header-right">
     <a class="site-logo-link" href="../index.html">
-      <img class="site-logo" src="../assets/logo.png" alt="FutViz — volver al inicio">
+      {logo}
     </a>
     {theme_toggle}
   </div>
@@ -580,6 +596,12 @@ BRAND_ROOT_CSS = """
   .theme-toggle .icon-sun { display: none; }
   html[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
   html[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+
+  /* Logo: dos <img> (ver `logo_img`), se muestra la del tema. El selector lleva `img.` para ganarle a
+     `.site-logo { display: block }` y `.logo-large`, que las plantillas definen después. */
+  img.logo-theme-dark { display: none; }
+  html[data-theme="dark"] img.logo-theme-light { display: none; }
+  html[data-theme="dark"] img.logo-theme-dark { display: block; }
 """
 
 INDEX_TEMPLATE = """<!doctype html>
@@ -588,7 +610,7 @@ INDEX_TEMPLATE = """<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FutViz — EDA 5 grandes ligas</title>
-<link rel="icon" type="image/png" href="favicon.png">
+{favicon}
 {theme_init_script}
 {font_links}
 <style>
@@ -697,7 +719,7 @@ INDEX_TEMPLATE = """<!doctype html>
 <body>
 <div class="theme-toggle--floating">{theme_toggle}</div>
 <header class="hero-header">
-  <img class="logo-large" src="assets/logo.png" alt="FutViz">
+  {logo}
   <p class="motivation">Nació de juntar mi pasión por el <span class="accent-word">fútbol</span> con la
     <span class="accent-word">ciencia de datos</span>.</p>
   <p class="author">Autor: <strong>Oliver Burguete</strong></p>
@@ -740,7 +762,7 @@ SECTION_PAGE_TEMPLATE = """<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{name} · FutViz</title>
-<link rel="icon" type="image/png" href="favicon.png">
+{favicon}
 {theme_init_script}
 {font_links}
 <style>
@@ -831,7 +853,7 @@ SECTION_PAGE_TEMPLATE = """<!doctype html>
     <span class="crumb-current"><span class="wordmark">FutViz</span> / {name}</span>
     <div class="header-right">
       <a class="site-logo-link" href="index.html">
-        <img class="site-logo" src="assets/logo.png" alt="FutViz — volver al inicio">
+        {logo}
       </a>
       {theme_toggle}
     </div>
@@ -914,14 +936,14 @@ PAGE_HEADER_HTML = """<header>
     <span class="crumb-current"><span class="wordmark" translate="no">FutViz</span> / __NAME__</span>
     <div class="header-right">
       <a class="site-logo-link" href="index.html">
-        <img class="site-logo" src="assets/logo.png" alt="FutViz — volver al inicio">
+        __LOGO__
       </a>
       __THEME_TOGGLE__
     </div>
   </div>
   <h1 class="page-title">__NAME__</h1>
   <div class="lead">__DESCRIPTION__</div>
-</header>"""
+</header>""".replace("__LOGO__", logo_img())
 
 # CSS de la lectura de un análisis (prosa, figuras, tablas, callouts). Lo comparten la página
 # suelta de cada artículo (`ARTICLE_PAGE_TEMPLATE`) y el lector de la sección de Machine
@@ -1025,7 +1047,7 @@ ARTICLE_PAGE_TEMPLATE = """<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title} · FutViz</title>
-<link rel="icon" type="image/png" href="../favicon.png">
+{favicon}
 <meta name="description" content="{subtitle}">
 {theme_init_script}
 {font_links}
@@ -1062,7 +1084,7 @@ ARTICLE_PAGE_TEMPLATE = """<!doctype html>
   <a class="crumb" href="../{section_slug}.html#{slug}">&larr; {section_name}</a>
   <div class="header-right">
     <a class="site-logo-link" href="../index.html">
-      <img class="site-logo" src="../assets/logo.png" alt="FutViz — volver al inicio">
+      {logo}
     </a>
     {theme_toggle}
   </div>
@@ -1145,6 +1167,7 @@ def write_article_page(page: "ArticlePage", dist_dir: Path) -> Path:
         section_slug=section_meta.get("slug", "index"),
         brand_root=BRAND_ROOT_CSS, font_links=FONT_LINKS, article_css=ARTICLE_CSS,
         theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML,
+        logo=logo_img("../"), favicon=favicon_links("../"),
         react_scripts=(
             '<script>window.futvizBase="../";</script>\n'
             '<script src="../react/futviz-react.js" defer></script>') if page.react else "",
@@ -1169,6 +1192,7 @@ def write_chart_page(page: ChartPage, charts_dir: Path) -> Path:
         section_slug=section_slug, section_name=page.section,
         font_links=FONT_LINKS, brand_root=BRAND_ROOT_CSS,
         theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML,
+        logo=logo_img("../"), favicon=favicon_links("../"),
         theme_toggle_script=PLOTLY_THEME_SCRIPT,
     )
     out_path = charts_dir / f"{page.slug}.html"
@@ -1198,6 +1222,7 @@ def write_section_pages(pages: list[ChartPage], dist_dir: Path) -> list[Path]:
             name=name, description=meta["description"], cards=cards,
             brand_root=BRAND_ROOT_CSS, font_links=FONT_LINKS,
             theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML,
+            logo=logo_img(), favicon=favicon_links(),
             theme_toggle_script=THEME_TOGGLE_SCRIPT,
         )
         out_path = dist_dir / f"{meta['slug']}.html"
@@ -1232,6 +1257,7 @@ def write_index(pages: list[ChartPage], dist_dir: Path) -> Path:
     html = INDEX_TEMPLATE.format(
         cards=cards, fuentes=FUENTES_SITIO, brand_root=BRAND_ROOT_CSS, font_links=FONT_LINKS,
         theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML,
+        logo=logo_img(clase="logo-large", alt="FutViz"), favicon=favicon_links(),
         theme_toggle_script=THEME_TOGGLE_SCRIPT,
     )
     out_path = dist_dir / "index.html"
