@@ -22,7 +22,7 @@ import re
 from pathlib import Path
 
 from site_utils import (
-    ARTICLE_CSS, BRAND_ROOT_CSS, FONT_LINKS, THEME_COLOR_META, favicon_links, PAGE_HEADER_CSS, PAGE_HEADER_HTML, PLOTLY_THEME_SCRIPT, SECTION_META,
+    ARTICLE_CSS, BRAND_ROOT_CSS, FONT_LINKS, THEME_COLOR_META, favicon_links, PAGE_HEADER_CSS, page_header_html, PLOTLY_THEME_SCRIPT, SECTION_META,
     THEME_INIT_SCRIPT, THEME_TOGGLE_HTML, ArticlePage,
 )
 
@@ -522,7 +522,7 @@ def write_ml_reader(section: str, articles: list, dist_dir: Path):
               .replace("__THEME_COLOR__", THEME_COLOR_META)
               .replace("__FAVICON__", favicon_links())
               .replace("__PAGE_HEADER_CSS__", PAGE_HEADER_CSS)
-              .replace("__PAGE_HEADER__", PAGE_HEADER_HTML)
+              .replace("__PAGE_HEADER__", page_header_html(section))
               .replace("__NAME__", section)
               .replace("__DESCRIPTION__", html.escape(meta["description"]))
               .replace("__PRELOAD__", todos[0]["src"])

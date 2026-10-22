@@ -25,7 +25,7 @@ import react_views
 from ml_reader import _minutos
 from site_utils import (
     BRAND_ROOT_CSS, COLOR_BG_CLARO, FONT_LINKS, SECTION_META, THEME_COLOR_META, THEME_INIT_SCRIPT,
-    THEME_TOGGLE_HTML, THEME_TOGGLE_SCRIPT, ArticlePage, favicon_links, logo_img,
+    THEME_TOGGLE_SCRIPT, ArticlePage, favicon_links, site_bar,
 )
 
 SITIO_URL = "https://futviz-lake.vercel.app/"
@@ -432,13 +432,6 @@ __BRAND_ROOT__
 
   /* Header */
   .site-header { border-bottom: 1px solid var(--color-border); }
-  .site-header .contenedor { display: flex; align-items: center; gap: 8px 24px; min-height: 72px; flex-wrap: wrap; }
-  .marca { display: inline-flex; align-items: center; min-height: 44px; margin-right: auto; }
-  .marca img { height: 30px; width: auto; }
-  .nav { display: flex; gap: 4px 20px; flex-wrap: wrap; }
-  .nav a { display: inline-flex; align-items: center; min-height: 44px; font-size: 14.5px; font-weight: 500;
-    color: var(--color-text-body); text-decoration: none; }
-  .site-header .theme-toggle { width: 44px; height: 44px; border-radius: 10px; }
 
   /* Hero */
   /* Hero centrado: el buscador es la idea de la página y el header ya es simétrico (logo a un lado, menú y
@@ -501,7 +494,7 @@ __BRAND_ROOT__
     color: var(--color-primary); max-width: 20ch; text-wrap: balance; }
   .ir { display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; font-weight: 600;
     color: var(--color-interactive); text-decoration: none; }
-  .ir:hover, .leer:hover, .nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .ir:hover, .leer:hover { text-decoration: underline; text-underline-offset: 4px; }
   .todas { display: inline-flex; align-items: center; min-height: 44px; margin-top: 16px; font-weight: 600;
     color: var(--color-text-body); text-underline-offset: 4px; }
 
@@ -557,8 +550,6 @@ __BRAND_ROOT__
   }
   @media (max-width: 640px) {
     .contenedor { padding-left: 16px; padding-right: 16px; }   /* solo lateral: el hero también es .contenedor */
-    .site-header .contenedor { min-height: 64px; }
-    .nav { order: 3; width: 100%; gap: 0 20px; }
     .preguntas h3 { font-size: 21px; }
     /* El buscador abierto ocupa la pantalla: el teclado del teléfono deja poco espacio para la lista. */
     .buscador.abierto { position: fixed; inset: 0; z-index: 50; max-width: none; padding: 12px 16px;
@@ -575,14 +566,7 @@ __BRAND_ROOT__
 <body>
 <a class="skip" href="#main">Saltar al contenido</a>
 <header class="site-header">
-  <div class="contenedor">
-    <a class="marca" href="index.html" aria-label="FutViz, inicio">__LOGO__</a>
-    <nav class="nav" aria-label="Secciones">
-      <a href="__EDA_URL__">Análisis exploratorio</a>
-      <a href="__ML_URL__">Machine Learning</a>
-    </nav>
-    __THEME_TOGGLE__
-  </div>
+  __SITE_BAR__
 </header>
 <main id="main">
   <section class="hero contenedor" aria-labelledby="titulo">
@@ -715,13 +699,12 @@ def escribir_landing(pages, dist_dir: Path):
             .replace("__TITULO__", escape(TITULO))
             .replace("__DESCRIPCION__", escape(DESCRIPCION))
             .replace("__URL__", SITIO_URL)
-            .replace("__LOGO__", logo_img(alt="FutViz"))
+            .replace("__SITE_BAR__", site_bar())
             .replace("__THEME_COLOR__", THEME_COLOR_META)
             .replace("__FAVICON__", favicon_links())
             .replace("__THEME_INIT__", THEME_INIT_SCRIPT)
             .replace("__FONT_LINKS__", FONT_LINKS)
             .replace("__BRAND_ROOT__", BRAND_ROOT_CSS)
-            .replace("__THEME_TOGGLE__", THEME_TOGGLE_HTML)
             .replace("__THEME_SCRIPT__", THEME_TOGGLE_SCRIPT + "\n" + _MAPA_JS))
     salida = dist_dir / "index.html"
     salida.write_text(html, encoding="utf-8")

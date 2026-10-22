@@ -169,6 +169,23 @@ THEME_TOGGLE_HTML = """<button type="button" class="theme-toggle" id="theme-togg
   </svg>
 </button>"""
 
+
+# Barra de arriba de todas las páginas: logo a la izquierda (vuelve al inicio), secciones y tema a la derecha.
+# `actual` es el nombre de la sección de la página ("Análisis exploratorio", "Machine Learning") o None en la
+# portada; esa sección lleva `aria-current`. El CSS está en `BRAND_ROOT_CSS` (`.sitebar`).
+def site_bar(prefijo="", actual=None):
+    def enlace(nombre):
+        slug = SECTION_META[nombre]["slug"]
+        marca = ' aria-current="page"' if nombre == actual else ""
+        return f'<a href="{prefijo}{slug}.html"{marca}>{nombre}</a>'
+    inicio = ' aria-current="page"' if actual is None else ""
+    return (f'<div class="sitebar">\n'
+            f'  <a class="marca" href="{prefijo}index.html"{inicio}>{logo_img(prefijo)}</a>\n'
+            f'  <nav class="sitebar-nav" aria-label="Secciones">'
+            f'{enlace("Análisis exploratorio")}{enlace("Machine Learning")}</nav>\n'
+            f'  {THEME_TOGGLE_HTML}\n'
+            f'</div>')
+
 # Fondo y borde del tema claro: UNA definición. `BRAND_ROOT_CSS` los pone en `--color-bg` / `--color-border` y
 # de aquí salen también el fallback del <meta theme-color> y el placeholder de los previews (`build.py`).
 # El fondo pasó del lavanda #EFEDF7 (matiz 252°) a un blanco azulado: la marca es slate (192°) + verde.
@@ -540,14 +557,8 @@ PAGE_TEMPLATE = """<!doctype html>
 {font_links}
 <style>
 {brand_root}
-  header {{ display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    padding: 14px 32px; border-bottom: 1px solid var(--color-border); }}
-  .crumb {{ color: var(--color-muted); text-decoration: none; font-size: 13px; font-weight: 500; }}
-  .crumb:hover {{ color: var(--color-interactive); }}
-  .header-right {{ display: flex; align-items: center; gap: 14px; }}
-  .site-logo-link {{ flex: none; line-height: 0; }}
-  .site-logo {{ height: 30px; width: auto; display: block; }}
-  main {{ padding: 28px 32px 60px; }}
+  header {{ border-bottom: 1px solid var(--color-border); }}
+  main {{ padding: 28px 24px 60px; }}
   /* Tanto los gráficos Plotly (transparentes, texto recoloreado en JS —
      ver PLOTLY_THEME_SCRIPT) como los PNG de matplotlib (dos versiones
      pre-renderizadas, claro/oscuro — ver viz_theme.dark_ink()) siguen el
@@ -567,22 +578,14 @@ PAGE_TEMPLATE = """<!doctype html>
   html[data-theme="dark"] img.static-chart-light {{ display: none; }}
   html[data-theme="dark"] img.static-chart-dark {{ display: block; }}
   @media (max-width: 640px) {{
-    header {{ padding: 12px 16px; }}
     main {{ padding: 20px 16px 40px; }}
     .chart-scroll {{ padding: 12px; }}
-    .site-logo {{ height: 24px; }}
   }}
 </style>
 </head>
 <body>
 <header>
-  <a class="crumb" href="../{section_slug}.html">&larr; {section_name}</a>
-  <div class="header-right">
-    <a class="site-logo-link" href="../index.html">
-      {logo}
-    </a>
-    {theme_toggle}
-  </div>
+  {site_bar}
 </header>
 <main><div class="chart-scroll">{body}</div></main>
 {theme_toggle_script}
@@ -660,6 +663,26 @@ BRAND_ROOT_CSS = """
   img.logo-theme-dark { display: none; }
   html[data-theme="dark"] img.logo-theme-light { display: none; }
   html[data-theme="dark"] img.logo-theme-dark { display: block; }
+
+  /* Barra de arriba (ver `site_bar`): la misma en todas las páginas, para que el logo quede siempre en el
+     mismo punto. Va a lo ancho con el mismo tope y margen que el `.shell` del análisis exploratorio y el
+     `.reader` de Machine Learning (1880px, 24px a los lados), así el logo cae sobre el panel lateral. */
+  .sitebar { display: flex; align-items: center; flex-wrap: wrap; gap: 0 24px; min-height: 72px;
+    max-width: 1880px; margin: 0 auto; padding: 0 24px; }
+  .sitebar .marca { display: inline-flex; align-items: center; min-height: 44px; margin-right: auto; line-height: 0; }
+  .sitebar .marca img { height: 30px; width: auto; }
+  .sitebar-nav { display: flex; flex-wrap: wrap; gap: 0 20px; }
+  .sitebar-nav a { display: inline-flex; align-items: center; min-height: 44px; font-size: 14.5px; font-weight: 500;
+    color: var(--color-text-body); text-decoration: none; }
+  .sitebar-nav a:hover { color: var(--color-interactive); }
+  .sitebar-nav a[aria-current="page"] { color: var(--color-primary); font-weight: 600; text-decoration: underline;
+    text-decoration-color: var(--color-brand-accent); text-decoration-thickness: 2px; text-underline-offset: 8px; }
+  .sitebar .theme-toggle { width: 44px; height: 44px; border-radius: 10px; }
+  @media (max-width: 640px) {
+    .sitebar { min-height: 0; padding: 10px 16px 0; }   /* dos renglones: logo y tema, abajo las secciones */
+    .sitebar .marca img { height: 26px; }
+    .sitebar-nav { order: 3; width: 100%; padding-bottom: 4px; }
+  }
 """.replace("__BG_CLARO__", COLOR_BG_CLARO).replace("__BORDE_CLARO__", COLOR_BORDE_CLARO)
 
 SECTION_PAGE_TEMPLATE = """<!doctype html>
@@ -676,20 +699,15 @@ SECTION_PAGE_TEMPLATE = """<!doctype html>
 {brand_root}
   /* Misma textura de puntos que la landing (opacidad ya subida ~10%),
      pero acá solo en el header — no en toda la página. */
-  header {{ padding: 20px 20px 24px; border-bottom: 1px solid var(--color-border);
+  header {{ padding: 0 0 24px; border-bottom: 1px solid var(--color-border);
     background-image:
       radial-gradient(rgba(44, 76, 84, 0.077) 1.4px, transparent 1.6px),
       radial-gradient(rgba(57, 153, 6, 0.066) 1.4px, transparent 1.6px);
     background-size: 22px 22px, 22px 22px;
     background-position: 0 0, 11px 11px; }}
-  .topbar {{ display: flex; align-items: center; justify-content: space-between; gap: 12px; }}
-  .crumb-current {{ color: var(--color-muted); font-size: 13px; font-weight: 500; }}
-  .crumb-current .wordmark {{ font-weight: 700; }}
-  .header-right {{ display: flex; align-items: center; gap: 14px; }}
-  .site-logo-link {{ flex: none; line-height: 0; }}
-  .site-logo {{ height: 30px; width: auto; display: block; }}
+  .intro {{ max-width: 1880px; margin: 0 auto; padding: 4px 24px 0; }}
   h1 {{ position: relative; font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
-    color: var(--color-primary); margin: 16px 0 8px; padding-left: 14px; }}
+    color: var(--color-primary); margin: 0 0 8px; padding-left: 14px; }}
   h1::before {{ content: ""; position: absolute; left: 0; top: 3px; bottom: 3px;
     width: 4px; border-radius: 2px; background: var(--color-brand-accent); }}
   /* 760px y no 640: la bajada de cada sección es UNA frase, y a 640 la más
@@ -756,17 +774,11 @@ SECTION_PAGE_TEMPLATE = """<!doctype html>
 </head>
 <body>
 <header>
-  <div class="topbar">
-    <span class="crumb-current"><span class="wordmark">FutViz</span> / {name}</span>
-    <div class="header-right">
-      <a class="site-logo-link" href="index.html">
-        {logo}
-      </a>
-      {theme_toggle}
-    </div>
+  {site_bar}
+  <div class="intro">
+    <h1>{name}</h1>
+    <div class="lead">{description}</div>
   </div>
-  <h1>{name}</h1>
-  <div class="lead">{description}</div>
 </header>
 <main><div class="grid">{cards}</div></main>
 {theme_toggle_script}
@@ -801,30 +813,24 @@ TOOL_CARD_TEMPLATE = """<a class="card card--tool" href="{href}">
 
 
 # Encabezado compartido por las dos páginas con panel lateral (el lector de Machine Learning,
-# `ml_reader.py`, y las vistas del análisis exploratorio, `section_views.py`): migas, logo, título de
-# la sección y bajada, más el enlace "saltar al contenido" que solo aparece con el foco del teclado.
+# `ml_reader.py`, y las vistas del análisis exploratorio, `section_views.py`): la barra del sitio, título
+# de la sección y bajada, más el enlace "saltar al contenido" que solo aparece con el foco del teclado.
 # Los dos módulos arman su página con `.replace("__X__", ...)`, no con `.format`: las llaves van simples.
 PAGE_HEADER_CSS = """
   html { -webkit-tap-highlight-color: transparent; }
-  header { padding: 20px 24px 26px; border-bottom: 1px solid var(--color-border);
+  .page-header { border-bottom: 1px solid var(--color-border);
     background-image:
       radial-gradient(rgba(44, 76, 84, 0.077) 1.4px, transparent 1.6px),
       radial-gradient(rgba(57, 153, 6, 0.066) 1.4px, transparent 1.6px);
     background-size: 22px 22px, 22px 22px; background-position: 0 0, 11px 11px; }
-  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-  .crumb-current { color: var(--color-muted); font-size: 13px; font-weight: 500; }
-  .crumb-current .wordmark { font-weight: 700; }
-  .header-right { display: flex; align-items: center; gap: 14px; }
-  .site-logo-link { flex: none; line-height: 0; }
-  .site-logo { height: 30px; width: auto; display: block; }
+  .page-intro { max-width: 1880px; margin: 0 auto; padding: 4px 24px 26px; }
   h1.page-title { position: relative; font-size: 28px; font-weight: 700; letter-spacing: -0.01em;
-    color: var(--color-primary); margin: 16px 0 8px; padding-left: 14px; }
+    color: var(--color-primary); margin: 0 0 8px; padding-left: 14px; }
   h1.page-title::before { content: ""; position: absolute; left: 0; top: 3px; bottom: 3px;
     width: 4px; border-radius: 2px; background: var(--color-brand-accent); }
   .lead { color: var(--color-muted); font-size: 15px; line-height: 1.55; max-width: 760px; }
   @media (max-width: 640px) {
-    header { padding: 16px 16px 20px; }
-    .site-logo { height: 24px; }
+    .page-intro { padding: 8px 16px 20px; }
     h1.page-title { font-size: 24px; }
     .lead { font-size: 14px; }
   }
@@ -838,19 +844,14 @@ PAGE_HEADER_CSS = """
   @media (prefers-reduced-motion: reduce) { .skip { transition: none; } }
 """
 
-PAGE_HEADER_HTML = """<header>
-  <div class="topbar">
-    <span class="crumb-current"><span class="wordmark" translate="no">FutViz</span> / __NAME__</span>
-    <div class="header-right">
-      <a class="site-logo-link" href="index.html">
-        __LOGO__
-      </a>
-      __THEME_TOGGLE__
-    </div>
+def page_header_html(nombre):
+    return f"""<header class="page-header">
+  {site_bar(actual=nombre)}
+  <div class="page-intro">
+    <h1 class="page-title">__NAME__</h1>
+    <div class="lead">__DESCRIPTION__</div>
   </div>
-  <h1 class="page-title">__NAME__</h1>
-  <div class="lead">__DESCRIPTION__</div>
-</header>""".replace("__LOGO__", logo_img())
+</header>"""
 
 # CSS de la lectura de un análisis (prosa, figuras, tablas, callouts). Lo comparten la página
 # suelta de cada artículo (`ARTICLE_PAGE_TEMPLATE`) y el lector de la sección de Machine
@@ -962,16 +963,9 @@ ARTICLE_PAGE_TEMPLATE = """<!doctype html>
 {react_scripts}
 <style>
 {brand_root}
-  header {{ padding: 14px 20px; border-bottom: 1px solid var(--color-border);
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    position: sticky; top: 0; z-index: 20;
+  header {{ border-bottom: 1px solid var(--color-border); position: sticky; top: 0; z-index: 20;
     background: color-mix(in srgb, var(--color-bg) 88%, transparent);
     backdrop-filter: blur(8px); }}
-  .crumb {{ color: var(--color-muted); text-decoration: none; font-size: 13px; font-weight: 500; }}
-  .crumb:hover {{ color: var(--color-interactive); }}
-  .header-right {{ display: flex; align-items: center; gap: 14px; }}
-  .site-logo-link {{ flex: none; line-height: 0; }}
-  .site-logo {{ height: 26px; width: auto; display: block; }}
 
   /* Barra de progreso de lectura: en un artículo largo da idea de cuánto
      falta, que es justo lo que una grilla de gráficos no necesita. */
@@ -983,19 +977,15 @@ ARTICLE_PAGE_TEMPLATE = """<!doctype html>
 {article_css}
   @media (max-width: 640px) {{
     main {{ padding: 0 16px 56px; }}
+    /* En el teléfono la barra ocupa dos renglones: fija se comería un tercio de la pantalla al leer. */
+    header {{ position: static; }}
   }}
 </style>
 </head>
 <body>
 <div id="progress"></div>
 <header>
-  <a class="crumb" href="../{section_slug}.html#{slug}">&larr; {section_name}</a>
-  <div class="header-right">
-    <a class="site-logo-link" href="../index.html">
-      {logo}
-    </a>
-    {theme_toggle}
-  </div>
+  {site_bar}
 </header>
 <main>
   <div class="wrap hero">
@@ -1074,8 +1064,8 @@ def write_article_page(page: "ArticlePage", dist_dir: Path) -> Path:
         meta=meta_html, fuente=page.fuente, section_name=page.section,
         section_slug=section_meta.get("slug", "index"),
         brand_root=BRAND_ROOT_CSS, font_links=font_links("../"), article_css=ARTICLE_CSS,
-        theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML, theme_color=THEME_COLOR_META,
-        logo=logo_img("../"), favicon=favicon_links("../"), ink_claro=INK["secondary"],
+        theme_init_script=THEME_INIT_SCRIPT, theme_color=THEME_COLOR_META,
+        site_bar=site_bar("../", page.section), favicon=favicon_links("../"), ink_claro=INK["secondary"],
         react_scripts=(
             '<script>window.futvizBase="../";</script>\n'
             '<script src="../react/futviz-react.js" defer></script>') if page.react else "",
@@ -1099,9 +1089,9 @@ def write_chart_page(page: ChartPage, charts_dir: Path) -> Path:
         title=page.title, body=page.body_html,
         section_slug=section_slug, section_name=page.section,
         font_links=font_links("../"), brand_root=BRAND_ROOT_CSS,
-        theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML, theme_color=THEME_COLOR_META,
-        logo=logo_img("../"), favicon=favicon_links("../"),
-        theme_toggle_script=PLOTLY_THEME_SCRIPT,
+        theme_init_script=THEME_INIT_SCRIPT, theme_color=THEME_COLOR_META,
+        site_bar=site_bar("../", SECTION_META.get(page.section, {}).get("hub", page.section)),
+        favicon=favicon_links("../"), theme_toggle_script=PLOTLY_THEME_SCRIPT,
     )
     out_path = charts_dir / f"{page.slug}.html"
     out_path.write_text(html, encoding="utf-8")
@@ -1129,8 +1119,8 @@ def write_section_pages(pages: list[ChartPage], dist_dir: Path) -> list[Path]:
         html = SECTION_PAGE_TEMPLATE.format(
             name=name, description=meta["description"], cards=cards,
             brand_root=BRAND_ROOT_CSS, font_links=FONT_LINKS,
-            theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML, theme_color=THEME_COLOR_META,
-            logo=logo_img(), favicon=favicon_links(),
+            theme_init_script=THEME_INIT_SCRIPT, theme_color=THEME_COLOR_META,
+            site_bar=site_bar(actual=name), favicon=favicon_links(),
             theme_toggle_script=THEME_TOGGLE_SCRIPT,
         )
         out_path = dist_dir / f"{meta['slug']}.html"
