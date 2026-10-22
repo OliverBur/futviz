@@ -336,13 +336,6 @@ _MAPA_JS = """<script>
 </script>"""
 
 
-def _etiqueta_mapa(sup, clave=CLAVE_MAPA):
-    sit, parte, accion = clave.split("|")
-    buscar = lambda lista, i: next((x["etiqueta"] for x in lista if x["id"] == i), i)  # noqa: E731
-    return (f'{buscar(sup["situaciones"], sit)} · {buscar(sup["partes"], parte).lower()} · '
-            f'tras {buscar(sup["acciones"], accion).lower()}')
-
-
 def og_image(sup, dist_dir: Path):
     """La imagen para compartir (1200x630): logo, título y el mismo mapa de calor, en el tema claro."""
     from PIL import Image, ImageDraw, ImageFont
@@ -533,10 +526,6 @@ __BRAND_ROOT__
   figcaption { margin-top: 10px; font-size: 13.5px; line-height: 1.5; color: var(--color-text-body); }
   figcaption small { display: block; color: var(--color-muted); font-size: 12.5px; margin-top: 2px; }
 
-  .como { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 48px; align-items: start; }
-  .como h2 { margin: 0; }
-  .como p { margin: 0 0 14px; font-size: 17px; line-height: 1.6; color: var(--color-text-body); max-width: 62ch; }
-
   .site-footer { border-top: 1px solid var(--color-border); padding: 28px 0 40px; font-size: 13.5px; color: var(--color-muted); }
   .site-footer .contenedor { display: flex; flex-wrap: wrap; gap: 12px 32px; justify-content: space-between; align-items: center; }
   .site-footer p { margin: 0; max-width: 70ch; line-height: 1.55; }
@@ -544,9 +533,8 @@ __BRAND_ROOT__
   .site-footer a { display: inline-flex; align-items: center; min-height: 44px; color: var(--color-text-body); font-weight: 600; }
 
   @media (max-width: 860px) {
-    .preguntas, .destacada, .como { grid-template-columns: minmax(0, 1fr); }
+    .preguntas, .destacada { grid-template-columns: minmax(0, 1fr); }
     .destacada { gap: 32px; }
-    .como { gap: 16px; }
   }
   @media (max-width: 640px) {
     .contenedor { padding-left: 16px; padding-right: 16px; }   /* solo lateral: el hero también es .contenedor */
@@ -612,18 +600,8 @@ __BRAND_ROOT__
         <figure>
           __MAPA__
           <div class="leyenda" aria-hidden="true"><span>Poco probable</span><i></i><span>Muy probable</span></div>
-          <figcaption>Lo que aprendió el modelo: la probabilidad de gol según dónde se tira.<small>__MAPA_DETALLE__</small></figcaption>
+          <figcaption>Lo que aprendió el modelo es la probabilidad de gol según el contexto del tiro.<small>Las zonas sin color no tienen tiros suficientes.</small></figcaption>
         </figure>
-      </div>
-    </div>
-  </section>
-
-  <section class="seccion" aria-labelledby="como">
-    <div class="contenedor como">
-      <h2 id="como">Cómo leer este sitio</h2>
-      <div>
-        <p>Aquí no se predicen partidos. La idea es entender cómo juegan los equipos y los jugadores, y aprender lo que hay detrás de cada número.</p>
-        <p>Cuando un análisis no encuentra señal, se dice tal cual. Un resultado nulo también es un resultado.</p>
       </div>
     </div>
   </section>
@@ -642,10 +620,6 @@ __THEME_SCRIPT__
 </body>
 </html>
 """
-
-
-def _rango(temporadas):
-    return f"{temporadas[0]} a {temporadas[-1]}" if temporadas else ""
 
 
 def escribir_landing(pages, dist_dir: Path):
@@ -668,16 +642,10 @@ def escribir_landing(pages, dist_dir: Path):
             f'<a class="ir" href="{eda_url}#{slug}">{escape(slugs[slug].tab or slugs[slug].title)} →</a></li>')
 
     art = articulos[0]
-    metodos = dict(art.meta).get("Métodos")
-    meta = f"{_minutos(art.body_html)} min de lectura" + (f" · {metodos}" if metodos else "")
+    meta = f"{_minutos(art.body_html)} min de lectura"
     proximo = (f'<p class="proximo">Próximamente: {escape(ml["proximos"][0]["title"])}.</p>'
                if ml.get("proximos") else "")
     sup = react_views.tabla_registrada("xg")["superficie"]
-    jug, equ = react_views.tabla_registrada("jugadores"), react_views.tabla_registrada("equipos")
-    tiros = (react_views.tabla_registrada("xg").get("tiros_temporada") or {}).get("temporadas") or []
-    fuentes = ("Datos: FBref (equipos) y Understat (jugadores y tiros) · Las 5 grandes ligas de Europa · "
-               f"jugadores y equipos de {_rango(sorted(set(jug['temporadas']) | set(equ['temporadas'])))}"
-               + (f", tiros de {_rango(tiros)}" if tiros else ""))
 
     html = (LANDING_TEMPLATE
             .replace("__PREGUNTAS__", "".join(preguntas))
@@ -686,14 +654,13 @@ def escribir_landing(pages, dist_dir: Path):
             .replace("__RAMPA_CSS__", rampa_css(sup))
             .replace("__RAMPA_LEYENDA__", "linear-gradient(to right, "
                      + ", ".join(f"var(--mapa-{i})" for i in range(1, NIVELES_MAPA + 1, 3)) + f", var(--mapa-{NIVELES_MAPA}))")
-            .replace("__MAPA_DETALLE__", f"{_etiqueta_mapa(sup)}. Modelo final del artículo; las zonas sin color no tienen tiros suficientes.")
             .replace("__ARTICULO_URL__", f"{ml_url}#{art.slug}")
             .replace("__ARTICULO_TITULO__", escape(art.title))
             .replace("__ARTICULO_SECCION__", escape(art.section))
             .replace("__ARTICULO_DESCRIPCION__", escape(art.subtitle))
             .replace("__ARTICULO_META__", escape(meta))
             .replace("__PROXIMO__", proximo)
-            .replace("__FUENTES__", escape(fuentes))
+            .replace("__FUENTES__", "Datos: FBref y Understat")
             .replace("__EDA_URL__", eda_url)
             .replace("__ML_URL__", ml_url)
             .replace("__TITULO__", escape(TITULO))
@@ -714,4 +681,5 @@ def escribir_landing(pages, dist_dir: Path):
     og = og_image(sup, dist_dir)
     return {"index": salida, "indice": ruta_idx, "og": og, "kb": kb, "kb_gz": kb_gz,
             "jugadores": len(indice["j"]), "equipos": len(indice["e"]), "vistas": len(indice["v"]),
-            "lecturas": len(indice["a"]), "jugadores_tabla": len(jug["nombres"])}
+            "lecturas": len(indice["a"]),
+            "jugadores_tabla": len(react_views.tabla_registrada("jugadores")["nombres"])}
