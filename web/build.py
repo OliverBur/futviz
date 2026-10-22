@@ -191,6 +191,13 @@ def build_favicon():
     # Para pestañas oscuras: con el arco slate el ícono casi desaparece (ver `site_utils.FAVICON_LINKS`).
     cuadrado(_trim_oscuro(Image.open(src), pad=16)).save(DIST_DIR / "favicon-dark.png")
     print(f"  favicon oscuro -> {(DIST_DIR / 'favicon-dark.png').relative_to(DIST_DIR)}")
+    # El mismo ícono, sin cuadrar, para el hero de la portada (`landing.py`); 240 px de alto alcanza para
+    # mostrarlo a ~120 px en pantallas 2x.
+    SITE_ASSETS_DIR.mkdir(parents=True, exist_ok=True)
+    for nombre, im in (("logo-icono.png", _trim_transparent(Image.open(src), pad=4)),
+                       ("logo-icono-dark.png", _trim_oscuro(Image.open(src), pad=4))):
+        im.resize((round(im.width * 240 / im.height), 240), Image.LANCZOS).save(SITE_ASSETS_DIR / nombre)
+    print(f"  ícono -> {(SITE_ASSETS_DIR / 'logo-icono.png').relative_to(DIST_DIR)}")
 
 
 def main():

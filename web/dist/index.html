@@ -94,10 +94,10 @@
   html[data-theme="dark"] img.logo-theme-dark { display: block; }
 
   /* Barra de arriba (ver `site_bar`): la misma en todas las páginas, para que el logo quede siempre en el
-     mismo punto. Va a lo ancho con el mismo tope y margen que el `.shell` del análisis exploratorio y el
-     `.reader` de Machine Learning (1880px, 24px a los lados), así el logo cae sobre el panel lateral. */
-  .sitebar { display: flex; align-items: center; flex-wrap: wrap; gap: 0 24px; min-height: 72px;
-    max-width: 1880px; margin: 0 auto; padding: 0 24px; }
+     mismo punto. Va a todo el ancho, sin tope, con 24px a los lados: el mismo margen que el `.shell` del
+     análisis exploratorio y el `.reader` de Machine Learning, así el logo cae sobre el panel lateral (en
+     pantallas de más de 1880px esos dos se centran y la barra no). */
+  .sitebar { display: flex; align-items: center; flex-wrap: wrap; gap: 0 24px; min-height: 72px; padding: 0 24px; }
   .sitebar .marca { display: inline-flex; align-items: center; min-height: 44px; margin-right: auto; line-height: 0; }
   .sitebar .marca img { height: 30px; width: auto; }
   .sitebar-nav { display: flex; flex-wrap: wrap; gap: 0 20px; }
@@ -131,7 +131,10 @@
      tema al otro). Cargado a la izquierda dejaba media pantalla vacía en monitores anchos. */
   .hero { text-align: center; padding-top: clamp(64px, 11vw, 136px); padding-bottom: clamp(56px, 9vw, 112px); }
   h1 { font-size: clamp(36px, 7vw, 64px); line-height: 1.05; letter-spacing: -0.03em; font-weight: 800;
-    color: var(--color-primary); margin: 0 auto 32px; text-wrap: balance; max-width: 18ch; }
+    color: var(--color-primary); margin: 0; text-align: left; }   /* el ancho es el del texto: así el bloque ícono + título queda centrado */
+  /* Ícono grande + título como un solo bloque centrado, del alto de los dos renglones del título. */
+  .titular { display: flex; align-items: center; justify-content: center; gap: clamp(20px, 2.5vw, 32px); margin: 0 auto 36px; }
+  .titular img { height: 2.1em; width: auto; font-size: clamp(36px, 7vw, 64px); flex: none; }
   .leer { display: inline-flex; align-items: center; min-height: 44px; margin-top: 16px; font-size: 15px;
     font-weight: 600; color: var(--color-interactive); text-decoration: none; }
 
@@ -238,6 +241,10 @@
   }
   @media (max-width: 640px) {
     .contenedor { padding-left: 16px; padding-right: 16px; }   /* solo lateral: el hero también es .contenedor */
+    /* En el teléfono el título usa tres renglones: el ícono va arriba, más chico. */
+    .titular { flex-direction: column; gap: 16px; margin-bottom: 28px; }
+    .titular img { height: 56px; }
+    h1 { text-align: center; }
     .preguntas h3 { font-size: 21px; }
     /* El buscador abierto ocupa la pantalla: el teclado del teléfono deja poco espacio para la lista. */
     .buscador.abierto { position: fixed; inset: 0; z-index: 50; max-width: none; padding: 12px 16px;
@@ -269,7 +276,11 @@
 </header>
 <main id="main">
   <section class="hero contenedor" aria-labelledby="titulo">
-    <h1 id="titulo">Pregúntale a los datos del fútbol</h1>
+    <div class="titular">
+      <img class="logo-theme-light" src="assets/logo-icono.png" alt="" width="353" height="240">
+      <img class="logo-theme-dark" src="assets/logo-icono-dark.png" alt="" width="353" height="240">
+      <h1 id="titulo">Pregúntale a los<br> datos del fútbol</h1>
+    </div>
     <form class="buscador" id="buscador" action="analisis-exploratorio.html" role="search">
       <label class="sr-only" for="q">Busca un jugador, un equipo o una gráfica</label>
       <div class="campo">
