@@ -8,6 +8,7 @@
 // vistas: la liga es una posición entera del eje X (1..5), cada equipo un punto con un desplazamiento
 // horizontal pequeño y determinista (jitter), y una capa propia dibuja las cajas encima.
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { entre, leerParams, usePublicarParams } from "./urlEstado.js";
 import { ThemeProvider } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
@@ -101,9 +102,19 @@ function CapaCajas({ cajas, ligasX, dominioY, colores, tk, onArea }) {
 }
 
 function Vista({ cfg, T, modo, tk }) {
-  const [colVar, setColVar] = useState(cfg.variable);
-  const [temporada, setTemporada] = useState(T.temporadas.length - 1);
-  const [nivel, setNivel] = useState("todos");
+  // Los filtros de la URL (ver urlEstado.js): se leen una vez, al montarse.
+  const [P] = useState(() => leerParams(cfg.id));
+  const [colVar, setColVar] = useState(() => entre(P.get("var"), cfg.variables.map((v) => v.col), cfg.variable));
+  const [temporada, setTemporada] = useState(() => {
+    const i = T.temporadas.indexOf(P.get("t"));
+    return i >= 0 ? i : T.temporadas.length - 1;
+  });
+  const [nivel, setNivel] = useState(() => entre(P.get("nivel"), T.niveles, "todos"));
+  usePublicarParams(cfg.id, {
+    var: colVar === cfg.variable ? null : colVar,
+    t: T.temporadas[temporada],
+    nivel: nivel === "todos" ? null : nivel,
+  });
   const [area, setArea] = useState({ left: 0, top: 0, width: 0, height: 0 });
   const [ancho, setAncho] = useState(0);
   const [caja, setCaja] = useState(null);
@@ -249,7 +260,7 @@ function Vista({ cfg, T, modo, tk }) {
         </Box>
       </Box>
 
-      <Box sx={{ mt: 3, maxWidth: 820 }}>
+      <Box sx={{ mt: 3, maxWidth: 1040 }}>
         <Rotulo>Qué mirar aquí</Rotulo>
         <Parrafos texto={cfg.queMirar} sx={{ color: "text.primary" }} />
       </Box>

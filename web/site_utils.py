@@ -871,6 +871,58 @@ TOOL_CARD_TEMPLATE = """<a class="card card--tool" href="{href}">
 """
 
 
+# Encabezado compartido por las dos páginas con panel lateral (el lector de Machine Learning,
+# `ml_reader.py`, y las vistas del análisis exploratorio, `section_views.py`): migas, logo, título de
+# la sección y bajada, más el enlace "saltar al contenido" que solo aparece con el foco del teclado.
+# Los dos módulos arman su página con `.replace("__X__", ...)`, no con `.format`: las llaves van simples.
+PAGE_HEADER_CSS = """
+  html { -webkit-tap-highlight-color: transparent; }
+  header { padding: 20px 24px 26px; border-bottom: 1px solid var(--color-border);
+    background-image:
+      radial-gradient(rgba(44, 76, 84, 0.077) 1.4px, transparent 1.6px),
+      radial-gradient(rgba(57, 153, 6, 0.066) 1.4px, transparent 1.6px);
+    background-size: 22px 22px, 22px 22px; background-position: 0 0, 11px 11px; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .crumb-current { color: var(--color-muted); font-size: 13px; font-weight: 500; }
+  .crumb-current .wordmark { font-weight: 700; }
+  .header-right { display: flex; align-items: center; gap: 14px; }
+  .site-logo-link { flex: none; line-height: 0; }
+  .site-logo { height: 30px; width: auto; display: block; }
+  h1.page-title { position: relative; font-size: 28px; font-weight: 700; letter-spacing: -0.01em;
+    color: var(--color-primary); margin: 16px 0 8px; padding-left: 14px; }
+  h1.page-title::before { content: ""; position: absolute; left: 0; top: 3px; bottom: 3px;
+    width: 4px; border-radius: 2px; background: var(--color-brand-accent); }
+  .lead { color: var(--color-muted); font-size: 15px; line-height: 1.55; max-width: 760px; }
+  @media (max-width: 640px) {
+    header { padding: 16px 16px 20px; }
+    .site-logo { height: 24px; }
+    h1.page-title { font-size: 24px; }
+    .lead { font-size: 14px; }
+  }
+
+  .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+  .skip { position: absolute; left: 12px; top: -48px; z-index: 40; padding: 9px 14px; border-radius: 8px;
+    background: var(--color-primary); color: var(--color-bg); font-size: 13px; font-weight: 600; text-decoration: none;
+    transition: transform .15s ease; }
+  .skip:focus-visible { transform: translateY(60px); outline: 2px solid var(--color-interactive); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) { .skip { transition: none; } }
+"""
+
+PAGE_HEADER_HTML = """<header>
+  <div class="topbar">
+    <span class="crumb-current"><span class="wordmark" translate="no">FutViz</span> / __NAME__</span>
+    <div class="header-right">
+      <a class="site-logo-link" href="index.html">
+        <img class="site-logo" src="assets/logo.png" alt="FutViz — volver al inicio">
+      </a>
+      __THEME_TOGGLE__
+    </div>
+  </div>
+  <h1 class="page-title">__NAME__</h1>
+  <div class="lead">__DESCRIPTION__</div>
+</header>"""
+
 # CSS de la lectura de un análisis (prosa, figuras, tablas, callouts). Lo comparten la página
 # suelta de cada artículo (`ARTICLE_PAGE_TEMPLATE`) y el lector de la sección de Machine
 # Learning (`ml_reader.py`): así los dos se ven igual sin mantener el CSS por duplicado.
