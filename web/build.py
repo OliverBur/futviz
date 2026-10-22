@@ -16,10 +16,11 @@ import matplotlib
 matplotlib.use("Agg")
 
 from site_utils import (  # noqa: E402
-    COLOR_BG_CLARO, SECTION_META, write_article_page, write_chart_page, write_index, write_section_pages,
+    SECTION_META, write_article_page, write_chart_page, write_section_pages,
 )
 from section_views import write_section_views  # noqa: E402
 from ml_reader import write_ml_reader  # noqa: E402
+import landing  # noqa: E402
 import react_views  # noqa: E402
 from viz_theme import apply_theme, apply_plotly_theme  # noqa: E402
 import teams as teams_charts  # noqa: E402
@@ -192,177 +193,6 @@ def build_favicon():
     print(f"  favicon oscuro -> {(DIST_DIR / 'favicon-dark.png').relative_to(DIST_DIR)}")
 
 
-# Qué gráfico real representa a cada sección en su thumbnail de la
-# landing — elegidos por el usuario, no cualquiera de los 9/5 de cada
-# sección sirve igual de bien como preview. Es `(página, índice del
-# gráfico dentro de esa página)`: las páginas de chart tienen uno solo,
-# pero un análisis tiene varios y hay que decir cuál representa mejor.
-PREVIEW_SOURCE_CHART = {
-    # Es una página con vistas: el `#...` elige cuál se ve.
-    "analisis-exploratorio": ("analisis-exploratorio.html#perfil-ofensivo", 0),  # "Perfil ofensivo: xG90 vs. xA90"
-    "machine-learning": ("analisis/modelo-xg.html", 8),     # el mapa de valor del tiro (9.ª figura)
-}
-
-
-def _serve_dist():
-    """Sirve `dist/` por http en un puerto libre y devuelve `(servidor, base_url)`.
-
-    La captura va por http y no por `file://` para parecerse a como se ve el sitio
-    publicado."""
-    import functools
-    import http.server
-    import threading
-
-    class _Callado(http.server.SimpleHTTPRequestHandler):
-        def log_message(self, *args):
-            pass
-
-    servidor = http.server.ThreadingHTTPServer(
-        ("127.0.0.1", 0), functools.partial(_Callado, directory=str(DIST_DIR)))
-    threading.Thread(target=servidor.serve_forever, daemon=True).start()
-    return servidor, f"http://127.0.0.1:{servidor.server_address[1]}"
-
-
-def _screenshot_chart_card(source, base_url, dark=False):
-    """Captura una tarjeta `.chart-scroll` (el gráfico ya renderizado, sin
-    el header/breadcrumb) de una página ya generada en `dist/`, con
-    Playwright. `source` es `(ruta relativa a dist/, índice del gráfico)`.
-    `dark=True` clickea el toggle real de la página antes de capturar
-    (mismo flujo que un usuario, no duplica la lógica de
-    PLOTLY_THEME_SCRIPT). Devuelve una imagen PIL o `None` si algo falla —
-    un thumbnail roto es peor que caer al placeholder de texto."""
-    import io
-
-    rel_path, index = source
-    if not (DIST_DIR / rel_path.split("#")[0]).exists():
-        return None
-
-    try:
-        from playwright.sync_api import sync_playwright
-        from PIL import Image
-
-        with sync_playwright() as p:
-            browser = p.chromium.launch()
-            # 1360 y no 1100: la página del análisis exploratorio tiene un menú de 250 px a la izquierda y con
-            # 1100 el gráfico del thumbnail salía más chico que el cuadro que lo muestra.
-            page = browser.new_page(viewport={"width": 1360, "height": 900})
-            page.goto(f"{base_url}/{rel_path}")
-            page.wait_for_timeout(600)
-            if dark:
-                page.click("#theme-toggle")
-                page.wait_for_timeout(400)
-            locator = page.locator(".chart-scroll").nth(index)
-            locator.wait_for(state="visible", timeout=5000)
-            locator.scroll_into_view_if_needed()
-            # Que el contenedor exista no significa que ya haya algo dibujado
-            # dentro: los gráficos que están más abajo en un análisis largo
-            # tardan varios segundos, y sin esperarlos el thumbnail sale en
-            # blanco. Qué esperar depende del tipo de gráfico — los de React
-            # pintan puntos (`.rx-chart svg circle`) o celdas, los de Plotly un
-            # `.main-svg` y los de matplotlib son un `<img>` embebido.
-            # `:visible` importa en los de matplotlib: llevan dos <img>, una por
-            # tema, y la del tema inactivo está oculta por CSS — sin filtrar,
-            # la espera se queda mirando la que nunca se va a mostrar.
-            locator.locator(".main-svg, .rx-chart svg circle, .rx-chart svg rect[data-celda], img:visible").first.wait_for(
-                state="visible", timeout=20000)
-            # Las vistas de React entran con una animación (~1 s) y sus etiquetas aparecen al final.
-            page.wait_for_timeout(1600 if locator.locator(".rx-chart").count() else 400)
-            png_bytes = locator.screenshot()
-            browser.close()
-        return Image.open(io.BytesIO(png_bytes)).convert("RGB")
-    except Exception as e:
-        print(f"  (no se pudo capturar {rel_path} para preview: {e})")
-        return None
-
-
-def _fit_preview_canvas(im, target_width=960):
-    """Solo reescala, sin recortar — `.hub-thumb` en el CSS ya tiene
-    `aspect-ratio: 16/10; object-fit: cover`, así que el navegador hace el
-    recorte final al mostrarlo. Recortar acá también duplicaría el
-    recorte y, en gráficos con barra lateral (más anchos que 16:10),
-    terminaba comiéndose el título del lado izquierdo."""
-    from PIL import Image
-
-    ratio = target_width / im.width
-    return im.resize((target_width, round(im.height * ratio)), Image.LANCZOS)
-
-
-def _placeholder_preview(label):
-    """Placeholder de texto simple — para cuando no hay ni fuente manual
-    en img/ ni se pudo capturar el gráfico real."""
-    from PIL import Image, ImageDraw, ImageFont
-
-    w, h = 960, 600
-    bg = tuple(int(COLOR_BG_CLARO[i:i + 2], 16) for i in (1, 3, 5))      # --color-bg
-    primary = (44, 76, 84)    # --color-primary
-    accent = (57, 153, 6)     # --color-brand-accent
-    img = Image.new("RGB", (w, h), bg)
-    draw = ImageDraw.Draw(img)
-    # Una franja de acento simple en la esquina (misma pareja de colores
-    # del logo, no una cancha ni un balón), sin cruzar el texto centrado.
-    draw.rectangle([0, 0, w, 10], fill=accent)
-    draw.rectangle([0, 0, 10, h], fill=primary)
-    try:
-        font_big = ImageFont.truetype("segoeui.ttf", 46)
-        font_small = ImageFont.truetype("segoeui.ttf", 24)
-    except OSError:
-        font_big = ImageFont.load_default(size=46)
-        font_small = ImageFont.load_default(size=24)
-
-    def centered(text, y, font, color):
-        bbox = draw.textbbox((0, 0), text, font=font)
-        tw = bbox[2] - bbox[0]
-        draw.text(((w - tw) / 2, y), text, font=font, fill=color)
-
-    centered(label, h / 2 - 46, font_big, primary)
-    centered("vista previa próximamente", h / 2 + 18, font_small, (87, 112, 122))
-    return img
-
-
-def build_previews():
-    """Thumbnail de preview (claro y oscuro) para cada card de la landing
-    (`dist/assets/preview-{slug}.png` / `preview-{slug}-dark.png`). Orden
-    de prioridad para el claro: 1) `img/preview-{slug}.png` a mano (no
-    versionado, igual que el logo), 2) captura real de
-    `PREVIEW_SOURCE_CHART[slug]` (requiere correr esto *después* de
-    escribir las páginas de chart), 3) placeholder de texto. El oscuro
-    sigue el mismo orden — todas las páginas de chart soportan el toggle
-    (Plotly se recolorea en runtime, matplotlib tiene una segunda imagen
-    pre-renderizada, ver viz_theme.dark_ink())."""
-    SITE_ASSETS_DIR.mkdir(parents=True, exist_ok=True)
-    labels = {"analisis-exploratorio": "Análisis exploratorio", "machine-learning": "Machine Learning"}
-    servidor, base_url = _serve_dist()
-
-    for slug, label in labels.items():
-        dest_light = SITE_ASSETS_DIR / f"preview-{slug}.png"
-        dest_dark = SITE_ASSETS_DIR / f"preview-{slug}-dark.png"
-        src = IMG_DIR / f"preview-{slug}.png"
-        source = PREVIEW_SOURCE_CHART[slug]
-
-        if src.exists():
-            shutil.copy(src, dest_light)
-            shutil.copy(src, dest_dark)  # sin variante oscura manual todavía
-            print(f"  preview {slug} -> {dest_light.relative_to(DIST_DIR)} (fuente real)")
-            continue
-
-        shot = _screenshot_chart_card(source, base_url)
-        if shot is not None:
-            _fit_preview_canvas(shot).save(dest_light)
-            print(f"  preview {slug} -> {dest_light.relative_to(DIST_DIR)} (captura de {source[0]})")
-        else:
-            _placeholder_preview(label).save(dest_light)
-            print(f"  preview {slug} -> {dest_light.relative_to(DIST_DIR)} (placeholder)")
-
-        shot_dark = _screenshot_chart_card(source, base_url, dark=True)
-        if shot_dark is not None:
-            _fit_preview_canvas(shot_dark).save(dest_dark)
-            print(f"  preview {slug} (oscuro) -> {dest_dark.relative_to(DIST_DIR)}")
-        else:
-            shutil.copy(dest_light, dest_dark)
-
-    servidor.shutdown()
-
-
 def main():
     if DIST_DIR.exists():
         shutil.rmtree(DIST_DIR)
@@ -405,8 +235,8 @@ def main():
         print(f"  {hub}: {sum(len(v) for v in entidades.values())} vistas -> {outs[0].relative_to(DIST_DIR)}")
 
     # Los análisis son otro tipo de página (prosa + gráficos, no un gráfico
-    # suelto), pero entran a la misma lista: `write_section_pages` y
-    # `write_index` solo miran `.section` y arman el href con `.href_prefix`.
+    # suelto), pero entran a la misma lista: `write_section_pages` y la
+    # landing solo miran `.section` y arman el href con `.href_prefix`.
     print("Generando análisis de machine learning...")
     # `ml_xg` entrena el modelo de xG al construirse (221.922 tiros, con
     # early stopping), así que es de los pasos más lentos del build.
@@ -422,15 +252,17 @@ def main():
     for ruta in react_views.escribir_datos(DIST_DIR):
         print(f"  datos -> {ruta.relative_to(DIST_DIR)} ({ruta.stat().st_size / 1024:.0f} KB)")
 
-    # Después de escribir las páginas de chart: los previews de la landing
-    # capturan una de esas páginas ya generadas (ver PREVIEW_SOURCE_CHART).
-    build_previews()
-
     for out in write_section_pages(pages, DIST_DIR):
         print(f"  sección -> {out.relative_to(DIST_DIR)}")
 
-    index_path = write_index(pages, DIST_DIR)
-    print(f"Índice -> {index_path.relative_to(DIST_DIR)}")
+    # La landing va al final: su índice de búsqueda y su mapa de calor salen de las tablas y vistas que
+    # registraron los pasos anteriores (ver landing.py). El buscador es un .js estático que solo se copia.
+    shutil.copy(WEB_DIR / "static" / "buscador.js", SITE_ASSETS_DIR / "buscador.js")
+    r = landing.escribir_landing(pages, DIST_DIR)
+    print(f"Landing -> {r['index'].relative_to(DIST_DIR)} · og:image -> {r['og'].relative_to(DIST_DIR)}")
+    print(f"  buscador -> {r['indice'].relative_to(DIST_DIR)}: {r['jugadores']} jugadores (de "
+          f"{r['jugadores_tabla']} en las tablas), {r['equipos']} equipos, {r['vistas']} gráficas, "
+          f"{r['lecturas']} lecturas · {r['kb']:.0f} KB, {r['kb_gz']:.1f} KB gzip")
     print(f"\n{len(pages)} páginas generadas en {DIST_DIR}")
 
 

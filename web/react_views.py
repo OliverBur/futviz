@@ -167,9 +167,23 @@ def escribir_datos(dist_dir: Path):
 
 # --- vistas ------------------------------------------------------------------------------------
 
+_VISTAS = {}   # id -> {"tipo", "config"}: lo lee el índice del buscador de la landing (`landing.py`)
+
+
+def vista_registrada(vista_id):
+    """La configuración con la que se montó una vista (`None` si no existe)."""
+    return _VISTAS.get(vista_id)
+
+
+def tabla_registrada(nombre):
+    """El payload de una tabla ya registrada (`None` si no existe)."""
+    return _TABLAS.get(nombre)
+
+
 def montar_html(tipo: str, vista_id: str, config: dict, alto_min: int = 520) -> str:
     """El fragmento de una vista: contenedor y configuración (ver el contrato arriba). `alto_min`
     reserva el espacio mientras carga, para que la página no salte."""
+    _VISTAS[vista_id] = {"tipo": tipo, "config": config}
     cuerpo = json.dumps(config, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     return (
         f'<div class="rx-mount" data-rx="{tipo}" data-rx-id="{vista_id}" style="min-height:{alto_min}px"></div>'
