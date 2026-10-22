@@ -74,11 +74,12 @@ def _caja_contenido(diff, pad):
 
 
 # Colores del logo fuente. El slate ("Fut" y el arco) es lo único que se recolorea para el tema oscuro: sobre
-# #12181A daba ~1.9:1. El destino es el `--color-primary` del tema oscuro (ver BRAND_ROOT_CSS), así que el
-# logo y el texto del sitio quedan del mismo color. Los verdes se quedan como están (son ≥ 3:1 sobre los
-# dos fondos oscuros).
+# #12181A daba ~1.9:1. El destino es el MISMO slate aclarado, no el casi blanco de `--color-primary`: mismo matiz
+# (~193°) y saturación (30 %), luminosidad de 25 % a 52 %, para que el logo siga siendo azul-teal y se parezca al
+# del tema claro. Da 5.7:1 sobre #12181A y 5.0:1 sobre #1B2426 (a 48 % ya no llega a 4.5:1 sobre esta última).
+# Los verdes se quedan como están (son ≥ 4.3:1 sobre los dos fondos oscuros).
 LOGO_SLATE = (44, 76, 84)             # #2C4C54
-LOGO_SLATE_OSCURO = (215, 228, 231)   # #D7E4E7
+LOGO_SLATE_OSCURO = (96, 153, 169)    # #6099A9
 
 
 def _trim_oscuro(im, pad=30):
