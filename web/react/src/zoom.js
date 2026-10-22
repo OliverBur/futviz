@@ -53,7 +53,9 @@ export function centrarEn(v, base, x, y) {
 
 // Vista que abarca un conjunto de puntos con un margen, manteniendo la proporción
 // de la base (así la diagonal no se deforma) y sin salirse de ella.
-export function ajustarA(puntos, base, margen = 0.08) {
+// `acercamientoMax` es lo más que se puede acercar respecto de la base: para la vista de arranque se usa
+// uno chico, porque con dos o tres puntos "ajustar" los dejaría a 40 aumentos, que no es verlos mejor.
+export function ajustarA(puntos, base, margen = 0.08, acercamientoMax = ZOOM_MAX) {
   if (!puntos.length) return base;
   let x1 = -Infinity, y1 = -Infinity;
   let x0 = Infinity, y0 = Infinity;
@@ -62,7 +64,7 @@ export function ajustarA(puntos, base, margen = 0.08) {
     if (p.y < y0) y0 = p.y; if (p.y > y1) y1 = p.y;
   }
   const razon = altoDe(base) / anchoDe(base);
-  let w = Math.max(x1 - x0, (y1 - y0) / razon, anchoDe(base) / ZOOM_MAX) * (1 + margen * 2);
+  let w = Math.max(x1 - x0, (y1 - y0) / razon, anchoDe(base) / acercamientoMax) * (1 + margen * 2);
   w = Math.min(w, anchoDe(base));
   const h = w * razon;
   return encuadrar({
