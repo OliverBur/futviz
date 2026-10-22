@@ -390,8 +390,8 @@ def chart_shot_map():
 # Orden y agrupación de las pestañas de la sección: (slug, texto corto, familia). Lo que no esté acá
 # no se muestra, así que una vista nueva obliga a decidir en qué familia vive.
 PESTANAS = [
+    ("perfil-ofensivo", "Perfil xG90 / xA90", "Ataque"),   # la primera: es la que abre la página
     ("goles-vs-xg", "Goles vs. xG", "Ataque"),
-    ("perfil-ofensivo", "Perfil xG90 / xA90", "Ataque"),
     ("mapa-tiros", "Mapa de tiros", "Ataque"),
     ("asistencias-vs-xa", "Asist. vs. xA", "Creación"),
     ("pases-clave-vs-xa", "Pases clave vs. xA", "Creación"),

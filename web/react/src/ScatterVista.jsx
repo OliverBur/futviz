@@ -50,6 +50,7 @@ import { desvPob, media } from "./stats.js";
 import { GENERADORES, lecturaExplorador } from "./insights.js";
 
 const signo = (d, dec = 1) => (d >= 0 ? "+" : "−") + Math.abs(d).toFixed(dec);
+const AJUSTE_MAX = 5;   // lo más que la vista de arranque se acerca a la base (con pocos puntos, más sería ver ampliado el vacío)
 const MAX_PINES = 6;   // fijados a la vez: con más, las etiquetas y los anillos dejan de leerse
 const filtrar = createFilterOptions({ limit: 40, ignoreAccents: true });
 
@@ -163,22 +164,7 @@ function Vista({ cfg, T, modo, tk }) {
   const rx = useMemo(() => rangoDe(exp ? xs : pobl.map((r) => xs[r])), [exp, xs, pobl]);
   const ry = useMemo(() => rangoDe(exp ? ys : pobl.map((r) => ys[r])), [exp, ys, pobl]);
   const base = useMemo(() => ({ x0: rx.rango[0], x1: rx.rango[1], y0: ry.rango[0], y1: ry.rango[1] }), [rx, ry]);
-  const [view, setView] = useState(base);
-  const viewRef = useRef(view);
-  viewRef.current = view;
-  // Al cambiar de variables (explorador) la vista vuelve a la base de las nuevas.
-  useEffect(() => { viewRef.current = base; setView(base); }, [base]);
-
-  // Los promedios de las líneas punteadas son los de las temporadas juntas, no los de la mostrada:
-  // si se movieran con cada cambio, "estar por encima del promedio" significaría algo distinto en cada una.
-  const medias = useMemo(() => (ref && ref.tipo === "promedios" && pobl.length
-    ? { x: media(pobl.map((r) => xs[r])), y: media(pobl.map((r) => ys[r])) } : null), [ref, pobl, xs, ys]);
-
-  // Memoizados: si cambiaran de identidad en cada render, `series` se recalcularía y MUI
-  // volvería a pintar los ~2.000 marcadores en cada movimiento del mouse.
-  const colores = useMemo(() => T.colores[modo === "dark" ? "oscuro" : "claro"], [T, modo]);
-  const div = useMemo(() => divergente(modo, T.divergente), [T, modo]);
-
+  // Lo que se ve: las filas de la temporada y los filtros elegidos.
   const visibles = useMemo(() => {
     const out = [];
     const posIdx = posiciones.map((p) => (T.posiciones || []).indexOf(p));
@@ -193,6 +179,29 @@ function Vista({ cfg, T, modo, tk }) {
     return out;
   }, [pobl, T, tEf, ligasOn, posiciones, nivel, sub21]);
 
+  const puntos = useMemo(() => visibles.map((r) => ({ r, x: xs[r], y: ys[r] })), [visibles, xs, ys]);
+
+  // La vista de arranque se AJUSTA a esos puntos, no al rango de todas las temporadas (`base`): con una temporada
+  // a medias, o con un filtro que deja pocos, abrir con todo el rango dejaba los puntos amontonados en una
+  // esquina. `base` sigue siendo el límite del zoom y lo que enseña "Ver todo". Se reajusta al cambiar los
+  // filtros, la temporada o los ejes.
+  const ajuste = useMemo(() => ajustarA(puntos, base, 0.08, AJUSTE_MAX), [puntos, base]);
+  const [view, setView] = useState(ajuste);
+  const viewRef = useRef(view);
+  viewRef.current = view;
+  useEffect(() => { viewRef.current = ajuste; setView(ajuste); }, [ajuste]);
+
+  // Los promedios de las líneas punteadas son los de las temporadas juntas, no los de la mostrada:
+  // si se movieran con cada cambio, "estar por encima del promedio" significaría algo distinto en cada una.
+  const medias = useMemo(() => (ref && ref.tipo === "promedios" && pobl.length
+    ? { x: media(pobl.map((r) => xs[r])), y: media(pobl.map((r) => ys[r])) } : null), [ref, pobl, xs, ys]);
+
+  // Memoizados: si cambiaran de identidad en cada render, `series` se recalcularía y MUI
+  // volvería a pintar los ~2.000 marcadores en cada movimiento del mouse.
+  const colores = useMemo(() => T.colores[modo === "dark" ? "oscuro" : "claro"], [T, modo]);
+  const div = useMemo(() => divergente(modo, T.divergente), [T, modo]);
+
+
   // jugador -> su fila en lo que se ve (un jugador sin fila no juega en esta temporada o filtro).
   const filaDeJug = useMemo(() => {
     const m = new Map();
@@ -203,7 +212,6 @@ function Vista({ cfg, T, modo, tk }) {
     () => fijados.map((j) => filaDeJug.get(j)).filter((r) => r != null), [fijados, filaDeJug]);
   const pines = useMemo(() => new Set(filasFijadas), [filasFijadas]);
 
-  const puntos = useMemo(() => visibles.map((r) => ({ r, x: xs[r], y: ys[r] })), [visibles, xs, ys]);
 
   // Identifica QUÉ puntos hay. Si cambia, el chart se remonta (ver Grafica.jsx) y el highlight por hover
   // que venía de los datos anteriores deja de valer.
@@ -294,7 +302,10 @@ function Vista({ cfg, T, modo, tk }) {
   }, [claveDatos]);
 
   const onView = useCallback((v) => setView(v), []);
-  const hayZoom = !esBase(view, base);
+  // "Con zoom" es haberse movido de la vista de arranque (el ajuste) y de la base; `fueraDeBase`, en cambio,
+  // es poder alejarse todavía más.
+  const hayZoom = !esBase(view, ajuste) && !esBase(view, base);
+  const fueraDeBase = !esBase(view, base);
   const tempPista = useRef(0);
   const onPista = useCallback(() => {
     setPista(true);
@@ -601,11 +612,11 @@ function Vista({ cfg, T, modo, tk }) {
             <Box role="toolbar" aria-label="Zoom y tabla" sx={{ display: "flex", alignItems: "center", gap: 0.25 }}>
               <Tooltip title="Acercar"><span><IconButton size="small" aria-label="Acercar"
                 onClick={() => mover(acercar(viewRef.current, base, 0.6))}><ZoomIn fontSize="small" /></IconButton></span></Tooltip>
-              <Tooltip title="Alejar"><span><IconButton size="small" aria-label="Alejar" disabled={!hayZoom}
+              <Tooltip title="Alejar"><span><IconButton size="small" aria-label="Alejar" disabled={!fueraDeBase}
                 onClick={() => mover(acercar(viewRef.current, base, 1 / 0.6))}><ZoomOut fontSize="small" /></IconButton></span></Tooltip>
               <Tooltip title="Ajustar a los datos de esta vista"><span><IconButton size="small" aria-label="Ajustar a los datos"
-                onClick={() => mover(ajustarA(puntos, base))}><CenterFocusStrong fontSize="small" /></IconButton></span></Tooltip>
-              <Tooltip title="Ver todo"><span><IconButton size="small" aria-label="Ver todo" disabled={!hayZoom}
+                onClick={() => mover(ajuste)}><CenterFocusStrong fontSize="small" /></IconButton></span></Tooltip>
+              <Tooltip title="Ver todo"><span><IconButton size="small" aria-label="Ver todo" disabled={!fueraDeBase}
                 onClick={() => mover(base)}><ZoomOutMap fontSize="small" /></IconButton></span></Tooltip>
               {!movil && (
                 <Button size="small" startIcon={<TableChart fontSize="small" />} onClick={() => setTablaAbierta(true)}
