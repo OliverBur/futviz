@@ -22,7 +22,7 @@ import re
 from pathlib import Path
 
 from site_utils import (
-    ARTICLE_CSS, BRAND_ROOT_CSS, FONT_LINKS, favicon_links, PAGE_HEADER_CSS, PAGE_HEADER_HTML, PLOTLY_THEME_SCRIPT, SECTION_META,
+    ARTICLE_CSS, BRAND_ROOT_CSS, FONT_LINKS, THEME_COLOR_META, favicon_links, PAGE_HEADER_CSS, PAGE_HEADER_HTML, PLOTLY_THEME_SCRIPT, SECTION_META,
     THEME_INIT_SCRIPT, THEME_TOGGLE_HTML, ArticlePage,
 )
 
@@ -47,7 +47,7 @@ READER_PAGE_TEMPLATE = """<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>__NAME__ · FutViz</title>
 <meta name="description" content="__DESCRIPTION__">
-<meta name="theme-color" content="#EFEDF7">
+__THEME_COLOR__
 __FAVICON__
 __THEME_INIT__
 __FONT_LINKS__
@@ -438,11 +438,6 @@ __PAGE_HEADER__
   window.addEventListener('hashchange', alHash);
   document.getElementById('skip').addEventListener('click', function(e) { e.preventDefault(); pane.focus({preventScroll: false}); });
 
-  // El theme-color de la barra del navegador sigue al fondo de la página, también al cambiar de tema a mano.
-  var metaTema = document.querySelector('meta[name="theme-color"]');
-  function sincronizarTema() { metaTema.content = getComputedStyle(document.documentElement).getPropertyValue('--color-bg').trim(); }
-  document.addEventListener('futviz-theme-change', sincronizarTema);
-  sincronizarTema();
 
   alHash();
 })();
@@ -524,6 +519,7 @@ def write_ml_reader(section: str, articles: list, dist_dir: Path):
 
     datos = json.dumps(todos, ensure_ascii=False).replace("</", "<\\/")
     pagina = (READER_PAGE_TEMPLATE
+              .replace("__THEME_COLOR__", THEME_COLOR_META)
               .replace("__FAVICON__", favicon_links())
               .replace("__PAGE_HEADER_CSS__", PAGE_HEADER_CSS)
               .replace("__PAGE_HEADER__", PAGE_HEADER_HTML)
