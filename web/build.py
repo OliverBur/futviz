@@ -54,13 +54,88 @@ def _trim_transparent(im, pad=30):
     from PIL import Image
     im = Image.fromarray(rgba, mode="RGBA")
 
-    mask = diff > 30
-    rows, cols = np.where(mask)
-    if len(rows):
-        bbox = (max(int(cols.min()) - pad, 0), max(int(rows.min()) - pad, 0),
-                 min(int(cols.max()) + pad, im.width), min(int(rows.max()) + pad, im.height))
+    bbox = _caja_contenido(diff, pad)
+    if bbox:
         im = im.crop(bbox)
     return im
+
+
+def _caja_contenido(diff, pad):
+    """`(izq, arriba, der, abajo)` de lo que no es fondo (`diff` > 30) más `pad` de margen, o `None` si
+    no hay nada. La comparten la versión clara y la oscura del logo para que midan exactamente lo mismo."""
+    import numpy as np
+
+    rows, cols = np.where(diff > 30)
+    if not len(rows):
+        return None
+    alto, ancho = diff.shape
+    return (max(int(cols.min()) - pad, 0), max(int(rows.min()) - pad, 0),
+            min(int(cols.max()) + pad, ancho), min(int(rows.max()) + pad, alto))
+
+
+# Colores del logo fuente. El slate ("Fut" y el arco) es lo único que se recolorea para el tema oscuro: sobre
+# #12181A daba ~1.9:1. El destino es el `--color-primary` del tema oscuro (ver BRAND_ROOT_CSS), así que el
+# logo y el texto del sitio quedan del mismo color. Los verdes se quedan como están (son ≥ 3:1 sobre los
+# dos fondos oscuros).
+LOGO_SLATE = (44, 76, 84)             # #2C4C54
+LOGO_SLATE_OSCURO = (215, 228, 231)   # #D7E4E7
+
+
+def _trim_oscuro(im, pad=30):
+    """La versión del logo para el tema oscuro: mismo recorte, formas y proporciones que `_trim_transparent`,
+    con el slate cambiado por `LOGO_SLATE_OSCURO`.
+
+    Recolorear los píxeles tal cual dejaría un halo: el alfa de `_trim_transparent` sale de la distancia al
+    fondo, pero el RGB de los píxeles de borde sigue siendo una MEZCLA del primer plano con ese fondo claro
+    (celeste grisáceo), y sobre un fondo oscuro se vería como un contorno claro. Por eso aquí se desmezcla:
+    cada píxel se explica como mezcla de dos colores de {fondo, colores sólidos del logo} (la pareja que deja
+    menos error; cubre tanto fondo-primer plano como slate-verde, donde se tocan las letras) y se reconstruye
+    el color de primer plano y la cobertura real. Devuelve una imagen RGBA."""
+    import numpy as np
+    from PIL import Image
+
+    rgb = np.asarray(im.convert("RGB")).astype(float)
+    fondo = rgb[0, 0]
+    diff = np.abs(rgb - fondo).sum(axis=2)
+    caja = _caja_contenido(diff, pad)
+    if caja:
+        rgb = rgb[caja[1]:caja[3], caja[0]:caja[2]]
+        diff = diff[caja[1]:caja[3], caja[0]:caja[2]]
+    alto, ancho = rgb.shape[:2]
+    pix = rgb.reshape(-1, 3)
+
+    # Los colores sólidos de primer plano: los que cubren más del 1 % de lo que no es fondo (los del
+    # borde suavizado son miles de tonos con unos cientos de píxeles cada uno).
+    unicos, cuentas = np.unique(pix.astype(np.uint8), axis=0, return_counts=True)
+    umbral = 0.01 * int((diff > 30).sum())
+    solidos = [u.astype(float) for u, c in zip(unicos, cuentas)
+               if c > umbral and np.abs(u - fondo).sum() > 30]
+    destino = [np.array(LOGO_SLATE_OSCURO, float) if np.abs(c - LOGO_SLATE).sum() < 12 else c for c in solidos]
+    print("  logo oscuro: " + ", ".join(
+        f"#{int(c[0]):02X}{int(c[1]):02X}{int(c[2]):02X}->#{int(d[0]):02X}{int(d[1]):02X}{int(d[2]):02X}"
+        for c, d in zip(solidos, destino)))
+
+    colores = np.vstack([fondo] + solidos)       # K x 3; el 0 es el fondo
+    k = len(colores)
+    peso = np.zeros((len(pix), k))
+    mejor = np.full(len(pix), np.inf)
+    for i in range(k):
+        for j in range(i + 1, k):
+            d = colores[i] - colores[j]
+            t = np.clip(((pix - colores[j]) @ d) / (d @ d), 0, 1)
+            error = ((pix - (colores[j] + t[:, None] * d)) ** 2).sum(axis=1)
+            gana = error < mejor
+            peso[gana] = 0
+            peso[gana, i] = t[gana]
+            peso[gana, j] = 1 - t[gana]
+            mejor[gana] = error[gana]
+
+    alfa = 1 - peso[:, 0]                                    # cobertura del primer plano
+    pre = peso[:, 1:] @ np.vstack(destino)                   # color premultiplicado por la cobertura
+    color = pre / np.maximum(alfa, 1e-6)[:, None]
+    rgba = np.dstack([np.clip(np.rint(color), 0, 255).reshape(alto, ancho, 3),
+                      np.clip(np.rint(alfa * 255), 0, 255).reshape(alto, ancho, 1)]).astype("uint8")
+    return Image.fromarray(rgba, mode="RGBA")
 
 
 def build_logo():
@@ -77,10 +152,13 @@ def build_logo():
 
     from PIL import Image
 
-    im = _trim_transparent(Image.open(src))
     SITE_ASSETS_DIR.mkdir(parents=True, exist_ok=True)
+    im = _trim_transparent(Image.open(src))
     im.save(SITE_ASSETS_DIR / "logo.png")
     print(f"  logo -> {(SITE_ASSETS_DIR / 'logo.png').relative_to(DIST_DIR)}")
+    # El mismo logo para el tema oscuro (se muestra con `html[data-theme="dark"]`, ver `site_utils.logo_img`).
+    _trim_oscuro(Image.open(src)).save(SITE_ASSETS_DIR / "logo-dark.png")
+    print(f"  logo oscuro -> {(SITE_ASSETS_DIR / 'logo-dark.png').relative_to(DIST_DIR)}")
 
 
 def build_favicon():
@@ -96,17 +174,19 @@ def build_favicon():
 
     from PIL import Image
 
-    im = _trim_transparent(Image.open(src), pad=16)
+    def cuadrado(im):
+        # Centrar en lienzo cuadrado (el ícono es más ancho que alto) antes de
+        # bajar la resolución, para que no quede estirado.
+        side = max(im.width, im.height)
+        canvas = Image.new("RGBA", (side, side), (0, 0, 0, 0))
+        canvas.paste(im, ((side - im.width) // 2, (side - im.height) // 2), im)
+        return canvas.resize((256, 256), Image.LANCZOS)
 
-    # Centrar en lienzo cuadrado (el ícono es más ancho que alto) antes de
-    # bajar la resolución, para que no quede estirado.
-    side = max(im.width, im.height)
-    canvas = Image.new("RGBA", (side, side), (0, 0, 0, 0))
-    canvas.paste(im, ((side - im.width) // 2, (side - im.height) // 2), im)
-    canvas = canvas.resize((256, 256), Image.LANCZOS)
-
-    canvas.save(DIST_DIR / "favicon.png")
+    cuadrado(_trim_transparent(Image.open(src), pad=16)).save(DIST_DIR / "favicon.png")
     print(f"  favicon -> {(DIST_DIR / 'favicon.png').relative_to(DIST_DIR)}")
+    # Para pestañas oscuras: con el arco slate el ícono casi desaparece (ver `site_utils.FAVICON_LINKS`).
+    cuadrado(_trim_oscuro(Image.open(src), pad=16)).save(DIST_DIR / "favicon-dark.png")
+    print(f"  favicon oscuro -> {(DIST_DIR / 'favicon-dark.png').relative_to(DIST_DIR)}")
 
 
 # Qué gráfico real representa a cada sección en su thumbnail de la
