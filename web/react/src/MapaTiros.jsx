@@ -119,7 +119,7 @@ function Vista({ cfg, T, modo, tk }) {
                 )}
                 {/* la cancha: línea clara con un halo oscuro debajo, para que se lea sobre cualquier celda */}
                 {[0, 1].map((capa) => {
-                  const e = capa === 0 ? { stroke: "rgba(11,11,11,.45)", strokeWidth: 3.4 } : { stroke: "rgba(252,252,251,.92)", strokeWidth: 1.5 };
+                  const e = capa === 0 ? { stroke: "rgba(7,12,14,.45)", strokeWidth: 3.4 } : { stroke: "rgba(255,255,255,.92)", strokeWidth: 1.5 };
                   return (
                     <g key={capa} {...trazo} {...e} pointerEvents="none">
                       <rect x={medio - 20.16} y={0} width={40.32} height={16.5} {...trazo} {...e} />

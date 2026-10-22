@@ -162,7 +162,7 @@ export default function Explorador({ cfg, tk, pal, modo, alCargar }) {
     const X0 = 1.5 * escala, Y0 = MARGEN * escala;
     g.fillStyle = conAlfa(pal.propio, modo === "dark" ? 0.07 : 0.05);
     g.fillRect(X0, Y0, m(ANCHO), m(PROF));
-    g.strokeStyle = modo === "dark" ? "rgba(252,252,251,.55)" : "rgba(11,11,11,.45)";
+    g.strokeStyle = modo === "dark" ? "rgba(255,255,255,.55)" : "rgba(7,12,14,.45)";
     g.lineWidth = 1.4;
     g.strokeRect(X0, Y0, m(ANCHO), m(PROF) + 4);
     const medio = ANCHO / 2;

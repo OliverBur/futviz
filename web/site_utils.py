@@ -96,7 +96,7 @@ FUENTES_SITIO = (f"Datos: FBref (equipos) y Understat (jugadores y tiros) · "
 
 sys.path.insert(0, str(CODE_DIR))
 
-from viz_theme import LEAGUE_COLORS, LEAGUE_COLORS_DARK  # noqa: E402
+from viz_theme import INK, LEAGUE_COLORS, LEAGUE_COLORS_DARK  # noqa: E402
 
 # Un solo <link> de Google Fonts, con todos los pesos que usa cualquier
 # plantilla del sitio (landing, secciones, páginas de chart) — se inyecta
@@ -148,9 +148,15 @@ THEME_TOGGLE_HTML = """<button type="button" class="theme-toggle" id="theme-togg
   </svg>
 </button>"""
 
+# Fondo y borde del tema claro: UNA definición. `BRAND_ROOT_CSS` los pone en `--color-bg` / `--color-border` y
+# de aquí salen también el fallback del <meta theme-color> y el placeholder de los previews (`build.py`).
+# El fondo pasó del lavanda #EFEDF7 (matiz 252°) a un blanco azulado: la marca es slate (192°) + verde.
+COLOR_BG_CLARO = "#F2F6F8"
+COLOR_BORDE_CLARO = "#DAE3E8"
+
 # El <meta name="theme-color"> de todas las páginas (barra del navegador en móvil). El valor es solo el de
 # arranque, el del tema claro: `THEME_SYNC_JS` lo reescribe con el `--color-bg` del tema en uso.
-THEME_COLOR_META = '<meta name="theme-color" content="#EFEDF7">'
+THEME_COLOR_META = f'<meta name="theme-color" content="{COLOR_BG_CLARO}">'
 
 # Lo que TODAS las páginas hacen con el tema además del botón, en un solo lugar: se inserta (con
 # `.replace("__THEME_SYNC__", ...)`) dentro del IIFE de `THEME_TOGGLE_SCRIPT` y de `PLOTLY_THEME_SCRIPT`,
@@ -205,7 +211,7 @@ __THEME_SYNC__
 # claro y los --color-x oscuros del sitio (ver BRAND_ROOT_CSS).
 PLOTLY_THEME_SCRIPT = """<script>
 (function() {
-  var LIGHT = {primary:'#0b0b0b', secondary:'#52514e', muted:'#898781', grid:'#e1e0d9', axis:'#c3c2b7', surface:'#fcfcfb'};
+  var LIGHT = __INK_CLARO__;
   var DARK = {primary:'#D7E4E7', secondary:'#C7D3D6', muted:'#8CA0A5', grid:'#2C393C', axis:'#3A4A4E', surface:'#1B2426'};
 
   // Los colores de liga son [claro, oscuro] — mismo hue, distinta luminosidad
@@ -365,7 +371,8 @@ PLOTLY_THEME_SCRIPT = PLOTLY_THEME_SCRIPT.replace(
     "__LEAGUE_COLORS__",
     json.dumps({liga: [LEAGUE_COLORS[liga].lower(), LEAGUE_COLORS_DARK[liga].lower()]
                  for liga in LEAGUE_COLORS}, ensure_ascii=False),
-).replace("__THEME_SYNC__", THEME_SYNC_JS)
+).replace("__THEME_SYNC__", THEME_SYNC_JS).replace(
+    "__INK_CLARO__", json.dumps({k: INK[k] for k in ("primary", "secondary", "muted", "grid", "axis", "surface")}))
 
 
 @dataclass
@@ -585,7 +592,7 @@ PAGE_TEMPLATE = """<!doctype html>
 #   hover), nunca texto — ahí el contraste no aplica.
 BRAND_ROOT_CSS = """
   :root {
-    --color-bg: #EFEDF7;
+    --color-bg: __BG_CLARO__;
     --color-surface: #FFFFFF;
     --color-primary: #2C4C54;
     --color-brand-accent: #399906;
@@ -594,7 +601,7 @@ BRAND_ROOT_CSS = """
     --color-interactive-soft: rgba(46, 122, 6, 0.10);
     --color-text-body: #1A2E33;
     --color-muted: #57707A;
-    --color-border: #DEDBEA;
+    --color-border: __BORDE_CLARO__;
   }
   /* Modo oscuro: mismos nombres de variable, valores nuevos — todo lo que
      ya usa var(--color-x) se adapta solo, sin tocar cada regla. Verificado
@@ -640,7 +647,7 @@ BRAND_ROOT_CSS = """
   img.logo-theme-dark { display: none; }
   html[data-theme="dark"] img.logo-theme-light { display: none; }
   html[data-theme="dark"] img.logo-theme-dark { display: block; }
-"""
+""".replace("__BG_CLARO__", COLOR_BG_CLARO).replace("__BORDE_CLARO__", COLOR_BORDE_CLARO)
 
 INDEX_TEMPLATE = """<!doctype html>
 <html lang="es">
@@ -1166,7 +1173,7 @@ ARTICLE_PAGE_TEMPLATE = """<!doctype html>
   function syncAnnotations() {{
     if (!window.Plotly) return;
     var dark = document.documentElement.getAttribute('data-theme') === 'dark';
-    var ink = dark ? '#C7D3D6' : '#52514e';
+    var ink = dark ? '#C7D3D6' : '{ink_claro}';
     document.querySelectorAll('.js-plotly-plot').forEach(function(gd) {{
       var anns = (gd.layout && gd.layout.annotations) || [];
       if (!anns.length) return;
@@ -1208,7 +1215,7 @@ def write_article_page(page: "ArticlePage", dist_dir: Path) -> Path:
         section_slug=section_meta.get("slug", "index"),
         brand_root=BRAND_ROOT_CSS, font_links=FONT_LINKS, article_css=ARTICLE_CSS,
         theme_init_script=THEME_INIT_SCRIPT, theme_toggle=THEME_TOGGLE_HTML, theme_color=THEME_COLOR_META,
-        logo=logo_img("../"), favicon=favicon_links("../"),
+        logo=logo_img("../"), favicon=favicon_links("../"), ink_claro=INK["secondary"],
         react_scripts=(
             '<script>window.futvizBase="../";</script>\n'
             '<script src="../react/futviz-react.js" defer></script>') if page.react else "",

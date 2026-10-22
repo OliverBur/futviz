@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Análisis exploratorio · FutViz</title>
 <meta name="description" content="Rendimiento, estilo y nivel de jugadores y equipos de las 5 grandes ligas, con filtros y un explorador para cruzar cualquier par de variables.">
-<meta name="theme-color" content="#EFEDF7">
+<meta name="theme-color" content="#F2F6F8">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="icon" type="image/png" href="favicon-dark.png" media="(prefers-color-scheme: dark)">
 <script>
@@ -25,7 +25,7 @@
 <style>
 
   :root {
-    --color-bg: #EFEDF7;
+    --color-bg: #F2F6F8;
     --color-surface: #FFFFFF;
     --color-primary: #2C4C54;
     --color-brand-accent: #399906;
@@ -34,7 +34,7 @@
     --color-interactive-soft: rgba(46, 122, 6, 0.10);
     --color-text-body: #1A2E33;
     --color-muted: #57707A;
-    --color-border: #DEDBEA;
+    --color-border: #DAE3E8;
   }
   /* Modo oscuro: mismos nombres de variable, valores nuevos — todo lo que
      ya usa var(--color-x) se adapta solo, sin tocar cada regla. Verificado
@@ -385,7 +385,7 @@
 </script>
 <script>
 (function() {
-  var LIGHT = {primary:'#0b0b0b', secondary:'#52514e', muted:'#898781', grid:'#e1e0d9', axis:'#c3c2b7', surface:'#fcfcfb'};
+  var LIGHT = {"primary": "#070C0E", "secondary": "#44535A", "muted": "#798A91", "grid": "#D7E1E7", "axis": "#B6C4CA", "surface": "#FFFFFF"};
   var DARK = {primary:'#D7E4E7', secondary:'#C7D3D6', muted:'#8CA0A5', grid:'#2C393C', axis:'#3A4A4E', surface:'#1B2426'};
 
   // Los colores de liga son [claro, oscuro] — mismo hue, distinta luminosidad

@@ -62,7 +62,7 @@ SEQUENTIAL_BLUE = ["#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f
 #
 # Validada con el validador de la skill de dataviz (puerto Python del
 # validate_palette.js, mismos umbrales y misma simulación Machado 2009) sobre
-# la superficie clara del proyecto (#fcfcfb), en modo `--pairs all` porque se
+# la superficie clara del proyecto de entonces (#fcfcfb), en modo `--pairs all` porque se
 # usa en scatter y en grafo (no solo en barras/leyenda, donde bastaría el
 # pairlist adyacente):
 #   - peor par bajo daltonismo (mín. protan/deutan): ΔE 8.3  (objetivo ≥ 8.0)
@@ -74,16 +74,22 @@ SEQUENTIAL_BLUE = ["#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f
 # identidad nunca depende solo del color.
 CLUSTER_COLORS = ["#256abf", "#d95926", "#199e70", "#eda100", "#9085e9", "#e87ba4"]
 
-# Par divergente (sobre/bajo lo esperado): positivo vs negativo, gris en cero
-DIVERGING = {"pos": "#2a78d6", "neg": "#e34948", "mid": "#cfcecb"}
+# Par divergente (sobre/bajo lo esperado): positivo vs negativo, gris en cero. El gris es frío (matiz ~198°,
+# la familia del slate del sitio) y de la misma luminancia que el gris cálido (#cfcecb) que tenía antes.
+DIVERGING = {"pos": "#2a78d6", "neg": "#e34948", "mid": "#C7CFD3"}
 
+# Tinta del tema claro. Antes eran grises cálidos (#0b0b0b, #52514e, #898781, #e1e0d9, #c3c2b7) y el sitio
+# es slate + verde sobre un fondo azul-gris (--color-bg #F2F6F8): cada tinta pasó a un gris de matiz ~195-200°
+# con la MISMA luminancia relativa que la que reemplaza, así que los gráficos no cambian de peso visual, solo de
+# matiz (contraste sobre el fondo: primary 18:1, secondary 7.3:1, muted 3.3:1). El `surface` es el
+# --color-surface del sitio. `PLOTLY_THEME_SCRIPT` (web/site_utils.py) toma estos valores de aquí.
 INK = {
-    "surface": "#fcfcfb",
-    "primary": "#0b0b0b",
-    "secondary": "#52514e",
-    "muted": "#898781",
-    "grid": "#e1e0d9",
-    "axis": "#c3c2b7",
+    "surface": "#FFFFFF",
+    "primary": "#070C0E",
+    "secondary": "#44535A",
+    "muted": "#798A91",
+    "grid": "#D7E1E7",
+    "axis": "#B6C4CA",
 }
 
 # Tinta para la variante oscura de los PNG de matplotlib (radar, ranking de
@@ -1584,7 +1590,7 @@ def sidebar_chart_html(fig, scatter_data, x_col, y_col, base_annotations=None,
     pts.sort(function(a, b) {{ return b.s - a.s; }});
     var dark = document.documentElement.getAttribute('data-theme') === 'dark';
     var tinta = dark ? '#D7E4E7' : {json.dumps(INK["primary"])};
-    var fondo = dark ? 'rgba(27,36,38,.82)' : 'rgba(252,252,251,.82)';
+    var fondo = dark ? 'rgba(27,36,38,.82)' : 'rgba(255,255,255,.82)';
     var cajas = [], vistos = {{}};
     var tope = xa._length < 380 ? Math.min(OUTLIERS.n, 4) : OUTLIERS.n;
     for (var k = 0; k < pts.length && outAnns.length < tope; k++) {{
