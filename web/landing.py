@@ -60,7 +60,7 @@ SUGERIDAS_VISTAS = 3       # ...y las primeras gráficas de "Preguntas para empe
 
 # La combinación del mapa de calor de la portada: la más común (jugada abierta, pie derecho, tras un pase).
 CLAVE_MAPA = "jugada|pie_der|Pass"
-NIVELES_MAPA = 10
+NIVELES_MAPA = 16   # tonos de la rampa; el desenfoque se encarga de que no se vean escalones
 
 
 # --- el índice del buscador ------------------------------------------------------------------
@@ -230,10 +230,33 @@ def _niveles(sup, clave):
     return niveles
 
 
+def _rampa(sup):
+    """NIVELES_MAPA colores interpolados sobre la rampa azul del artículo (`SEQUENTIAL_BLUE`), de poco a muy
+    probable. En el tema oscuro se usa al revés, como en el artículo: lo más probable es lo más brillante."""
+    paradas = [tuple(int(h[i:i + 2], 16) for i in (1, 3, 5)) for h in sup["rampa"]]
+    salida = []
+    for n in range(NIVELES_MAPA):
+        x = n / (NIVELES_MAPA - 1) * (len(paradas) - 1)
+        i = min(len(paradas) - 2, int(x))
+        f = x - i
+        salida.append(tuple(round(a + (b - a) * f) for a, b in zip(paradas[i], paradas[i + 1])))
+    return salida
+
+
+def rampa_css(sup):
+    """Las variables `--mapa-1..N` de los dos temas (salen de la rampa del artículo, no se escriben a mano)."""
+    claro = [f"#{r:02X}{g:02X}{b:02X}" for r, g, b in _rampa(sup)]
+    oscuro = claro[::-1]
+    var = lambda colores: "".join(f"--mapa-{i + 1}:{c};" for i, c in enumerate(colores))  # noqa: E731
+    return f':root{{{var(claro)}}}html[data-theme="dark"]{{{var(oscuro)}}}'
+
+
 def mapa_svg(sup, clave=CLAVE_MAPA):
-    """El mapa como SVG que sigue al tema: las celdas se pintan con `--color-primary` y una opacidad por
-    nivel (en claro, más probable = más oscuro; en oscuro, más probable = más brillante), así que cambia
-    con el botón sin repintar nada. Un <path> por nivel, con las celdas contiguas unidas en tramos."""
+    """El mapa como SVG que sigue al tema: un <path> por tono de la rampa (las celdas contiguas del mismo
+    tono unidas en tramos) con el color en una variable CSS, así cambia con el botón sin repintar nada. Un
+    desenfoque leve borra los escalones de la rejilla de 40x32 y una rejilla fina de 2 m deja leer la escala.
+    Lleva los valores de la malla para el tooltip (`_MAPA_JS`): el xG que da el modelo a un tiro desde el
+    punto bajo el mouse y su distancia a la portería."""
     nx, ny, ancho, ch, cw, prof, x0, y0 = _geometria(sup)
     niveles = _niveles(sup, clave)
     trazos = {n: [] for n in range(1, NIVELES_MAPA + 1)}
@@ -247,9 +270,7 @@ def mapa_svg(sup, clave=CLAVE_MAPA):
             if n:
                 trazos[n].append(f"M{r} {k}h{fin - r + 1}v1h-{fin - r + 1}z")
             r = fin + 1
-    capas = "".join(
-        f'<path d="{"".join(t)}" fill-opacity="{0.12 + 0.88 * (n - 1) / (NIVELES_MAPA - 1):.2f}"/>'
-        for n, t in trazos.items() if t)
+    capas = "".join(f'<path d="{"".join(t)}" style="fill:var(--mapa-{n})"/>' for n, t in trazos.items() if t)
     medio, penal = ancho / 2, 11
     tope = math.asin(math.sqrt(9.15 ** 2 - (16.5 - penal) ** 2) / 9.15)
     arco = " ".join(f"{medio + 9.15 * math.sin(a):.2f},{penal + 9.15 * math.cos(a):.2f}"
@@ -258,15 +279,61 @@ def mapa_svg(sup, clave=CLAVE_MAPA):
               f'<rect x="{medio - 9.16:.2f}" y="0" width="18.32" height="5.5"/>'
               f'<polyline points="{arco}"/><rect x="0" y="0" width="{ancho:g}" height="{prof:.2f}"/>')
     vb_h = prof + 3.2 + 1
+    datos = {"nx": nx, "ny": ny, "xmin": sup["xmin"], "ymin": sup["ymin"], "ymax": sup["ymax"],
+             "largo": sup["largo"], "ancho": ancho, "ch": round(ch, 5), "prof": round(prof, 3),
+             "v": [None if v is None else round(v, 2) for v in sup["rejillas"][clave]]}
     return (
+        f'<div class="mapa-caja">'
         f'<svg class="mapa" viewBox="-1 -3.2 {ancho + 2:g} {vb_h:.2f}" width="560" height="{560 * vb_h / (ancho + 2):.0f}" '
         f'role="img" aria-label="Mapa de la cancha cerca de la portería rival: cuanto más intenso el color, '
         f'más probable es que un tiro desde ahí termine en gol, según el modelo.">'
+        f'<defs><clipPath id="mapa-recorte"><rect x="0" y="0" width="{ancho:g}" height="{prof:.2f}"/></clipPath>'
+        f'<filter id="mapa-suave" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="0.9"/></filter>'
+        f'<pattern id="mapa-rejilla" width="2" height="2" patternUnits="userSpaceOnUse"><path d="M2 0H0V2"/></pattern></defs>'
         f'<rect class="mapa-fondo" x="0" y="0" width="{ancho:g}" height="{prof:.2f}"/>'
-        f'<g class="mapa-celdas" transform="translate({x0:.3f} {y0:.3f}) scale({cw:.4f} {ch:.4f})" shape-rendering="crispEdges">{capas}</g>'
+        f'<g clip-path="url(#mapa-recorte)"><g filter="url(#mapa-suave)">'
+        f'<g transform="translate({x0:.3f} {y0:.3f}) scale({cw:.4f} {ch:.4f})">{capas}</g></g></g>'
+        f'<rect class="mapa-rejilla" x="0" y="0" width="{ancho:g}" height="{prof:.2f}" fill="url(#mapa-rejilla)"/>'
         f'<g class="mapa-lineas mapa-lineas-fondo">{lineas}</g><g class="mapa-lineas">{lineas}</g>'
         f'<rect class="mapa-porteria" x="{medio - 3.66:.2f}" y="-1.2" width="7.32" height="1.2"/>'
-        f'<circle class="mapa-punto" cx="{medio:g}" cy="{penal}" r="0.45"/></svg>')
+        f'<circle class="mapa-punto" cx="{medio:g}" cy="{penal}" r="0.45"/>'
+        f'<circle class="mapa-marca" r="1.15" cx="0" cy="0" visibility="hidden"/></svg>'
+        f'<div class="mapa-tip" aria-hidden="true" hidden><small>xG de un tiro desde aquí</small><b></b><span></span></div>'
+        f'</div><script type="application/json" id="mapa-datos">{json.dumps(datos, separators=(",", ":"))}</script>')
+
+
+# El tooltip del mapa: lee la malla que trae la página y no pide nada. Puntero (mouse o toque), sin teclado:
+# el mapa es una ilustración del artículo, la misma información se explora completa allá.
+_MAPA_JS = """<script>
+(function () {
+  var svg = document.querySelector(".mapa"), caja = svg && svg.parentNode, fuente = document.getElementById("mapa-datos");
+  if (!svg || !fuente) return;
+  var d = JSON.parse(fuente.textContent), tip = caja.querySelector(".mapa-tip"), marca = svg.querySelector(".mapa-marca");
+  function ocultar() { tip.hidden = true; marca.setAttribute("visibility", "hidden"); }
+  function mover(ev) {
+    var m = svg.getScreenCTM();
+    if (!m) return;
+    var pt = svg.createSVGPoint();
+    pt.x = ev.clientX; pt.y = ev.clientY;
+    var p = pt.matrixTransform(m.inverse());
+    var r = Math.round((p.x / d.ancho - d.ymin) / (d.ymax - d.ymin) * (d.ny - 1));
+    var c = Math.round(((1 - d.xmin) * d.largo - p.y) / d.ch);
+    var v = r >= 0 && r < d.ny && c >= 0 && c < d.nx ? d.v[r * d.nx + c] : null;
+    if (v == null || p.x < 0 || p.x > d.ancho || p.y < 0 || p.y > d.prof) return ocultar();
+    marca.setAttribute("cx", p.x); marca.setAttribute("cy", p.y); marca.setAttribute("visibility", "visible");
+    tip.querySelector("b").textContent = v.toFixed(2);
+    tip.querySelector("span").textContent = "a " + Math.round(Math.hypot(p.y, p.x - d.ancho / 2)) + " m de la portería";
+    tip.hidden = false;
+    var cj = caja.getBoundingClientRect(), x = ev.clientX - cj.left, y = ev.clientY - cj.top;
+    var derecha = x > cj.width - tip.offsetWidth - 28;
+    tip.style.left = (derecha ? x - tip.offsetWidth - 18 : x + 18) + "px";
+    tip.style.top = Math.max(0, y - tip.offsetHeight / 2) + "px";
+  }
+  svg.addEventListener("pointermove", mover);
+  svg.addEventListener("pointerdown", mover);
+  svg.addEventListener("pointerleave", ocultar);
+})();
+</script>"""
 
 
 def _etiqueta_mapa(sup, clave=CLAVE_MAPA):
@@ -281,7 +348,7 @@ def og_image(sup, dist_dir: Path):
     from PIL import Image, ImageDraw, ImageFont
 
     fondo = tuple(int(COLOR_BG_CLARO[i:i + 2], 16) for i in (1, 3, 5))
-    slate, texto = (44, 76, 84), (26, 46, 51)
+    texto = (26, 46, 51)
     im = Image.new("RGB", (1200, 630), fondo)
     d = ImageDraw.Draw(im)
     logo = Image.open(dist_dir / "assets" / "logo.png")
@@ -294,18 +361,26 @@ def og_image(sup, dist_dir: Path):
         d.text((72, 210 + i * 80), linea, font=grande, fill=texto)
     d.text((72, 400), "Jugadores y equipos de las 5 grandes ligas,", font=chica, fill=(87, 112, 122))
     d.text((72, 438), "con gráficas interactivas y un modelo de xG.", font=chica, fill=(87, 112, 122))
-    # el mapa: mismas celdas y niveles que el SVG
+    # el mapa: mismas celdas, tonos y desenfoque que el SVG (tema claro)
+    from PIL import ImageFilter
     nx, ny, ancho, ch, cw, prof, x0, y0 = _geometria(sup)
-    niveles = _niveles(sup, CLAVE_MAPA)
+    niveles, rampa = _niveles(sup, CLAVE_MAPA), _rampa(sup)
     escala = 460 / ancho
     ox, oy = 680, 90
+    # Se desenfoca sobre el color del fondo (no sobre transparente, que deja un halo oscuro en el borde) y
+    # se pega solo dentro de la cancha.
+    capa = Image.new("RGB", im.size, fondo)
+    dc = ImageDraw.Draw(capa)
     for k in range(nx):
         for r in range(ny):
             n = niveles[k][r]
-            a = 0.05 if not n else 0.12 + 0.88 * (n - 1) / (NIVELES_MAPA - 1)
-            color = tuple(round(f * (1 - a) + s * a) for f, s in zip(fondo, slate))
-            x, y = ox + (x0 + r * cw) * escala, oy + (y0 + k * ch) * escala
-            d.rectangle([x, y, x + cw * escala, y + ch * escala], fill=color)
+            if n:
+                x, y = ox + (x0 + r * cw) * escala, oy + (y0 + k * ch) * escala
+                dc.rectangle([x, y, x + cw * escala, y + ch * escala], fill=rampa[n - 1])
+    capa = capa.filter(ImageFilter.GaussianBlur(0.9 * escala))
+    recorte = Image.new("L", im.size, 0)
+    ImageDraw.Draw(recorte).rectangle([ox, oy, ox + ancho * escala, oy + prof * escala], fill=255)
+    im.paste(capa, (0, 0), recorte)
     medio = ancho / 2
     for (x, y, w, h) in ((medio - 20.16, 0, 40.32, 16.5), (medio - 9.16, 0, 18.32, 5.5), (0, 0, ancho, prof)):
         d.rectangle([ox + x * escala, oy + y * escala, ox + (x + w) * escala, oy + (y + h) * escala],
@@ -366,15 +441,16 @@ __BRAND_ROOT__
   .site-header .theme-toggle { width: 44px; height: 44px; border-radius: 10px; }
 
   /* Hero */
-  .hero { padding-top: clamp(56px, 10vw, 120px); padding-bottom: clamp(48px, 8vw, 96px); }
+  /* Hero centrado: el buscador es la idea de la página y el header ya es simétrico (logo a un lado, menú y
+     tema al otro). Cargado a la izquierda dejaba media pantalla vacía en monitores anchos. */
+  .hero { text-align: center; padding-top: clamp(64px, 11vw, 136px); padding-bottom: clamp(56px, 9vw, 112px); }
   h1 { font-size: clamp(36px, 7vw, 64px); line-height: 1.05; letter-spacing: -0.03em; font-weight: 800;
-    color: var(--color-primary); margin: 0 0 18px; text-wrap: balance; max-width: 16ch; }
-  .sub { font-size: clamp(16px, 2vw, 19px); line-height: 1.5; color: var(--color-text-body); margin: 0 0 32px; }
+    color: var(--color-primary); margin: 0 auto 32px; text-wrap: balance; max-width: 18ch; }
   .leer { display: inline-flex; align-items: center; min-height: 44px; margin-top: 16px; font-size: 15px;
     font-weight: 600; color: var(--color-interactive); text-decoration: none; }
 
   /* Buscador: el campo es un combobox con la lista desplegada debajo (en pantallas chicas, a pantalla completa). */
-  .buscador { position: relative; max-width: 720px; }
+  .buscador { position: relative; max-width: 760px; margin: 0 auto; text-align: left; }
   .campo { display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 0 16px 0 18px;
     background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 12px;
     transition: border-color .12s ease, box-shadow .12s ease; }
@@ -439,9 +515,20 @@ __BRAND_ROOT__
   .boton:hover { background: color-mix(in srgb, var(--color-primary) 88%, var(--color-bg)); }
   .proximo { margin: 0; padding-top: 18px; border-top: 1px solid var(--color-border); font-size: 14.5px; color: var(--color-muted); }
   figure { margin: 0; }
-  .mapa { display: block; width: 100%; height: auto; }
+  __RAMPA_CSS__
+  .mapa-caja { position: relative; }
+  .mapa { display: block; width: 100%; height: auto; touch-action: pan-y; }
   .mapa-fondo { fill: var(--color-primary); fill-opacity: .05; }
-  .mapa-celdas path { fill: var(--color-primary); }
+  .mapa-rejilla { pointer-events: none; }
+  #mapa-rejilla path { fill: none; stroke: var(--color-bg); stroke-opacity: .32; stroke-width: .06; }
+  .mapa-marca { fill: none; stroke: var(--color-brand-accent); stroke-width: 2.4; vector-effect: non-scaling-stroke; pointer-events: none; }
+  .mapa-tip { position: absolute; z-index: 2; min-width: 150px; padding: 10px 14px; border-radius: 10px; pointer-events: none;
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    box-shadow: 0 10px 28px color-mix(in srgb, var(--color-primary) 20%, transparent); font-variant-numeric: tabular-nums; }
+  .mapa-tip[hidden] { display: none; }
+  .mapa-tip small { display: block; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--color-muted); }
+  .mapa-tip b { display: block; font-size: 26px; line-height: 1.15; font-weight: 700; color: var(--color-primary); }
+  .mapa-tip span { display: block; font-size: 13px; color: var(--color-muted); }
   /* `vector-effect` no se hereda: va en cada línea, o el trazo escalaría con el viewBox (en metros). */
   .mapa-lineas { fill: none; stroke: var(--color-muted); stroke-width: 1.2; }
   .mapa-lineas > * { vector-effect: non-scaling-stroke; }
@@ -449,8 +536,7 @@ __BRAND_ROOT__
   .mapa-porteria { fill: none; stroke: var(--color-muted); stroke-width: 2; vector-effect: non-scaling-stroke; }
   .mapa-punto { fill: var(--color-bg); }
   .leyenda { display: flex; align-items: center; gap: 10px; margin-top: 14px; font-size: 13px; color: var(--color-muted); }
-  .leyenda i { flex: 0 0 120px; height: 8px; border-radius: 4px;
-    background: linear-gradient(to right, color-mix(in srgb, var(--color-primary) 12%, transparent), var(--color-primary)); }
+  .leyenda i { flex: 0 0 140px; height: 8px; border-radius: 4px; background: __RAMPA_LEYENDA__; }
   figcaption { margin-top: 10px; font-size: 13.5px; line-height: 1.5; color: var(--color-text-body); }
   figcaption small { display: block; color: var(--color-muted); font-size: 12.5px; margin-top: 2px; }
 
@@ -501,7 +587,6 @@ __BRAND_ROOT__
 <main id="main">
   <section class="hero contenedor" aria-labelledby="titulo">
     <h1 id="titulo">Pregúntale a los datos del fútbol</h1>
-    <p class="sub">Nació de juntar mi pasión por el fútbol con la ciencia de datos.</p>
     <form class="buscador" id="buscador" action="__EDA_URL__" role="search">
       <label class="sr-only" for="q">Busca un jugador, un equipo o una gráfica</label>
       <div class="campo">
@@ -614,6 +699,9 @@ def escribir_landing(pages, dist_dir: Path):
             .replace("__PREGUNTAS__", "".join(preguntas))
             .replace("__N_VISTAS__", str(len(paginas_eda)))
             .replace("__MAPA__", mapa_svg(sup))
+            .replace("__RAMPA_CSS__", rampa_css(sup))
+            .replace("__RAMPA_LEYENDA__", "linear-gradient(to right, "
+                     + ", ".join(f"var(--mapa-{i})" for i in range(1, NIVELES_MAPA + 1, 3)) + f", var(--mapa-{NIVELES_MAPA}))")
             .replace("__MAPA_DETALLE__", f"{_etiqueta_mapa(sup)}. Modelo final del artículo; las zonas sin color no tienen tiros suficientes.")
             .replace("__ARTICULO_URL__", f"{ml_url}#{art.slug}")
             .replace("__ARTICULO_TITULO__", escape(art.title))
@@ -634,7 +722,7 @@ def escribir_landing(pages, dist_dir: Path):
             .replace("__FONT_LINKS__", FONT_LINKS)
             .replace("__BRAND_ROOT__", BRAND_ROOT_CSS)
             .replace("__THEME_TOGGLE__", THEME_TOGGLE_HTML)
-            .replace("__THEME_SCRIPT__", THEME_TOGGLE_SCRIPT))
+            .replace("__THEME_SCRIPT__", THEME_TOGGLE_SCRIPT + "\n" + _MAPA_JS))
     salida = dist_dir / "index.html"
     salida.write_text(html, encoding="utf-8")
 
