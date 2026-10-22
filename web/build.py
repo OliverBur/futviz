@@ -238,7 +238,7 @@ def main():
     # suelto), pero entran a la misma lista: `write_section_pages` y la
     # landing solo miran `.section` y arman el href con `.href_prefix`.
     print("Generando análisis de machine learning...")
-    # `ml_xg` entrena el modelo de xG al construirse (221.922 tiros, con
+    # `ml_xg` entrena el modelo de xG al construirse (los tiros de las temporadas cerradas, con
     # early stopping), así que es de los pasos más lentos del build.
     articles = ml_xg_articles.build(ASSETS_DIR)
     for page in articles:
@@ -258,6 +258,11 @@ def main():
     # La landing va al final: su índice de búsqueda y su mapa de calor salen de las tablas y vistas que
     # registraron los pasos anteriores (ver landing.py). El buscador es un .js estático que solo se copia.
     shutil.copy(WEB_DIR / "static" / "buscador.js", SITE_ASSETS_DIR / "buscador.js")
+    fuentes = SITE_ASSETS_DIR / "fonts"
+    fuentes.mkdir(parents=True, exist_ok=True)
+    for f in (WEB_DIR / "static" / "fonts").glob("*"):
+        if f.is_file():   # los .woff2 y sus licencias; `ttf/` se queda (solo lo usa la og:image)
+            shutil.copy(f, fuentes / f.name)
     r = landing.escribir_landing(pages, DIST_DIR)
     print(f"Landing -> {r['index'].relative_to(DIST_DIR)} · og:image -> {r['og'].relative_to(DIST_DIR)}")
     print(f"  buscador -> {r['indice'].relative_to(DIST_DIR)}: {r['jugadores']} jugadores (de "

@@ -55,6 +55,8 @@ PRIORIDAD_JUGADOR = {
 }
 PRIORIDAD_EQUIPO = ["eficiencia-definicion", "creacion", "defensa"]
 VISTAS_POR_RESULTADO = 3   # la principal + "Ver a {nombre} en…" con dos más
+SUGERIDOS_JUGADORES = 4    # con el campo vacío: los máximos goleadores de la temporada más reciente
+SUGERIDAS_VISTAS = 3       # ...y las primeras gráficas de "Preguntas para empezar"
 
 # La combinación del mapa de calor de la portada: la más común (jugada abierta, pie derecho, tras un pase).
 CLAVE_MAPA = "jugada|pie_der|Pass"
@@ -163,7 +165,26 @@ def construir_indice(paginas_eda, articulos):
 
     vistas = [[p.slug, p.tab or p.title, p.group, p.section] for p in paginas_eda]
     lecturas = [[a.title, f"{SECTION_META[a.section]['slug']}.html#{a.slug}", a.section] for a in articulos]
-    return {"t": temporadas, "l": ligas, "v": vistas, "j": jugadores, "e": equipos, "a": lecturas}
+
+    # Sugerencias para el campo vacío, sacadas de los datos: los que más goles llevan en la temporada más
+    # reciente de la tabla (con sus goles) y las primeras gráficas de las preguntas de la portada.
+    ultima_t = jug["temporadas"][-1]
+    t_ult = jug["temporadas"].index(ultima_t)
+    en_indice = {x[0] for x in jugadores}
+    goles = jug["c"]["goals"]
+    filas = [r for r in range(jug["n"]) if jug["f"]["t"][r] == t_ult and goles[r] is not None
+             and jug["nombres"][jug["f"]["j"][r]] in en_indice]
+    filas.sort(key=lambda r: (-goles[r], -(jug["c"]["xG"][r] or 0)))
+    sugeridos = []
+    for r in filas:
+        nombre = jug["nombres"][jug["f"]["j"][r]]
+        if nombre not in (n for n, _ in sugeridos):
+            sugeridos.append([nombre, int(goles[r])])
+        if len(sugeridos) == SUGERIDOS_JUGADORES:
+            break
+    sugeridas = [v_idx[slug] for _, _, slug in PREGUNTAS if slug in v_idx][:SUGERIDAS_VISTAS]
+    return {"t": temporadas, "l": ligas, "v": vistas, "j": jugadores, "e": equipos, "a": lecturas,
+            "s": {"titulo": f"Más goles en {ultima_t}", "j": sugeridos, "v": sugeridas}}
 
 
 def escribir_indice(indice, dist_dir: Path):
@@ -266,10 +287,9 @@ def og_image(sup, dist_dir: Path):
     logo = Image.open(dist_dir / "assets" / "logo.png")
     logo = logo.resize((300, round(300 * logo.height / logo.width)), Image.LANCZOS)
     im.paste(logo, (72, 72), logo)
-    try:
-        grande, chica = ImageFont.truetype("segoeuib.ttf", 66), ImageFont.truetype("segoeui.ttf", 28)
-    except OSError:
-        grande, chica = ImageFont.load_default(size=66), ImageFont.load_default(size=28)
+    # Inter, la misma fuente del sitio, en TTF (PIL no lee woff2): la imagen sale igual en cualquier sistema.
+    ttf = Path(__file__).parent / "static" / "fonts" / "ttf"
+    grande, chica = ImageFont.truetype(str(ttf / "inter-800.ttf"), 62), ImageFont.truetype(str(ttf / "inter-400.ttf"), 27)
     for i, linea in enumerate(("Pregúntale a los", "datos del fútbol")):
         d.text((72, 210 + i * 80), linea, font=grande, fill=texto)
     d.text((72, 400), "Jugadores y equipos de las 5 grandes ligas,", font=chica, fill=(87, 112, 122))

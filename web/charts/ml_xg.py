@@ -245,7 +245,7 @@ def _grafica(vista_id, tipo, dato, titulo, subtitulo, alt, alto=None, alto_min=4
 
 def _explorador(n_total):
     cfg = {"grafica": "explorador", "titulo": "Elige un tiro",
-           "subtitulo": f"{_n(n_total)} tiros de las cinco últimas temporadas, con lo que dijo cada modelo",
+           "subtitulo": f"{_n(n_total)} tiros de las cinco últimas temporadas (penales incluidos), con lo que dijo cada modelo",
            "fuente": FUENTE, "alt": "Cancha con los tiros de la temporada y el detalle del tiro elegido",
            "temporadas": xm.CERRADAS, "ligas": LIGAS, "origen": [2021, 7, 1],
            "situaciones": [SITUACION_ES[s] for s in xg_explorador.SITUACIONES],
@@ -356,7 +356,7 @@ def build_xg_article() -> ArticlePage:
         "de eso termina en gol y cómo cambia según la distancia y el ángulo.</p>"))
     p.append(_grafica(
         "xg-mapa", "mapa", "mapa", "Los tiros sobre la cancha",
-        f"{_n(E['n'])} tiros de las cinco ligas, {E['temporadas'][0]} a {E['temporadas'][-1]} · elige qué mirar y pasa el "
+        f"{_n(E['n'])} tiros de las cinco ligas sin penales ni autogoles, {E['temporadas'][0]} a {E['temporadas'][-1]} · elige qué mirar y pasa el "
         "mouse sobre una zona", "Mapa de la media cancha con tiros, tasa de gol, xG medio de Understat y zonas de "
         "distancia y de ángulo", alto_min=520,
         ayuda="Las zonas con menos de 25 tiros no muestran tasa; las franjas, menos de 40."))
@@ -530,7 +530,7 @@ def build_xg_article() -> ArticlePage:
     # ================================================================ 8. el explorador
     p.append(h("Elige un tiro", "explorador"))
     p.append(_prose(
-        f"<p>Los {_n(n_explorador)} tiros de las cinco últimas temporadas, cada uno con el xG de un modelo "
+        f"<p>Los {_n(n_explorador)} tiros de las cinco últimas temporadas, penales incluidos, cada uno con el xG de un modelo "
         "que <strong>no había visto esa temporada</strong>. Elige uno y compáralo con Understat y con lo que "
         "pasó.</p>"))
     p.append(_explorador(n_explorador))
@@ -560,7 +560,9 @@ def build_xg_article() -> ArticlePage:
         subtitle=SUBTITULO,
         deck=SUBTITULO,   # `deck` es obligatorio y el texto de arriba de la página es el que escribió el autor
         body_html="".join(p),
-        meta=[("Datos", f"+{_n(R['n']['cerradas'])} tiros · top 5 ligas · +10 temporadas"),
+        meta=[("Datos", f"{_n(E['raw']['filas'])} tiros · top 5 ligas · {len(E['temporadas'])} temporadas "
+                        f"({E['temporadas'][0]} a {E['temporadas'][-1]})"),
+              ("Modelo", f"entrenado y evaluado con {_n(R['n']['cerradas'])} tiros de {xm.CERRADAS[0]} a {xm.CERRADAS[-1]}"),
               ("Métodos", "XGBoost · LightGBM · bootstrap por partido")],
         fuente=f"{FUENTE} · temporadas {tray[0]['temporada']} a {tray[-1]['temporada']}",
         react=True,

@@ -23,7 +23,7 @@
   var MAX = 8;
   var GRUPOS = [["j", "Jugadores"], ["e", "Equipos"], ["g", "Gráficas"]];
   var movil = window.matchMedia("(max-width: 640px)");
-  var entradas = null, carga = null, opciones = [], activa = -1, tAnuncio = 0;
+  var entradas = null, sugerencias = null, carga = null, opciones = [], activa = -1, tAnuncio = 0;
 
   // En un teléfono el texto completo no cabe en el campo: uno más corto que diga lo mismo.
   if (movil.matches) input.placeholder = "Jugador, equipo o gráfica…";
@@ -54,6 +54,17 @@
       out.push({ tipo: "g", nombre: x[0], det: x[2] + " · lectura", peso: 0, acc: [{ etiqueta: "", url: x[1] }] });
     });
     out.forEach(function (e) { e.n = norm(e.nombre); });
+    // Con el campo vacío (ver landing.construir_indice): goleadores de la última temporada y unas gráficas.
+    var porNombre = {};
+    out.forEach(function (e) { if (e.tipo === "j") porNombre[e.nombre] = e; });
+    sugerencias = {
+      titulo: ix.s.titulo,
+      j: ix.s.j.filter(function (x) { return porNombre[x[0]]; }).map(function (x) {
+        var e = porNombre[x[0]];
+        return { tipo: "j", nombre: e.nombre, det: e.det + " · " + x[1] + (x[1] === 1 ? " gol" : " goles"), acc: e.acc };
+      }),
+      g: ix.s.v.map(function (i) { return out.filter(function (e) { return e.tipo === "g" && e.acc[0].url === EDA + "#" + v[i][0]; })[0]; })
+    };
     return out;
   }
 
@@ -139,7 +150,7 @@
     activa = -1;
     input.removeAttribute("aria-activedescendant");
     aviso.hidden = true;
-    if (!qn) { anunciar(""); return; }
+    if (!qn) { pintarSugerencias(); return; }
     var res = buscar(qn), principal = null;
     GRUPOS.forEach(function (g) {
       var deGrupo = res.filter(function (e) { return e.tipo === g[0]; });
@@ -171,6 +182,27 @@
       mostrarAviso("Sin resultados para «" + q.trim() + "». Prueba con un apellido o el nombre de un equipo.", "Ver todas las gráficas");
     }
     anunciar(res.length ? res.length + (res.length === 1 ? " resultado" : " resultados") : "Sin resultados");
+  }
+
+  function grupoDe(id, titulo, items) {
+    var grupo = document.createElement("li"), ul = document.createElement("ul");
+    grupo.setAttribute("role", "presentation");
+    grupo.appendChild(span("grupo", titulo)).id = id;
+    ul.setAttribute("role", "group");
+    ul.setAttribute("aria-labelledby", id);
+    items.forEach(function (e) {
+      ul.appendChild(opcion(document.createTextNode(e.nombre), e.det, e.tipo === "g" ? "Abrir" : "Ver en " + e.acc[0].etiqueta, { url: e.acc[0].url }));
+    });
+    grupo.appendChild(ul);
+    lista.appendChild(grupo);
+  }
+
+  // El campo vacío no abre una lista vacía: ofrece por dónde empezar.
+  function pintarSugerencias() {
+    if (!sugerencias) return;
+    grupoDe("grupo-sj", sugerencias.titulo, sugerencias.j);
+    grupoDe("grupo-sg", "Gráficas para empezar", sugerencias.g);
+    anunciar("Sugerencias: " + opciones.length);
   }
 
   function mostrarAviso(texto, enlace) {
@@ -208,8 +240,8 @@
     form.classList.add("abierto");
     document.documentElement.style.overflow = "hidden";
     abrir();
-    if (!input.value.trim()) {
-      aviso.textContent = "Escribe el nombre de un jugador, un equipo o una gráfica.";
+    if (!input.value.trim() && !entradas) {
+      aviso.textContent = "Cargando…";
       aviso.hidden = false;
     }
   }
@@ -235,8 +267,9 @@
   function actualizar() {
     var q = input.value;
     if (!q.trim()) {
+      aviso.hidden = true;
       pintar("");
-      if (form.classList.contains("abierto")) abrirMovil(); else cerrarPanel();
+      if (opciones.length) abrir(); else cerrarPanel();
       return;
     }
     abrir();
@@ -255,9 +288,14 @@
 
   form.addEventListener("pointerenter", precargar);
   input.addEventListener("focus", function () {
-    precargar();
     abrirMovil();
-    if (input.value.trim()) actualizar();
+    if (input.value.trim()) { actualizar(); return; }
+    cargar().then(function () {
+      if (document.activeElement !== input || input.value.trim()) return;
+      aviso.hidden = true;
+      pintar("");
+      abrir();
+    }, function () {});
   });
   input.addEventListener("input", actualizar);
   form.addEventListener("submit", function (ev) {
