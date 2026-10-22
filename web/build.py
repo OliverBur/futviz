@@ -16,7 +16,7 @@ import matplotlib
 matplotlib.use("Agg")
 
 from site_utils import (  # noqa: E402
-    SECTION_META, write_article_page, write_chart_page, write_index, write_section_pages,
+    COLOR_BG_CLARO, SECTION_META, write_article_page, write_chart_page, write_index, write_section_pages,
 )
 from section_views import write_section_views  # noqa: E402
 from ml_reader import write_ml_reader  # noqa: E402
@@ -291,7 +291,7 @@ def _placeholder_preview(label):
     from PIL import Image, ImageDraw, ImageFont
 
     w, h = 960, 600
-    bg = (239, 237, 247)      # --color-bg
+    bg = tuple(int(COLOR_BG_CLARO[i:i + 2], 16) for i in (1, 3, 5))      # --color-bg
     primary = (44, 76, 84)    # --color-primary
     accent = (57, 153, 6)     # --color-brand-accent
     img = Image.new("RGB", (w, h), bg)

@@ -205,7 +205,7 @@ export default function Arbol({ cfg, D, tk, modo: modoTema }) {
                   const [r, g, b] = colorRampa(rampa, n.tasa / TASA_MAX);
                   fondo = `rgb(${r},${g},${b})`;
                   const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-                  texto = lum < 0.55 ? "#ffffff" : "#0b0b0b";
+                  texto = lum < 0.55 ? "#ffffff" : "#070C0E";
                   sub = texto;
                   trazo = tk.border;
                 }

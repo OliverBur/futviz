@@ -36,7 +36,7 @@ export function colorRendimiento(dif, divergente) {
 
 // El par divergente en cada modo. En claro es `DIVERGING` tal cual. En oscuro el
 // azul y el rojo ya pasan 3:1 contra la superficie (#1B2426), pero el gris del
-// cero no puede ser el claro (#cfcecb): sobre fondo oscuro sería lo MÁS brillante
+// cero no puede ser el claro (#C7CFD3): sobre fondo oscuro sería lo MÁS brillante
 // del gráfico, justo lo que debe retroceder.
 export const divergente = (modo, base) =>
   modo === "dark" ? { ...base, mid: "#5f6e72" } : base;
