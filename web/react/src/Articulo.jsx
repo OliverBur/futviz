@@ -9,7 +9,7 @@
 // Tipos, casi todos en SVG propio sobre un mismo marco (`Marco`) y con el tema de MUI:
 //   lineas     calibración, trayectoria del sesgo, curva de aprendizaje, cabeza contra pie
 //   forest     escalera de variables y diferencias por temporada (Δ log-loss con su intervalo)
-//   barras     tasas de gol, sesgo por grupo, importancia de las variables
+//   barras     tasas de gol, sesgo por grupo, importancia SHAP de las variables
 //   puntos     modelos en una métrica a elegir (log-loss, AUC...) sobre un eje que no empieza en cero
 //   ventanas   cómo se parte el tiempo en entrenar, validar y probar
 //   dispersion un punto por equipo, con tendencia
@@ -462,14 +462,16 @@ function Barras({ cfg, D, tk, pal }) {
   const [ref, ancho] = useAncho();
   const [sel, setSel] = useState(null);
   const grupo = G.agrupaciones.find((a) => a.id === agr) || G.agrupaciones[0];
+  // una agrupación puede traer su propio eje (formato, etiqueta) si mide otra cosa que las demás
+  const eje = { ...G.eje, ...(grupo.eje || {}) };
   const todos = G.agrupaciones.flatMap((a) => a.filas.flatMap((f) => Object.values(f.valores)));
   const lo = Math.min(0, ...todos), hi = Math.max(0, ...todos);
   // una agrupación puede traer su propio dominio (las que no comparten escala con las demás)
-  const dom = grupo.dom || G.eje.dom || [lo < 0 ? lo - (hi - lo) * 0.14 : lo, hi + (hi - lo) * 0.1];   // espacio para el rótulo de un valor negativo
+  const dom = grupo.dom || eje.dom || [lo < 0 ? lo - (hi - lo) * 0.14 : lo, hi + (hi - lo) * 0.1];   // espacio para el rótulo de un valor negativo
   const w = Math.max(80, ancho);
   const px = lineal(dom[0], dom[1], 4, w - 4);
   const marcasX = marcas(dom[0], dom[1], Math.max(3, Math.round(w / 90)));
-  const fx = fm(G.eje.formato);
+  const fx = fm(eje.formato);
   const grosor = 14, sep = 4;
   const altoFila = G.series.length * grosor + (G.series.length - 1) * sep + 18;
   return (
@@ -492,7 +494,7 @@ function Barras({ cfg, D, tk, pal }) {
         <Box ref={ref} sx={{ height: 24 }}>
           {ancho > 0 && (
             <svg width={w} height={24} aria-hidden="true" style={{ display: "block" }}>
-              {marcasX.map((v) => <text key={v} x={px(v)} y={16} textAnchor="middle" {...estiloTexto(tk)}>{fx(v)}</text>)}
+              {marcasX.map((v) => <text key={v} x={px(v)} y={16} {...estiloTexto(tk)} textAnchor={px(v) < 14 ? "start" : px(v) > w - 14 ? "end" : "middle"}>{fx(v)}</text>)}
             </svg>
           )}
         </Box>
@@ -507,7 +509,7 @@ function Barras({ cfg, D, tk, pal }) {
               </Box>
               <Box sx={{ borderTop: 1, borderColor: "divider", bgcolor: activo ? "action.hover" : "transparent", height: altoFila }}>
                 {ancho > 0 && (
-                  <svg width={w} height={altoFila} role="img" aria-label={`${f.nombre}: ${G.series.map((s) => `${s.nombre} ${fm(G.eje.formato)(f.valores[s.id])}`).join(", ")}`}
+                  <svg width={w} height={altoFila} role="img" aria-label={`${f.nombre}: ${G.series.map((s) => `${s.nombre} ${fx(f.valores[s.id])}`).join(", ")}`}
                     style={{ display: "block" }}>
                     {marcasX.map((v) => <line key={v} x1={px(v)} x2={px(v)} y1={0} y2={altoFila} stroke={tk.border} strokeOpacity={0.6} />)}
                     <line x1={px(0)} x2={px(0)} y1={0} y2={altoFila} stroke={tk.muted} strokeWidth={1.4} />
@@ -531,7 +533,7 @@ function Barras({ cfg, D, tk, pal }) {
           );
         })}
       </Box>
-      {G.eje.etiqueta && <Typography sx={{ fontSize: 12.5, fontWeight: 600, textAlign: "center", mt: 0.75 }}>{G.eje.etiqueta}</Typography>}
+      {eje.etiqueta && <Typography sx={{ fontSize: 12.5, fontWeight: 600, textAlign: "center", mt: 0.75 }}>{eje.etiqueta}</Typography>}
       <Pie cfg={cfg} />
     </Box>
   );
@@ -618,14 +620,18 @@ function Dispersion({ cfg, D, tk, pal, modo }) {
 // la línea de fondo es el borde de arriba. Cada combinación de controles es una rejilla ya calculada.
 function Superficie({ cfg, D, tk, modo }) {
   const S = D[cfg.dato];
-  const [sit, setSit] = useState(S.situaciones[0].id);
-  const [parte, setParte] = useState(S.partes[0].id);
-  const [accion, setAccion] = useState(S.acciones[0].id);
+  // Cada control se puede dejar sin elegir (null): el mapa junta entonces todos los remates de esa
+  // dimensión (las rejillas "*", promediadas en Python según cuántos tiros de cada tipo hay en cada zona).
+  // La acción previa solo se elige en jugada abierta.
+  const [sit, setSit] = useState(null);
+  const [parte, setParte] = useState(null);
+  const [accion, setAccion] = useState(null);
   const [cel, setCel] = useState(null);
   const svgRef = useRef(null);
   const situacion = S.situaciones.find((s) => s.id === sit);
-  const usaAccion = !!situacion.usaAccion;
-  const clave = `${sit}|${parte}|${usaAccion ? accion : "-"}`;
+  const usaAccion = !!(situacion && situacion.usaAccion);
+  const clave = `${sit ?? "*"}|${parte ?? "*"}|${usaAccion ? accion ?? "*" : "-"}`;
+  const general = !sit && !parte;
   const rej = S.rejillas[clave];
 
   const rampa = useMemo(() => (modo === "dark" ? [...S.rampa].reverse() : S.rampa), [S, modo]);
@@ -670,7 +676,7 @@ function Superficie({ cfg, D, tk, modo }) {
   let max = 0, imax = -1;
   valores.forEach((v, i) => { if (v != null && v > max) { max = v; imax = i; } });
   const lectura = imax >= 0
-    ? `En esta combinación, lo más valioso del mapa es ${max.toFixed(2)} de xG, a ${Math.round(Math.hypot(dCol(imax % nx), wFila(Math.floor(imax / nx)) - medio))} m del centro de la portería.`
+    ? `${general ? "Con todos los remates juntos" : "En esta combinación"}, lo más valioso del mapa es ${max.toFixed(2)} de xG, a ${Math.round(Math.hypot(dCol(imax % nx), wFila(Math.floor(imax / nx)) - medio))} m del centro de la portería.`
     : "Con estos controles no hay suficientes tiros en ninguna zona para sostener una predicción.";
   const sobre = cel && rej ? rej[cel.r * nx + cel.c] : null;
 
@@ -739,26 +745,29 @@ function Superficie({ cfg, D, tk, modo }) {
           <Box>
             <Rotulo>Situación</Rotulo>
             <ToggleButtonGroup exclusive size="small" fullWidth orientation="vertical" value={sit} aria-label="Situación"
-              onChange={(_e, v) => v && setSit(v)}>
+              onChange={(_e, v) => setSit(v)}>
               {S.situaciones.map((s) => <ToggleButton key={s.id} value={s.id}>{s.etiqueta}</ToggleButton>)}
             </ToggleButtonGroup>
           </Box>
           <Box>
             <Rotulo>Parte del cuerpo</Rotulo>
             <ToggleButtonGroup exclusive size="small" fullWidth value={parte} aria-label="Parte del cuerpo"
-              onChange={(_e, v) => v && setParte(v)} sx={{ flexWrap: "wrap" }}>
+              onChange={(_e, v) => setParte(v)} sx={{ flexWrap: "wrap" }}>
               {S.partes.map((p) => <ToggleButton key={p.id} value={p.id} sx={{ flex: "1 0 30%" }}>{p.etiqueta}</ToggleButton>)}
             </ToggleButtonGroup>
           </Box>
           <Box sx={{ opacity: usaAccion ? 1 : 0.45 }}>
-            <Rotulo ayuda="Lo último que pasó antes del tiro, según Understat. Solo se puede elegir en jugada abierta: en córners y balón parado la acción previa es siempre la misma.">
+            <Rotulo ayuda="Lo último que pasó antes del tiro, según Understat. Solo se puede elegir con «Jugada abierta»: en córners y balón parado la acción previa es siempre la misma.">
               Acción previa
             </Rotulo>
             <ToggleButtonGroup exclusive size="small" fullWidth orientation="vertical" value={accion} aria-label="Acción previa"
-              disabled={!usaAccion} onChange={(_e, v) => v && setAccion(v)}>
+              disabled={!usaAccion} onChange={(_e, v) => setAccion(v)}>
               {S.acciones.map((a) => <ToggleButton key={a.id} value={a.id}>{a.etiqueta}</ToggleButton>)}
             </ToggleButtonGroup>
           </Box>
+          <Typography sx={{ fontSize: 12, color: "text.secondary", mt: -0.5 }}>
+            Sin nada elegido, el mapa junta todos los remates. Toca una opción marcada para quitarla.
+          </Typography>
         </Box>
       </Box>
     </Box>

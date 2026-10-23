@@ -1,0 +1,93 @@
+{
+  "fecha": "2026-10-23",
+  "pruebas": 80,
+  "valor_validacion": 0.256381613555567,
+  "valor_validacion_por_fold": {
+    "A": 0.25496277784721993,
+    "B": 0.25780044926391404
+  },
+  "arboles_por_fold": {
+    "A": 4434,
+    "B": 5870
+  },
+  "valor_parametros_anteriores": 0.2593895260388839,
+  "folds": [
+    {
+      "id": "A",
+      "entrena": [
+        "2021-22",
+        "2022-23"
+      ],
+      "valida": "2023-24"
+    },
+    {
+      "id": "B",
+      "entrena": [
+        "2021-22",
+        "2022-23",
+        "2023-24"
+      ],
+      "valida": "2024-25"
+    }
+  ],
+  "busqueda": {
+    "sampler": "TPE",
+    "semilla": 1,
+    "pruebas_iniciales": 10,
+    "tope_arboles": 6000,
+    "early_stopping": 60,
+    "semilla_xgboost": 42,
+    "espacio": {
+      "learning_rate": [
+        0.02,
+        0.12,
+        "log"
+      ],
+      "max_depth": [
+        3,
+        8,
+        "int"
+      ],
+      "min_child_weight": [
+        3,
+        150,
+        "log"
+      ],
+      "subsample": [
+        0.5,
+        1.0,
+        "lin"
+      ],
+      "colsample_bytree": [
+        0.4,
+        1.0,
+        "lin"
+      ],
+      "reg_lambda": [
+        0.1,
+        50,
+        "log"
+      ],
+      "reg_alpha": [
+        0.001,
+        5,
+        "log"
+      ],
+      "gamma": [
+        0,
+        2,
+        "lin"
+      ]
+    }
+  },
+  "params": {
+    "learning_rate": 0.028439028511886115,
+    "max_depth": 3,
+    "min_child_weight": 4.196528579755596,
+    "subsample": 0.9847699268382223,
+    "colsample_bytree": 0.5061424945102249,
+    "reg_lambda": 0.5092737864756264,
+    "reg_alpha": 0.46714432359994806,
+    "gamma": 0.07492855149648413
+  }
+}

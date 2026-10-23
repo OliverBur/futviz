@@ -4,6 +4,9 @@ Cálculo aparte de `xg_modelo.py` y con su propio caché (`data/processed/xg_com
 entrena los dos modelos con las mismas variables, el mismo corte y las mismas semillas que el
 modelo final del artículo, y arma el árbol que se dibuja en la página.
 
+Los dos van con hiperparámetros SIN ajustar (XGBoost con `xm.PARAMS_BASE`): LightGBM no pasó por el
+tuning, así que comparar contra el XGBoost ajustado mezclaría el algoritmo con el ajuste.
+
 Qué sale de aquí:
   * métricas de los tres modelos en 2025-26 y sus diferencias con intervalo (bootstrap por partido);
   * el log-loss al ir sumando árboles (entrenamiento y prueba), que enseña cómo funciona el boosting;
@@ -24,7 +27,7 @@ import pandas as pd
 
 import xg_modelo as xm
 
-VERSION = 1
+VERSION = 2
 CACHE = xm.DATA_DIR / "processed" / "xg_comparacion.json"
 BASES = ["geo", "contexto", "jugada", "accion"]      # las variables del modelo final
 MODELOS = [("xgb", "XGBoost"), ("lgbm", "LightGBM"), ("mezcla", "Mezcla de los dos")]
@@ -83,7 +86,7 @@ def _arbol(s, tr, te):
     """Un árbol de decisión de profundidad 7 con las cuentas de entrenamiento y de prueba de cada nodo."""
     from sklearn.tree import DecisionTreeClassifier
     F = {"dist": s.dist, "angulo": np.degrees(s.angulo), "dist_y": s.dist_y,
-         "asistido": s.asistido, "rebote": s.rebote,
+         "asistido": s.asistido, "rebote_previo": s.rebote_previo,
          "cabeza": (s.body_part == "Head").astype(int), "pie_der": (s.body_part == "Right Foot").astype(int),
          "pie_izq": (s.body_part == "Left Foot").astype(int),
          "corner": (s.situation == "From Corner").astype(int), "abp": (s.situation == "Set Piece").astype(int),
@@ -92,7 +95,7 @@ def _arbol(s, tr, te):
         F[f"acc_{a}"] = (s.accion == a).astype(int)
     F = pd.DataFrame(F)
     etiquetas = {"dist": ("Distancia", "m"), "angulo": ("Ángulo", "°"), "dist_y": ("Dist. al centro", "m"),
-                 "asistido": ("Asistido", None), "rebote": ("Rebote", None), "cabeza": ("De cabeza", None),
+                 "asistido": ("Asistido", None), "rebote_previo": ("Tiro antes en el minuto", None), "cabeza": ("De cabeza", None),
                  "pie_der": ("Pie derecho", None), "pie_izq": ("Pie izquierdo", None),
                  "corner": ("Córner", None), "abp": ("Balón parado", None), "tiro_libre": ("Tiro libre directo", None)}
     for a in xm.ACCIONES:
@@ -151,7 +154,7 @@ def _calcular(log=print):
     modelos, probs, tiempos, arboles = {}, {"xgb": [], "lgbm": []}, {}, {}
     for sem in xm.SEMILLAS:
         t = time.time()
-        mx = xm._ajustar(X, y, tr, va, sem, True)
+        mx = xm._ajustar(X, y, tr, va, sem, True, params=xm.PARAMS_BASE)
         tx = time.time() - t
         t = time.time()
         ml = _lgbm(X, y, tr, va, sem, mono)
