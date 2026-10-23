@@ -13,7 +13,10 @@ data/.fbref_html/
 # regenera `python code/consolidate_data.py` en segundos a partir de
 # data/<temporada>/, que sí se versiona. Vercel no los necesita: solo sirve
 # web/dist, no construye nada.
-data/processed/
+data/processed/*
+# Excepción: los hiperparámetros del xG no son un derivado barato (los elige code/xg_tuning.py en ~2 h)
+# y xg_modelo.py los lee como entrada.
+!data/processed/xg_params.json
 
 # Lock que deja seleniumbase al bajar chromedriver. Sin prefijo de ruta:
 # lo crea en el directorio desde el que se corra el script, no siempre code/

@@ -13,6 +13,9 @@ Sale de aquí:
   * la probabilidad de gol de cada tiro cuando NINGÚN modelo lo había visto
     (`data/processed/xg_temporadas_prob.csv.gz`): es la que usa el explorador de tiros.
 
+Hiperparámetros SIN ajustar (`xm.PARAMS_BASE`): el tuning validó en 2023-24 y 2024-25, que aquí son
+temporadas de prueba; con los ajustados, esas filas habrían visto su propia prueba.
+
 Caché propio (`data/processed/xg_temporadas.json`): tarda ~15 min y no debe repetirse porque cambie
 el texto del artículo. Solo se invalida si cambian los datos, este archivo o `xg_modelo.py`.
 """
@@ -28,7 +31,7 @@ import pandas as pd
 
 import xg_modelo as xm
 
-VERSION = 1
+VERSION = 2
 CACHE = xm.DATA_DIR / "processed" / "xg_temporadas.json"
 PREDICCIONES = xm.DATA_DIR / "processed" / "xg_temporadas_prob.csv.gz"
 BASES = ["geo", "contexto", "jugada", "accion"]      # las variables del modelo final
@@ -66,7 +69,7 @@ def _calcular(log=print):
         te = (s.temporada == T).values
         ps, arbs = [], []
         for sem in xm.SEMILLAS:
-            m = xm._ajustar(X, y, tr, va, sem, True)
+            m = xm._ajustar(X, y, tr, va, sem, True, params=xm.PARAMS_BASE)
             ps.append(m.predict_proba(X[te])[:, 1])
             arbs.append(m.best_iteration)
         p = np.mean(ps, axis=0)
