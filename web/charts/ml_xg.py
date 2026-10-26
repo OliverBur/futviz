@@ -1,7 +1,7 @@
 """El análisis del modelo de xG para el sitio, contado como un proyecto de ML.
 
 El orden es el de un proyecto: datos (qué hay y cómo se bajó), exploración, propuesta de modelo,
-cómo funciona un árbol, resultados, qué hace Understat, la prueba en varias temporadas y un
+cómo funciona un árbol, resultados (con la comparación contra Understat) y un
 explorador de tiros. Casi todo es una gráfica; el texto solo ata una con otra.
 
 Los modelos y las mediciones los hacen `xg_modelo.py`, `xg_comparacion.py` y `xg_temporadas.py`
@@ -32,7 +32,7 @@ import xg_eda  # noqa: E402
 import xg_explorador  # noqa: E402
 import xg_modelo as xm  # noqa: E402
 import xg_temporadas as xt  # noqa: E402
-from ml_comun import SECTION, _callout, _heading, _prose, _stat, _table  # noqa: E402
+from ml_comun import SECTION, _heading, _prose, _stat, _table  # noqa: E402
 from site_utils import ArticlePage  # noqa: E402
 from viz_theme import LEAGUE_COLORS, LEAGUE_COLORS_DARK, SEQUENTIAL_BLUE  # noqa: E402
 
@@ -74,11 +74,6 @@ def _nombre_variable(c):
             "asistido": "Asistido", "rebote_previo": "Tiro antes en ese minuto"}.get(c, c)
 
 
-def _ic(d):
-    """'-0.0005 (intervalo de 95%: -0.0030 a +0.0021)' a partir de un dict con d_ll, d_lo y d_hi."""
-    return f"{_signo(d['d_ll'])} (intervalo de 95%: {_signo(d['d_lo'])} a {_signo(d['d_hi'])})"
-
-
 def _exceso(sesgo):
     """+16.8 -> 'un 17% más goles esperados de los que entraron'."""
     return f"un {abs(sesgo):.0f}% {'más' if sesgo >= 0 else 'menos'} goles esperados de los que entraron"
@@ -94,10 +89,6 @@ NOMBRE_ORIGINAL = {"dist": "Distancia a la portería", "angulo": "Ángulo de tir
                    "location_x": "Profundidad", "location_y": "Posición a lo ancho", "asistido": "Si fue asistido",
                    "rebote_previo": "Tiro antes en ese minuto", "accion": "Acción previa",
                    "cuerpo": "Parte del cuerpo", "situacion": "Situación (jugada, córner…)"}
-
-
-def _corto(t):
-    return t.replace("20", "", 1)
 
 
 # ---------------------------------------------------------------------------------------------
@@ -185,15 +176,11 @@ def _payload(R, C, T, E):
     E_ = {f["id"]: f for f in esc}
     fin = E_[xm.FINAL]
     glob, logi = R["baselines"]
-    pub = R["publicado"]
     modelos = [("Misma probabilidad para todos", glob, "neutro", False),
                ("Logística: distancia y ángulo", logi, "neutro", False),
-               ("XGBoost · sin ajustar", M["xgb"], "neutro", False),
-               ("LightGBM · sin ajustar", M["lgbm"], "neutro", False),
-               ("Mezcla de los dos · sin ajustar", M["mezcla"], "neutro", False),
-               (f"XGBoost ajustado · evaluación (entrena {_corto(xm.TRAIN[0])} a {_corto(xm.TRAIN[-1])})", fin, "propio", True),
-               (f"XGBoost ajustado · publicado (entrena {_corto(pub['entrena'][0])} a {_corto(pub['entrena'][-1])})",
-                pub, "propio", False)]
+               ("LightGBM", M["lgbm"], "neutro", False),
+               ("Mezcla de XGBoost y LightGBM", M["mezcla"], "neutro", False),
+               ("XGBoost · mi modelo", fin, "propio", True)]
     vals = [m_["ll"] for _, m_, _, _ in modelos]
     pad = (max(vals) - min(vals)) * 0.08
     P["modelos"] = {"agrupaciones": [{
@@ -241,18 +228,6 @@ def _payload(R, C, T, E):
         "eje": {"etiqueta": "Cuánto mueve, en promedio, el xG de un tiro (SHAP medio, en log-odds)", "formato": "num2",
                 "dom": [0, max(v["shap"] for v in ori) * 1.15]}}
 
-    # ============================================================ varias temporadas
-    ts = T["temporadas"]
-    P["rendimiento"] = {
-        "x": {"categorias": [f["temporada"] for f in ts], "etiqueta": None},
-        "y": {"etiqueta": "Log-loss en la temporada de prueba", "formato": "num3"},
-        "series": [
-            {"id": "base", "nombre": "Misma probabilidad para todos", "color": "neutro",
-             "puntos": [[k, f["base_ll"], None, None, f["tiros"]] for k, f in enumerate(ts)]},
-            {"id": "propio", "nombre": "XGBoost · mi modelo", "color": "propio",
-             "puntos": [[k, f["propio"]["ll"], None, None, f["tiros"]] for k, f in enumerate(ts)]},
-        ],
-        "unidad_n": "tiros de prueba"}
     return P
 
 
@@ -306,64 +281,69 @@ def _lista(items):
     return "<ul>" + "".join(f"<li>{i}</li>" for i in items) + "</ul>"
 
 
-def _frase_tuning(aj):
-    tu = aj.get("tuning")
-    if not tu:
-        return ""
-    folds = " y ".join(f"entrenar hasta {f['entrena'][-1]} y validar en {f['valida']}" for f in tu["folds"])
-    return (f"Sus hiperparámetros los elegí con Optuna ({tu['pruebas']} pruebas) y validación en el tiempo "
-            f"({folds}), sin mirar {xm.TEST}. ")
+def _pct(d, ref):
+    """Una diferencia de log-loss como porcentaje del log-loss de referencia: 0.0014 sobre 0.2583 -> 0.5."""
+    return abs(d) / ref * 100
 
 
-def _frase_robustez():
-    """Si se corrió `code/xg_robustez.py`: ¿la mejora del ajuste se repite en temporadas que el tuning no vio?"""
+def _robustez_tuning():
+    """¿La mejora del ajuste se repite en temporadas que el tuning no vio? (de `code/xg_robustez.py`, si se
+    corrió con los mismos parámetros). True, False o None si no hay dato."""
     ruta = xm.DATA_DIR / "processed" / "xg_robustez.json"
     if not ruta.exists():
-        return ""
+        return None
     rb = json.loads(ruta.read_text(encoding="utf-8"))
-    if rb.get("params") != xm.PARAMS:      # resultado de otros parámetros: no vale
-        return ""
-    f = rb["tuning_fuera"]
-    mejor = sum(x["d_hi"] < 0 for x in f)
-    peor = sum(x["d_lo"] > 0 for x in f)
-    igual = len(f) - mejor - peor
-    if mejor == len(f):
-        return f" Y se repite en {f[0]['temporada']} a {f[-1]['temporada']}, temporadas que el ajuste nunca vio."
-    partes = [f"{n} {'temporada' if n == 1 else 'temporadas'} {etq}" for n, etq in
-              ((mejor, "mejor"), (igual, "igual"), (peor, "peor")) if n]
-    return (f" Ojo: en {f[0]['temporada']} a {f[-1]['temporada']}, temporadas que el ajuste nunca vio, la mejora no se "
-            f"repite ({', '.join(partes)}): parece propia de los años con los que se eligió.")
+    if rb.get("params") != xm.PARAMS:
+        return None
+    return all(x["d_hi"] < 0 for x in rb["tuning_fuera"])
 
 
-def _frase_temporadas(aj):
-    tu = aj.get("tuning")
-    if not tu:
-        return ""
-    return (" Aquí el modelo va con los hiperparámetros sin ajustar: el ajuste se validó en "
-            f"{' y '.join(f['valida'] for f in tu['folds'])}, que aquí también son temporadas de prueba.")
+def _texto_resultados(R, C, T):
+    """Los resultados en tres párrafos cortos. El log-loss va como porcentaje (cuánto menos error que el
+    modelo de referencia), que se lee mejor que diferencias de milésimas; qué gana y qué empata lo decide
+    el intervalo de 95% (`_veredicto`), no el texto."""
+    base = R["baselines"][0]["ll"]
+    logi, fin, aj = R["baselines"][1], {f["id"]: f for f in R["escalera"]}[xm.FINAL], R["ajuste"]
+    M = {m["id"]: m for m in C["metricas"]}
+    mx = M["xgb"]
 
+    txt = (f"<p>Con solo la distancia y el ángulo (una regresión logística), el log-loss baja de {base:.3f} a "
+           f"{logi['ll']:.3f}: un {_pct(base - logi['ll'], base):.0f}% menos que darle a todos los tiros la misma "
+           f"probabilidad. Con todas las variables y XGBoost baja a {fin['ll']:.3f}, un "
+           f"{_pct(base - fin['ll'], base):.0f}% menos. ")
+    otros = [M["lgbm"], M["mezcla"]]
+    peor = max(_pct(m["d_xgb"], mx["ll"]) for m in otros)
+    if all(m["d_xgb_lo"] > 0 for m in otros) and peor >= 1:
+        txt += f"LightGBM y la mezcla de los dos quedan hasta un {peor:.0f}% peor, así que me quedo con XGBoost. "
+    else:
+        txt += ("Probé otros algoritmos (LightGBM y una mezcla de los dos) y quedan prácticamente igual, así que me "
+                "quedo con XGBoost. ")
+    if aj["origen"] == "tuning":
+        pct = _pct(aj["d_ll"], aj["sin_ajustar"]["ll"])
+        txt += {"mejor": f"Ajustar sus hiperparámetros (con Optuna, sin mirar {xm.TEST}) lo mejora otro {pct:.1f}%",
+                "peor": f"Ajustar sus hiperparámetros lo empeora un {pct:.1f}%",
+                "igual": "Ajustar sus hiperparámetros no cambia nada claro"}[_veredicto(aj, "mejor", "peor", "igual")]
+        rob = _robustez_tuning()
+        if aj["d_hi"] < 0 and rob is False:
+            txt += ", aunque en temporadas que el ajuste no vio esa mejora no se repite"
+        elif aj["d_hi"] < 0 and rob:
+            txt += ", y la mejora se repite en temporadas que el ajuste no vio"
+        txt += "."
+    txt += "</p>"
 
-def _correccion(R):
-    """El recuadro de corrección: qué estaba mal en la versión anterior y cuánto cambió, todo de los datos."""
-    fu, aj = R["fuga"], R["ajuste"]
-    lug = {l_["id"]: l_ for l_ in fu["lugares"]}
-    pri, solo = lug["primero"], lug["solo"]
+    und, eu = R["understat"], R["final_vs_understat"]
+    tc, ts = T["conjunto"], T["temporadas"]
 
-    def estado(d):
-        return _veredicto(d, "mejor que Understat", "peor que Understat", "empate con Understat")
-    return _callout("Corrección · octubre de 2026", (
-        "<p>La versión anterior de este artículo usaba una variable, «rebote», que marcaba un tiro si el mismo equipo "
-        "remataba otra vez en ese minuto, <em>antes o después</em>. El después era el problema: si un tiro entra, la "
-        "jugada se corta, así que el primero de varios tiros en un minuto casi nunca es gol "
-        f"({_n(pri['goles'])} de {_n(pri['tiros'])}, el {pri['tasa']:.1%}, contra el {solo['tasa']:.1%} de un tiro "
-        "solo). El modelo se enteraba del resultado por el tiro que venía después.</p>"
-        "<p>Ahora la variable solo mira los tiros anteriores (en el orden del identificador del tiro, que sigue al "
-        "reloj en el 87% de los partidos). Con los mismos hiperparámetros, el log-loss en "
-        f"{xm.TEST} pasa de {fu['ll']:.4f} a {aj['sin_ajustar']['ll']:.4f}, y frente a Understat de "
-        f"{_ic(fu['vs_understat'])} ({estado(fu['vs_understat'])}) a {_ic(aj['sin_ajustar_vs_understat'])} "
-        f"({estado(aj['sin_ajustar_vs_understat'])}). Además ajusté los hiperparámetros, entreno el modelo publicado "
-        "con una temporada más y cambié la forma de medir qué variables importan; todo está en Resultados.</p>"),
-        warn=True)
+    def contra(d, ref):
+        pct = _pct(d["d_ll"], ref)
+        return _veredicto(d, f"mi modelo es un {pct:.1f}% mejor", f"Understat es un {pct:.1f}% mejor",
+                          f"quedan prácticamente empatados (la diferencia, de {pct:.1f}%, podría ser casualidad)")
+    txt += (f"<p>¿Y contra el xG de Understat, en los mismos tiros? En {xm.TEST}, {contra(eu, und['ll'])}. Probando "
+            f"también cada una de las {len(ts)} temporadas desde {ts[0]['temporada']} con un modelo que no la había "
+            f"visto, {contra(tc, tc['understat']['ll'])}.</p>")
+    txt += (f"<p>Donde sí se separan es en el total de goles: en {xm.TEST} Understat suma "
+            f"{_exceso(und['sesgo'])}; mi modelo, {_exceso(fin['sesgo'])}.</p>")
+    return txt
 
 
 def _texto_importancia(R):
@@ -424,12 +404,11 @@ def build_xg_article() -> ArticlePage:
     ayudan = [f for f in contexto if f["d_hi"] < 0]
     tray = R["historico"]["trayectoria"]
     M = {m["id"]: m for m in C["metricas"]}
-    mx, ml, mm = M["xgb"], M["lgbm"], M["mezcla"]
-    base_ll, logi = R["baselines"][0]["ll"], R["baselines"][1]
+    mx, ml = M["xgb"], M["lgbm"]
+    base_ll = R["baselines"][0]["ll"]
     rej = R["aprendio"]["superficie"]["rejillas"]
     tasas = {k: {r[{"cuerpo": "body_part", "situacion": "situation", "accion": "accion"}[k]]: r for r in v}
              for k, v in E["tasas"].items()}
-    ts = T["temporadas"]
     n_explorador = sum(v["n"] for v in X.values())
 
     contador = [0]
@@ -450,9 +429,8 @@ def build_xg_article() -> ArticlePage:
         "calidad de las ocasiones sin depender del marcador: permite ver si un equipo o un jugador rinde por encima o "
         "por debajo de lo esperado, y separar lo que fue juego de lo que fue suerte. Un xG, al final, no es más que "
         "eso: <strong>una probabilidad dada la situación en la que se tira</strong>.</p>"
-        "<p>Aquí construyo el xG desde cero con la metodología de un proyecto de ML con el fin de aprender lo que hay detrás de este número que tan popular se ha vuelto."
-        "</p>"))
-    p.append(_correccion(R))
+        "<p>Aquí construyo el xG desde cero con el fin de aprender lo que hay detrás de este número que tan popular "
+        "se ha vuelto.</p>"))
 
     # ================================================================ 2. los datos
     p.append(h("Los datos", "datos"))
@@ -476,8 +454,7 @@ def build_xg_article() -> ArticlePage:
     p.append(_prose(
         f"<p>Antes de modelar saqué los {_n(pen['n'])} penales (entran el {pen['conversion']:.0%} sin importar "
         f"quién los patee), los autogoles y {oli['n']} remates a menos de dos grados de portería visible: "
-        "casi todos son goles olímpicos y Understat solo registra un córner si iba a "
-        "puerta.</p>"))
+        "casi todos son goles olímpicos pero son anomalías.</p>"))
 
     # ================================================================ 3. exploración
     p.append(h("Explorando los datos", "eda"))
@@ -518,7 +495,7 @@ def build_xg_article() -> ArticlePage:
         + _lista([
             "<strong>Split temporal:</strong> entreno con tres temporadas, decido cuántos árboles con la siguiente y pruebo en una que el modelo nunca vio.",
             "<strong>Intervalos por partido:</strong> los tiros de un mismo partido no son independientes, así que para calcular los intervalos de confianza remuestreo partidos, no tiros.",
-            "<strong>Validación hacia adelante:</strong> repito el experimento moviendo la ventana una temporada cada vez, siempre entrenando con el pasado y probando en el futuro (en la sección 7 se ve el resultado de cada una)."])))
+            "<strong>Validación hacia adelante:</strong> repito el experimento moviendo la ventana una temporada cada vez, siempre entrenando con el pasado y probando en el futuro."])))
     p.append(_grafica(
         "xg-ventanas", "ventanas", "ventanas", "Cómo parto el tiempo",
         "Cada fila es un experimento con su propio split temporal. ",
@@ -551,7 +528,6 @@ def build_xg_article() -> ArticlePage:
         f"en {mx['seg']:.0f} s", "Log-loss de XGBoost y LightGBM según el número de árboles", alto=360))
 
     # ================================================================ 6. resultados
-    aj, pub = R["ajuste"], R["publicado"]
     p.append(h("Resultados", "resultados"))
     p.append(_prose(
         "<p>Para comparar modelos uso el <strong>log-loss</strong>: mide qué tan buenas son las probabilidades, no solo "
@@ -559,49 +535,12 @@ def build_xg_article() -> ArticlePage:
         f"penaliza mucho). Menos es mejor, y un log-loss de {base_ll:.4f} es el baseline cuando el modelo le da a todos los tiros la misma "
         "probabilidad.</p>"
         f"<p>En {xm.TEST}, con {_n(n_test)} tiros que el modelo no vio, XGBoost obtuvo un <strong>log-loss de {fin['ll']:.4f}</strong>. "
-        f"{_frase_tuning(aj)}Así queda frente a modelos más simples y a otros algoritmos:</p>"))
+        "Así queda frente a modelos más simples y a otros algoritmos:</p>"))
     p.append(_grafica(
         "xg-modelos", "puntos", "modelos", "XGBoost frente a otros modelos",
         f"Log-loss en {xm.TEST} · cada punto es un modelo", "Log-loss de cada modelo en la temporada de prueba",
         alto_min=300))
-    lg_peor, mz_peor = ml["d_xgb_lo"] > 0, mm["d_xgb_lo"] > 0
-    lg_igual, mz_igual = ml["d_xgb_hi"] >= 0 >= ml["d_xgb_lo"], mm["d_xgb_hi"] >= 0 >= mm["d_xgb_lo"]
-    if lg_peor and mz_peor:
-        algo_txt = (f"LightGBM y la mezcla de los dos quedan un poco peor ({_signo(ml['d_xgb'])} y "
-                    f"{_signo(mm['d_xgb'])} de log-loss)")
-    elif lg_igual and mz_igual:
-        algo_txt = (f"LightGBM y la mezcla de los dos no se distinguen de XGBoost ({_signo(ml['d_xgb'])} y "
-                    f"{_signo(mm['d_xgb'])})")
-    else:
-        algo_txt = (f"LightGBM da {_signo(ml['d_xgb'])} y la mezcla de los dos, {_signo(mm['d_xgb'])} de log-loss "
-                    "frente a XGBoost")
-    p.append(_prose(
-        f"<p>Con solo la distancia y el ángulo (una regresión logística) el log-loss baja de {base_ll:.4f} a "
-        f"{logi['ll']:.4f}. Con todas las variables y XGBoost baja a {fin['ll']:.4f}. <p>Entre algoritmos casi no hay "
-        f"diferencia: {algo_txt}, los tres con los hiperparámetros sin ajustar (LightGBM no pasó por el ajuste). "
-        "Por eso me quedo con XGBoost." + (
-            f" Ajustarlo cambia el log-loss en {_ic(aj)}: "
-            f"{_veredicto(aj, 'una mejora pequeña pero distinta de cero', 'lo empeora', 'no se distingue de cero')}."
-            + _frase_robustez() if aj['origen'] == 'tuning' else "") + "</p>"))
-    pe = pub["vs_evaluacion"]
-    p.append(_prose(
-        f"<p>Hay dos versiones del modelo{' ajustado' if aj['origen'] == 'tuning' else ''}. La de <strong>evaluación</strong> entrena de {xm.TRAIN[0]} a "
-        f"{xm.TRAIN[-1]} y usa {xm.VALID} para decidir cuántos árboles: es la de todas las comparaciones de esta "
-        f"sección. La <strong>publicada</strong> entrena también con {xm.VALID} (sin temporada para decidir árboles, "
-        f"usa {pub['factor']:.2f} veces los de la de evaluación) y es la del mapa y la importancia de abajo. La probé "
-        f"una sola vez en {xm.TEST}, que tampoco vio: log-loss {pub['ll']:.4f}, {_ic(pe)} frente a la de evaluación "
-        f"({_veredicto(pe, 'mejor', 'peor', 'sin diferencia clara')}). Esa diferencia mezcla dos cosas, más datos y "
-        "más árboles, y no las separa.</p>"))
-    pu, eu, tc = pub["vs_understat"], R["final_vs_understat"], T["conjunto"]
-    p.append(_prose(
-        f"<p>¿Y contra el xG de Understat, en los mismos tiros? La versión de evaluación queda en {_ic(eu)} de "
-        f"log-loss ({_veredicto(eu, 'mejor', 'peor', 'empate')}) y la publicada en {_ic(pu)} "
-        f"({_veredicto(pu, 'mejor', 'peor', 'empate')}). Pero una temporada es poco: en la prueba hacia atrás "
-        f"de la sección 7 (sin ajustar), en las {len(ts)} temporadas juntas la diferencia es {_ic(tc)}, "
-        f"{_veredicto(tc, 'a favor de mi modelo', 'a favor de Understat', 'sin ganador')} "
-        f"(mi modelo gana {tc['gana']}, empata {tc['empata']} y pierde {tc['pierde']}). Donde sí hay una diferencia "
-        f"clara es en el total: en {xm.TEST} Understat suma {_exceso(R['understat']['sesgo'])}; mi modelo publicado, "
-        f"{_exceso(pub['sesgo'])}.</p>"))
+    p.append(_prose(_texto_resultados(R, C, T)))
 
     p.append(_prose(
         "<p>¿Qué variables ayudan? Las fui sumando por grupos y en cada paso medí cuánto cambia el log-loss: a la "
@@ -641,7 +580,7 @@ def build_xg_article() -> ArticlePage:
         "</p>"))
     p.append(_grafica(
         "xg-superficie", "superficie", "superficie", "Qué aprendió el modelo",
-        "xG del modelo publicado para un remate desde cada punto de la cancha, según qué tipo de remate sea · "
+        "xG del modelo para un remate desde cada punto de la cancha, según qué tipo de remate sea · "
         "la cancha mira hacia la portería", "Mapa interactivo del xG por zona de la cancha", alto_min=560,
         ayuda="Las zonas sin color no tienen tiros suficientes para opinar."))
     if None not in (z_pie, z_fil, z_cab):
@@ -657,29 +596,9 @@ def build_xg_article() -> ArticlePage:
         "depende el xG de esa variable.</p>"))
     p.append(_grafica(
         "xg-importancia", "barras", "shap", "De qué se agarra el modelo",
-        "Aporte medio de cada variable al xG de un tiro · modelo publicado", "Importancia SHAP de las variables",
+        "Aporte medio de cada variable al xG de un tiro", "Importancia SHAP de las variables",
         alto_min=420, ayuda="Un aporte de 0.69 equivale a duplicar (o partir a la mitad) los momios del gol."))
     p.append(_prose(_texto_importancia(R)))
-
-    # ================================================================ 7. varias temporadas
-    p.append(h("¿Y en otras temporadas?", "temporadas"))
-    p.append(_prose(
-        f"<p>Todo lo anterior fue en {xm.TEST}. Para saber si no fue casualidad, repetí el experimento en {len(ts)} "
-        "temporadas, una por cada fila del diagrama de la propuesta de modelo. En cada una comparo contra lo mismo: "
-        f"predecir siempre la tasa de gol histórica.{_frase_temporadas(aj)}</p>"))
-    p.append(_grafica(
-        "xg-rendimiento", "lineas", "rendimiento", "Rendimiento temporada por temporada",
-        "Log-loss en cada temporada de prueba (menos es mejor) · el modelo nunca vio esa temporada al entrenar",
-        "Log-loss del modelo y de la tasa de gol histórica en cada temporada de prueba", alto=340))
-    mejora = [f["base_ll"] - f["propio"]["ll"] for f in ts]
-    if min(mejora) > 0:
-        p.append(_prose(
-            f"<p>Cada temporada tiene su dificultad, pero el XGB siempre rinde bien."
-            "</p>"))
-    else:
-        p.append(_prose(
-            f"<p>Cada temporada tiene su dificultad, y el XGB no siempre rinde mejor que la tasa histórica."
-            "</p>"))
 
     # ================================================================ 8. el explorador
     p.append(h("Elige un tiro", "explorador"))
