@@ -286,18 +286,6 @@ def _pct(d, ref):
     return abs(d) / ref * 100
 
 
-def _robustez_tuning():
-    """¿La mejora del ajuste se repite en temporadas que el tuning no vio? (de `code/xg_robustez.py`, si se
-    corrió con los mismos parámetros). True, False o None si no hay dato."""
-    ruta = xm.DATA_DIR / "processed" / "xg_robustez.json"
-    if not ruta.exists():
-        return None
-    rb = json.loads(ruta.read_text(encoding="utf-8"))
-    if rb.get("params") != xm.PARAMS:
-        return None
-    return all(x["d_hi"] < 0 for x in rb["tuning_fuera"])
-
-
 def _texto_resultados(R, C, T):
     """Los resultados en tres párrafos cortos. El log-loss va como porcentaje (cuánto menos error que el
     modelo de referencia), que se lee mejor que diferencias de milésimas; qué gana y qué empata lo decide
@@ -307,28 +295,21 @@ def _texto_resultados(R, C, T):
     M = {m["id"]: m for m in C["metricas"]}
     mx = M["xgb"]
 
-    txt = (f"<p>Con solo la distancia y el ángulo (una regresión logística), el log-loss baja de {base:.3f} a "
-           f"{logi['ll']:.3f}: un {_pct(base - logi['ll'], base):.0f}% menos que darle a todos los tiros la misma "
-           f"probabilidad. Con todas las variables y XGBoost baja a {fin['ll']:.3f}, un "
-           f"{_pct(base - fin['ll'], base):.0f}% menos. ")
+    txt = (f"<p>Con solo la distancia y el ángulo, el log-loss baja un {_pct(base - logi['ll'], base):.0f}% en "
+           "comparación que darle a todos los tiros la misma probabilidad. Con todas las variables y XGBoost baja a "
+           f"{fin['ll']:.3f}, un {_pct(base - fin['ll'], base):.0f}% menos. ")
     otros = [M["lgbm"], M["mezcla"]]
     peor = max(_pct(m["d_xgb"], mx["ll"]) for m in otros)
     if all(m["d_xgb_lo"] > 0 for m in otros) and peor >= 1:
-        txt += f"LightGBM y la mezcla de los dos quedan hasta un {peor:.0f}% peor, así que me quedo con XGBoost. "
+        txt += f"Probé otros algoritmos (LightGBM y una mezcla de los dos) y quedan hasta un {peor:.0f}% peor. "
     else:
-        txt += ("Probé otros algoritmos (LightGBM y una mezcla de los dos) y quedan prácticamente igual, así que me "
-                "quedo con XGBoost. ")
+        txt += "Probé otros algoritmos (LightGBM y una mezcla de los dos) y quedan prácticamente igual. "
     if aj["origen"] == "tuning":
         pct = _pct(aj["d_ll"], aj["sin_ajustar"]["ll"])
-        txt += {"mejor": f"Ajustar sus hiperparámetros (con Optuna, sin mirar {xm.TEST}) lo mejora otro {pct:.1f}%",
-                "peor": f"Ajustar sus hiperparámetros lo empeora un {pct:.1f}%",
-                "igual": "Ajustar sus hiperparámetros no cambia nada claro"}[_veredicto(aj, "mejor", "peor", "igual")]
-        rob = _robustez_tuning()
-        if aj["d_hi"] < 0 and rob is False:
-            txt += ", aunque en temporadas que el ajuste no vio esa mejora no se repite"
-        elif aj["d_hi"] < 0 and rob:
-            txt += ", y la mejora se repite en temporadas que el ajuste no vio"
-        txt += "."
+        txt += {"mejor": f"A este XGBoost le hice un ajuste de hiperparámetros lo que mejora otro {pct:.1f}%.",
+                "peor": f"A este XGBoost le hice un ajuste de hiperparámetros, que lo empeora un {pct:.1f}%.",
+                "igual": "A este XGBoost le hice un ajuste de hiperparámetros, que no cambia nada claro."}[
+                    _veredicto(aj, "mejor", "peor", "igual")]
     txt += "</p>"
 
     und, eu = R["understat"], R["final_vs_understat"]
@@ -342,7 +323,7 @@ def _texto_resultados(R, C, T):
             f"también cada una de las {len(ts)} temporadas desde {ts[0]['temporada']} con un modelo que no la había "
             f"visto, {contra(tc, tc['understat']['ll'])}.</p>")
     txt += (f"<p>Donde sí se separan es en el total de goles: en {xm.TEST} Understat suma "
-            f"{_exceso(und['sesgo'])}; mi modelo, {_exceso(fin['sesgo'])}.</p>")
+            f"{_exceso(und['sesgo'])}, mientras que mi modelo, solo {_exceso(fin['sesgo'])}.</p>")
     return txt
 
 
