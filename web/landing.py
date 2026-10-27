@@ -22,7 +22,6 @@ from html import escape
 from pathlib import Path
 
 import react_views
-from ml_reader import _minutos
 from site_utils import (
     BRAND_ROOT_CSS, COLOR_BG_CLARO, FONT_LINKS, SECTION_META, THEME_COLOR_META, THEME_INIT_SCRIPT,
     THEME_TOGGLE_SCRIPT, ArticlePage, favicon_links, site_bar,
@@ -498,7 +497,6 @@ __BRAND_ROOT__
   .destacada h3 { margin: 0 0 14px; font-size: clamp(28px, 4vw, 44px); line-height: 1.1; letter-spacing: -0.02em;
     font-weight: 700; color: var(--color-primary); text-wrap: balance; }
   .destacada p { margin: 0 0 14px; font-size: 16px; line-height: 1.6; color: var(--color-text-body); max-width: 52ch; }
-  .destacada .meta { font-size: 14px; color: var(--color-muted); font-variant-numeric: tabular-nums; }
   .boton { display: inline-flex; align-items: center; min-height: 48px; padding: 0 22px; margin: 8px 0 28px; border-radius: 10px;
     background: var(--color-primary); color: var(--color-bg); font-weight: 600; font-size: 15px; text-decoration: none; }
   .boton:hover { background: color-mix(in srgb, var(--color-primary) 88%, var(--color-bg)); }
@@ -604,7 +602,6 @@ __BRAND_ROOT__
           <span class="etiqueta">__ARTICULO_SECCION__</span>
           <h3>__ARTICULO_TITULO__</h3>
           <p>__ARTICULO_DESCRIPCION__</p>
-          <p class="meta">__ARTICULO_META__</p>
           <a class="boton" href="__ARTICULO_URL__">Leer el artículo →</a>
           __PROXIMO__
         </div>
@@ -653,7 +650,6 @@ def escribir_landing(pages, dist_dir: Path):
             f'<a class="ir" href="{eda_url}#{slug}">{escape(slugs[slug].tab or slugs[slug].title)} →</a></li>')
 
     art = articulos[0]
-    meta = f"{_minutos(art.body_html)} min de lectura"
     proximo = (f'<p class="proximo">Próximamente: {escape(ml["proximos"][0]["title"])}.</p>'
                if ml.get("proximos") else "")
     sup = react_views.tabla_registrada("xg")["superficie"]
@@ -669,7 +665,6 @@ def escribir_landing(pages, dist_dir: Path):
             .replace("__ARTICULO_TITULO__", escape(art.title))
             .replace("__ARTICULO_SECCION__", escape(art.section))
             .replace("__ARTICULO_DESCRIPCION__", escape(art.subtitle))
-            .replace("__ARTICULO_META__", escape(meta))
             .replace("__PROXIMO__", proximo)
             .replace("__FUENTES__", "Datos: FBref y Understat")
             .replace("__EDA_URL__", eda_url)

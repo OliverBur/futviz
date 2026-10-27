@@ -18,7 +18,6 @@ este archivo. Los que todavía no existen se listan en `SECTION_META[...]["proxi
 
 import html
 import json
-import re
 from pathlib import Path
 
 from site_utils import (
@@ -26,7 +25,6 @@ from site_utils import (
     THEME_INIT_SCRIPT, THEME_TOGGLE_HTML, ArticlePage,
 )
 
-PALABRAS_POR_MINUTO = 200
 
 # Reloj de arena para las cards de lo que viene: dice "todavía no" sin parecer un error.
 ICONO_PROXIMO = (
@@ -448,16 +446,11 @@ __THEME_SCRIPT__
 """
 
 
-def _minutos(body_html: str) -> int:
-    texto = re.sub(r"<script.*?</script>|<[^>]+>", " ", body_html, flags=re.S)
-    return max(1, round(len(texto.split()) / PALABRAS_POR_MINUTO))
-
-
-def _card(slug, n, titulo, subtitulo, meta, soon=False):
+def _card(slug, n, titulo, subtitulo, meta="", soon=False):
     clase = "mini mini--soon" if soon else "mini"
     return (
         f'<li><a class="{clase}" href="#{slug}" data-slug="{slug}">'
-        f'<span class="mini-meta"><span>{n:02d}</span><span>{meta}</span></span>'
+        f'<span class="mini-meta"><span>{n:02d}</span>{f"<span>{meta}</span>" if meta else ""}</span>'
         f'<span class="mini-title">{html.escape(titulo)}</span>'
         f'<span class="mini-sub">{html.escape(subtitulo)}</span></a></li>'
     )
@@ -505,7 +498,7 @@ def write_ml_reader(section: str, articles: list, dist_dir: Path):
         ruta.write_text(
             f"window.futvizArticulo({json.dumps(a.slug)},{json.dumps(_fragmento(a, n))});", encoding="utf-8")
         salidas.append(ruta)
-        cards.append(_card(a.slug, n, a.title, a.subtitle, f"{_minutos(a.body_html)}&nbsp;min de lectura"))
+        cards.append(_card(a.slug, n, a.title, a.subtitle))
         paneles.append(f'<section class="view" id="v-{a.slug}" aria-label="{html.escape(a.title)}" hidden></section>')
     primero = articles[0] if articles else None
     for j, p in enumerate(proximos):
