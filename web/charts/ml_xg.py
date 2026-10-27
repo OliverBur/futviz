@@ -614,10 +614,6 @@ def build_xg_article() -> ArticlePage:
         subtitle=SUBTITULO,
         deck=SUBTITULO,   # `deck` es obligatorio y el texto de arriba de la página es el que escribió el autor
         body_html="".join(p),
-        meta=[("Datos", f"{_n(E['raw']['filas'])} tiros · top 5 ligas · {len(E['temporadas'])} temporadas "
-                        f"({E['temporadas'][0]} a {E['temporadas'][-1]})"),
-              ("Modelo", f"entrenado y evaluado con {_n(R['n']['cerradas'])} tiros de {xm.CERRADAS[0]} a {xm.CERRADAS[-1]}"),
-              ("Métodos", "XGBoost · LightGBM · Optuna · bootstrap por partido")],
         fuente=f"{FUENTE} · temporadas {tray[0]['temporada']} a {tray[-1]['temporada']}",
         react=True,
     )
