@@ -448,7 +448,6 @@ class ArticlePage:
     subtitle: str      # bajada corta, la que se ve en la card de la sección
     deck: str          # entradilla larga, arriba del artículo
     body_html: str
-    meta: list         # pares (etiqueta, valor) para la barra de metadatos
     fuente: str        # origen de los datos, para el pie del artículo
     kind: str = "article"
     href_prefix: str = "analisis/"
@@ -870,18 +869,6 @@ ARTICLE_CSS = """
   .hero h1 { font-size: 32px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em;
     color: var(--color-primary); margin: 0 0 16px; }
   .deck { font-size: 17px; line-height: 1.6; color: var(--color-muted); margin: 0; }
-  /* Rejilla de 2 columnas y no flex-wrap: con flex cada dato se dimensiona por
-     su contenido, así que se apilaban todos a la izquierda y la segunda columna
-     no coincidía entre filas (58px de diferencia), dejando medio ancho vacío.
-     Dos columnas porque el dato más largo mide ~300px: con cuatro se partiría
-     en dos líneas. */
-  .meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px 32px; margin-top: 26px; padding-top: 20px;
-    border-top: 1px solid var(--color-border); }
-  .meta div { font-size: 12.5px; color: var(--color-muted); }
-  .meta b { display: block; font-size: 10.5px; font-weight: 600; letter-spacing: .06em;
-    text-transform: uppercase; color: var(--color-primary); margin-bottom: 3px; }
-
   article { font-size: 16.5px; line-height: 1.72; }
   article h2 { font-size: 25px; line-height: 1.25; font-weight: 700; letter-spacing: -0.015em;
     color: var(--color-primary); margin: 60px 0 6px; scroll-margin-top: 70px; }
@@ -939,8 +926,6 @@ ARTICLE_CSS = """
     .hero { padding: 32px 0 22px; }
     .hero h1 { font-size: 26px; }
     .deck { font-size: 15.5px; }
-    /* en móvil dos columnas dejarían ~140px por dato: una sola y a lo alto */
-    .meta { grid-template-columns: 1fr; gap: 14px; }
     article { font-size: 16px; }
     article h2 { font-size: 21px; margin-top: 46px; }
     .chart-scroll { padding: 12px; }
@@ -992,7 +977,6 @@ ARTICLE_PAGE_TEMPLATE = """<!doctype html>
     <span class="kicker">{section_name}</span>
     <h1>{title}</h1>
     <p class="deck">{deck}</p>
-    <div class="meta">{meta}</div>
   </div>
   <article>{body}</article>
   <div class="wrap article-end">
@@ -1047,7 +1031,6 @@ ARTICLE_PAGE_TEMPLATE = """<!doctype html>
 </html>
 """
 
-META_ITEM_TEMPLATE = "<div><b>{label}</b>{value}</div>"
 
 
 def write_article_page(page: "ArticlePage", dist_dir: Path) -> Path:
@@ -1055,13 +1038,11 @@ def write_article_page(page: "ArticlePage", dist_dir: Path) -> Path:
     out_dir = dist_dir / page.href_prefix.strip("/")
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    meta_html = "".join(META_ITEM_TEMPLATE.format(label=label, value=value)
-                        for label, value in page.meta)
     section_meta = SECTION_META.get(page.section, {})
 
     html = ARTICLE_PAGE_TEMPLATE.format(
         slug=page.slug, title=page.title, subtitle=page.subtitle, deck=page.deck, body=page.body_html,
-        meta=meta_html, fuente=page.fuente, section_name=page.section,
+        fuente=page.fuente, section_name=page.section,
         section_slug=section_meta.get("slug", "index"),
         brand_root=BRAND_ROOT_CSS, font_links=font_links("../"), article_css=ARTICLE_CSS,
         theme_init_script=THEME_INIT_SCRIPT, theme_color=THEME_COLOR_META,

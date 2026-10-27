@@ -478,12 +478,9 @@ def _panel_proximo(p, primero):
 def _fragmento(page: ArticlePage, n: int) -> str:
     """El contenido de un artículo dentro del lector: la misma portada, cuerpo y cierre que la
     página suelta, sin la cabecera ni la barra de progreso (las pone el cascarón)."""
-    meta = "".join(f"<div><b>{label}</b>{value}</div>" for label, value in page.meta)
-    meta += f"<div><b>Lectura</b>≈&nbsp;{_minutos(page.body_html)}&nbsp;min</div>"
     return (
         f'<div class="wrap hero"><span class="kicker">Artículo {n:02d}</span>'
-        f'<h2 class="hero-title">{page.title}</h2><p class="deck">{page.deck}</p>'
-        f'<div class="meta">{meta}</div></div>'
+        f'<h2 class="hero-title">{page.title}</h2><p class="deck">{page.deck}</p></div>'
         f'<article>{page.body_html}</article>'
         f'<div class="wrap-wide article-end"><span class="note">Datos: {page.fuente}</span></div>'
     )
