@@ -1,21 +1,16 @@
 __pycache__/
 *.pyc
 
-# Historia completa de cada club que cachea fetch_elo.py (~40 MB, 130 CSV que
-# se vuelven a bajar solos). Lo que sí se versiona es data/<temporada>/elo.csv,
-# que es el resumen por temporada que sale de esto.
-data/.clubelo/
-
-# HTML crudo que cachea fetch_fbref.py (~25 MB, se vuelve a bajar solo)
-data/.fbref_html/
-
-# Artefactos derivados (~47 MB, shots_all_seasons.csv solo pesa 42). Los
-# regenera `python code/consolidate_data.py` en segundos a partir de
-# data/<temporada>/, que sí se versiona. Vercel no los necesita: solo sirve
-# web/dist, no construye nada.
+# Datos: no se versionan. Vienen de fbref, Understat, clubelo y Transfermarkt, y
+# sus términos no permiten redistribuirlos; los code/fetch_*.py los vuelven a bajar
+# y consolidate_data.py los junta. Vercel no los necesita: solo sirve web/dist, no
+# construye nada. Esto cubre también los cachés (data/.clubelo/, .fbref_html/,
+# .transfermarkt/, .understat_rosters/) y el respaldo de actualizar.py (.respaldo/).
+data/*
+# Excepción: los hiperparámetros del xG no son datos de nadie ni un derivado barato
+# (los elige code/xg_tuning.py en ~2 h) y xg_modelo.py los lee como entrada.
+!data/processed/
 data/processed/*
-# Excepción: los hiperparámetros del xG no son un derivado barato (los elige code/xg_tuning.py en ~2 h)
-# y xg_modelo.py los lee como entrada.
 !data/processed/xg_params.json
 
 # Lock que deja seleniumbase al bajar chromedriver. Sin prefijo de ruta:

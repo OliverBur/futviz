@@ -14,12 +14,16 @@ todo ANTES de tocar el sitio publicado:
     4. fbref jugadores       fetch_fbref_players.py --refrescar (10 páginas, Chrome)
     5. Validación            ninguna fuente puede tener MENOS partidos que antes
     6. consolidate_data.py   y   web/build.py
-    7. --publicar: commit de data/<temporada> + web/dist, y push
+    7. --publicar: commit de web/dist, y push
 
 Por qué no es un solo `git add -A`: el sitio se construye con el código que haya
 en el árbol de trabajo. Si a esa hora hubiera código a medio editar, se
 publicaría. Por eso `--publicar` EXIGE árbol limpio, rama `master` y nada sin
-subir, y solo commitea esas dos rutas.
+subir, y solo commitea web/dist.
+
+data/ no se versiona (los términos de las fuentes no permiten redistribuirla),
+así que git no sirve de respaldo: antes de descargar se copia data/<temporada>
+a data/.respaldo/, y si algo falla se restaura desde ahí.
 
 Uso:
     python actualizar.py                    # baja + consolida + construye, sin tocar git
@@ -32,7 +36,9 @@ El log de cada corrida queda en `logs/` (no se versiona).
 """
 
 import argparse
+import hashlib
 import os
+import shutil
 import subprocess
 import sys
 import threading
@@ -48,6 +54,7 @@ from consolidate_data import LEAGUE_ORDER, SEASONS, flatten_columns, split_leagu
 CODE_DIR = Path(__file__).resolve().parent
 REPO_DIR = CODE_DIR.parent
 DATA_DIR = REPO_DIR / "data"
+RESPALDO_DIR = DATA_DIR / ".respaldo"
 WEB_DIR = REPO_DIR / "web"
 LOG_DIR = REPO_DIR / "logs"
 RAMA = "master"
@@ -191,6 +198,31 @@ def comparar(antes, despues):
             for liga in LEAGUE_ORDER}
 
 
+def huella(season):
+    """Hash del contenido de cada archivo de data/<temporada>. Por contenido y no
+    por fecha: fetch_understat --force y los --refrescar de fbref reescriben el
+    CSV aunque no haya nada nuevo."""
+    d = DATA_DIR / season
+    return {p.relative_to(d).as_posix(): hashlib.sha1(p.read_bytes()).hexdigest()
+            for p in d.rglob("*") if p.is_file()} if d.exists() else {}
+
+
+def respaldar(season):
+    """Copia data/<temporada> antes de descargar; `restaurar` la devuelve si algo falla."""
+    destino = RESPALDO_DIR / season
+    shutil.rmtree(destino, ignore_errors=True)
+    if (DATA_DIR / season).exists():
+        shutil.copytree(DATA_DIR / season, destino)
+    ESTADO["respaldo"] = destino
+
+
+def restaurar(season):
+    decir(f"\nRestaurando data/{season} desde el respaldo de antes de descargar...")
+    shutil.rmtree(DATA_DIR / season, ignore_errors=True)
+    if ESTADO["respaldo"].exists():
+        shutil.copytree(ESTADO["respaldo"], DATA_DIR / season)
+
+
 def verificar_dist():
     """El sitio nuevo no puede haber perdido ninguna página del publicado."""
     publicados = set(git("ls-files", "web/dist").splitlines())
@@ -205,7 +237,7 @@ def verificar_dist():
 # --- publicar -------------------------------------------------------------
 
 def publicar(season, nuevos):
-    rutas = [f"data/{season}", "web/dist"]
+    rutas = ["web/dist"]
     git("add", "-A", "--", *rutas)
 
     # el árbol estaba limpio al empezar: si hay otra cosa cambiada, algo del
@@ -213,7 +245,7 @@ def publicar(season, nuevos):
     ajeno = [l for l in git("status", "--porcelain", "--untracked-files=no").splitlines()
              if not l[3:].strip('"').startswith(tuple(rutas))]
     if ajeno:
-        raise Fallo("el proceso modificó archivos fuera de data/ y web/dist:\n  "
+        raise Fallo("el proceso modificó archivos versionados fuera de web/dist:\n  "
                     + "\n  ".join(ajeno))
 
     if not git("diff", "--cached", "--name-only", "--", *rutas):
@@ -241,18 +273,17 @@ def publicar(season, nuevos):
     raise Fallo("no se pudo hacer push. El commit quedó local: súbelo con `git push`")
 
 
-def revertir(season):
-    """Deja data/ y web/dist como estaban en el último commit. Solo se llama al
-    publicar, cuando el árbol empezó limpio, así que no pisa trabajo de nadie."""
-    decir("\nRevirtiendo cambios a medias en data/ y web/dist...")
-    git("restore", "--source=HEAD", "--staged", "--worktree", "--",
-        f"data/{season}", "web/dist", check=False)
+def revertir():
+    """Deja web/dist como estaba en el último commit. Solo se llama al publicar,
+    cuando el árbol empezó limpio, así que no pisa trabajo de nadie."""
+    decir("\nRevirtiendo cambios a medias en web/dist...")
+    git("restore", "--source=HEAD", "--staged", "--worktree", "--", "web/dist", check=False)
     git("clean", "-fdq", "--", "web/dist", check=False)
 
 
 # --- flujo ----------------------------------------------------------------
 
-ESTADO = {"arranco_limpio": False, "commiteado": False}
+ESTADO = {"arranco_limpio": False, "commiteado": False, "respaldo": None}
 
 
 def ejecutar(season, publicar_cambios, descargar):
@@ -266,8 +297,9 @@ def ejecutar(season, publicar_cambios, descargar):
         ESTADO["arranco_limpio"] = True
     revisar_img()
 
-    antes = foto(season)
+    antes, huella_antes = foto(season), huella(season)
     if descargar:
+        respaldar(season)
         correr("Understat · jugadores", [py, "fetch_understat.py", "--force", season], CODE_DIR, 15)
         correr("Understat · tiros", [py, "fetch_shots.py", "--actualizar", season], CODE_DIR, 45)
         correr("fbref · equipos", [py, "fetch_fbref.py", "--refrescar", season], CODE_DIR, 60)
@@ -275,7 +307,8 @@ def ejecutar(season, publicar_cambios, descargar):
 
     nuevos = comparar(antes, foto(season))
 
-    if not git("status", "--porcelain", "--", f"data/{season}"):
+    # con --sin-descarga se construye siempre: es justo para eso
+    if descargar and huella(season) == huella_antes:
         decir("\nSin cambios en los datos: no hay nada que reconstruir.")
         return
 
@@ -316,11 +349,14 @@ def main():
     else:
         return 0
 
-    # Solo se revierte si la corrida arrancó desde un árbol limpio: si la
-    # revisión inicial fue justo lo que falló, los cambios de data/ o web/dist
-    # son tuyos, no de este proceso.
+    # Los datos se restauran siempre que esta corrida los haya respaldado: una
+    # descarga rota no puede quedar como punto de partida de la siguiente.
+    if ESTADO["respaldo"] is not None and not ESTADO["commiteado"]:
+        restaurar(season)
+    # web/dist solo si la corrida arrancó desde un árbol limpio: si la revisión
+    # inicial fue justo lo que falló, los cambios de web/dist son tuyos.
     if args.publicar and ESTADO["arranco_limpio"] and not ESTADO["commiteado"]:
-        revertir(season)
+        revertir()
     return 1
 
 

@@ -29,7 +29,8 @@ avanzadas, pero sí lo suficiente para sacar insights reales con buen tratamient
 ## Estructura del repo
 
 ```
-data/           CSVs públicos de fbref (equipos) y Understat (jugadores)
+data/           No se versiona: los términos de las fuentes no permiten redistribuir los
+                datos. Los scripts code/fetch_*.py los bajan y code/consolidate_data.py los junta
 code/           Notebooks del EDA (laboratorio) + viz_theme.py (identidad visual compartida)
 web/
   charts/       Configuración de las vistas de "Análisis exploratorio" (jugadores y equipos) y
@@ -62,8 +63,9 @@ python build.py
 
 **Actualización semanal** (temporada en curso): `code/actualizar.py` baja solo los partidos nuevos
 de Understat y refresca las páginas de fbref, comprueba que ninguna fuente retrocedió, consolida,
-reconstruye `web/dist/` y, con `--publicar`, hace commit + push (Vercel despliega solo). Si algo
-falla, no publica nada y deja el repo como estaba. El log de cada corrida queda en `logs/`.
+reconstruye `web/dist/` y, con `--publicar`, hace commit + push de `web/dist/` (Vercel despliega
+solo). Si algo falla, no publica nada y restaura los datos desde la copia que hizo antes de
+descargar. El log de cada corrida queda en `logs/`.
 
 ```bash
 python code/actualizar.py                # baja + consolida + construye, sin tocar git
