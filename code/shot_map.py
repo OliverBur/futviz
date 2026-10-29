@@ -189,7 +189,7 @@ def _etiqueta_temporada(temporada, seasons):
 def _subtitulo(temporada, tipo, n, seasons):
     etiqueta = next(e for k, e, _, _, _, _ in TIPOS if k == tipo)
     ambito = f"{seasons[0]} a {seasons[-1]}" if temporada == TODAS else temporada
-    return f"{etiqueta} · {ambito} · {ins.miles(n)} remates, sin penaltis"
+    return f"{etiqueta} · {ambito} · {ins.miles(n)} remates, sin penales"
 
 
 def _dibujar_cancha(fig):

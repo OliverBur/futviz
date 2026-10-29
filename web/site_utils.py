@@ -23,6 +23,15 @@ SEASON = "2025-26"
 SEASON_DIR = DATA_DIR / SEASON
 PROCESSED_DIR = DATA_DIR / "processed"
 
+
+def temporadas_en_curso():
+    """`{temporada: jornadas}` de las temporadas que no han terminado: las que el equipo que más partidos
+    lleva no pasa de 30. Lo usan las vistas del análisis exploratorio para avisar que la muestra es chica."""
+    import pandas as pd
+    df = pd.read_csv(PROCESSED_DIR / "teams_all_seasons.csv", usecols=["temporada", "ov_Playing Time_MP"])
+    mp = df.groupby("temporada")["ov_Playing Time_MP"].max()
+    return {t: int(n) for t, n in mp.items() if n < 30}
+
 # Las temporadas que hay descargadas, leídas de las carpetas de `data/` en vez
 # de listadas a mano: es lo que dice el pie de la landing, y agregar una
 # temporada no tiene por qué obligar a acordarse de tocar un literal acá.

@@ -104,11 +104,19 @@ export default function Arbol({ cfg, D, tk, modo: modoTema }) {
   }, [A]);
 
   const [estrategia, setEstrategia] = useState("hoja");
-  const [prof, setProf] = useState(4);
+  const [prof, setProf] = useState(3);
   const [hojasMax, setHojasMax] = useState(10);
   const [paso, setPaso] = useState(null);       // null = el árbol completo bajo los topes
   const [jugando, setJugando] = useState(false);
   const [sobre, setSobre] = useState(null);
+  const refCaja = useRef(null);
+  const [cajaAncho, setCajaAncho] = useState(0);
+  useEffect(() => {
+    if (!refCaja.current) return undefined;
+    const ro = new ResizeObserver(([e]) => setCajaAncho(Math.round(e.contentRect.width)));
+    ro.observe(refCaja.current);
+    return () => ro.disconnect();
+  }, []);
 
   const pasos = useMemo(() => planear(N, estrategia, prof, hojasMax), [N, estrategia, prof, hojasMax]);
   const k = paso === null ? pasos.length : Math.min(paso, pasos.length);
@@ -165,6 +173,9 @@ export default function Arbol({ cfg, D, tk, modo: modoTema }) {
 
   const W = (maxD + 1) * COL_W - (COL_W - CAJA_W) + 8;
   const H = Math.max(filas, 1) * FILA_H + 8;
+  // el árbol se encoge para caber a lo ancho (hasta 70%); lo que aun así no cabe se desliza
+  const esc = cajaAncho > 0 ? Math.min(1, Math.max(0.7, cajaAncho / W)) : 1;
+  const desborda = cajaAncho > 0 && W * esc > cajaAncho + 1;
   const nodoSobre = sobre ? N[sobre.i] : null;
   const refs = A.ref || [];
   const xgb = refs.find((r) => r.id === "xgb");
@@ -178,8 +189,9 @@ export default function Arbol({ cfg, D, tk, modo: modoTema }) {
         <Box sx={{ minWidth: 0 }}>
           <Box className="rx-chart" sx={{ overflow: "auto", maxHeight: 680, border: 1, borderColor: "divider", borderRadius: 2,
             bgcolor: "background.paper", p: 1 }}>
-            <svg width={W} height={H} role="img" aria-label={cfg.alt} style={{ display: "block" }}
-              onPointerLeave={() => setSobre(null)}>
+            <Box ref={refCaja} sx={{ width: "100%" }} />
+            <svg width={W * esc} height={H * esc} viewBox={`0 0 ${W} ${H}`} role="img" aria-label={cfg.alt}
+              style={{ display: "block" }} onPointerLeave={() => setSobre(null)}>
               {[...pos.keys()].filter((i) => abiertos.has(i)).map((i) => {
                 const n = N[i], p = pos.get(i);
                 return [n.si, n.no].map((h, j) => {
@@ -211,7 +223,8 @@ export default function Arbol({ cfg, D, tk, modo: modoTema }) {
                 }
                 const activo = sobre && sobre.i === i;
                 return (
-                  <g key={i} onPointerMove={(e) => setSobre({ i, px: e.clientX, py: e.clientY })} style={{ cursor: "default" }}>
+                  <g key={i} onPointerMove={(e) => setSobre({ i, px: e.clientX, py: e.clientY })}
+                    onPointerDown={(e) => setSobre({ i, px: e.clientX, py: e.clientY })} style={{ cursor: "default" }}>
                     <rect x={p.x} y={yc - CAJA_H / 2} width={CAJA_W} height={CAJA_H} rx={8} fill={fondo}
                       stroke={activo ? tk.primary : trazo} strokeWidth={activo ? 2 : 1} />
                     <text x={p.x + 10} y={yc - 3} fontSize={12} fontWeight={700} fill={texto}>
@@ -239,13 +252,14 @@ export default function Arbol({ cfg, D, tk, modo: modoTema }) {
           )}
           <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: 1, mt: 0.75 }}>
             <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
-              Pasa el mouse por un nodo para ver sus cuentas. El color de las hojas es su tasa de gol.
+              {desborda ? "Desliza el árbol para ver las hojas. " : ""}Pasa el mouse o toca un nodo para ver sus cuentas. El
+              color de las hojas es su tasa de gol.
             </Typography>
             <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
           </Box>
         </Box>
 
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, order: { xs: -1, md: 0 } }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <Box>
             <Rotulo ayuda="Por niveles: parte todos los nodos de un nivel antes de pasar al siguiente (es lo que hace XGBoost). Por la mejor hoja: parte siempre la hoja donde más baja el error (es lo que hace LightGBM).">
               Cómo crece
@@ -285,10 +299,11 @@ export default function Arbol({ cfg, D, tk, modo: modoTema }) {
           <Box sx={{ border: 1, borderColor: "divider", borderRadius: 2, p: 1.25, bgcolor: "background.paper" }} aria-live="polite">
             <Rotulo>Este árbol</Rotulo>
             <Fila k="Hojas · profundidad" v={`${hojasVisibles.length} · ${profReal}`} />
-            <Fila k="Error en entrenamiento" v={lTr.toFixed(4)} />
-            <Fila k="Error en 2025-26" v={lTe.toFixed(4)} fuerte />
+            <Fila k="Log-loss en entrenamiento" v={lTr.toFixed(4)} />
+            <Fila k="Log-loss en 2025-26" v={lTe.toFixed(4)} fuerte />
             <Fila k="AUC en 2025-26" v={Number.isNaN(aucTe) ? "—" : aucTe.toFixed(3)} />
             {refs.length > 0 && <Box sx={{ borderTop: 1, borderColor: "divider", mt: 0.75, pt: 0.75 }}>
+              <Fila k="Con todos los árboles" v="log-loss · AUC" suave />
               {refs.map((r) => <Fila key={r.id} k={r.nombre} v={`${r.ll.toFixed(4)} · ${r.auc.toFixed(3)}`} suave />)}
             </Box>}
           </Box>
@@ -299,7 +314,7 @@ export default function Arbol({ cfg, D, tk, modo: modoTema }) {
         <Typography sx={{ fontSize: 14, lineHeight: 1.6, mt: 2, maxWidth: 820 }}>
           Con {hojasVisibles.length} hojas, este árbol llega a <strong>{lTe.toFixed(4)}</strong> de log-loss en 2025-26. {xgb.nombre} suma
           {" "}{miles(xgb.arboles)} árboles de tamaño parecido, cada uno corrigiendo los errores de los anteriores, y llega a{" "}
-          <strong>{xgb.ll.toFixed(4)}</strong>. El error en entrenamiento es {lTr.toFixed(4)}: la brecha con la prueba mezcla lo que el
+          <strong>{xgb.ll.toFixed(4)}</strong>. En entrenamiento es {lTr.toFixed(4)}: la brecha con la prueba mezcla lo que el
           árbol memoriza con que 2025-26 es otra temporada.
         </Typography>
       )}

@@ -33,7 +33,7 @@ export function golesXg(T, filas, ambito) {
   const fija = `En ${ambito}, el máximo goleador es **${quien(T, top)}** (${T.equipo(top)}) con ${Math.trunc(T.c.goals[top])} goles sobre ${fmt1(T.c.xG[top])} de xG.`;
   if (filas.length < 5) return { fija, salta: null };
   const dif = goles.map((g, i) => g - xg[i]);
-  const salta = `El que más superó su xG es **${quien(T, filas[idxmax(dif)])}** (+${fmt1(Math.max(...dif))} goles) y el que más se quedó corto, **${quien(T, filas[idxmin(dif)])}** (${fmt1(Math.min(...dif))}). Antes de sacar conclusiones: una diferencia así se repite poco de una temporada a la siguiente.`;
+  const salta = `El que más superó su xG es **${quien(T, filas[idxmax(dif)])}** (+${fmt1(Math.max(...dif))} goles) y el que más se quedó corto, **${quien(T, filas[idxmin(dif)])}** (${fmt1(Math.min(...dif))}). Antes de sacar conclusiones: una diferencia así se repite poco de una temporada a la siguiente (los números están en «Por qué estas variables»).`;
   return { fija, salta };
 }
 
@@ -74,17 +74,31 @@ function completo(T, filas, cx, cy) {
   const rx = rangoPct(x), ry = rangoPct(y);
   const r = filas[idxmax(rx.map((v, i) => v + ry[i]))];
   const mx = media(x), my = media(y);
-  let nAmbos = 0;
-  for (let i = 0; i < x.length; i++) if (x[i] > mx && y[i] > my) nAmbos++;
-  return [r, nAmbos];
+  let nAmbos = 0, nx = 0, ny = 0;
+  for (let i = 0; i < x.length; i++) {
+    if (x[i] > mx) nx++;
+    if (y[i] > my) ny++;
+    if (x[i] > mx && y[i] > my) nAmbos++;
+  }
+  // los que saldrían arriba en los dos si un eje no tuviera que ver con el otro: con distribuciones
+  // sesgadas, menos de la mitad supera el promedio de cada eje, así que "pocos" hay que medirlo contra esto
+  return [r, nAmbos, Math.floor((nx * ny) / x.length + 0.5)];
+}
+
+// Cuántos superan el promedio en los dos ejes, comparado con lo que daría el azar.
+function frasesAmbos(nAmbos, esperado, n) {
+  const base = `${nAmbos} de ${n} jugadores superan el promedio en los dos ejes a la vez`;
+  if (nAmbos > esperado * 1.15) return `${base}, más de los ${esperado} que saldrían si un eje no tuviera que ver con el otro: hacer una cosa suele ir con la otra.`;
+  if (nAmbos < esperado * 0.85) return `Solo ${base}, menos de los ${esperado} que saldrían si un eje no tuviera que ver con el otro: hacer las dos cosas es raro.`;
+  return `${base}, más o menos los ${esperado} que saldrían si un eje no tuviera que ver con el otro.`;
 }
 
 export function perfil(T, filas, ambito) {
   const rem = filas[idxmax(col(T, "xG90", filas))], cre = filas[idxmax(col(T, "xA90", filas))];
   const fija = `En ${ambito}, el perfil más rematador es **${quien(T, rem)}** (${fmt(T.c.xG90[rem])} xG90) y el más creador **${quien(T, cre)}** (${fmt(T.c.xA90[cre])} xA90).`;
   if (filas.length < 5) return { fija, salta: null };
-  const [c, nAmbos] = completo(T, filas, "xG90", "xA90");
-  let salta = `El perfil más completo es **${quien(T, c)}** (${fmt(T.c.xG90[c])} xG90 y ${fmt(T.c.xA90[c])} xA90). Solo ${nAmbos} de ${filas.length} jugadores superan el promedio en los dos ejes a la vez: hacer las dos cosas es raro.`;
+  const [c, nAmbos, esperado] = completo(T, filas, "xG90", "xA90");
+  let salta = `El perfil más completo es **${quien(T, c)}** (${fmt(T.c.xG90[c])} xG90 y ${fmt(T.c.xA90[c])} xA90). ${frasesAmbos(nAmbos, esperado, filas.length)}`;
   const entre = perfilEntreLigas(T, filas);
   if (entre) salta += " " + entre;
   return { fija, salta };
@@ -106,8 +120,8 @@ export function disputar(T, filas, ambito) {
   const ent = filas[idxmax(col(T, "tkl_w90", filas))], lec = filas[idxmax(col(T, "interceptions90", filas))];
   const fija = `En ${ambito}, el que más entradas gana es **${quien(T, ent)}** (${fmt(T.c.tkl_w90[ent])} por 90') y el que más intercepta, **${quien(T, lec)}** (${fmt(T.c.interceptions90[lec])} por 90').`;
   if (filas.length < 5) return { fija, salta: null };
-  const [c, nAmbos] = completo(T, filas, "tkl_w90", "interceptions90");
-  const salta = `El más completo de los dos lados es **${quien(T, c)}** (${T.equipo(c)}), con ${fmt(T.c.tkl_w90[c])} entradas y ${fmt(T.c.interceptions90[c])} intercepciones por 90'. ${nAmbos} de ${filas.length} jugadores superan el promedio en los dos ejes.`;
+  const [c, nAmbos, esperado] = completo(T, filas, "tkl_w90", "interceptions90");
+  const salta = `El más completo de los dos lados es **${quien(T, c)}** (${T.equipo(c)}), con ${fmt(T.c.tkl_w90[c])} entradas y ${fmt(T.c.interceptions90[c])} intercepciones por 90'. ${frasesAmbos(nAmbos, esperado, filas.length)}`;
   return { fija, salta };
 }
 
@@ -115,10 +129,10 @@ export function dosFases(T, filas, ambito) {
   const arriba = filas[idxmax(col(T, "xga90", filas))], atras = filas[idxmax(col(T, "recoveries90", filas))];
   const fija = `En ${ambito}, el que más produce arriba es **${quien(T, arriba)}** (${fmt(T.c.xga90[arriba])} de xG+xA por 90') y el que más recupera atrás, **${quien(T, atras)}** (${fmt(T.c.recoveries90[atras])} por 90').`;
   if (filas.length < 5) return { fija, salta: null };
-  const [c, nAmbos] = completo(T, filas, "xga90", "recoveries90");
+  const [c, nAmbos, esperado] = completo(T, filas, "xga90", "recoveries90");
   const puesto = T.posicion(c);          // "" si el jugador no cruzó por nombre con fbref
   const nombre = `${quien(T, c)}** (${T.equipo(c)}${puesto ? `, ${puesto.toLowerCase()})` : ")"}`;
-  const salta = `El que mejor pesa en las dos es **${nombre}: ${fmt(T.c.xga90[c])} de producción y ${fmt(T.c.recoveries90[c])} recuperaciones por 90'. Solo ${nAmbos} de ${filas.length} jugadores superan el promedio en los dos ejes a la vez — el cuadrante de arriba a la derecha es el más vacío del gráfico, y por eso el interesante.`;
+  const salta = `El que mejor pesa en las dos es **${nombre}: ${fmt(T.c.xga90[c])} de producción y ${fmt(T.c.recoveries90[c])} recuperaciones por 90'. ${frasesAmbos(nAmbos, esperado, filas.length)}`;
   return { fija, salta };
 }
 
@@ -126,11 +140,12 @@ export function pasesClave(T, filas, ambito) {
   const fija = `En ${ambito}: ` + lideres(T, filas, "kp90", "xA90", fmt1, fmt, "más pases clave por 90'", "más xA por 90'");
   if (filas.length < 5) return { fija, salta: null };
   const kp = col(T, "kp90", filas), med = mediana(kp);
-  const frec = filas.filter((r) => T.c.kp90[r] >= med && T.c.kp90[r] > 0);
+  // con menos de 10 pases clave en la temporada, el xA por pase es ruido (un central con 3 pases y un gol)
+  const frec = filas.filter((r) => T.c.kp90[r] >= med && T.c.kp90[r] > 0 && T.c.key_passes[r] >= 10);
   if (frec.length < 3) return { fija, salta: null };
   const porPase = frec.map((r) => T.c.xA90[r] / T.c.kp90[r]);
   const mejor = frec[idxmax(porPase)];
-  const salta = `Entre los que dan pases clave seguido, el que más peligro saca de cada uno es **${quien(T, mejor)}**: ${fmt(Math.max(...porPase))} de xA por pase clave, contra ${fmt(media(porPase))} del grupo.`;
+  const salta = `Entre los que dan pases clave seguido (10 o más en la temporada), el que más peligro saca de cada uno es **${quien(T, mejor)}**: ${fmt(Math.max(...porPase))} de xA por pase clave, contra ${fmt(media(porPase))} del grupo.`;
   return { fija, salta };
 }
 
@@ -153,7 +168,7 @@ export function centros(T, filas, ambito) {
   const muchos = filas.filter((r) => T.c.crosses90[r] >= corte);
   if (!muchos.length) return { fija, salta: null };
   const p = muchos[idxmin(muchos.map((r) => T.c.xA90[r]))];
-  const salta = `Entre los que más centran, el que menos peligro genera es **${quien(T, p)}**: ${fmt1(T.c.crosses90[p])} centros por 90' y ${fmt(T.c.xA90[p])} de xA — volumen que casi no se convierte en ocasión.`;
+  const salta = `Entre el 25% que más centra, el que menos peligro genera es **${quien(T, p)}**: ${fmt1(T.c.crosses90[p])} centros por 90' y ${fmt(T.c.xA90[p])} de xA — volumen que casi no se convierte en ocasión.`;
   return { fija, salta };
 }
 

@@ -282,7 +282,7 @@ def evolucion_que_mirar():
 
 def evolucion_por_que():
     return (
-        "Va en valor real y no escalado, al revés que el radar, porque acá la "
+        "Va en valor real y no escalado, al revés que el radar, porque aquí la "
         "pregunta es de magnitud: cuántas faltas menos se pitan hoy que en 2021-22. "
         "Escalar lo escondería.\n\n"
         "El rango del eje Y se fija por métrica, con un poco de aire. Si se dejara "
@@ -526,6 +526,61 @@ def edad(df, season, seasons):
 MIN_MINUTOS = 500
 
 
+def _corte():
+    """El corte de minutos tal como se aplica (`players.MIN_MINUTES_POR_TEMPORADA`): el número fijo vale
+    para las temporadas cerradas, y el subtítulo de la gráfica dice el de la que se ve."""
+    return (f"el corte de minutos ({MIN_MINUTOS} en una temporada cerrada; en la que va en curso, menos, "
+            f"el que dice el subtítulo)")
+
+
+def _frase_ambos(x, y):
+    """Cuántos superan el promedio en los dos ejes, contra los que saldrían si un eje no tuviera que ver con
+    el otro. Con distribuciones sesgadas menos de la mitad supera el promedio de cada eje, así que "pocos"
+    se mide contra eso. Mismo texto que `frasesAmbos` de `web/react/src/insights.js`."""
+    n = len(x)
+    ax, ay = x > x.mean(), y > y.mean()
+    n_ambos = int((ax & ay).sum())
+    esperado = int(ax.sum() * ay.sum() / n + 0.5)
+    base = f"{n_ambos} de {n} jugadores superan el promedio en los dos ejes a la vez"
+    if n_ambos > esperado * 1.15:
+        return (f"{base}, más de los {esperado} que saldrían si un eje no tuviera que ver con el otro: "
+                f"hacer una cosa suele ir con la otra.")
+    if n_ambos < esperado * 0.85:
+        return (f"Solo {base}, menos de los {esperado} que saldrían si un eje no tuviera que ver con el "
+                f"otro: hacer las dos cosas es raro.")
+    return f"{base}, más o menos los {esperado} que saldrían si un eje no tuviera que ver con el otro."
+
+
+def _cuanto(r):
+    """Qué tanto se pisan dos ejes, con las bandas de "Crea tu gráfico" (`banda` en insights.js)."""
+    a = abs(r)
+    if a < 0.3:
+        return "casi no se pisan"
+    if a < 0.6:
+        return "se pisan a medias"
+    if a < 0.85:
+        return "se pisan bastante"
+    return "son casi la misma información"
+
+
+def _persistencia(df, real, esperado, minimo=900):
+    """Cuánto se repite (real − esperado) por 90' de una temporada a la siguiente: la correlación entre
+    temporadas cerradas seguidas, con los jugadores que pasan de `minimo` minutos en las dos. Un nombre
+    repetido en una temporada (dos jugadores que se llaman igual) queda fuera. Devuelve `(lo, hi)` o None.
+    Cerrada = alguien pasó de 2,500 minutos (la que va en curso no llega)."""
+    cerradas = [t for t, m in df.groupby("temporada")["min"].max().items() if m >= 2500]
+    rs = []
+    for a, b in zip(cerradas, cerradas[1:]):
+        d = []
+        for t in (a, b):
+            x = df[(df["temporada"] == t) & (df["min"] >= minimo)].drop_duplicates("player", keep=False)
+            d.append(((x[real] - x[esperado]) / x["min"] * 90).set_axis(x["player"]))
+        comun = d[0].index.intersection(d[1].index)
+        if len(comun) >= 100:
+            rs.append(d[0][comun].corr(d[1][comun]))
+    return (min(rs), max(rs)) if rs else None
+
+
 def _top_dif(d, real, esperado, n=1):
     """Quién más se pasa y quién más se queda corto respecto de lo esperado."""
     dif = d[real] - d[esperado]
@@ -539,8 +594,17 @@ def _top_dif(d, real, esperado, n=1):
 def goles_xg_que_mirar():
     return ("La diagonal marca \"marcó exactamente lo que se esperaba\". Por encima "
             "están los que metieron más de lo que decían sus ocasiones; por debajo, "
-            "los que fallaron ocasiones claras. Cuanto más a la derecha, más "
-            "ocasiones tuvo.")
+            "los que metieron menos. Cuanto más a la derecha, más ocasiones tuvo.")
+
+
+def _frase_persistencia(df, real, esperado, que):
+    p = _persistencia(df, real, esperado)
+    if not p:
+        return ""
+    lo, hi = p
+    return (f" Medido en estos datos: entre una temporada cerrada y la siguiente, la diferencia "
+            f"entre {que} por 90' de los que jugaron más de 900 minutos en las dos correlaciona "
+            f"entre {_fmt(lo)} y {_fmt(hi)}. Casi nada se repite.")
 
 
 def goles_xg_por_que(df):
@@ -548,18 +612,20 @@ def goles_xg_por_que(df):
     return (
         f"El xG mide la **calidad de las ocasiones**, no el acierto: suma la "
         f"probabilidad de gol de cada remate según desde dónde y cómo se hizo. "
-        f"Restarlo de los goles deja lo que el jugador puso de más (o de menos).\n\n"
-        f"Dos advertencias que valen más que el gráfico. Primera: **una temporada es "
-        f"poca muestra para separar talento de suerte**. Con unas decenas de remates, un "
-        f"par de goles de más o de menos mueve mucho a un jugador respecto de la "
-        f"diagonal, así que quien está muy arriba este año no necesariamente lo estará "
-        f"el próximo.\n\n"
-        f"Segunda: el xG que se usa acá es el de Understat, y en estos datos marca más "
-        f"goles de los que entran: el jugador promedio queda {_fmt(dif.mean())} goles "
-        f"por debajo de su xG. Eso empuja a toda la nube por debajo de la diagonal. La "
-        f"línea es una referencia, no un cero calibrado.\n\n"
-        f"El filtro de {MIN_MINUTOS} minutos existe por lo mismo: sin él, cualquiera "
-        f"con 200 minutos y dos goles de rebote encabezaría el ranking."
+        f"Restarlo de los goles deja la definición más la suerte, y en una temporada "
+        f"no hay forma de separarlas.\n\n"
+        f"Primera advertencia: **una temporada es poca muestra para separar talento de "
+        f"suerte**. Con unas decenas de remates, un par de goles de más o de menos "
+        f"mueve mucho a un jugador respecto de la diagonal, así que quien está muy "
+        f"arriba este año no necesariamente lo estará el próximo."
+        + _frase_persistencia(df, "goals", "xG", "goles y xG") + "\n\n"
+        f"Segunda: el xG que se usa aquí es el de Understat, y en estos datos suma "
+        f"{'más' if dif.mean() < 0 else 'menos'} de lo que entra: el jugador promedio mete {_fmt(abs(dif.mean()))} goles "
+        f"{'menos' if dif.mean() < 0 else 'más'} que su xG. Eso empuja a toda la nube "
+        f"{'por debajo' if dif.mean() < 0 else 'por encima'} de la diagonal. La línea "
+        f"es una referencia, no un cero calibrado.\n\n"
+        f"{_corte().capitalize()} existe por lo mismo: sin él, cualquiera con 200 "
+        f"minutos y dos goles de rebote encabezaría el ranking."
     )
 
 
@@ -582,7 +648,7 @@ def goles_xg(df, season, liga=None):
              f"(+{_fmt(dif.max(), 1)} goles) y el que más se quedó corto, "
              f"**{abajo['player']}** ({_fmt(dif.min(), 1)}). Antes de sacar "
              f"conclusiones: una diferencia así se repite poco de una temporada a la "
-             f"siguiente.")
+             f"siguiente (los números están en «Por qué estas variables»).")
     return fija, salta
 
 
@@ -602,12 +668,13 @@ def asist_xa_por_que(df):
         f"El xA mide la calidad de los pases de gol que dio un jugador: **cuánta "
         f"probabilidad de gol generó el remate que habilitó**. Correlaciona "
         f"{_fmt(r)} con las asistencias reales.\n\n"
-        f"La diferencia clave con el gráfico de goles: acá el que está por encima de "
+        f"La diferencia clave con el gráfico de goles: aquí el que está por encima de "
         f"la diagonal **no hizo nada distinto**. Una asistencia depende de que otro "
         f"la meta, así que estar arriba dice sobre todo que quien remató estuvo "
         f"acertado. Es todavía menos atribuible al jugador que la diferencia entre "
         f"goles y xG, y por eso conviene leerlo como una medida de creación de "
         f"ocasiones (el eje horizontal) más que de rendimiento sobre lo esperado."
+        + _frase_persistencia(df, "a", "xA", "asistencias y xA")
     )
 
 
@@ -640,31 +707,27 @@ def asist_xa(df, season, liga=None):
 def perfil_que_mirar():
     return ("Las líneas punteadas son el promedio de cada eje. Abajo a la derecha, "
             "rematadores puros; arriba a la izquierda, creadores puros; arriba a la "
-            "derecha, los que hacen las dos cosas — que son pocos y suelen ser los "
-            "nombres que uno espera.\n\n"
-            "Ojo con leer la nube entera de un saque: **buena parte de la distancia "
+            "derecha, los que hacen las dos cosas.\n\n"
+            "Ojo con leer la nube entera de un vistazo: **buena parte de la distancia "
             "entre dos puntos es el puesto en el que juegan**, no lo bueno que es cada "
             "uno. Un central y un extremo caen lejísimos sin que eso diga nada de "
-            "ninguno de los dos. El filtro de posición de la barra lateral deja la "
-            "comparación entre iguales, que es donde un xG90 alto empieza a significar "
-            "algo.")
+            "ninguno de los dos. El filtro de posición deja la comparación entre "
+            "iguales, que es donde un xG90 alto empieza a significar algo.")
 
 
 def perfil_por_que(df):
     r = df["xG90"].corr(df["xA90"])
     return (
         f"Va en tasas por 90 minutos y no en totales para que un suplente que rinde "
-        f"mucho en poco tiempo no quede sepultado por un titular indiscutido. El "
-        f"filtro de {MIN_MINUTOS} minutos compensa el efecto contrario: sin él, unos "
-        f"pocos minutos con una ocasión clara dan una tasa altísima que es puro "
-        f"ruido.\n\n"
+        f"mucho en poco tiempo no quede sepultado por un titular indiscutido. "
+        f"{_corte().capitalize()} compensa el efecto contrario: sin él, unos pocos "
+        f"minutos con una ocasión clara dan una tasa altísima que es puro ruido.\n\n"
         f"Se usa **xG90 y xA90 en vez de goles y asistencias** porque a este nivel de "
         f"detalle la muestra por jugador es chica y los goles son un evento raro: lo "
         f"esperado es una medida mucho más estable de lo que un jugador genera que lo "
         f"que efectivamente entró.\n\n"
-        f"Los dos ejes correlacionan {_fmt(r)}: comparten algo (los buenos atacantes "
-        f"tienden a participar en todo) pero dejan sitio de sobra para perfiles "
-        f"distintos, que es lo que hace que valga la pena cruzarlos."
+        f"Los dos ejes correlacionan {_fmt(r)}: {_cuanto(r)}. Los buenos atacantes "
+        f"tienden a participar en todo, pero queda sitio para perfiles distintos."
     )
 
 
@@ -686,11 +749,9 @@ def perfil(df, season, liga=None):
     # Todocampo: el mejor en la suma de ambos percentiles, estando arriba en los dos.
     rx, ry = d["xG90"].rank(pct=True), d["xA90"].rank(pct=True)
     completo = d.loc[(rx + ry).idxmax()]
-    n_ambos = int(((d["xG90"] > d["xG90"].mean()) & (d["xA90"] > d["xA90"].mean())).sum())
     salta = (f"El perfil más completo es **{completo['player']}** "
-             f"({_fmt(completo['xG90'])} xG90 y {_fmt(completo['xA90'])} xA90). Solo "
-             f"{n_ambos} de {len(d)} jugadores superan el promedio en los dos ejes a "
-             f"la vez: hacer las dos cosas es raro.")
+             f"({_fmt(completo['xG90'])} xG90 y {_fmt(completo['xA90'])} xA90). "
+             + _frase_ambos(d["xG90"], d["xA90"]))
     entre_ligas = _perfil_entre_ligas(d) if liga in (None, LIGA_TODAS) else ""
     if entre_ligas:
         salta += " " + entre_ligas
@@ -748,7 +809,7 @@ def _parrafo(texto):
     return f"\n\n{texto}" if texto else ""
 
 
-def _quiebre_intercepciones(df):
+def _quiebre_intercepciones(df, corto=False):
     """El aviso de que las intercepciones NO son comparables entre temporadas.
 
     Al bajar los datos (2026-09-01) apareció esto: la media de intercepciones
@@ -771,16 +832,22 @@ def _quiebre_intercepciones(df):
     tkl_var = abs(1 - tkl.min() / tkl.max()) * 100
     if caida < 10 or caida < tkl_var * 2:
         return ""
+    # El texto completo va una sola vez, en "Perfil defensivo" (donde las intercepciones son un eje);
+    # las otras dos defensivas mandan ahí.
+    if corto:
+        return (f"**Las intercepciones no se comparan bien entre temporadas**: su media cae un "
+                f"{caida:.0f}% entre {inter.idxmax()} y {inter.idxmin()} en las cinco ligas a la "
+                f"vez. El detalle está en \"Perfil defensivo\".")
     return (
         f"**Las intercepciones no son comparables entre temporadas.** Su media "
         f"por 90' cae un {caida:.0f}% entre {inter.idxmax()} y {inter.idxmin()} "
-        f"—de {_fmt(inter.max())} a {_fmt(inter.min())}— y lo hace en **las cinco "
+        f"(de {_fmt(inter.max())} a {_fmt(inter.min())}) y lo hace en **las cinco "
         f"ligas a la vez**, mientras las entradas ganadas se mueven un "
         f"{tkl_var:.0f}% en el mismo período. Cinco competiciones independientes "
-        f"no cambian igual el mismo año por fútbol, y un cambio de estilo real no "
-        f"dejaría quieta la otra mitad de la acción defensiva: es quien cuenta el "
-        f"dato el que cambió de criterio. Dentro de una temporada la comparación "
-        f"entre jugadores se sostiene; entre temporadas, no."
+        f"no cambian igual el mismo año por futbol, y un cambio de estilo real no "
+        f"dejaría quieta la otra mitad de la acción defensiva: lo más probable es "
+        f"que haya cambiado el criterio de quien cuenta el dato. Dentro de una "
+        f"temporada la comparación entre jugadores se sostiene; entre temporadas, no."
     )
 
 
@@ -802,7 +869,7 @@ def recuperar_que_mirar():
             "sitio del gráfico; arriba a la izquierda, los que hacen faltas sin "
             "recuperar a cambio. La diagonal imaginaria entre esas dos esquinas es "
             "lo interesante: dos jugadores con el mismo volumen de recuperación "
-            "pueden estar separadísimos en verticalidad.\n\n"
+            "pueden quedar muy separados en el eje vertical.\n\n"
             "Dos avisos antes de sacar conclusiones. **La posición manda**: un "
             "central y un extremo no compiten por lo mismo. Y **el equipo también**: "
             "quien juega en un club que no tiene la pelota defiende más, sin que eso "
@@ -816,22 +883,23 @@ def recuperar_por_que(df):
     por_falta = d["recoveries"].sum() / d["fouls"].sum()
     return (
         f"Las dos maneras de quitar la pelota van **sumadas** en el eje X porque "
-        f"acá la pregunta no es cómo la recupera sino cuánta: entrar a disputar y "
+        f"aquí la pregunta no es cómo la recupera sino cuánta: entrar a disputar y "
         f"leer el pase terminan en lo mismo, la posesión cambia de dueño. Separarlas "
         f"es la otra gráfica.\n\n"
-        f"La falta entra como **precio y no como falta de disciplina**. Cortar una "
+        f"La falta entra como el **precio** de recuperar. Cortar una "
         f"jugada con falta es una decisión defensiva legítima —a veces la correcta— "
         f"pero cuesta un balón parado en contra y acerca la tarjeta. En estos datos "
         f"se cometen {_fmt(1 / por_falta)} faltas por cada recuperación, y los dos "
         f"ejes correlacionan {_fmt(r)}: quien más defiende más falta, así que lo que "
         f"distingue a un jugador no es su altura en el gráfico sino cuánto se aparta "
         f"de esa tendencia.\n\n"
-        f"Las tres columnas son de **FBref y no de Understat**, que es "
-        f"shot-event-driven y no publica ninguna acción defensiva. Van divididas por "
-        f"los minutos de FBref y no por los de Understat: son cuentas de una fuente, "
-        f"y su divisor tiene que ser de la misma. El corte de {MIN_MINUTOS} minutos "
-        f"sí es el de Understat, como en el resto de la sección."
-        + _parrafo(_quiebre_intercepciones(d))
+        f"Las tres columnas son de **FBref y no de Understat**, que solo registra "
+        f"lo que pasa alrededor de los tiros y no publica ninguna acción defensiva. "
+        f"Van divididas por los minutos de FBref y no por los de Understat: son "
+        f"cuentas de una fuente, y su divisor tiene que ser de la misma. "
+        f"{_corte().capitalize()} sí usa los minutos de Understat, como en el resto "
+        f"de la sección."
+        + _parrafo(_quiebre_intercepciones(d, corto=True))
     )
 
 
@@ -870,8 +938,7 @@ def disputar_que_mirar():
             "disputarla** (entradas ganadas) contra **leer el pase antes de que "
             "llegue** (intercepciones), las dos por 90 minutos.\n\n"
             "A la derecha, los que van al choque; arriba, los que se anticipan; "
-            "arriba a la derecha, los que hacen las dos cosas — y esos suelen ser "
-            "los laterales y mediocentros que todo el mundo tiene fichados. Las "
+            "arriba a la derecha, los que hacen las dos cosas. Las "
             "líneas punteadas marcan el promedio de cada eje.\n\n"
             "Vale el mismo aviso que en la otra defensiva: buena parte de la "
             "distancia entre dos puntos es **la posición y el equipo**, no el "
@@ -883,19 +950,18 @@ def disputar_por_que(df):
     d = df[df["tkl_w90"].notna()]
     r = d["tkl_w90"].corr(d["interceptions90"])
     return (
-        f"La pregunta que decide si esta gráfica vale la pena es si sus dos ejes no "
-        f"son la misma medida dos veces: los dos crecen con el volumen defensivo, "
-        f"así que podrían ser un solo eje disfrazado de dos. **Correlacionan "
-        f"{_fmt(r)}** sobre las {len(d)} observaciones, o sea que comparten un "
-        f"{r ** 2 * 100:.0f}% de su variación y dejan el resto para lo que sí las "
-        f"distingue. Por eso están cruzadas y no sumadas — sumadas son el eje X de "
-        f"\"Quitar vs. cortar con falta\", que es la otra pregunta.\n\n"
+        f"Lo primero es comprobar que los dos ejes no sean la misma medida dos veces: "
+        f"los dos crecen con el volumen defensivo. **Correlacionan {_fmt(r)}** sobre "
+        f"las {miles(len(d))} jugador-temporadas de todas las temporadas: "
+        f"{_cuanto(r)} (comparten un {r ** 2 * 100:.0f}% de su variación). Por eso "
+        f"van cruzadas y no sumadas; sumadas son el eje X de \"Quitar vs. cortar con "
+        f"falta\", que es la otra pregunta.\n\n"
         f"Se usan **entradas ganadas** y no entradas intentadas porque FBref dejó de "
-        f"publicar las segundas (y con ellas los duelos, los bloqueos y los despejes; "
-        f"ver la nota en `fetch_fbref_players.py`). Lo que queda mide una entrada que "
-        f"terminó con la pelota recuperada, que es la que cuenta.\n\n"
+        f"publicar las segundas (y con ellas los duelos, los bloqueos y los "
+        f"despejes). Lo que queda mide una entrada que terminó con la pelota "
+        f"recuperada.\n\n"
         f"Como en la otra defensiva, las columnas son de **FBref** y van sobre "
-        f"minutos de FBref; el corte de {MIN_MINUTOS} minutos es el de Understat."
+        f"minutos de FBref; {_corte()} usa los de Understat."
         + _parrafo(_quiebre_intercepciones(d))
     )
 
@@ -918,12 +984,10 @@ def disputar(df, season, liga=None):
     # encontrar al más completo, mirando al revés.
     rx, ry = d["tkl_w90"].rank(pct=True), d["interceptions90"].rank(pct=True)
     completo = d.loc[(rx + ry).idxmax()]
-    n_ambos = int(((d["tkl_w90"] > d["tkl_w90"].mean()) &
-                    (d["interceptions90"] > d["interceptions90"].mean())).sum())
     salta = (f"El más completo de los dos lados es **{completo['player']}** "
              f"({completo['team']}), con {_fmt(completo['tkl_w90'])} entradas y "
              f"{_fmt(completo['interceptions90'])} intercepciones por 90'. "
-             f"{n_ambos} de {len(d)} jugadores superan el promedio en los dos ejes.")
+             + _frase_ambos(d["tkl_w90"], d["interceptions90"]))
     return fija, salta
 
 
@@ -943,13 +1007,11 @@ def dos_fases_que_mirar():
             "eje.\n\n"
             "Abajo a la derecha, el atacante puro: pesa en el área rival y no "
             "aparece en la propia. Arriba a la izquierda, el recuperador puro. "
-            "**Arriba a la derecha están los raros**, los que hacen las dos cosas — "
-            "y suelen ser laterales ofensivos e interiores, no los nombres que uno "
-            "esperaría.\n\n"
-            "Acá el filtro de posición no es un adorno sino parte del análisis: la "
-            "nube entera está ordenada por puesto antes que por jugador, y la "
-            "relación entre los dos ejes **cambia de signo según el puesto** (los "
-            "números están en \"por qué estas variables\").")
+            "**Arriba a la derecha**, los que hacen las dos cosas.\n\n"
+            "Aquí el filtro de posición es parte del análisis: la nube entera está "
+            "ordenada por puesto antes que por jugador, y la relación entre los dos "
+            "ejes **cambia mucho según el puesto** (los números están en \"Por qué "
+            "estas variables\").")
 
 
 def dos_fases_por_que(df):
@@ -981,13 +1043,12 @@ def dos_fases_por_que(df):
         f"que aporta arriba no recupera menos por eso. Donde sí existe es en el "
         f"mediocampo, que es exactamente donde se discute si un jugador \"llega\" o "
         f"\"corre\".\n\n"
-        f"Es la única gráfica de la sección con **un eje de cada fuente**: la "
-        f"producción esperada la publica Understat y las recuperaciones, FBref. El "
-        f"corte de {MIN_MINUTOS} minutos es el de Understat."
+        f"Cada eje sale de una fuente: la producción esperada la publica Understat "
+        f"y las recuperaciones, FBref. {_corte().capitalize()} usa los minutos de "
+        f"Understat."
         # El eje vertical incluye intercepciones, así que le toca el mismo aviso
-        # que a las otras dos defensivas — atenuado, porque la otra mitad del eje
-        # (las entradas ganadas) sí se mantiene estable.
-        + _parrafo(_quiebre_intercepciones(df))
+        # que a las otras dos defensivas, en corto.
+        + _parrafo(_quiebre_intercepciones(df, corto=True))
     )
 
 
@@ -1008,8 +1069,6 @@ def dos_fases(df, season, liga=None):
     # usa para el todocampo.
     rx, ry = d["xga90"].rank(pct=True), d["recoveries90"].rank(pct=True)
     completo = d.loc[(rx + ry).idxmax()]
-    n_ambos = int(((d["xga90"] > d["xga90"].mean()) &
-                    (d["recoveries90"] > d["recoveries90"].mean())).sum())
     # El puesto puede faltar (quien no cruzó por nombre con fbref). Se comprueba
     # que sea texto en vez de con `pd.isna`: este módulo no importa pandas a
     # propósito — recibe los datos ya calculados y solo arma frases.
@@ -1018,10 +1077,8 @@ def dos_fases(df, season, liga=None):
     quien += f", {puesto.lower()})" if isinstance(puesto, str) and puesto else ")"
     salta = (f"El que mejor pesa en las dos es **{quien}: "
              f"{_fmt(completo['xga90'])} de producción y "
-             f"{_fmt(completo['recoveries90'])} recuperaciones por 90'. Solo "
-             f"{n_ambos} de {len(d)} jugadores superan el promedio en los dos ejes "
-             f"a la vez — el cuadrante de arriba a la derecha es el más vacío del "
-             f"gráfico, y por eso el interesante.")
+             f"{_fmt(completo['recoveries90'])} recuperaciones por 90'. "
+             + _frase_ambos(d["xga90"], d["recoveries90"]))
     return fija, salta
 
 
@@ -1058,13 +1115,13 @@ def tiros_que_mirar():
             "que cambias un filtro, y por eso la forma de un tipo de tiro se puede "
             "comparar con la de otro aunque haya veinte veces más de uno que de "
             "otro.\n\n"
-            "Pasa el mouse por una celda para ver los números crudos: cuántos "
+            "Pasa el mouse o toca una celda para ver los números crudos: cuántos "
             "tiros salieron de ahí y cuántos acabaron en gol.")
 
 
 def tiros_por_que(n_mapa, n_penales, n_fuera):
     return (
-        f"**Los penaltis quedan fuera** ({miles(n_penales)} en las 5 temporadas). "
+        f"**Los penales quedan fuera** ({miles(n_penales)} en todas las temporadas del mapa). "
         f"Understat los registra a todos en exactamente el mismo punto, así que en "
         f"un mapa de 2×2 m caen en una sola celda y la convierten en la más caliente "
         f"de todas — sin decir nada sobre desde dónde remata un equipo, que es la "
@@ -1188,12 +1245,11 @@ def pases_clave_por_que(df):
         f"qué tan bueno fue ese tiro; el **xA** le pone precio a cada uno según la "
         f"probabilidad de gol del remate que habilitó. Son dos preguntas distintas: "
         f"cuánto crea y qué tan peligroso es lo que crea.\n\n"
-        f"Correlacionan {_fmt(r)}, o sea que se parecen pero dejan mucho margen: "
-        f"comparten el {r ** 2 * 100:.0f}% de su variación y el resto es justamente "
-        f"la calidad. Ambos van por 90 minutos para que el suplente que rinde en "
-        f"poco tiempo no quede enterrado, y con el filtro de {MIN_MINUTOS} minutos "
-        f"para que unos pocos minutos con un pase afortunado no den una tasa "
-        f"imposible."
+        f"Correlacionan {_fmt(r)}: {_cuanto(r)} (comparten el {r ** 2 * 100:.0f}% de "
+        f"su variación). Lo que queda es la diferencia entre dar muchos pases clave "
+        f"y darlos buenos. Ambos van por 90 minutos para que el suplente que rinde "
+        f"en poco tiempo no quede enterrado, y con {_corte()} para que unos pocos "
+        f"minutos con un pase afortunado no den una tasa imposible."
     )
 
 
@@ -1206,12 +1262,14 @@ def pases_clave(df, season, liga=None):
         return fija, None
     # Peligro por pase clave: solo entre quienes dan pases clave seguido, porque
     # con uno cada tanto el cociente es ruido puro.
-    frecuentes = d[(d["kp90"] >= d["kp90"].median()) & (d["kp90"] > 0)].copy()
+    # Con menos de 10 pases clave en la temporada el cociente también es ruido.
+    frecuentes = d[(d["kp90"] >= d["kp90"].median()) & (d["kp90"] > 0)
+                   & (d["key_passes"] >= 10)].copy()
     if len(frecuentes) < 3:  # p. ej. solo porteros: casi nadie da pases clave
         return fija, None
     frecuentes["por_pase"] = frecuentes["xA90"] / frecuentes["kp90"]
     mejor = frecuentes.loc[frecuentes["por_pase"].idxmax()]
-    salta = (f"Entre los que dan pases clave seguido, el que más peligro saca de cada "
+    salta = (f"Entre los que dan pases clave seguido (10 o más en la temporada), el que más peligro saca de cada "
              f"uno es **{mejor['player']}**: {_fmt(mejor['por_pase'])} de xA por pase "
              f"clave, contra {_fmt(frecuentes['por_pase'].mean())} del grupo.")
     return fija, salta
@@ -1236,10 +1294,9 @@ def construir_por_que(df):
         f"la ocasión\" que se puede medir con estos datos, sin pases ni "
         f"progresiones de por medio.\n\n"
         f"Ojo: **depende del equipo**. Quien juega en un equipo que genera mucho "
-        f"xG participa en más jugadas con xG, juegue como juegue. Por eso se "
-        f"compara contra la producción directa (xG + xA) y no contra un valor "
-        f"fijo. Los dos ejes correlacionan {_fmt(r)}: hay relación, pero el "
-        f"gráfico vive de las diferencias."
+        f"xG participa en más jugadas con xG, juegue como juegue, y eso le pasa a "
+        f"los dos ejes por igual: aquí no se corrige. Los dos ejes correlacionan "
+        f"{_fmt(r)}: {_cuanto(r)}, así que construir y producir son cosas distintas."
     )
 
 
@@ -1275,8 +1332,8 @@ def centros_por_que(df):
     return (
         f"Los **centros** vienen de FBref (que sigue publicándolos) y el **xA** de "
         f"Understat, así que son dos fuentes independientes midiendo cosas "
-        f"cercanas. Correlacionan {_fmt(r)}: el centro es una de las formas de "
-        f"crear ocasión, no la única.\n\n"
+        f"cercanas. Correlacionan {_fmt(r)}: {_cuanto(r)}. El centro es una de las "
+        f"formas de crear ocasión, y hay otras.\n\n"
         f"Un centro cuenta igual salga bien o mal, y el xA solo cuenta los pases "
         f"que terminaron en tiro; por eso un jugador puede estar muy a la derecha "
         f"y bajo en el eje vertical sin que eso diga que centra mal — la "
@@ -1295,7 +1352,7 @@ def centros(df, season, liga=None):
     if muchos.empty:
         return fija, None
     p = muchos.loc[muchos["xA90"].idxmin()]
-    salta = (f"Entre los que más centran, el que menos peligro genera es "
+    salta = (f"Entre el 25% que más centra, el que menos peligro genera es "
              f"**{p['player']}**: {_fmt(p['crosses90'], 1)} centros por 90' y "
              f"{_fmt(p['xA90'])} de xA — volumen que casi no se convierte en "
              f"ocasión.")
@@ -1328,9 +1385,9 @@ def creacion_por_que(df):
         f"bien. Por eso conviene mirarla como tendencia y no como dato fino.\n\n"
         f"La posesión de una liga suma 100% por partido, así que su promedio es "
         f"~50% en todas: sirve para comparar equipos dentro de una liga y poco para "
-        f"comparar ligas. Los dos ejes correlacionan {_fmt(r)}, o sea que tener el "
-        f"balón explica una parte de la creación pero deja sitio a estilos "
-        f"distintos."
+        f"comparar ligas. Los dos ejes correlacionan {_fmt(r)}: {_cuanto(r)} "
+        f"(comparten el {r ** 2 * 100:.0f}% de su variación), y lo que queda es "
+        f"sitio para estilos distintos."
     )
 
 
@@ -1363,9 +1420,9 @@ def defensa_que_mirar():
             "líneas son el promedio.\n\n"
             "**Abajo a la izquierda** están los sólidos. Las esquinas que cuentan "
             "algo son las otras: **arriba a la izquierda**, reciben pocos tiros y "
-            "aun así encajan (portería floja o mala suerte); **abajo a la "
-            "derecha**, aguantan muchos tiros sin que les entre (portería estelar "
-            "o defensa que bloquea bien).")
+            "aun así les entran (portería floja o mala suerte); **abajo a la "
+            "derecha**, les tiran mucho a puerta y les entra poco (portería estelar "
+            "o buena suerte).")
 
 
 def defensa_por_que(df):
@@ -1377,7 +1434,7 @@ def defensa_por_que(df):
         f"un número malo o bueno.\n\n"
         f"Correlacionan {_fmt(r)}, como era de esperar: a más tiros, más goles. "
         f"La distancia a la tendencia es lo que importa, y es en buena parte "
-        f"portería y suerte — con 38 partidos, una racha de paradas o de remates "
+        f"portería y suerte: en una temporada, una racha de paradas o de remates "
         f"que entran mueve mucho el resultado. No se puede separar la defensa de "
         f"la portería con estos datos."
     )
@@ -1408,9 +1465,12 @@ def defensa(df, season, liga=None):
 def nivel_liga_equipos_que_mirar():
     return ("Cada caja resume una liga para la variable que elijas: la línea del "
             "medio es la mediana, la caja contiene a la mitad central de los equipos "
-            "y cada punto es un equipo (pasa el mouse para ver cuál).\n\n"
-            "Mira **dos cosas distintas**: qué liga está más arriba (su nivel típico) "
-            "y qué tan ancha es la caja (qué tan parejos son sus equipos). Una liga "
-            "puede tener el mismo promedio que otra y mucha más distancia entre su "
-            "mejor y su peor. El filtro de nivel de club separa a los grandes del "
-            "resto, que casi siempre cuentan historias distintas.")
+            "y cada punto es un equipo (pasa el mouse o toca un punto para ver cuál).\n\n"
+            "Mira **dos cosas distintas**: qué liga está más arriba (su valor típico) "
+            "y qué tan ancha es la caja (qué tan parejos son sus equipos). Ojo con las "
+            "variables que se reparten dentro de cada liga, como la diferencia de "
+            "goles, la posesión o los puntos por partido: lo que gana un equipo lo "
+            "pierde otro de su misma liga, así que la mediana sale casi igual en las "
+            "cinco y solo cuenta el ancho de la caja. Ninguna variable de esta lista "
+            "mide qué liga es más fuerte. El filtro de nivel de club separa a los "
+            "grandes del resto, que casi siempre cuentan historias distintas.")

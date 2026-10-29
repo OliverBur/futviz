@@ -66,7 +66,7 @@ function Vista({ cfg, T, modo, tk }) {
 
   const ambito = temporada === TODAS ? `las ${T.temporadas.length} temporadas` : temporada;
   const lectura = useMemo(() => tiros(sel.tot, base, tipo.frase || "", ambito), [sel, base, tipo, ambito]);
-  const subtitulo = `${tipo.etiqueta} · ${temporada === TODAS ? `${T.temporadas[0]} a ${T.temporadas[T.temporadas.length - 1]}` : temporada} · ${miles(total)} remates, sin penaltis`;
+  const subtitulo = `${tipo.etiqueta} · ${temporada === TODAS ? `${T.temporadas[0]} a ${T.temporadas[T.temporadas.length - 1]}` : temporada} · ${miles(total)} remates, sin penales`;
 
   // --- geometría (metros) --------------------------------------------------------------------------
   const { nx, ny, celda: lado, ancho, profundidad, aire, penal, porteria } = T;
@@ -160,7 +160,7 @@ function Vista({ cfg, T, modo, tk }) {
           </Box>
 
           <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: 1, mt: 0.75 }}>
-            <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Pasa el mouse por una celda para ver los números crudos.</Typography>
+            <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Pasa el mouse o toca una celda para ver los números crudos.</Typography>
             <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
           </Box>
         </Box>

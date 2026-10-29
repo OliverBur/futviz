@@ -557,9 +557,12 @@ function Vista({ cfg, T, modo, tk }) {
     + (nivel !== "todos" ? 1 : 0) + (sub21 ? 1 : 0);
 
   const minimo = T.minimos ? T.minimos[tLabel] : null;
+  // la temporada que va en curso se marca: con pocas jornadas los extremos son casi todo muestra
+  const jornadas = T.enCurso ? T.enCurso[tLabel] : null;
+  const tTexto = jornadas ? `${tLabel} (en curso, ${jornadas} jornadas)` : tLabel;
   const subtitulo = exp
-    ? `${Y.label} vs. ${X.label} · ${tLabel}`
-    : cfg.subtitulo.replace("{min}", minimo != null ? String(minimo) : "").replace("{temporada}", tLabel);
+    ? `${Y.label} vs. ${X.label} · ${tTexto}`
+    : cfg.subtitulo.replace("{min}", minimo != null ? String(minimo) : "").replace("{temporada}", tTexto);
   const vacio = visibles.length === 0 ? `Ningún ${esJugadores ? "jugador" : "equipo"} con estos filtros.` : null;
 
   return (
@@ -637,7 +640,9 @@ function Vista({ cfg, T, modo, tk }) {
 
           <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: 1, mt: 0.75 }}>
             <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
-              Arrastra para mover · Ctrl + rueda o los botones para hacer zoom · clic en un punto para fijarlo
+              {movil
+                ? "Arrastra para mover · usa los botones para hacer zoom · toca un punto para fijarlo"
+                : "Arrastra para mover · Ctrl + rueda o los botones para hacer zoom · clic en un punto para fijarlo"}
             </Typography>
             <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
           </Box>
@@ -676,6 +681,12 @@ function Vista({ cfg, T, modo, tk }) {
             </Typography>
             <Typography sx={{ fontSize: 14, lineHeight: 1.6, mb: lectura.salta ? 1 : 0 }}><Md texto={lectura.fija} /></Typography>
             {lectura.salta && <Typography sx={{ fontSize: 14, lineHeight: 1.6 }}><Md texto={lectura.salta} /></Typography>}
+            {jornadas && (
+              <Typography sx={{ fontSize: 13, lineHeight: 1.55, mt: 1, color: "text.secondary" }}>
+                La temporada {tLabel} va en curso ({jornadas} jornadas): con tan pocos partidos, los extremos cambian mucho
+                de una semana a otra. Para conclusiones, mejor una temporada cerrada.
+              </Typography>
+            )}
           </Box>
         )}
         {(cfg.porQue || exp) && (

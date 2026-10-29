@@ -182,7 +182,8 @@ function Vista({ cfg, T, modo, tk }) {
         <Box sx={{ minWidth: 0 }}>
           <Typography component="h2" sx={{ fontSize: 17, fontWeight: 700, color: "primary.main" }}>{cfg.titulo}</Typography>
           <Typography sx={{ fontSize: 13, color: "text.secondary", mb: 1.5 }}>
-            {cfg.subtitulo.replace("{variable}", v.label).replace("{temporada}", tLabel)}
+            {cfg.subtitulo.replace("{variable}", v.label).replace("{temporada}",
+              T.enCurso && T.enCurso[tLabel] ? `${tLabel} (en curso, ${T.enCurso[tLabel]} jornadas)` : tLabel)}
           </Typography>
           <Box ref={setCaja} className="rx-chart" sx={{
             position: "relative", width: "100%", userSelect: "none",
