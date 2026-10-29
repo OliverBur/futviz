@@ -73,6 +73,14 @@ function marcas(min, max, n = 5) {
   return out;
 }
 
+// Deja una marca sí y otra no (o menos) hasta que quepan a `porMarca` px cada una: en el teléfono los
+// rótulos de tres decimales se pegaban ("0.2600.280").
+function ralear(ms, ancho, porMarca = 52) {
+  let k = 1;
+  while (ms.length > 2 && Math.ceil(ms.length / k) * porMarca > ancho) k += 1;
+  return ms.filter((_, i) => i % k === 0);
+}
+
 // Ancho máximo de un mapa de cancha. Crece con el cuadro, pero sin pasar de lo que cabe en alto en una
 // pantalla baja (el mapa mide ~0.7 de su ancho de alto).
 const MAPA_MAX = "min(880px, 130vh)";
@@ -170,7 +178,9 @@ function Marco({ alto = 380, margen, x, y, tk, aria, render }) {
   const [ref, ancho] = useAncho();
   const [hover, setHover] = useState(null);
   const angosto = ancho > 0 && ancho < 520;
-  const m = { t: 12, r: angosto ? 10 : 18, b: x.etiqueta ? 52 : 34, l: angosto ? 48 : 60, ...margen };
+  // en angosto, el título del eje Y va arriba y en horizontal: rotado se encimaba con los valores del eje
+  const yArriba = angosto && !!y.etiqueta;
+  const m = { t: yArriba ? 28 : 12, r: angosto ? 10 : 18, b: x.etiqueta ? 52 : 34, l: angosto ? 48 : 60, ...margen };
   const w = Math.max(10, ancho - m.l - m.r), h = alto - m.t - m.b;
   const px = lineal(x.dom[0], x.dom[1], 0, w);
   const py = lineal(y.dom[0], y.dom[1], h, 0);
@@ -212,10 +222,12 @@ function Marco({ alto = 380, margen, x, y, tk, aria, render }) {
               {x.etiqueta}
             </text>
           )}
-          {y.etiqueta && (
+          {y.etiqueta && (yArriba ? (
+            <text x={4} y={14} textAnchor="start" fontSize={12} fontWeight={600} fill={tk["text-body"]}>{y.etiqueta}</text>
+          ) : (
             <text transform={`translate(13 ${m.t + h / 2}) rotate(-90)`} textAnchor="middle" fontSize={12.5}
               fontWeight={600} fill={tk["text-body"]}>{y.etiqueta}</text>
-          )}
+          ))}
         </svg>
       )}
       {hover && out.tip && <Tip tip={{ px: hover.px, py: hover.py }} ancho={ancho}>{out.tip}</Tip>}
@@ -470,7 +482,7 @@ function Barras({ cfg, D, tk, pal }) {
   const dom = grupo.dom || eje.dom || [lo < 0 ? lo - (hi - lo) * 0.14 : lo, hi + (hi - lo) * 0.1];   // espacio para el rótulo de un valor negativo
   const w = Math.max(80, ancho);
   const px = lineal(dom[0], dom[1], 4, w - 4);
-  const marcasX = marcas(dom[0], dom[1], Math.max(3, Math.round(w / 90)));
+  const marcasX = ralear(marcas(dom[0], dom[1], Math.max(3, Math.round(w / 90))), w);
   const fx = fm(eje.formato);
   const grosor = 14, sep = 4;
   const altoFila = G.series.length * grosor + (G.series.length - 1) * sep + 18;
@@ -785,17 +797,20 @@ function Puntos({ cfg, D, tk, pal }) {
   const G = D[cfg.dato];
   const [agr, setAgr] = useState(G.agrupaciones[0].id);
   const [ref, ancho] = useAncho();
+  const [refTodo, anchoTodo] = useAncho();
   const [sel, setSel] = useState(null);
   const g = G.agrupaciones.find((a) => a.id === agr) || G.agrupaciones[0];
   const [d0, d1] = g.eje.dom;
+  // En angosto (menos de 520 px), como en `Forest`: el nombre va en su renglón y la gráfica a todo el ancho.
+  const angosto = anchoTodo > 0 && anchoTodo < 520;
   const w = Math.max(60, ancho);
   const px = lineal(d0, d1, 10, w - 10);
-  const marcasX = marcas(d0, d1, Math.max(3, Math.round(w / 90)));
+  const marcasX = ralear(marcas(d0, d1, Math.max(2, Math.min(5, Math.round(w / 90)))), w);
   const fx = fm(g.eje.formato);
-  const alto = 40;
+  const alto = angosto ? 28 : 40;
   const tono = (t) => (t === "propio" ? pal.propio : t === "understat" ? pal.understat : tk.muted);
   return (
-    <Box>
+    <Box ref={refTodo}>
       <Cabecera cfg={cfg} />
       {G.agrupaciones.length > 1 && (
         <Box sx={{ mb: 1.25 }}>
@@ -806,9 +821,9 @@ function Puntos({ cfg, D, tk, pal }) {
           </ToggleButtonGroup>
         </Box>
       )}
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(110px, 1fr) minmax(0, 1.3fr) auto", sm: "minmax(190px, 1fr) minmax(0, 1.7fr) auto" },
+      <Box sx={{ display: "grid", gridTemplateColumns: angosto ? "minmax(0, 1fr) auto" : "minmax(190px, 1fr) minmax(0, 1.7fr) auto",
         columnGap: 1.5, alignItems: "center" }}>
-        <Box />
+        {!angosto && <Box />}
         <Box ref={ref} sx={{ height: 24 }}>
           {ancho > 0 && (
             <svg width={w} height={24} aria-hidden="true" style={{ display: "block" }}>
@@ -822,12 +837,12 @@ function Puntos({ cfg, D, tk, pal }) {
           return (
             <Box key={`${agr}-${i}`} sx={{ display: "contents" }} onMouseEnter={() => setSel(i)} onMouseLeave={() => setSel(null)}>
               <Box sx={{ py: 0.5, pr: 1, borderTop: 1, borderColor: "divider", bgcolor: activo ? "action.hover" : "transparent",
-                fontSize: 13, lineHeight: 1.3, fontWeight: f.destacado ? 700 : 500, height: alto, display: "flex",
-                flexDirection: "column", justifyContent: "center" }}>
+                fontSize: 13, lineHeight: 1.3, fontWeight: f.destacado ? 700 : 500, display: "flex",
+                flexDirection: "column", justifyContent: "center", ...(angosto ? { gridColumn: "1 / -1", pb: 0 } : { height: alto }) }}>
                 <span>{f.nombre}</span>
                 {f.nota && <Box component="span" sx={{ fontSize: 11.5, color: "text.secondary", fontWeight: 400 }}>{f.nota}</Box>}
               </Box>
-              <Box sx={{ borderTop: 1, borderColor: "divider", bgcolor: activo ? "action.hover" : "transparent", height: alto }}>
+              <Box sx={{ borderTop: angosto ? 0 : 1, borderColor: "divider", bgcolor: activo ? "action.hover" : "transparent", height: alto }}>
                 {ancho > 0 && (
                   <svg width={w} height={alto} role="img" aria-label={`${f.nombre}: ${f.texto}`} style={{ display: "block" }}>
                     {marcasX.map((v) => <line key={v} x1={px(v)} x2={px(v)} y1={0} y2={alto} stroke={tk.border} strokeOpacity={0.6} />)}
@@ -840,7 +855,7 @@ function Puntos({ cfg, D, tk, pal }) {
                   </svg>
                 )}
               </Box>
-              <Box sx={{ borderTop: 1, borderColor: "divider", bgcolor: activo ? "action.hover" : "transparent", height: alto,
+              <Box sx={{ borderTop: angosto ? 0 : 1, borderColor: "divider", bgcolor: activo ? "action.hover" : "transparent", height: alto,
                 display: "flex", alignItems: "center", justifyContent: "flex-end", fontSize: 13, fontWeight: 700, whiteSpace: "nowrap", pl: 0.5 }}>
                 {f.texto}
               </Box>

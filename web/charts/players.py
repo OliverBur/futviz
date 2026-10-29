@@ -13,7 +13,7 @@ import insights as ins
 import react_views
 import shot_map
 from consolidate_data import ELO_TOP, NIVELES, POSICIONES
-from site_utils import PROCESSED_DIR, ChartPage
+from site_utils import PROCESSED_DIR, ChartPage, temporadas_en_curso
 from viz_theme import (
     DIVERGING, FUENTE_FBREF, FUENTE_UNDERSTAT, LEAGUE_COLORS, LEAGUE_COLORS_DARK, LEAGUE_ORDER,
     PITCH_ZONAS,
@@ -36,13 +36,13 @@ FUENTE_MIXTA = f"{FUENTE_UNDERSTAT} y {FUENTE_FBREF}"
 VARIABLES = [
     ("goals", "Goles", "Producción", 0),
     ("a", "Asistencias", "Producción", 0),
-    ("np_goals", "Goles sin penalti", "Producción", 0),
+    ("np_goals", "Goles sin penales", "Producción", 0),
     ("g90", "Goles por 90'", "Producción", 2),
     ("a90", "Asistencias por 90'", "Producción", 2),
 
     ("xG", "xG", "Esperado", 1),
     ("xA", "xA", "Esperado", 1),
-    ("np_xg", "xG sin penalti", "Esperado", 1),
+    ("np_xg", "xG sin penales", "Esperado", 1),
     ("xG90", "xG por 90'", "Esperado", 2),
     ("xA90", "xA por 90'", "Esperado", 2),
     ("xga90", "Producción esperada por 90' (xG + xA)", "Esperado", 2),
@@ -176,7 +176,7 @@ def _defensa_subtitulo(df, df_def):
     todavía no se bajó. "jugador-temporada" y no "jugadores": el número es el total de todas."""
     dentro = df[df["temporada"].isin(set(df_def["temporada"]))]
     faltan = len(dentro) - len(df_def)
-    return f" · {faltan} jugador-temporada sin cruce en fbref" if faltan else ""
+    return f" · sin {faltan} jugadores que no se encontraron en FBref (sumando temporadas)" if faltan else ""
 
 
 # --- configuración de las vistas ---------------------------------------------------------------
@@ -196,11 +196,11 @@ def _metricas(x, y, referencia):
         primera = {"id": "dif", "etiqueta": "Diferencia",
                    "ayuda": f"Los que más se alejan de la diagonal ({referencia['dif']})"}
     else:
-        primera = {"id": "dist", "etiqueta": "Alejados",
-                   "ayuda": "Los que más se alejan del centro de la nube (en desviaciones estándar)"}
+        primera = {"id": "dist", "etiqueta": "Extremos",
+                   "ayuda": "Los más fuera de lo común: lejos del centro de la nube, para bien o para mal"}
     return [primera,
-            {"id": "x", "etiqueta": x["corto"], "ayuda": f"Los de mayor {x['label']}"},
-            {"id": "y", "etiqueta": y["corto"], "ayuda": f"Los de mayor {y['label']}"}]
+            {"id": "x", "etiqueta": x["corto"], "ayuda": f"Ordenados por {x['label']}"},
+            {"id": "y", "etiqueta": y["corto"], "ayuda": f"Ordenados por {y['label']}"}]
 
 
 def _diagonal(x, y, dif, sobre="Sobrerrendimiento", bajo="Bajo rendimiento"):
@@ -447,6 +447,7 @@ def _registrar_tabla(df, seasons):
             "coloresPos": {z[0]: z[2] for z in PITCH_ZONAS if z[0] in posiciones},
             "minimos": {s: int(MIN_MINUTES_POR_TEMPORADA[s]) for s in seasons},
             "ayudas": AYUDAS,
+            "enCurso": temporadas_en_curso(),
         })
 
 

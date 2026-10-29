@@ -11,7 +11,7 @@ import pandas as pd
 import insights as ins
 import react_views
 from consolidate_data import ELO_TOP, NIVELES
-from site_utils import PROCESSED_DIR, ChartPage
+from site_utils import PROCESSED_DIR, ChartPage, temporadas_en_curso
 from viz_theme import DIVERGING, FUENTE_FBREF, LEAGUE_COLORS, LEAGUE_COLORS_DARK, LEAGUE_ORDER
 
 SECTION = "Equipos"
@@ -127,10 +127,10 @@ def _scatter(df, slug, titulo, descripcion, *, x, y, cuadrantes, subtitulo, text
         "subtitulo": subtitulo,
         "filtros": {"nivel": True},
         "metricas": [
-            {"id": "dist", "etiqueta": "Alejados",
-             "ayuda": "Los que más se alejan del centro de la nube (en desviaciones estándar)"},
-            {"id": "x", "etiqueta": x["corto"], "ayuda": f"Los de mayor {x['label']}"},
-            {"id": "y", "etiqueta": y["corto"], "ayuda": f"Los de mayor {y['label']}"},
+            {"id": "dist", "etiqueta": "Extremos",
+             "ayuda": "Los más fuera de lo común: lejos del centro de la nube, para bien o para mal"},
+            {"id": "x", "etiqueta": x["corto"], "ayuda": f"Ordenados por {x['label']}"},
+            {"id": "y", "etiqueta": y["corto"], "ayuda": f"Ordenados por {y['label']}"},
         ],
         "queMirar": que_mirar(), "porQue": por_que(df),
         "insight": insight, "fuente": FUENTE_FBREF, "colorPor": ["liga"],
@@ -143,8 +143,8 @@ def chart_def_efficiency(df):
         "Precisión (SoT%) vs. definición (G/SoT) — un punto por equipo.",
         x=_eje("sh_Standard_SoT%", "Precisión — % de tiros que van a puerta (SoT%)", "Precisión", 1),
         y=_eje("sh_Standard_G/SoT", "Definición — goles por tiro a puerta (G/SoT)", "Definición", 2),
-        cuadrantes={"tr": "certeros y letales", "tl": "poco a puerta, pero letales",
-                    "br": "mucho a puerta, poca pegada", "bl": "ni certeros ni letales"},
+        cuadrantes={"tr": "certeros y letales", "tl": "poco a puerta, letales",
+                    "br": "a puerta, sin pegada", "bl": "ni certeros ni letales"},
         subtitulo="Precisión (llegar a puerta) vs. definición (marcar una vez ahí) · {temporada}",
         textos=(ins.definicion_que_mirar, ins.definicion_por_que), insight="definicion")
 
@@ -172,8 +172,8 @@ def chart_defense(df):
         "Tiros a puerta que recibe cada equipo contra los goles que le entran — un punto por equipo.",
         x=_eje("p90_SoTA", "Tiros a puerta recibidos por 90'", "Tiros recibidos", 2),
         y=_eje("gk_Performance_GA90", "Goles recibidos por 90'", "Goles recibidos", 2),
-        cuadrantes={"tr": "los bombardean y encajan", "tl": "pocos tiros, pero encajan",
-                    "br": "muchos tiros, no les entra", "bl": "sólidos"},
+        cuadrantes={"tr": "les tiran y les entra", "tl": "poco tiro, mucho gol",
+                    "br": "mucho tiro, poco gol", "bl": "sólidos"},
         subtitulo="Tiros a puerta que recibe vs. goles que le entran, por 90' · {temporada}",
         textos=(ins.defensa_que_mirar, ins.defensa_por_que), insight="defensa")
 
@@ -188,7 +188,9 @@ def chart_league_level(df):
         "nivel-por-liga-equipos", "Nivel por liga",
         "Cómo se reparten los equipos de cada liga en la variable que elijas.",
         {"tabla": "equipos", "entidad": "equipos", "variables": variables,
-         "variable": "pt_Team Success_+/-90", "subtitulo": "{variable} · {temporada}",
+         # Abre en goles por 90': la diferencia de goles suma cero dentro de cada liga y todas las
+         # medianas quedaban en 0 (ver `nivel_liga_equipos_que_mirar`).
+         "variable": "ov_Per 90 Minutes_Gls", "subtitulo": "{variable} · {temporada}",
          "filtros": {"nivel": True}, "fuente": FUENTE_FBREF, "colorPor": ["liga"],
          "queMirar": ins.nivel_liga_equipos_que_mirar()},
         tipo="cajas", kind="box")
@@ -230,6 +232,7 @@ def _registrar_tabla(df, seasons):
                         "oscuro": {l: LEAGUE_COLORS_DARK[l] for l in ligas}},
             "divergente": dict(DIVERGING),
             "ayudas": AYUDAS,
+            "enCurso": temporadas_en_curso(),
         })
 
 

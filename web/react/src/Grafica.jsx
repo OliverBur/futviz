@@ -295,21 +295,23 @@ export function Grafica({
         const arriba = area.top + 13, abajo = area.top + area.height - 7;
         const hayArriba = hy > area.top + 18, hayAbajo = hy < area.top + area.height - 12;
         const hayDer = vx < area.left + area.width - 40, hayIzq = vx > area.left + 40;
-        const poner = (clave, ok, x, y, ancla) => {
+        // `hacia`: +1 en los de arriba (el renglón extra va hacia abajo), −1 en los de abajo.
+        const poner = (clave, ok, x, y, ancla, hacia) => {
           if (!ok || !q[clave]) return;
           const w = q[clave].length * 5.7 + 6;
-          // Pegado a la línea de promedio, pero sin salirse del recuadro (en pantalla angosta un rótulo largo
-          // no cabe entre la línea y el borde): si no cabe, se corre hacia dentro.
-          if (ancla === "start" && x + w > area.left + area.width - 2) { x = area.left + area.width - 2 - w; }
-          if (ancla === "end" && x - w < area.left + 2) { x = area.left + 2 + w; }
+          // Pegado a la línea de promedio, pero sin salirse del recuadro. Si no cabe entre la línea y el borde
+          // (pantalla angosta, o la línea muy cerca de un lado), se pega al borde un renglón más adentro: corrido
+          // hacia dentro en el mismo renglón se encimaba con el rótulo del otro lado.
+          if (ancla === "start" && x + w > area.left + area.width - 2) { x = area.left + area.width - 2; ancla = "end"; y += 14 * hacia; }
+          else if (ancla === "end" && x - w < area.left + 2) { x = area.left + 2; ancla = "start"; y += 14 * hacia; }
           const x0 = ancla === "start" ? x : x - w;
           rotulosCuadrante.push({ clave, x, y, ancla, texto: q[clave] });
           obstaculos.push({ x0, x1: x0 + w, y0: y - 12, y1: y + 3 });
         };
-        poner("tr", hayArriba && hayDer, vx + 6, arriba, "start");
-        poner("tl", hayArriba && hayIzq, vx - 6, arriba, "end");
-        poner("br", hayAbajo && hayDer, vx + 6, abajo, "start");
-        poner("bl", hayAbajo && hayIzq, vx - 6, abajo, "end");
+        poner("tr", hayArriba && hayDer, vx + 6, arriba, "start", 1);
+        poner("tl", hayArriba && hayIzq, vx - 6, arriba, "end", 1);
+        poner("br", hayAbajo && hayDer, vx + 6, abajo, "start", -1);
+        poner("bl", hayAbajo && hayIzq, vx - 6, abajo, "end", -1);
       }
     }
   }

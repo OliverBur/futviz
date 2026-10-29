@@ -176,11 +176,14 @@ def _payload(R, C, T, E):
     E_ = {f["id"]: f for f in esc}
     fin = E_[xm.FINAL]
     glob, logi = R["baselines"]
+    # LightGBM, la mezcla y el primer XGBoost van con los mismos hiperparámetros sin ajustar
+    # (`xg_comparacion.py`): comparar LightGBM contra el XGBoost ajustado mezclaría el algoritmo con el ajuste.
     modelos = [("Misma probabilidad para todos", glob, "neutro", False),
                ("Logística: distancia y ángulo", logi, "neutro", False),
                ("LightGBM", M["lgbm"], "neutro", False),
                ("Mezcla de XGBoost y LightGBM", M["mezcla"], "neutro", False),
-               ("XGBoost · mi modelo", fin, "propio", True)]
+               ("XGBoost sin ajustar", M["xgb"], "neutro", False),
+               ("XGBoost ajustado · mi modelo", fin, "propio", True)]
     vals = [m_["ll"] for _, m_, _, _ in modelos]
     pad = (max(vals) - min(vals)) * 0.08
     P["modelos"] = {"agrupaciones": [{
@@ -215,8 +218,8 @@ def _payload(R, C, T, E):
              "puntos": [[float(np.log10(c["k"])), c["entrenamiento"]] for c in cv["lgbm"]]},
         ]}
     P["arbol"] = dict(C["arbol"], rampa=SEQUENTIAL_BLUE, ref=[
-        {"id": "xgb", "nombre": "XGBoost completo", "ll": M["xgb"]["ll"], "auc": M["xgb"]["auc"], "arboles": M["xgb"]["arboles"]},
-        {"id": "lgbm", "nombre": "LightGBM completo", "ll": M["lgbm"]["ll"], "auc": M["lgbm"]["auc"], "arboles": M["lgbm"]["arboles"]}])
+        {"id": "xgb", "nombre": "XGBoost sin ajustar", "ll": M["xgb"]["ll"], "auc": M["xgb"]["auc"], "arboles": M["xgb"]["arboles"]},
+        {"id": "lgbm", "nombre": "LightGBM sin ajustar", "ll": M["lgbm"]["ll"], "auc": M["lgbm"]["auc"], "arboles": M["lgbm"]["arboles"]}])
 
     # --- lo que aprendió
     P["superficie"] = dict(R["aprendio"]["superficie"], rampa=SEQUENTIAL_BLUE)
@@ -296,7 +299,7 @@ def _texto_resultados(R, C, T):
     mx = M["xgb"]
 
     txt = (f"<p>Con solo la distancia y el ángulo, el log-loss baja un {_pct(base - logi['ll'], base):.0f}% en "
-           "comparación que darle a todos los tiros la misma probabilidad. Con todas las variables y XGBoost baja a "
+           "comparación con darle a todos los tiros la misma probabilidad. Con todas las variables y XGBoost baja a "
            f"{fin['ll']:.3f}, un {_pct(base - fin['ll'], base):.0f}% menos. ")
     otros = [M["lgbm"], M["mezcla"]]
     peor = max(_pct(m["d_xgb"], mx["ll"]) for m in otros)
@@ -306,7 +309,7 @@ def _texto_resultados(R, C, T):
         txt += "Probé otros algoritmos (LightGBM y una mezcla de los dos) y quedan prácticamente igual. "
     if aj["origen"] == "tuning":
         pct = _pct(aj["d_ll"], aj["sin_ajustar"]["ll"])
-        txt += {"mejor": f"A este XGBoost le hice un ajuste de hiperparámetros lo que mejora otro {pct:.1f}%.",
+        txt += {"mejor": f"A este XGBoost le hice un ajuste de hiperparámetros, lo que lo mejora otro {pct:.1f}%.",
                 "peor": f"A este XGBoost le hice un ajuste de hiperparámetros, que lo empeora un {pct:.1f}%.",
                 "igual": "A este XGBoost le hice un ajuste de hiperparámetros, que no cambia nada claro."}[
                     _veredicto(aj, "mejor", "peor", "igual")]
@@ -333,7 +336,9 @@ def _texto_importancia(R):
     top = [f"«{NOMBRE_ORIGINAL.get(v['id'], v['id']).lower()}»" for v in ori[:3]]
     geo = {"dist", "angulo", "dist_y", "location_x", "location_y"}
     txt = (f"<p>Lo que más pesa es {top[0]}, luego {top[1]} y {top[2]}"
-           + (": dónde se tira manda. " if ori[0]["id"] in geo and ori[1]["id"] in geo else ". "))
+           + (": dónde se tira manda. Las tres dicen casi lo mismo y SHAP se reparte el crédito entre ellas "
+              "casi al azar, así que el orden entre ellas importa poco. "
+              if ori[0]["id"] in geo and ori[1]["id"] in geo else ". "))
     ultimos = [v for v in ori if v["shap"] < 0.05 * ori[0]["shap"]]
     if ultimos:
         txt += ("Casi no lo mueven " + " ni ".join(f"«{NOMBRE_ORIGINAL.get(v['id'], v['id']).lower()}»" for v in ultimos)
@@ -349,24 +354,13 @@ def _texto_importancia(R):
     txt += ("<p>Lo confirma otra medida: barajar un grupo de variables entre los tiros y ver cuánto empeora el "
             f"log-loss: {gr}" + (". La geometría pesa más que todo lo demás junto.</p>" if domina else ".</p>"))
 
-    # Por qué se dejó la ganancia media por corte: el cabezazo era el ejemplo (primero en la versión
-    # anterior). Se compara su puesto por ganancia media con su puesto por SHAP en este modelo.
-    rango_shap = [x["variable"] for x in imp["variables"]]
-    rango_gan = [x["variable"] for x in imp["ganancia"]]
-    cab_v = "body_part_Head"
-    if cab_v in rango_shap and cab_v in rango_gan:
-        k_gan, k_shap = rango_gan.index(cab_v) + 1, rango_shap.index(cab_v) + 1
-        cortes = imp["ganancia"][k_gan - 1]["cortes"]
-        txt += ("<p>Antes esta gráfica usaba la ganancia media por corte, que premia a las variables que el modelo "
-                "usa en pocos cortes grandes. Con ella «Cabeza» salía primera; en este modelo es la "
-                f"{k_gan}.ª ({_n(cortes)} cortes), pero por SHAP es la {k_shap}.ª.")
-        cab = R["aprendio"]["cabeza"]
-        if 10 in cab["dist"]:
-            i = cab["dist"].index(10)
-            txt += (" El efecto del cabezazo sí es real: de frente a 10 m tras un centro, el modelo le da "
-                    f"{cab['cabeza'][i]:.2f} de xG contra {cab['pie'][i]:.2f} del pie derecho, el "
-                    f"{cab['cabeza'][i] / cab['pie'][i]:.0%}. Lo que era un artefacto era su lugar en el ranking.")
-        txt += "</p>"
+    # El cabezazo: en promedio mueve poco (son pocos tiros), pero en el tiro concreto pesa.
+    cab = R["aprendio"]["cabeza"]
+    if 10 in cab["dist"]:
+        i = cab["dist"].index(10)
+        txt += ("<p>Que una variable mueva poco en promedio no quiere decir que no importe en el tiro concreto. De "
+                f"frente a 10 m tras un centro, el modelo le da {cab['cabeza'][i]:.2f} de xG al cabezazo contra "
+                f"{cab['pie'][i]:.2f} del pie derecho: un {1 - cab['cabeza'][i] / cab['pie'][i]:.0%} menos.</p>")
     return txt
 
 
@@ -458,7 +452,8 @@ def build_xg_article() -> ArticlePage:
                     if b["cabeza"]["n"] >= 40 and b["pie"]["n"] >= 40)
     frase_cuerpo = (f"Un cabezazo convierte casi igual que un remate con el pie ({cab['tasa']:.1f}% contra "
                     f"{pie_d['tasa']:.1f}%) solo porque se da desde más cerca ({cab['dist']:.0f} m contra "
-                    f"{pie_d['dist']:.0f} m)" + ("; en cada franja de distancia vale menos." if cab_menos else "."))
+                    f"{pie_d['dist']:.0f} m)" + ("; en cada franja de distancia vale menos (pestaña «Por distancia» del mapa)."
+                                                   if cab_menos else "."))
     frase_accion = (f" Y lo que pasó justo antes también cuenta: tras un pase filtrado entra el {th['tasa']:.0f}%; "
                     f"tras un pase normal, el {ps['tasa']:.0f}%." if th and ps else "")
     p.append(_prose(
@@ -500,7 +495,7 @@ def build_xg_article() -> ArticlePage:
         "preguntas se eligen para que los tiros de cada rama se parezcan lo más posible en lo que importa: si "
         "terminaron o no en gol. La probabilidad que recibe el tiro es la proporción de goles entre los tiros de "
         f"entrenamiento que cayeron en esa misma hoja. "
-        f"<p>Al medir con muchos árboles, cada uno corrigiendo los errores de los anteriores, se obtiene un modelo más robusto y preciso "
+        f"<p>Al sumar muchos árboles, cada uno corrigiendo los errores de los anteriores, se obtiene un modelo más robusto y preciso "
         f"hasta llegar a cientos de árboles chicos con un log-loss de {mx['ll']:.4f}."))
     p.append(_grafica(
         "xg-boosting", "lineas", "boosting", "Árbol por árbol",
@@ -519,7 +514,8 @@ def build_xg_article() -> ArticlePage:
         "Así queda frente a modelos más simples y a otros algoritmos:</p>"))
     p.append(_grafica(
         "xg-modelos", "puntos", "modelos", "XGBoost frente a otros modelos",
-        f"Log-loss en {xm.TEST} · cada punto es un modelo", "Log-loss de cada modelo en la temporada de prueba",
+        f"Log-loss en {xm.TEST} · cada punto es un modelo · LightGBM, la mezcla y el XGBoost sin ajustar usan los "
+        "mismos hiperparámetros", "Log-loss de cada modelo en la temporada de prueba",
         alto_min=300))
     p.append(_prose(_texto_resultados(R, C, T)))
 
@@ -527,12 +523,21 @@ def build_xg_article() -> ArticlePage:
         "<p>¿Qué variables ayudan? Las fui sumando por grupos y en cada paso medí cuánto cambia el log-loss: a la "
         "izquierda del cero, mejora. La línea alrededor de cada punto es un intervalo de 95%: si toca el cero, el "
         "cambio podría ser casualidad.</p>"))
+    geo = esc["geo"]
     p.append(_grafica(
         "xg-escalera", "forest", "escalera", "Qué variables ayudan",
-        "Cambio en el log-loss frente al paso anterior · en gris, lo que no se distingue de cero",
-        "Escalera de variables: cambio en el log-loss al agregar cada grupo", alto_min=480))
+        f"Parte de la geometría sola (log-loss {geo['ll']:.4f}) y cada fila se suma a todas las de arriba · "
+        "en gris, lo que no se distingue de cero",
+        "Escalera de variables: cambio en el log-loss al agregar cada grupo", alto_min=480,
+        ayuda="Monotone constraints: el xG nunca sube al alejarse de la portería ni al cerrarse el ángulo. El modelo "
+              f"final es ese paso, y lo elegí viendo estas mismas cifras de {xm.TEST}: su log-loss puede quedar un "
+              "poco optimista."))
     res_ctx = ("solo " + " y ".join(f"«{f['nombre'][2:]}»" for f in ayudan) + " mejora con intervalo que excluye "
                "el cero") if ayudan else "ninguno mejora con un intervalo que excluya el cero"
+    empeoran = [f for f in contexto if f["d_lo"] > 0]
+    if empeoran:
+        res_ctx += (", y " + " y ".join(f"«{f['nombre'][2:]}» ({_signo(f['d_ll'])})" for f in empeoran)
+                    + (" hasta lo empeora" if len(empeoran) == 1 else " hasta lo empeoran"))
     mejoran = [f"{n_} ({_signo(esc[k]['d_ll'])})" for n_, k in (("cuerpo y situación", "cuerpo"),
                                                                  ("asistido y tiro previo en el minuto", "jugada"),
                                                                  ("la acción previa", "accion")) if esc[k]["d_hi"] < 0]
@@ -572,7 +577,8 @@ def build_xg_article() -> ArticlePage:
 
     p.append(_prose(
         "<p>Otra forma de ver lo que aprendió es de qué variables se agarra. Para eso uso SHAP: reparte el xG "
-        "de cada tiro entre sus variables y dice cuánto lo movió cada una, hacia arriba o hacia abajo. La barra "
+        "de cada tiro entre sus variables (en log-odds, la escala en la que suma el modelo) y dice cuánto lo movió "
+        "cada una, hacia arriba o hacia abajo. La barra "
         f"es el promedio de ese movimiento en los {_n(R['n']['test'])} tiros de {xm.TEST}: cuanto más larga, más "
         "depende el xG de esa variable.</p>"))
     p.append(_grafica(
@@ -586,7 +592,9 @@ def build_xg_article() -> ArticlePage:
     p.append(_prose(
         f"<p>Los {_n(n_explorador)} tiros de las cinco últimas temporadas, penales incluidos, cada uno con el xG de un modelo "
         "que <strong>no había visto esa temporada</strong>. Elige uno y compáralo con Understat y con lo que "
-        "pasó.</p>"))
+        "pasó.</p>"
+        "<p>Aquí «mi modelo» es el de la prueba hacia adelante, sin el ajuste de hiperparámetros, y a los penales les "
+        "toca la tasa de conversión de las temporadas anteriores. Por eso las sumas de goles esperados de abajo no coinciden con los porcentajes de Resultados.</p>"))
     p.append(_explorador(n_explorador))
 
     # ================================================================ 9. cómo usar un xG
