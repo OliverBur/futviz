@@ -55,25 +55,6 @@ LEAGUE_COLORS_DARK = {
 # Rampa secuencial (magnitud, un solo equipo/métrica), claro -> oscuro
 SEQUENTIAL_BLUE = ["#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"]
 
-# Paleta categórica para CLUSTERS de estilo (ml_style_clusters.ipynb), en orden
-# fijo de slot — nunca ciclada, nunca reasignada por ranking. Es distinta de
-# LEAGUE_COLORS a propósito: en ese notebook el color significa "arquetipo de
-# estilo", no "liga", y mezclar ambos significados confundiría al lector.
-#
-# Validada con el validador de la skill de dataviz (puerto Python del
-# validate_palette.js, mismos umbrales y misma simulación Machado 2009) sobre
-# la superficie clara del proyecto de entonces (#fcfcfb), en modo `--pairs all` porque se
-# usa en scatter y en grafo (no solo en barras/leyenda, donde bastaría el
-# pairlist adyacente):
-#   - peor par bajo daltonismo (mín. protan/deutan): ΔE 8.3  (objetivo ≥ 8.0)
-#   - peor par en visión normal:                      ΔE 15.1 (piso duro ≥ 15.0)
-#   - banda de luminosidad y piso de croma: OK en los 6 slots
-# Amarillo y magenta quedan por debajo de 3:1 de contraste contra la superficie
-# clara: aplica la "regla de relieve" — en el notebook siempre van acompañados
-# de hover con el nombre del arquetipo y de las tablas de membresía, así que la
-# identidad nunca depende solo del color.
-CLUSTER_COLORS = ["#256abf", "#d95926", "#199e70", "#eda100", "#9085e9", "#e87ba4"]
-
 # Par divergente (sobre/bajo lo esperado): positivo vs negativo, gris en cero. El gris es frío (matiz ~198°,
 # la familia del slate del sitio) y de la misma luminancia que el gris cálido (#cfcecb) que tenía antes.
 DIVERGING = {"pos": "#2a78d6", "neg": "#e34948", "mid": "#C7CFD3"}
