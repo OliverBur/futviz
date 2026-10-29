@@ -90,4 +90,5 @@ export function fmt(x, dec = 2) {
   }
   return x.toFixed(dec);
 }
-export const miles = (n) => String(Math.trunc(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+// Miles con coma ("230,323"), como se escribe en México: el punto queda para los decimales.
+export const miles = (n) => String(Math.trunc(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
