@@ -13,7 +13,7 @@ Las gráficas son vistas de React (`web/react/src/Articulo.jsx`): cada una lee s
 pequeña, `dist/react/datos-xg.js`, que se registra aquí (`_payload`). El explorador pide además una
 tabla por temporada (`xg_explorador.py`).
 
-Prototipado en `code/ml_xg_model.ipynb`; el artículo creció de ahí con la escalera de variables, la
+Prototipado en `code/ml_xg_model.ipynb` (borrado el 2026-10-27, queda en git); el artículo creció de ahí con la escalera de variables, la
 acción previa al tiro, las temporadas históricas y la prueba hacia atrás en el tiempo.
 """
 
