@@ -134,6 +134,12 @@ NIVEL_UNDER = "Clubes underground"
 NIVELES = (NIVEL_TOP, NIVEL_UNDER)
 
 
+# Clubes a los que FBref les cambió el nombre de una temporada a otra: (liga, nuevo) -> (liga, anterior).
+# Sin esto, mientras la temporada no tiene ELO, el club no encuentra su nivel anterior y cae a
+# underground (el PSG en 2026-27, que FBref pasó de "PSG" a "Paris SG").
+RENOMBRADOS = {("Ligue 1", "Paris SG"): ("Ligue 1", "PSG")}
+
+
 def nivel_de(elo):
     """La etiqueta de nivel de un ELO, o nulo si no hay dato — un club sin ELO
     no es ni top ni underground, igual que un jugador sin edad no es sub-21."""
@@ -319,12 +325,44 @@ def ultimo_club_col(d):
     """El último club del campo `team` de Understat, como Serie.
 
     `load_players_season` deja `team` tal cual viene ('Bournemouth,Manchester
-    City' para quien se fue en enero) porque quedarse con uno es decisión de
-    análisis. Acá se toma el último, que es **la misma decisión que toma
+    City' para quien se fue en enero) y `club_actual_al_final` pone al final el
+    club del tiro más reciente. Acá se toma el último, que es **la misma decisión que toma
     `web/charts/players.py` para mostrarlo**: si el hover dice "Manchester
     City", el filtro de nivel tiene que clasificarlo por Manchester City y no
     por el club que dejó."""
     return d["team"].str.split(",").str[-1].str.strip()
+
+
+def club_actual_al_final(players, season_dir):
+    """En los jugadores con varios clubes, pone al final el del tiro más reciente.
+
+    El orden del campo `team` de Understat no es cronológico ('Everton,Manchester
+    City' para Grealish, que tira con el Everton) y a veces trae clubes por los que
+    el jugador no pasó: en 2026-27, casi toda la plantilla del PSG viene como
+    'Paris Saint Germain,Rennes' con todos sus tiros en el PSG. Como el sitio y el
+    nivel toman el último de la lista (`ultimo_club_col`), aquí se reordena para
+    que el último sea el club con el que remató por última vez. Quien no tiene
+    tiros, o tiró con un club que no está en la lista, se queda como venía.
+    Solo cambia el orden: los demás clubes siguen en la lista."""
+    varios = players["team"].str.contains(",", na=False)
+    ruta = season_dir / "shots.csv"
+    if not varios.any() or not ruta.exists():
+        return players
+    s = pd.read_csv(ruta, encoding="utf-8-sig", usecols=["liga", "player", "team", "date", "minute"])
+    s["player"] = s["player"].apply(html.unescape)
+    ultimo = s.sort_values(["date", "minute"]).groupby(["liga", "player"])["team"].last()
+
+    def reordenar(liga, jugador, team):
+        clubes = [c.strip() for c in team.split(",")]
+        actual = ultimo.get((liga, jugador))
+        if actual in clubes:
+            clubes = [c for c in clubes if c != actual] + [actual]
+        return ",".join(clubes)
+
+    players = players.copy()
+    players.loc[varios, "team"] = [reordenar(l, j, t) for l, j, t in
+                                   players.loc[varios, ["liga", "player", "team"]].itertuples(index=False)]
+    return players
 
 
 def attach_elo_players(players, teams, season_dir, season):
@@ -657,9 +695,9 @@ def main():
             # llegue el ELO de verdad (`python fetch_elo.py <temporada>`), esto deja
             # de aplicarse solo.
             if elo is None and nivel_previo:
-                t["nivel"] = [nivel_previo.get((l, sq), NIVEL_UNDER)
-                              for l, sq in zip(t["liga"], t["Squad"])]
-                nuevos = sum((l, sq) not in nivel_previo for l, sq in zip(t["liga"], t["Squad"]))
+                previo = lambda l, sq: nivel_previo.get((l, sq), nivel_previo.get(RENOMBRADOS.get((l, sq))))
+                t["nivel"] = [previo(l, sq) or NIVEL_UNDER for l, sq in zip(t["liga"], t["Squad"])]
+                nuevos = sum(previo(l, sq) is None for l, sq in zip(t["liga"], t["Squad"]))
                 print(f"    sin elo.csv: nivel heredado de temporadas anteriores"
                       f" ({len(t) - nuevos}/{len(t)} clubes; {nuevos} sin historial"
                       f" → {NIVEL_UNDER})")
@@ -685,6 +723,7 @@ def main():
 
         if all((season_dir / f).exists() for f in PLAYER_FILES):
             p = load_players_season(season_dir, season)
+            p = club_actual_al_final(p, season_dir)
             p, sin_match = attach_fbref(p, season_dir, season)
             p, avisos_elo = attach_elo_players(p, t, season_dir, season)
             players.append(p)
