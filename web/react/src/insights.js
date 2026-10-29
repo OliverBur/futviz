@@ -87,10 +87,10 @@ function completo(T, filas, cx, cy) {
 
 // Cuántos superan el promedio en los dos ejes, comparado con lo que daría el azar.
 function frasesAmbos(nAmbos, esperado, n) {
-  const base = `${nAmbos} de ${n} jugadores superan el promedio en los dos ejes a la vez`;
-  if (nAmbos > esperado * 1.15) return `${base}, más de los ${esperado} que saldrían si un eje no tuviera que ver con el otro: hacer una cosa suele ir con la otra.`;
-  if (nAmbos < esperado * 0.85) return `Solo ${base}, menos de los ${esperado} que saldrían si un eje no tuviera que ver con el otro: hacer las dos cosas es raro.`;
-  return `${base}, más o menos los ${esperado} que saldrían si un eje no tuviera que ver con el otro.`;
+  const base = `${miles(nAmbos)} de ${miles(n)} jugadores superan el promedio en los dos ejes a la vez`;
+  if (nAmbos > esperado * 1.15) return `${base}, más de los ${miles(esperado)} que saldrían si un eje no tuviera que ver con el otro: hacer una cosa suele ir con la otra.`;
+  if (nAmbos < esperado * 0.85) return `Solo ${base}, menos de los ${miles(esperado)} que saldrían si un eje no tuviera que ver con el otro: hacer las dos cosas es raro.`;
+  return `${base}, más o menos los ${miles(esperado)} que saldrían si un eje no tuviera que ver con el otro.`;
 }
 
 export function perfil(T, filas, ambito) {

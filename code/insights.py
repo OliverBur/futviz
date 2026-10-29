@@ -66,7 +66,7 @@ def definicion_por_que(df):
     r = df[X_DEF].corr(df[Y_DEF])
     return (
         f"Las dos van en ejes separados porque **no son la misma habilidad**: "
-        f"correlacionan {_fmt(r)} sobre las {len(df)} observaciones, o sea que "
+        f"correlacionan {_fmt(r)} sobre las {miles(len(df))} observaciones, o sea que "
         f"comparten apenas un {r ** 2 * 100:.0f}% de su variación. Un equipo puede "
         f"ser muy bueno generando remates claros y flojo rematándolos, y al revés. "
         f"Si se mezclaran en un solo indicador de \"eficiencia\" esa distinción se "
@@ -541,14 +541,14 @@ def _frase_ambos(x, y):
     ax, ay = x > x.mean(), y > y.mean()
     n_ambos = int((ax & ay).sum())
     esperado = int(ax.sum() * ay.sum() / n + 0.5)
-    base = f"{n_ambos} de {n} jugadores superan el promedio en los dos ejes a la vez"
+    base = f"{miles(n_ambos)} de {miles(n)} jugadores superan el promedio en los dos ejes a la vez"
     if n_ambos > esperado * 1.15:
-        return (f"{base}, más de los {esperado} que saldrían si un eje no tuviera que ver con el otro: "
+        return (f"{base}, más de los {miles(esperado)} que saldrían si un eje no tuviera que ver con el otro: "
                 f"hacer una cosa suele ir con la otra.")
     if n_ambos < esperado * 0.85:
-        return (f"Solo {base}, menos de los {esperado} que saldrían si un eje no tuviera que ver con el "
+        return (f"Solo {base}, menos de los {miles(esperado)} que saldrían si un eje no tuviera que ver con el "
                 f"otro: hacer las dos cosas es raro.")
-    return f"{base}, más o menos los {esperado} que saldrían si un eje no tuviera que ver con el otro."
+    return f"{base}, más o menos los {miles(esperado)} que saldrían si un eje no tuviera que ver con el otro."
 
 
 def _cuanto(r):
@@ -1035,7 +1035,7 @@ def dos_fases_por_que(df):
         f"e intercepciones, que \"Perfil defensivo\" cruza. Acá la pregunta no es "
         f"qué tipo de aporte hace en cada área sino **en cuál de las dos pesa**, y "
         f"para eso cada mitad tiene que ser un solo número.\n\n"
-        f"Sobre las {len(df)} observaciones los dos ejes correlacionan {_fmt(r)}: "
+        f"Sobre las {miles(len(df))} observaciones los dos ejes correlacionan {_fmt(r)}: "
         f"negativo, o sea que hay un compromiso real —producir más arriba va con "
         f"recuperar menos atrás— pero flojo, apenas un {r ** 2 * 100:.0f}% de "
         f"variación compartida, que es lo que deja sitio para los que se salen de "
@@ -1101,7 +1101,8 @@ NOTABLE_LADO, NOTABLE_DIST, NOTABLE_CONV, NOTABLE_CHICA = 1.5, 3.0, 1.5, 6.0
 
 
 def miles(n):
-    return f"{int(n):,}".replace(",", ".")
+    """Miles con coma ("230,323"), como en México: el punto queda para los decimales."""
+    return f"{int(n):,}"
 
 
 def tiros_que_mirar():
