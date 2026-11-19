@@ -89,6 +89,11 @@ MIN_MINUTES_FRACCION = 0.4
 MIN_MINUTES_PISO = 90
 MIN_MINUTES_POR_TEMPORADA = {}  # {temporada: corte} — lo llena `load_data()`
 
+# Las vistas "por 90'" (xG por 90 vs. goles por 90, etc.) piden más: con 500 minutos una tasa por 90 se dispara con un solo
+# gol. Mismo criterio que arriba, con tope 900 en las temporadas cerradas; la que va en curso conserva su corte relativo.
+MIN_MINUTES_90 = 900
+MIN_MINUTES_90_POR_TEMPORADA = {}  # {temporada: corte} — lo llena `load_data()`
+
 # Notas de los filtros (la (i) junto al control).
 AYUDAS = {
     # Sub-21: `sub21` la calcula `consolidate_data.py` con el año de nacimiento que aporta fbref
@@ -118,10 +123,15 @@ def load_data():
     df = aplicar_a_jugadores(df)       # nombres como se dicen: «Kylian Mbappé», «Atlético Madrid»
     df["liga"] = pd.Categorical(df["liga"], categories=LEAGUE_ORDER, ordered=True)
 
-    global MIN_MINUTES_POR_TEMPORADA
+    global MIN_MINUTES_POR_TEMPORADA, MIN_MINUTES_90_POR_TEMPORADA
     MIN_MINUTES_POR_TEMPORADA = {
         temporada: max(MIN_MINUTES_PISO,
                         min(MIN_MINUTES, round(MIN_MINUTES_FRACCION * maximo)))
+        for temporada, maximo in df.groupby("temporada")["min"].max().items()
+    }
+    MIN_MINUTES_90_POR_TEMPORADA = {
+        temporada: max(MIN_MINUTES_PISO,
+                        min(MIN_MINUTES_90, round(MIN_MINUTES_FRACCION * maximo)))
         for temporada, maximo in df.groupby("temporada")["min"].max().items()
     }
     umbral = df["temporada"].map(MIN_MINUTES_POR_TEMPORADA)
@@ -225,13 +235,23 @@ def _pagina(slug, titulo, descripcion, config, kind="scatter"):
         body_html=react_views.montar_html("scatter", slug, config), kind=kind)
 
 
+def con_minimo_por90(df):
+    """Los jugador-temporada que pasan el corte de las vistas "por 90'" (`MIN_MINUTES_90_POR_TEMPORADA`)."""
+    return df[df["min"] >= df["temporada"].map(MIN_MINUTES_90_POR_TEMPORADA)].reset_index(drop=True)
+
+
 def _scatter(slug, titulo, descripcion, *, x, y, referencia, subtitulo, textos, insight, poblacion,
-             fuente=FUENTE_UNDERSTAT, extra_requiere=(), color_por=None):
+             fuente=FUENTE_UNDERSTAT, extra_requiere=(), color_por=None, minimo_por90=False,
+             posiciones_ini=None):
     """Una vista de dispersión con un par de variables fijo.
 
     `poblacion` es el DataFrame sobre el que se calculan los textos fijos ("por qué estas variables");
     lo que se ve en pantalla se restringe a las filas con dato en `requiere`, que es la misma
-    población."""
+    población. `minimo_por90`: la vista usa el corte de minutos de las tasas por 90' (en el navegador
+    lo aplica `ScatterVista`; aquí se recorta la población de los textos). `posiciones_ini`: las posiciones
+    marcadas al abrir (la lista vacía de siempre = todas menos porteros)."""
+    if minimo_por90:
+        poblacion = con_minimo_por90(poblacion)
     que_mirar, por_que = textos
     cfg = {
         "tabla": "jugadores", "entidad": "jugadores",
@@ -244,6 +264,10 @@ def _scatter(slug, titulo, descripcion, *, x, y, referencia, subtitulo, textos, 
         "insight": insight, "fuente": fuente,
         "colorPor": color_por or ["liga"],
     }
+    if minimo_por90:
+        cfg["minimoPor90"] = True
+    if posiciones_ini:
+        cfg["posicionesIni"] = list(posiciones_ini)
     return _pagina(slug, titulo, descripcion, cfg)
 
 
@@ -448,6 +472,7 @@ def _registrar_tabla(df, seasons):
             # usa el control de posición (al elegirla) y la tabla.
             "coloresPos": {z[0]: z[2] for z in PITCH_ZONAS if z[0] in posiciones},
             "minimos": {s: int(MIN_MINUTES_POR_TEMPORADA[s]) for s in seasons},
+            "minimos90": {s: int(MIN_MINUTES_90_POR_TEMPORADA[s]) for s in seasons},
             "ayudas": AYUDAS,
             "enCurso": temporadas_en_curso(),
         })

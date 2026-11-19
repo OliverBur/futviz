@@ -107,7 +107,11 @@ function Vista({ cfg, T, modo, tk }) {
     const ligas = P.getAll("ligas").map((n) => T.ligas.indexOf(n)).filter((i) => i >= 0);
     return new Set(ligas.length ? ligas : T.ligas.map((_, i) => i));
   });
-  const [posiciones, setPosiciones] = useState(() => P.getAll("pos").filter((p) => (T.posiciones || []).includes(p)));  // vacío = todas
+  // Las posiciones marcadas al abrir: las de la URL; si no hay `pos`, las de la vista (`posicionesIni`, p. ej. Medio y
+  // Delantero en "Rematar vs. crear"). `pos=todas` es "ninguna marcada" cuando la vista abre con alguna.
+  const posIni = useMemo(() => (cfg.posicionesIni || []).filter((p) => (T.posiciones || []).includes(p)), [cfg, T]);
+  const [posiciones, setPosiciones] = useState(() => (P.has("pos")
+    ? P.getAll("pos").filter((p) => (T.posiciones || []).includes(p)) : posIni));  // vacío = todas menos porteros
   const [nivel, setNivel] = useState(() => entre(P.get("nivel"), T.niveles || [], "todos"));
   const [sub21, setSub21] = useState(() => P.get("sub21") === "1");
   const [club, setClub] = useState(() => (T.f.e ? (T.equipos || []).indexOf(P.get("club")) : -1));   // -1: todos los clubes
@@ -134,10 +138,14 @@ function Vista({ cfg, T, modo, tk }) {
   const claveReq = requiere.join("|");
   const pobl = useMemo(() => {
     const cols = requiere.map((c) => T.c[c]);
+    // Las vistas "por 90'" piden más minutos (`minimoPor90`, ver `players.MIN_MINUTES_90`): con 500 una tasa se dispara
+    // con un solo gol, y eso también estiraría los ejes.
+    const minimos = cfg.minimoPor90 && T.minimos90 ? T.temporadas.map((t) => T.minimos90[t]) : null;
     const out = [];
     for (let r = 0; r < T.n; r++) {
       let ok = true;
       for (const c of cols) if (c[r] == null) { ok = false; break; }
+      if (ok && minimos && T.c.min[r] < minimos[T.f.t[r]]) ok = false;
       if (ok) out.push(r);
     }
     return out;
@@ -372,7 +380,8 @@ function Vista({ cfg, T, modo, tk }) {
   usePublicarParams(cfg.id, {
     t: tLabel,
     ligas: todasLigas ? [] : [...ligasOn].sort((a, b) => a - b).map((i) => T.ligas[i]),
-    pos: posiciones,
+    pos: posiciones.length === posIni.length && posiciones.every((p) => posIni.includes(p)) ? null
+      : posiciones.length ? posiciones : ["todas"],
     nivel: nivel === "todos" ? null : nivel,
     sub21: sub21 ? "1" : null,
     club: club >= 0 ? T.equipos[club] : null,
@@ -599,10 +608,10 @@ function Vista({ cfg, T, modo, tk }) {
   );
 
   // Cuántos filtros "de verdad" hay puestos (temporada y color no cuentan: son vistas, no recortes).
-  const nFiltros = (ligasOn.size < T.ligas.length ? 1 : 0) + (posiciones.length ? 1 : 0)
+  const nFiltros = (ligasOn.size < T.ligas.length ? 1 : 0) + (posiciones.length && !(posiciones.length === posIni.length && posiciones.every((p) => posIni.includes(p))) ? 1 : 0)
     + (nivel !== "todos" ? 1 : 0) + (sub21 ? 1 : 0) + (club >= 0 ? 1 : 0);
 
-  const minimo = T.minimos ? T.minimos[tLabel] : null;
+  const minimo = (cfg.minimoPor90 && T.minimos90 ? T.minimos90 : T.minimos || {})[tLabel] ?? null;
   // la temporada que va en curso se marca: con pocas jornadas los extremos son casi todo muestra
   const jornadas = T.enCurso ? T.enCurso[tLabel] : null;
   const tTexto = jornadas ? `${tLabel} (en curso, ${jornadas} jornadas)` : tLabel;
