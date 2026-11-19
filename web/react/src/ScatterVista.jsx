@@ -109,6 +109,7 @@ function Vista({ cfg, T, modo, tk }) {
   const [posiciones, setPosiciones] = useState(() => P.getAll("pos").filter((p) => (T.posiciones || []).includes(p)));  // vacío = todas
   const [nivel, setNivel] = useState(() => entre(P.get("nivel"), T.niveles || [], "todos"));
   const [sub21, setSub21] = useState(() => P.get("sub21") === "1");
+  const [club, setClub] = useState(() => (T.f.e ? (T.equipos || []).indexOf(P.get("club")) : -1));   // -1: todos los clubes
   const [colorPor, setColorPor] = useState(() => entre(P.get("color"), ["rendimiento"], "liga"));
   // Fijados: índices de JUGADOR (o equipo), no de fila, para que sobrevivan al cambio de temporada.
   // En la URL van por nombre: el índice cambia cuando se actualizan los datos.
@@ -163,6 +164,13 @@ function Vista({ cfg, T, modo, tk }) {
   const tEf = temporadasOk.includes(temporada) ? temporada : temporadasOk[temporadasOk.length - 1];
   const tLabel = T.temporadas[tEf];
 
+  const clubesDisp = useMemo(() => {
+    if (!T.f.e || !esJugadores) return [];
+    const vs = new Set();
+    for (const r of pobl) if (T.f.t[r] === tEf) vs.add(T.f.e[r]);
+    return [...vs].sort((a, b) => T.equipos[a].localeCompare(T.equipos[b], "es"));
+  }, [pobl, T, tEf, esJugadores]);
+
   // --- datos derivados ---------------------------------------------------------------------------
   const rx = useMemo(() => rangoDe(exp ? xs : pobl.map((r) => xs[r])), [exp, xs, pobl]);
   const ry = useMemo(() => rangoDe(exp ? ys : pobl.map((r) => ys[r])), [exp, ys, pobl]);
@@ -180,10 +188,11 @@ function Vista({ cfg, T, modo, tk }) {
       if (posIdx.length ? !posIdx.includes(T.f.p[r]) : (iPortero >= 0 && T.f.p[r] === iPortero)) continue;
       if (nivelIdx >= 0 && T.f.v[r] !== nivelIdx) continue;
       if (sub21 && !T.f.u[r]) continue;
+      if (club >= 0 && T.f.e[r] !== club) continue;
       out.push(r);
     }
     return out;
-  }, [pobl, T, tEf, ligasOn, posiciones, nivel, sub21]);
+  }, [pobl, T, tEf, ligasOn, posiciones, nivel, sub21, club]);
 
   const puntos = useMemo(() => visibles.map((r) => ({ r, x: xs[r], y: ys[r] })), [visibles, xs, ys]);
 
@@ -376,6 +385,7 @@ function Vista({ cfg, T, modo, tk }) {
     pos: posiciones,
     nivel: nivel === "todos" ? null : nivel,
     sub21: sub21 ? "1" : null,
+    club: club >= 0 ? T.equipos[club] : null,
     color: colorPor === "liga" ? null : colorPor,
     fijar: fijados.map((j) => T.nombres[j]),
     top: metrica === "y" ? null : metrica,
@@ -384,7 +394,7 @@ function Vista({ cfg, T, modo, tk }) {
   });
   const sinPorteros = !posiciones.length && posDisp.includes("Portero");
   const estado = [tLabel, todasLigas ? "todas las ligas" : ambito,
-    ...(posiciones.length ? posiciones : sinPorteros ? ["sin porteros"] : []), nivel !== "todos" ? nivel.replace("Clubes ", "clubes ") : null, sub21 ? "sub-21" : null]
+    ...(posiciones.length ? posiciones : sinPorteros ? ["sin porteros"] : []), club >= 0 ? T.equipos[club] : null, nivel !== "todos" ? nivel.replace("Clubes ", "clubes ") : null, sub21 ? "sub-21" : null]
     .filter(Boolean).join(" · ");
 
   const info = useCallback((r) => ({
@@ -460,8 +470,23 @@ function Vista({ cfg, T, modo, tk }) {
   );
   const hayNivel = filtros.nivel && nivelesDisp.length > 0;
   const haySub = filtros.sub21 && haySub21;
-  const hayMas = hayNivel || haySub;
-  const nMas = (nivel !== "todos" ? 1 : 0) + (sub21 ? 1 : 0);
+  const hayClub = clubesDisp.length > 0;
+  const hayMas = hayNivel || haySub || hayClub;
+  const nMas = (nivel !== "todos" ? 1 : 0) + (sub21 ? 1 : 0) + (club >= 0 ? 1 : 0);
+  const bloqueClub = !hayClub ? null : (
+    <Box>
+      <Rotulo>Club</Rotulo>
+      <Autocomplete size="small" options={clubesDisp} value={club >= 0 && clubesDisp.includes(club) ? club : null}
+        onChange={(_e, v) => setClub(v == null ? -1 : v)}
+        getOptionLabel={(i) => T.equipos[i]} isOptionEqualToValue={(a, b) => a === b}
+        filterOptions={(opciones, { inputValue }) => {
+          const q = sinAcentos(inputValue.trim());
+          return opciones.filter((i) => sinAcentos(T.equipos[i]).includes(q));
+        }}
+        noOptionsText="Ningún club con ese nombre"
+        renderInput={(p) => <TextField {...p} placeholder="Todos los clubes" />} />
+    </Box>
+  );
   const bloqueNivel = !hayNivel ? null : (
     <Box>
       <Rotulo ayuda={ayudas.nivel}>Nivel del club</Rotulo>
@@ -560,7 +585,7 @@ function Vista({ cfg, T, modo, tk }) {
         </Typography>
       </Box>
 
-      {hayMas && (movil ? <>{bloqueNivel}{bloqueSub21}</> : (
+      {hayMas && (movil ? <>{bloqueClub}{bloqueNivel}{bloqueSub21}</> : (
         <Box>
           <Button size="small" onClick={() => setMasAbierto((a) => !a)} aria-expanded={masAbierto} aria-controls="mas-filtros"
             startIcon={<ExpandMore sx={{ transform: masAbierto ? "rotate(180deg)" : "none", transition: "transform .15s" }} />}
@@ -569,7 +594,7 @@ function Vista({ cfg, T, modo, tk }) {
           </Button>
           <Collapse in={masAbierto}>
             <Box id="mas-filtros" sx={{ display: "flex", flexDirection: "column", gap: 2.25, pt: 1.5 }}>
-              {bloqueNivel}{bloqueSub21}
+              {bloqueClub}{bloqueNivel}{bloqueSub21}
             </Box>
           </Collapse>
         </Box>
@@ -586,7 +611,7 @@ function Vista({ cfg, T, modo, tk }) {
 
   // Cuántos filtros "de verdad" hay puestos (temporada y color no cuentan: son vistas, no recortes).
   const nFiltros = (ligasOn.size < T.ligas.length ? 1 : 0) + (posiciones.length ? 1 : 0)
-    + (nivel !== "todos" ? 1 : 0) + (sub21 ? 1 : 0);
+    + (nivel !== "todos" ? 1 : 0) + (sub21 ? 1 : 0) + (club >= 0 ? 1 : 0);
 
   const minimo = T.minimos ? T.minimos[tLabel] : null;
   // la temporada que va en curso se marca: con pocas jornadas los extremos son casi todo muestra
