@@ -135,8 +135,16 @@
   /* Ícono grande + título como un solo bloque centrado, del alto de los dos renglones del título. */
   .titular { display: flex; align-items: center; justify-content: center; gap: clamp(20px, 2.5vw, 32px); margin: 0 auto 36px; }
   .titular img { height: 2.1em; width: auto; font-size: clamp(36px, 7vw, 64px); flex: none; }
-  .leer { display: inline-flex; align-items: center; min-height: 44px; margin-top: 16px; font-size: 15px;
-    font-weight: 600; color: var(--color-interactive); text-decoration: none; }
+  /* Las dos secciones del sitio, con una frase de para qué sirve cada una (antes: "¿Prefieres leer?"). */
+  .puertas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 32px; max-width: 760px;
+    margin: 28px auto 0; text-align: left; }
+  .puerta { display: block; min-height: 44px; padding: 14px 0 0; border-top: 1px solid var(--color-border);
+    color: inherit; text-decoration: none; }
+  .puerta-nombre { display: block; font-size: 15px; font-weight: 700; color: var(--color-interactive); }
+  .puerta-desc { display: block; margin-top: 4px; font-size: 14.5px; line-height: 1.5; color: var(--color-text-body); }
+  .puerta:hover .puerta-nombre { text-decoration: underline; text-underline-offset: 4px; }
+  .intro-seccion { margin: -16px 0 28px; max-width: 62ch; font-size: 16px; line-height: 1.55; color: var(--color-text-body); }
+  @media (max-width: 640px) { .puertas { grid-template-columns: minmax(0, 1fr); gap: 14px; margin-top: 24px; } }
 
   /* Buscador: el campo es un combobox con la lista desplegada debajo (en pantallas chicas, a pantalla completa). */
   .buscador { position: relative; max-width: 760px; margin: 0 auto; text-align: left; }
@@ -190,7 +198,7 @@
     color: var(--color-primary); max-width: 20ch; text-wrap: balance; }
   .ir { display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; font-weight: 600;
     color: var(--color-interactive); text-decoration: none; }
-  .ir:hover, .leer:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .ir:hover { text-decoration: underline; text-underline-offset: 4px; }
   .todas { display: inline-flex; align-items: center; min-height: 44px; margin-top: 16px; font-weight: 600;
     color: var(--color-text-body); text-underline-offset: 4px; }
 
@@ -284,7 +292,7 @@
       <label class="sr-only" for="q">Busca un jugador, un equipo o una gráfica</label>
       <div class="campo">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        <input id="q" name="q" type="search" placeholder="Busca un jugador, un equipo o una gráfica…"
+        <input id="q" name="q" type="search" placeholder="Prueba con Raphinha, un equipo o una gráfica…" data-ejemplo="Raphinha"
           autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search"
           role="combobox" aria-expanded="false" aria-controls="sugerencias" aria-autocomplete="list">
         <button type="button" class="cerrar" id="cerrar">Cerrar</button>
@@ -295,13 +303,23 @@
       </div>
       <p class="sr-only" id="anuncio" aria-live="polite"></p>
     </form>
-    <a class="leer" href="machine-learning.html#modelo-xg">¿Prefieres leer? Empieza por Construyendo un modelo de xG →</a>
+    <div class="puertas">
+      <a class="puerta" href="analisis-exploratorio.html">
+        <span class="puerta-nombre">Análisis exploratorio →</span>
+        <span class="puerta-desc">16 gráficas para comparar jugadores y equipos de las 5 grandes ligas.</span>
+      </a>
+      <a class="puerta" href="machine-learning.html">
+        <span class="puerta-nombre">Machine Learning →</span>
+        <span class="puerta-desc">Artículos donde construyo modelos con estos datos. Empieza por «Construyendo un modelo de xG».</span>
+      </a>
+    </div>
   </section>
 
   <section class="seccion" aria-labelledby="preguntas">
     <div class="contenedor">
       <h2 id="preguntas">Preguntas para empezar</h2>
-      <ul class="preguntas"><li><span class="etiqueta">Jugadores</span><h3>¿Quién marca más de lo que debería?</h3><a class="ir" href="analisis-exploratorio.html#goles-vs-xg">Goles vs. xG →</a></li><li><span class="etiqueta">Jugadores</span><h3>¿Desde dónde se tira en las 5 ligas?</h3><a class="ir" href="analisis-exploratorio.html#mapa-tiros">Mapa de tiros →</a></li><li><span class="etiqueta">Jugadores</span><h3>¿Quién genera más ocasiones para sus compañeros?</h3><a class="ir" href="analisis-exploratorio.html#pases-clave-vs-xa">Pases clave vs. xA →</a></li><li><span class="etiqueta">Equipos</span><h3>¿Quién defiende mejor y cómo?</h3><a class="ir" href="analisis-exploratorio.html#defensa">Defensa →</a></li><li><span class="etiqueta">Equipos</span><h3>¿Qué equipo aprovecha mejor sus ocasiones?</h3><a class="ir" href="analisis-exploratorio.html#eficiencia-definicion">Eficiencia de definición →</a></li><li><span class="etiqueta">Equipos</span><h3>¿Qué tan distinto es el nivel entre ligas?</h3><a class="ir" href="analisis-exploratorio.html#nivel-por-liga-equipos">Nivel por liga →</a></li></ul>
+      <p class="intro-seccion">Cada pregunta abre una de las 16 gráficas del análisis exploratorio. Toca un punto para ver quién es y usa los filtros para afinar.</p>
+      <ul class="preguntas"><li><span class="etiqueta">Jugadores</span><h3>¿Quién marca más de lo que debería?</h3><a class="ir" href="analisis-exploratorio.html#goles-vs-xg">Goles vs. xG →</a></li><li><span class="etiqueta">Jugadores</span><h3>¿Desde dónde se tira en las 5 ligas?</h3><a class="ir" href="analisis-exploratorio.html#mapa-tiros">Mapa de tiros →</a></li><li><span class="etiqueta">Jugadores</span><h3>¿Quién genera más ocasiones para sus compañeros?</h3><a class="ir" href="analisis-exploratorio.html#pases-clave-vs-xa">Pases clave vs. xA →</a></li><li><span class="etiqueta">Equipos</span><h3>¿Quién defiende mejor y cómo?</h3><a class="ir" href="analisis-exploratorio.html#defensa">Tiros a puerta vs. goles recibidos →</a></li><li><span class="etiqueta">Equipos</span><h3>¿Qué equipo aprovecha mejor sus ocasiones?</h3><a class="ir" href="analisis-exploratorio.html#eficiencia-definicion">Eficiencia de definición →</a></li><li><span class="etiqueta">Equipos</span><h3>¿Qué tan parejos son los equipos de cada liga?</h3><a class="ir" href="analisis-exploratorio.html#nivel-por-liga-equipos">Distribución por liga →</a></li></ul>
       <a class="todas" href="analisis-exploratorio.html">Ver las 16 gráficas</a>
     </div>
   </section>
