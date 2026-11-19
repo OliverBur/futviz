@@ -40,12 +40,14 @@ VARIABLES = [
     ("a", "Asistencias", "Producción", 0),
     ("np_goals", "Goles sin penales", "Producción", 0),
     ("g90", "Goles por 90'", "Producción", 2),
+    ("npg90", "Goles sin penales por 90'", "Producción", 2),
     ("a90", "Asistencias por 90'", "Producción", 2),
 
     ("xG", "xG", "Esperado", 1),
     ("xA", "xA", "Esperado", 1),
     ("np_xg", "xG sin penales", "Esperado", 1),
     ("xG90", "xG por 90'", "Esperado", 2),
+    ("npxg90", "xG sin penales por 90' (npxG/90)", "Esperado", 2),
     ("xA90", "xA por 90'", "Esperado", 2),
     ("xga90", "Producción esperada por 90' (xG + xA)", "Esperado", 2),
     ("xg_chain", "xG de las jugadas en que participó", "Esperado", 1),
@@ -131,6 +133,8 @@ def load_data():
     noventas = df["min"] / 90
     df = pd.concat([df, pd.DataFrame({
         "g90": df["goals"] / noventas,
+        "npg90": df["np_goals"] / noventas,
+        "npxg90": df["np_xg"] / noventas,
         "a90": df["a"] / noventas,
         "sh90": df["shots"] / noventas,
         "kp90": df["key_passes"] / noventas,
@@ -419,7 +423,7 @@ def _ordenar_pestanas(paginas):
 DERIVADAS = {
     "xga90": ["suma", "xG90", "xA90"],
     "recoveries90": ["suma", "tkl_w90", "interceptions90"],
-    "g90": ["por90", "goals"], "a90": ["por90", "a"], "sh90": ["por90", "shots"],
+    "g90": ["por90", "goals"], "npg90": ["por90", "np_goals"], "npxg90": ["por90", "np_xg"], "a90": ["por90", "a"], "sh90": ["por90", "shots"],
     "kp90": ["por90", "key_passes"], "xgchain90": ["por90", "xg_chain"],
     "xgbuild90": ["por90", "xg_buildup"],
 }
