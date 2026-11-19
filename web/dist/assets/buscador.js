@@ -28,7 +28,12 @@
   // En un teléfono el texto completo no cabe en el campo: uno más corto que diga lo mismo.
   if (movil.matches) input.placeholder = "Prueba con " + (input.getAttribute("data-ejemplo") || "un jugador") + "…";
 
-  function norm(s) { return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase(); }
+  // Sin acentos y con las letras que no se descomponen (ø, ł, ß...) en su equivalente simple: "odegaard" encuentra a
+  // "Ødegaard". Es la misma tabla que `consolidate_data.TRANSLITERA`.
+  var TRANS = { "ø": "o", "ł": "l", "đ": "d", "ð": "d", "ı": "i", "ħ": "h", "ŧ": "t", "þ": "th", "ß": "ss", "æ": "ae", "œ": "oe" };
+  function norm(s) {
+    return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[øłđðıħŧþßæœ]/g, function (c) { return TRANS[c]; });
+  }
 
   function url(slug, temporada, nombre) {
     var q = temporada ? "?" + new URLSearchParams({ t: temporada, fijar: nombre }).toString() : "";
