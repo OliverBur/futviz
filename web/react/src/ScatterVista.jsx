@@ -96,6 +96,7 @@ function Vista({ cfg, T, modo, tk }) {
   const diag = !!ref && ref.tipo === "diagonal";
   // "goles − xG" en medio de una frase ("la diagonal (goles − xG)") y "Goles − xG" como rótulo.
   const difEt = diag ? ref.dif[0].toUpperCase() + ref.dif.slice(1) : null;
+  const decDif = diag && ref.decDif != null ? ref.decDif : 1;   // decimales de la diferencia (por partido: 2)
 
   // --- estado de los filtros ------------------------------------------------------------------
   const [temporada, setTemporada] = useState(() => {                // null: se resuelve abajo con las que tienen datos
@@ -293,22 +294,22 @@ function Vista({ cfg, T, modo, tk }) {
   // Lo que se lee de cada fila, en la lista y en la etiqueta: el valor de la métrica elegida.
   const valX = (r) => xs[r].toFixed(decL(X)), valY = (r) => ys[r].toFixed(decL(Y));
   const textoValor = useCallback((r) => {
-    if (metrica === "dif") return signo(ys[r] - xs[r], 1);
+    if (metrica === "dif") return signo(ys[r] - xs[r], decDif);
     if (metrica === "dist") return `${valX(r)} · ${valY(r)}`;
     return metrica === "x" ? valX(r) : valY(r);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [metrica, xs, ys, X.dec, Y.dec]);
+  }, [metrica, xs, ys, X.dec, Y.dec, decDif]);
   const nombre = useCallback((r) => T.nombre(r), [T]);
   const rotulos = useMemo(() => {
     // Con jugadores fijados el resto se atenúa: rotular a los demás sería ponerle nombre a puntos casi
     // invisibles. Se rotula solo a los fijados (con su diferencia, o sus dos valores si no hay diagonal).
     if (filasFijadas.length) {
       return filasFijadas.map((r) => ({ r, x: xs[r], y: ys[r], fijado: true,
-        texto: `${nombre(r)} ${diag ? signo(ys[r] - xs[r], 1) : `${valX(r)} · ${valY(r)}`}` }));
+        texto: `${nombre(r)} ${diag ? signo(ys[r] - xs[r], decDif) : `${valX(r)} · ${valY(r)}`}` }));
     }
     return ranking.map((r, i) => ({ r, x: xs[r], y: ys[r], rango: i + 1, texto: `${nombre(r)} ${textoValor(r)}` }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filasFijadas, ranking, xs, ys, nombre, textoValor, diag, X.dec, Y.dec]);
+  }, [filasFijadas, ranking, xs, ys, nombre, textoValor, diag, X.dec, Y.dec, decDif]);
 
   // --- interacción ------------------------------------------------------------------
   const itemDe = (r) => (r != null && posEnSerie.has(r) ? { type: "scatter", ...posEnSerie.get(r) } : null);
@@ -404,9 +405,9 @@ function Vista({ cfg, T, modo, tk }) {
     filas: [
       [exp ? X.label : X.corto, xs[r].toFixed(X.dec)],
       [exp ? Y.label : Y.corto, ys[r].toFixed(Y.dec)],
-      ...(diag ? [[difEt, signo(ys[r] - xs[r], 1)]] : []),
+      ...(diag ? [[difEt, signo(ys[r] - xs[r], decDif)]] : []),
     ],
-  }), [T, esJugadores, colores, exp, X, Y, xs, ys, diag, difEt]);
+  }), [T, esJugadores, colores, exp, X, Y, xs, ys, diag, difEt, decDif]);
   const ctx = useMemo(() => ({ info }), [info]);
 
   // --- tabla -------------------------------------------------------------------------------------
@@ -689,7 +690,7 @@ function Vista({ cfg, T, modo, tk }) {
           <Grafica series={series} view={view} viewRef={viewRef} base={base} onView={onView}
             rotulos={rotulos} destacado={destacado}
             onDestacar={onDestacar} onClicPunto={onClicPunto} tk={tk}
-            pos={div.pos} neg={div.neg} hayZoom={hayZoom} pista={pista} onPista={onPista}
+            pos={ref && ref.invertir ? div.neg : div.pos} neg={ref && ref.invertir ? div.pos : div.neg} hayZoom={hayZoom} pista={pista} onPista={onPista}
             // En móvil, el título corto del eje ("Precisión") en vez de la frase entera, que no cabe.
             ejeX={movil && !exp ? X.corto : X.label} ejeY={movil && !exp ? Y.corto : Y.label}
             claveDatos={claveDatos} pines={pines} idsPorSerie={idsPorSerie}
@@ -756,7 +757,7 @@ function Vista({ cfg, T, modo, tk }) {
               <Rotulo>{exp ? "Qué no dice el r²" : "Por qué estas variables"}</Rotulo>
             </AccordionSummary>
             <AccordionDetails sx={{ px: 0 }}>
-              <Parrafos texto={exp ? OJO_R2 : cfg.porQue} sx={{ fontSize: 13.5 }} />
+              <Parrafos texto={exp ? (exp.nota ? OJO_R2 + "\n\n" + exp.nota : OJO_R2) : cfg.porQue} sx={{ fontSize: 13.5 }} />
             </AccordionDetails>
           </Accordion>
         )}

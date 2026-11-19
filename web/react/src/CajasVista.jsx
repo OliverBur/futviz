@@ -128,6 +128,14 @@ function Vista({ cfg, T, modo, tk }) {
   const info = useMemo(() => Object.fromEntries(cfg.variables.map((v) => [v.col, v])), [cfg]);
   const v = info[colVar];
   const col = T.c[colVar];
+  // Las temporadas en las que la variable tiene dato (el ELO de la temporada en curso todavía no existe). Si la elegida
+  // no está, se muestra la última que sí.
+  const temporadasOk = useMemo(() => {
+    const ts = new Set();
+    for (let r = 0; r < T.n; r++) if (col[r] != null) ts.add(T.f.t[r]);
+    return [...ts].sort((a, b) => a - b);
+  }, [T, col]);
+  const tEf = temporadasOk.includes(temporada) ? temporada : temporadasOk[temporadasOk.length - 1];
   const colores = useMemo(() => T.ligas.map((l) => T.colores[modo === "dark" ? "oscuro" : "claro"][l]), [T, modo]);
 
   // El rango de cada variable: de TODAS las temporadas y niveles, con margen (más arriba que abajo: ahí
@@ -143,12 +151,12 @@ function Vista({ cfg, T, modo, tk }) {
   const filas = useMemo(() => {
     const out = [];
     for (let r = 0; r < T.n; r++) {
-      if (T.f.t[r] !== temporada || col[r] == null) continue;
+      if (T.f.t[r] !== tEf || col[r] == null) continue;
       if (nivelIdx >= 0 && T.f.v[r] !== nivelIdx) continue;
       out.push(r);
     }
     return out;
-  }, [T, col, temporada, nivelIdx]);
+  }, [T, col, tEf, nivelIdx]);
 
   const porLiga = useMemo(() => T.ligas.map((_, li) => filas.filter((r) => T.f.l[r] === li)), [T, filas]);
   const cajas = useMemo(() => porLiga.map((rs) => {
@@ -161,12 +169,12 @@ function Vista({ cfg, T, modo, tk }) {
   })), [T, colores, porLiga, col]);
 
   const ctx = useMemo(() => ({
-    info: (r) => ({ nombre: T.nombre(r), sub: `${T.liga(r)} · ${tTemp(T, temporada)}`, color: colores[T.f.l[r]],
+    info: (r) => ({ nombre: T.nombre(r), sub: `${T.liga(r)} · ${tTemp(T, tEf)}`, color: colores[T.f.l[r]],
       etiqueta: v.label, valor: col[r].toFixed(v.dec) }),
-  }), [T, colores, v, col, temporada]);
+  }), [T, colores, v, col, tEf]);
 
   const alto = Math.max(380, Math.min(560, Math.round(ancho * 0.58)));
-  const tLabel = T.temporadas[temporada];
+  const tLabel = T.temporadas[tEf];
   // En pantalla angosta los cinco nombres no caben en una línea: se parten ("Premier / League / 20").
   const estrecho = ancho > 0 && ancho < 640;
   const etiquetaLiga = (x) => {
@@ -174,7 +182,7 @@ function Vista({ cfg, T, modo, tk }) {
     if (Math.abs(x - Math.round(x)) > 1e-6 || !T.ligas[i]) return "";
     return estrecho ? `${T.ligas[i].replace(" ", "\n")}\n${porLiga[i].length}` : `${T.ligas[i]} · ${porLiga[i].length}`;
   };
-  const claveDatos = `${colVar}|${temporada}|${nivel}`;
+  const claveDatos = `${colVar}|${tEf}|${nivel}`;
 
   return (
     <FilaCtx.Provider value={ctx}>
@@ -235,10 +243,10 @@ function Vista({ cfg, T, modo, tk }) {
           </Box>
           <Box>
             <Rotulo>Temporada</Rotulo>
-            <ToggleButtonGroup exclusive size="small" fullWidth value={temporada} aria-label="Temporada"
+            <ToggleButtonGroup exclusive size="small" fullWidth value={tEf} aria-label="Temporada"
               onChange={(_e, x) => x != null && setTemporada(x)}>
-              {T.temporadas.map((t, i) => (
-                <ToggleButton key={t} value={i} aria-label={t} sx={{ px: 0.5, fontSize: "11.5px !important" }}>{t.slice(2)}</ToggleButton>
+              {temporadasOk.map((i) => (
+                <ToggleButton key={i} value={i} aria-label={T.temporadas[i]} sx={{ px: 0.5, fontSize: "11.5px !important" }}>{T.temporadas[i].slice(2)}</ToggleButton>
               ))}
             </ToggleButtonGroup>
           </Box>

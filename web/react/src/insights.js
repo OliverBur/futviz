@@ -173,66 +173,75 @@ export function centros(T, filas, ambito) {
 }
 
 // ---- Equipos ---------------------------------------------------------------------------
+// xG y goles de Understat por partido y sin penales (`web/charts/xg_equipos.py`). Mismo texto que las
+// funciones del mismo nombre de `code/insights.py`.
 
-const X_DEF = "sh_Standard_SoT%", Y_DEF = "sh_Standard_G/SoT";
-const POSESION = "ov_Poss", ASIST_90 = "ov_Per 90 Minutes_Ast";
-const SOTA_90 = "p90_SoTA", GA_90 = "gk_Performance_GA90";
+const XG_FAV = "xg_fav", XG_CON = "xg_con", XG_DIF = "xg_dif";
+const GOL_FAV = "gol_fav", GOL_CON = "gol_con", PPM = "pt_Team Success_PPM";
+
+// Con el signo a la vista en los positivos ("+0.45", "-0.12"), como `_sg` de Python.
+const sg = (v, dec = 2) => (v >= 0 ? "+" : "") + fmt(v, dec);
 
 export function definicion(T, filas, ambito) {
-  const y = col(T, Y_DEF, filas);
-  const mejor = filas[idxmax(y)];
-  const fija = `En ${ambito}, **${quien(T, mejor)}** es el que más gol saca por tiro a puerta (${fmt(T.c[Y_DEF][mejor])} G/SoT) contra una media de ${fmt(media(y))}.`;
+  const gf = col(T, GOL_FAV, filas), xf = col(T, XG_FAV, filas);
+  const top = filas[idxmax(gf)];
+  const fija = `En ${ambito}, **${quien(T, top)}** es el que más goles mete por partido (${fmt(T.c[GOL_FAV][top])}) con ${fmt(T.c[XG_FAV][top])} de xG.`;
   if (filas.length < 4) return { fija, salta: null };
-  // El mayor desajuste entre lo bien que llega y lo bien que define, por percentil dentro del ámbito.
-  const rx = rangoPct(col(T, X_DEF, filas)), ry = rangoPct(y);
-  const brecha = rx.map((v, i) => v - ry[i]);
-  const iAlto = idxmax(brecha), iBajo = idxmin(brecha);
-  let salta;
-  if (Math.abs(brecha[iAlto]) >= Math.abs(brecha[iBajo])) {
-    const e = filas[iAlto];
-    salta = `El desajuste más grande es el de **${quien(T, e)}**: está entre los que más tiros a puerta consiguen (${fmt1(T.c[X_DEF][e])}%) pero de los que menos los aprovechan (${fmt(T.c[Y_DEF][e])} G/SoT).`;
-  } else {
-    const e = filas[iBajo];
-    salta = `El caso opuesto lo tiene **${quien(T, e)}**: llega poco a puerta (${fmt1(T.c[X_DEF][e])}%) y aun así es de los más letales cuando llega (${fmt(T.c[Y_DEF][e])} G/SoT).`;
-  }
-  return { fija, salta };
+  const dif = gf.map((g, i) => g - xf[i]);
+  const arriba = filas[idxmax(dif)], abajo = filas[idxmin(dif)];
+  const mx = Math.max(...dif), mn = Math.min(...dif);
+  const mas = mx > 0
+    ? `El que más superó su xG es **${quien(T, arriba)}** (${sg(mx)} goles por partido)`
+    : `Ninguno superó su xG: el que más cerca quedó es **${quien(T, arriba)}** (${fmt(mx)} goles por partido)`;
+  const menos = mn < 0
+    ? `y el que más se quedó corto, **${quien(T, abajo)}** (${fmt(mn)}).`
+    : `y todos lo superaron: el que menos, **${quien(T, abajo)}** (${sg(mn)}).`;
+  return { fija, salta: `${mas} ${menos} Una diferencia así se repite poco de una temporada a la siguiente (los números están en «Por qué estas variables»).` };
 }
 
 export function creacion(T, filas, ambito) {
-  const pos = filas[idxmax(col(T, POSESION, filas))], ast = filas[idxmax(col(T, ASIST_90, filas))];
-  const fija = `En ${ambito}, **${quien(T, pos)}** es el que más balón tiene (${fmt1(T.c[POSESION][pos])}%) y **${quien(T, ast)}** el que más asistencias da por 90' (${fmt(T.c[ASIST_90][ast])}).`;
+  const crea = filas[idxmax(col(T, XG_FAV, filas))], cede = filas[idxmin(col(T, XG_CON, filas))];
+  const fija = quien(T, crea) === quien(T, cede)
+    ? `En ${ambito}, **${quien(T, crea)}** es el que más ocasiones crea y el que menos concede: ${fmt(T.c[XG_FAV][crea])} de xG a favor y ${fmt(T.c[XG_CON][crea])} en contra por partido.`
+    : `En ${ambito}, **${quien(T, crea)}** es el que más ocasiones crea (${fmt(T.c[XG_FAV][crea])} de xG por partido) y **${quien(T, cede)}** el que menos concede (${fmt(T.c[XG_CON][cede])}).`;
   if (filas.length < 4) return { fija, salta: null };
-  const rp = rangoPct(col(T, POSESION, filas)), ra = rangoPct(col(T, ASIST_90, filas));
-  const brecha = rp.map((v, i) => v - ra[i]);
-  const iAlto = idxmax(brecha), iBajo = idxmin(brecha);
-  let salta;
-  if (Math.abs(brecha[iAlto]) >= Math.abs(brecha[iBajo])) {
-    const e = filas[iAlto];
-    salta = `El caso de posesión que no crea es **${quien(T, e)}**: de los que más balón tienen (${fmt1(T.c[POSESION][e])}%) y de los que menos asistencias dan (${fmt(T.c[ASIST_90][e])} por 90').`;
-  } else {
-    const e = filas[iBajo];
-    salta = `El más directo es **${quien(T, e)}**: tiene poco el balón (${fmt1(T.c[POSESION][e])}%) y aun así da ${fmt(T.c[ASIST_90][e])} asistencias por 90', de lo más alto.`;
-  }
+  const dif = col(T, XG_DIF, filas);
+  const mejor = filas[idxmax(dif)], peor = filas[idxmin(dif)];
+  const salta = `El que más domina las ocasiones es **${quien(T, mejor)}**: crea ${fmt(T.c[XG_FAV][mejor])} y concede ${fmt(T.c[XG_CON][mejor])} por partido (${sg(Math.max(...dif))}). En el otro extremo, **${quien(T, peor)}** crea ${fmt(T.c[XG_FAV][peor])} y concede ${fmt(T.c[XG_CON][peor])} (${sg(Math.min(...dif))}).`;
   return { fija, salta };
 }
 
 export function defensa(T, filas, ambito) {
-  const mg = filas[idxmin(col(T, GA_90, filas))], mt = filas[idxmin(col(T, SOTA_90, filas))];
-  const fija = `En ${ambito}, **${quien(T, mg)}** es el que menos goles encaja (${fmt(T.c[GA_90][mg])} por 90') y **${quien(T, mt)}** el que menos tiros a puerta recibe (${fmt(T.c[SOTA_90][mt])} por 90').`;
+  const mg = filas[idxmin(col(T, GOL_CON, filas))], mx = filas[idxmin(col(T, XG_CON, filas))];
+  const fija = quien(T, mg) === quien(T, mx)
+    ? `En ${ambito}, **${quien(T, mg)}** es el que menos goles recibe (${fmt(T.c[GOL_CON][mg])} por partido) y también el que menos xG concede (${fmt(T.c[XG_CON][mg])}).`
+    : `En ${ambito}, **${quien(T, mg)}** es el que menos goles recibe (${fmt(T.c[GOL_CON][mg])} por partido) y **${quien(T, mx)}** el que menos xG concede (${fmt(T.c[XG_CON][mx])}).`;
   if (filas.length < 4) return { fija, salta: null };
-  const x = col(T, SOTA_90, filas), y = col(T, GA_90, filas);
+  const dif = col(T, GOL_CON, filas).map((g, i) => g - T.c[XG_CON][filas[i]]);
+  const i = idxmax(dif.map(Math.abs));
+  const e = filas[i], delta = dif[i];
+  const sentido = delta > 0 ? "más" : "menos";
+  const salta = `El que más se aleja de la diagonal es **${quien(T, e)}**: concede ${fmt(T.c[XG_CON][e])} de xG por partido y recibe ${fmt(T.c[GOL_CON][e])} goles, ${fmt(Math.abs(delta))} ${sentido} de lo que decían las ocasiones. Ahí cuentan juntos el portero, la defensa y la suerte.`;
+  return { fija, salta };
+}
+
+export function puntos(T, filas, ambito) {
+  const mejor = filas[idxmax(col(T, PPM, filas))];
+  const fija = `En ${ambito}, **${quien(T, mejor)}** es el que más puntos saca por partido (${fmt(T.c[PPM][mejor])}), con ${sg(T.c[XG_DIF][mejor])} de diferencia de xG por partido.`;
+  if (filas.length < 4) return { fija, salta: null };
+  const x = col(T, XG_DIF, filas), y = col(T, PPM, filas);
   const [pendiente, base] = ajusteLineal(x, y);
   const resto = y.map((v, i) => v - (pendiente * x[i] + base));
   const i = idxmax(resto.map(Math.abs));
   const e = filas[i], delta = resto[i];
   const sentido = delta > 0 ? "más" : "menos";
-  const salta = `Respecto de lo que sus tiros recibidos hacían esperar, el que más se desvía es **${quien(T, e)}**: recibe ${fmt(T.c[SOTA_90][e])} tiros a puerta por 90' y encaja ${fmt(T.c[GA_90][e])}, ${fmt(Math.abs(delta))} goles ${sentido} de lo normal para ese volumen.`;
+  const salta = `El que más se aleja de la tendencia es **${quien(T, e)}**: tiene ${sg(T.c[XG_DIF][e])} de diferencia de xG por partido y saca ${fmt(T.c[PPM][e])} puntos, ${fmt(Math.abs(delta))} ${sentido} de lo normal para ese juego. Eso se repite poco de una temporada a la siguiente (los números están en «Por qué estas variables»).`;
   return { fija, salta };
 }
 
 export const GENERADORES = {
   goles_xg: golesXg, asist_xa: asistXa, perfil, recuperar, disputar, dos_fases: dosFases,
-  pases_clave: pasesClave, construir, centros, definicion, creacion, defensa,
+  pases_clave: pasesClave, construir, centros, definicion, creacion, defensa, puntos,
 };
 
 // ---- Mapa de calor de los tiros ---------------------------------------------------------------

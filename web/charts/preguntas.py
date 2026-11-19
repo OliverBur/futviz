@@ -17,8 +17,9 @@ PREGUNTAS = {
     "crea-tu-grafico-jugadores": "¿Cómo se relacionan dos variables que tú elijas?",
     # Equipos
     "eficiencia-definicion": "¿Qué equipo aprovecha mejor sus ocasiones?",
-    "creacion": "¿Tener el balón se convierte en asistencias?",
+    "creacion": "¿Qué equipo domina las ocasiones?",
     "defensa": "¿Quién defiende mejor y cómo?",
+    "puntos-vs-xg": "¿Los puntos reflejan el juego o la suerte?",
     "nivel-por-liga-equipos": "¿Qué tan parejos son los equipos de cada liga?",
     "crea-tu-grafico-equipos": "¿Cómo se relacionan dos variables que tú elijas?",
 }

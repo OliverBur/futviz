@@ -34,7 +34,8 @@ JUGADORES = [
     ("construir", ins.construir, ["xgbuild90", "xga90"]),
     ("centros", ins.centros, ["crosses90", "xA90"]),
 ]
-EQUIPOS = [("definicion", ins.definicion, []), ("creacion", ins.creacion, []), ("defensa", ins.defensa, [])]
+EQUIPOS = [("definicion", ins.definicion, []), ("creacion", ins.creacion, []), ("defensa", ins.defensa, []),
+           ("puntos", ins.puntos, [])]
 
 
 def casos(df, seasons, ligas, insight, generador, requiere, entidad, rng, n_aleatorios):

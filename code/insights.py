@@ -48,19 +48,20 @@ def _verbo(nuevo, viejo, baja, sube, igual="quedó igual", tol=0.005):
 
 
 # --------------------------------------------------------------------------
-# Eficiencia de definición — SoT% vs. G/SoT (un punto por equipo)
+# Eficiencia de definición con proxies de FBref (SoT% vs. G/SoT). Ya no está en el sitio: lo usa
+# el notebook `eda_teams.ipynb`. La vista del sitio con este nombre es `definicion`, con xG.
 # --------------------------------------------------------------------------
 
 X_DEF, Y_DEF = "sh_Standard_SoT%", "sh_Standard_G/SoT"
 
 
-def definicion_que_mirar():
+def definicion_sot_que_mirar():
     return ("Arriba a la derecha están los que hacen bien las dos cosas; abajo a la "
             "derecha, los que llevan a puerta buena parte de sus tiros y marcan poco de "
             "ellos.")
 
 
-def definicion_por_que(df):
+def definicion_sot_por_que(df):
     r = df[X_DEF].corr(df[Y_DEF])
     return (
         f"Las dos van en ejes separados porque **no son la misma habilidad**: "
@@ -72,7 +73,7 @@ def definicion_por_que(df):
     )
 
 
-def definicion(df, season, liga=None):
+def definicion_sot(df, season, liga=None):
     d = df[df["temporada"] == season]
     ambito = "las 5 ligas"
     if liga and liga != LIGA_TODAS:
@@ -1351,108 +1352,310 @@ def centros(df, season, liga=None):
 
 
 # --------------------------------------------------------------------------
-# Equipos: creación (posesión vs. asistencias) y defensa
+# Equipos: las cuatro vistas de ataque y defensa, con xG de Understat
 # --------------------------------------------------------------------------
+#
+# xG y goles de cada equipo POR PARTIDO y SIN PENALES (ni autogoles), de `web/charts/xg_equipos.py`.
+# Las vistas viejas medían con proxies de FBref (tiros a puerta, asistencias) que casi no dicen nada:
+# el azar explica ~70-90% de la dispersión de los goles por tiro a puerta entre equipos, y las
+# asistencias son el gol con otra etiqueta.
+#
+# Las cifras de los textos "por qué" salen de los datos, con las temporadas CERRADAS (la que va en
+# curso tiene 6 a 9 partidos por equipo y mete mucho ruido). Lo que se repite de una temporada a la
+# siguiente es la medida de cuánto es del equipo y cuánto del azar.
 
-POSESION, ASIST_90 = "ov_Poss", "ov_Per 90 Minutes_Ast"
-SOTA_90, GA_90 = "p90_SoTA", "gk_Performance_GA90"
+XG_FAV, XG_CON, XG_DIF = "xg_fav", "xg_con", "xg_dif"
+GOL_FAV, GOL_CON = "gol_fav", "gol_con"
+PARTIDOS_XG, PARTIDOS_FBREF = "xg_partidos", "ov_Playing Time_MP"
+MIN_CERRADA = 30   # partidos: la misma regla con la que `site_utils.temporadas_en_curso` marca las que van en curso
 
+
+def _sg(v, dec=2):
+    """Con el signo a la vista en los positivos ("+0.45", "-0.12"). Mismo texto que `sg` de insights.js."""
+    return f"{v:+.{dec}f}"
+
+
+def _cerradas_eq(df):
+    """Las filas de las temporadas cerradas: aquellas en las que algún equipo ya jugó 30 partidos o más."""
+    maximos = df.groupby("temporada")[PARTIDOS_FBREF].max()
+    return df[df["temporada"].isin(maximos[maximos >= MIN_CERRADA].index)]
+
+
+def _persistencia_equipos(df, valor):
+    """Cuánto se repite `valor` (una serie con el índice de `df`) de una temporada cerrada a la siguiente:
+    la correlación, por cada par de temporadas cerradas seguidas, entre los equipos que están en las dos.
+    Devuelve `(menor, mayor, menos equipos, más equipos)` o None."""
+    c = _cerradas_eq(df)
+    v = valor.loc[c.index]
+    temporadas = sorted(c["temporada"].unique())
+    por_temp = {t: v[c["temporada"] == t].set_axis(c.loc[c["temporada"] == t, "Squad"]) for t in temporadas}
+    rs, ns = [], []
+    for a, b in zip(temporadas, temporadas[1:]):
+        comun = por_temp[a].index.intersection(por_temp[b].index)
+        if len(comun) >= 30:
+            rs.append(por_temp[a][comun].corr(por_temp[b][comun]))
+            ns.append(len(comun))
+    return (min(rs), max(rs), min(ns), max(ns)) if rs else None
+
+
+def _entre(p):
+    """"entre 0.11 y 0.20 (82 a 84 equipos por par de temporadas)" para un resultado de `_persistencia_equipos`."""
+    lo, hi, n_lo, n_hi = p
+    equipos = f"{n_lo}" if n_lo == n_hi else f"{n_lo} a {n_hi}"
+    return f"entre {_fmt(lo)} y {_fmt(hi)} ({equipos} equipos por par de temporadas)"
+
+
+def _se_repite(p):
+    """Qué tanto se repite, con las bandas de `_cuanto` pero sobre el valor más alto de los pares."""
+    hi = max(abs(p[0]), abs(p[1]))
+    if hi < 0.3:
+        return "Casi nada se repite."
+    if hi < 0.6:
+        return "Se repite en parte."
+    return "Se repite bastante."
+
+
+# --- Goles vs. xG (eficiencia-definicion) ---------------------------------------------------
+
+def definicion_que_mirar():
+    return ("Fíjate en la distancia a la diagonal y no en la altura: un equipo puede estar arriba solo "
+            "porque crea mucho. La diagonal es una referencia y no un cero calibrado (los números están "
+            "en «Por qué estas variables»).")
+
+
+def definicion_por_que(df):
+    c = _cerradas_eq(df)
+    r2 = c[XG_FAV].corr(c[GOL_FAV]) ** 2 * 100
+    persist = _persistencia_equipos(df, df[GOL_FAV] - df[XG_FAV])
+    p2 = (f"El xG explica el {r2:.0f}% de la variación de los goles por partido entre equipos "
+          f"({miles(len(c))} equipos-temporada cerrados). Lo que queda es la distancia a la diagonal")
+    p2 += (f". Entre una temporada cerrada y la siguiente, esa diferencia de un mismo equipo correlaciona "
+           f"{_entre(persist)}. {_se_repite(persist)}") if persist else "."
+    # cuánto de su xG meten los equipos, en la primera y la última temporada cerrada
+    tot = (c.assign(g=c[GOL_FAV] * c[PARTIDOS_XG], x=c[XG_FAV] * c[PARTIDOS_XG])
+           .groupby("temporada")[["g", "x"]].sum())
+    razon = tot["g"] / tot["x"]
+    if razon.mean() < 1:
+        calibra = "El xG de Understat suma más de lo que entra. "
+    else:
+        calibra = "El xG de Understat suma menos de lo que entra. "
+    if len(razon) > 1:
+        calibra += (f"En {razon.index[0]} los equipos metieron el {razon.iloc[0] * 100:.0f}% de lo que sumaba "
+                    f"su xG y en {razon.index[-1]}, el {razon.iloc[-1] * 100:.0f}%. ")
+    calibra += "Por eso la nube queda corrida respecto de la diagonal."
+    return (
+        f"El xG mide la **calidad de las ocasiones**: suma la probabilidad de gol de cada tiro según "
+        f"desde dónde y cómo se hizo. Aquí es el de Understat, el mismo de la sección de jugadores, por "
+        f"partido y sin penales ni autogoles. Restarlo de los goles deja la definición más la suerte, y "
+        f"en una temporada no hay forma de separarlas.\n\n"
+        f"{p2}\n\n"
+        f"{calibra}\n\n"
+        f"Va por partido y no en total porque la Bundesliga juega 34 jornadas y las otras cuatro ligas "
+        f"38. Los penales quedan fuera porque cada uno vale mucho más que un tiro normal y lo decide una "
+        f"sola acción. Los autogoles, porque no salen de ninguna ocasión del equipo."
+    )
+
+
+def definicion(df, season, liga=None):
+    d, ambito = _ambito(df, season, liga)
+    top = d.loc[d[GOL_FAV].idxmax()]
+    fija = (f"En {ambito}, **{top['Squad']}** es el que más goles mete por partido "
+            f"({_fmt(top[GOL_FAV])}) con {_fmt(top[XG_FAV])} de xG.")
+    if len(d) < 4:
+        return fija, None
+    dif = d[GOL_FAV] - d[XG_FAV]
+    arriba, abajo = d.loc[dif.idxmax()], d.loc[dif.idxmin()]
+    mx, mn = dif.max(), dif.min()
+    mas = (f"El que más superó su xG es **{arriba['Squad']}** ({_sg(mx)} goles por partido)" if mx > 0
+           else f"Ninguno superó su xG: el que más cerca quedó es **{arriba['Squad']}** "
+                f"({_fmt(mx)} goles por partido)")
+    menos = (f"y el que más se quedó corto, **{abajo['Squad']}** ({_fmt(mn)})." if mn < 0
+             else f"y todos lo superaron: el que menos, **{abajo['Squad']}** ({_sg(mn)}).")
+    salta = (f"{mas} {menos} Una diferencia así se repite poco de una temporada a la siguiente (los "
+             f"números están en «Por qué estas variables»).")
+    return fija, salta
+
+
+# --- Ocasiones a favor y en contra (creacion) -----------------------------------------------
 
 def creacion_que_mirar():
-    return ("Lo interesante son las esquinas que no siguen la diagonal. **Abajo a la "
-            "derecha**: equipos con posesión que no se convierte en asistencias. **Arriba "
-            "a la izquierda**: equipos directos, que crean sin tener la pelota.")
+    return ("Abajo a la derecha están los que crean más de lo que conceden. Arriba a la derecha, los "
+            "equipos de partidos abiertos, con mucho xG de los dos lados; abajo a la izquierda, los de "
+            "partidos cerrados, con poco de los dos. Arriba a la izquierda, los rivales dominan.")
 
 
 def creacion_por_que(df):
-    r = df[POSESION].corr(df[ASIST_90])
+    c = _cerradas_eq(df)
+    r = c[XG_FAV].corr(c[XG_CON])
+    p_xg = _persistencia_equipos(df, df[XG_DIF])
+    p_gol = _persistencia_equipos(df, df[GOL_FAV] - df[GOL_CON])
+    p2 = (f"Los dos ejes correlacionan {_fmt(r)} sobre {miles(len(c))} equipos-temporada cerrados: "
+          f"{_cuanto(r)}.")
+    if r < -0.3:
+        p2 += " Los que más crean tienden a conceder menos, pero con mucho margen: hay equipos que crean mucho y conceden mucho."
+    p3 = ""
+    if p_xg and p_gol:
+        p3 = (f"\n\nEntre una temporada cerrada y la siguiente, la diferencia de xG por partido de un "
+              f"mismo equipo (lo que crea menos lo que concede) correlaciona {_entre(p_xg)}. La diferencia "
+              f"de goles, {_entre(p_gol)}.")
     return (
-        f"Es la versión de equipo de \"cuánto se crea\", con lo que queda disponible: "
-        f"FBref ya no publica pases clave ni xA, así que la creación se mide por su "
-        f"**resultado** (asistencias), que además depende de que alguien remate "
-        f"bien. Por eso conviene mirarla como tendencia y no como dato fino.\n\n"
-        f"La posesión de una liga suma 100% por partido, así que su promedio es "
-        f"~50% en todas: sirve para comparar equipos dentro de una liga y poco para "
-        f"comparar ligas. Los dos ejes correlacionan {_fmt(r)}: {_cuanto(r)} "
-        f"(comparten el {r ** 2 * 100:.0f}% de su variación), y lo que queda es "
-        f"sitio para estilos distintos."
+        f"Cruza lo que un equipo crea con lo que deja crear. Las dos son xG de Understat por partido y "
+        f"sin penales, así que cuentan ocasiones y no goles, que son pocos y dependen del azar.\n\n"
+        f"{p2}{p3}"
     )
 
 
 def creacion(df, season, liga=None):
     d, ambito = _ambito(df, season, liga)
-    pos, ast = d.loc[d[POSESION].idxmax()], d.loc[d[ASIST_90].idxmax()]
-    fija = (f"En {ambito}, **{pos['Squad']}** es el que más balón tiene "
-            f"({_fmt(pos[POSESION], 1)}%) y **{ast['Squad']}** el que más asistencias "
-            f"da por 90' ({_fmt(ast[ASIST_90])}).")
+    crea, cede = d.loc[d[XG_FAV].idxmax()], d.loc[d[XG_CON].idxmin()]
+    if crea["Squad"] == cede["Squad"]:
+        fija = (f"En {ambito}, **{crea['Squad']}** es el que más ocasiones crea y el que menos concede: "
+                f"{_fmt(crea[XG_FAV])} de xG a favor y {_fmt(crea[XG_CON])} en contra por partido.")
+    else:
+        fija = (f"En {ambito}, **{crea['Squad']}** es el que más ocasiones crea "
+                f"({_fmt(crea[XG_FAV])} de xG por partido) y **{cede['Squad']}** el que menos concede "
+                f"({_fmt(cede[XG_CON])}).")
     if len(d) < 4:
         return fija, None
-    brecha = d[POSESION].rank(pct=True) - d[ASIST_90].rank(pct=True)
-    i_alto, i_bajo = brecha.idxmax(), brecha.idxmin()
-    if abs(brecha[i_alto]) >= abs(brecha[i_bajo]):
-        e = d.loc[i_alto]
-        salta = (f"El caso de posesión que no crea es **{e['Squad']}**: de los que más "
-                 f"balón tienen ({_fmt(e[POSESION], 1)}%) y de los que menos "
-                 f"asistencias dan ({_fmt(e[ASIST_90])} por 90').")
-    else:
-        e = d.loc[i_bajo]
-        salta = (f"El más directo es **{e['Squad']}**: tiene poco el balón "
-                 f"({_fmt(e[POSESION], 1)}%) y aun así da {_fmt(e[ASIST_90])} "
-                 f"asistencias por 90', de lo más alto.")
+    dif = d[XG_DIF]
+    mejor, peor = d.loc[dif.idxmax()], d.loc[dif.idxmin()]
+    salta = (f"El que más domina las ocasiones es **{mejor['Squad']}**: crea {_fmt(mejor[XG_FAV])} y "
+             f"concede {_fmt(mejor[XG_CON])} por partido ({_sg(dif.max())}). En el otro extremo, "
+             f"**{peor['Squad']}** crea {_fmt(peor[XG_FAV])} y concede {_fmt(peor[XG_CON])} "
+             f"({_sg(dif.min())}).")
     return fija, salta
 
 
+# --- Goles recibidos vs. xG en contra (defensa) ---------------------------------------------
+
 def defensa_que_mirar():
-    return ("Las esquinas que cuentan algo son las otras: **arriba a la izquierda**, "
-            "reciben pocos tiros y aun así les entran (portería floja o mala suerte); "
-            "**abajo a la derecha**, les tiran mucho a puerta y les entra poco (portería "
-            "estelar o buena suerte).")
+    return ("Cuanto más a la izquierda, menos ocasiones concede el equipo. La distancia a la diagonal "
+            "junta tres cosas que estos datos no separan: el portero, los bloqueos de la defensa y la "
+            "suerte. El xG en contra no ve a dónde va el tiro, así que esta gráfica no sirve para decir "
+            "quién tiene al mejor portero.")
 
 
 def defensa_por_que(df):
-    r = df[SOTA_90].corr(df[GA_90])
+    c = _cerradas_eq(df)
+    r2 = c[XG_CON].corr(c[GOL_CON]) ** 2 * 100
+    persist = _persistencia_equipos(df, df[GOL_CON] - df[XG_CON])
+    p2 = (f"El xG en contra explica el {r2:.0f}% de la variación de los goles recibidos por partido "
+          f"entre equipos ({miles(len(c))} equipos-temporada cerrados).")
+    if persist:
+        p2 += (f" De la distancia a la diagonal, entre una temporada cerrada y la siguiente, la diferencia "
+               f"de un mismo equipo correlaciona {_entre(persist)}. {_se_repite(persist)}")
     return (
-        f"Separa lo que llega de lo que entra. Los goles recibidos mezclan dos "
-        f"cosas: **cuánto deja tirar el equipo** y **qué tan bien ataja su "
-        f"portero**. Con los dos ejes por separado se ve cuál de las dos explica "
-        f"un número malo o bueno.\n\n"
-        f"Correlacionan {_fmt(r)}, como era de esperar: a más tiros, más goles. "
-        f"La distancia a la tendencia es lo que importa, y es en buena parte "
-        f"portería y suerte: en una temporada, una racha de paradas o de remates "
-        f"que entran mueve mucho el resultado. No se puede separar la defensa de "
-        f"la portería con estos datos."
+        f"Los goles recibidos juntan tres cosas: cuántas ocasiones concede el equipo, qué tan buenas son y "
+        f"qué pasa con ellas, que depende del portero, de los bloqueos de la defensa y de la suerte. El "
+        f"eje horizontal mide las dos primeras (xG en contra de Understat, por partido y sin penales). La "
+        f"distancia a la diagonal junta lo demás.\n\n"
+        f"{p2}\n\n"
+        f"Con estos datos no se puede decir cuánto de esa distancia es portero y cuánto suerte. Para "
+        f"juzgar a un portero haría falta el xG de postremate, que sí mira a dónde fue el tiro, y "
+        f"estos datos no lo traen. Los penales y los autogoles quedan fuera. Va por partido porque la Bundesliga juega 34 "
+        f"jornadas y las otras cuatro ligas 38."
     )
 
 
 def defensa(df, season, liga=None):
+    d, ambito = _ambito(df, season, liga)
+    menos_g, menos_x = d.loc[d[GOL_CON].idxmin()], d.loc[d[XG_CON].idxmin()]
+    if menos_g["Squad"] == menos_x["Squad"]:
+        fija = (f"En {ambito}, **{menos_g['Squad']}** es el que menos goles recibe "
+                f"({_fmt(menos_g[GOL_CON])} por partido) y también el que menos xG concede "
+                f"({_fmt(menos_g[XG_CON])}).")
+    else:
+        fija = (f"En {ambito}, **{menos_g['Squad']}** es el que menos goles recibe "
+                f"({_fmt(menos_g[GOL_CON])} por partido) y **{menos_x['Squad']}** el que menos xG concede "
+                f"({_fmt(menos_x[XG_CON])}).")
+    if len(d) < 4:
+        return fija, None
+    dif = d[GOL_CON] - d[XG_CON]
+    i = dif.abs().idxmax()
+    e, delta = d.loc[i], dif[i]
+    sentido = "más" if delta > 0 else "menos"
+    salta = (f"El que más se aleja de la diagonal es **{e['Squad']}**: concede {_fmt(e[XG_CON])} de xG por "
+             f"partido y recibe {_fmt(e[GOL_CON])} goles, {_fmt(abs(delta))} {sentido} de lo que decían las "
+             f"ocasiones. Ahí cuentan juntos el portero, la defensa y la suerte.")
+    return fija, salta
+
+
+# --- Puntos vs. diferencia de xG (puntos-vs-xg) ---------------------------------------------
+
+def puntos_que_mirar():
+    return ("Casi todos los equipos siguen la nube que sube de izquierda a derecha. Los que vale la pena "
+            "mirar son los que se salen: arriba a la izquierda, con puntos de más de los que su juego "
+            "explica; abajo a la derecha, con puntos de menos.")
+
+
+def puntos_por_que(df):
+    import numpy as np
+
+    c = _cerradas_eq(df)
+    r = c[XG_DIF].corr(c[COL_PPM])
+    pendiente, base = np.polyfit(c[XG_DIF], c[COL_PPM], 1)
+    p_xg = _persistencia_equipos(df, df[XG_DIF])
+    p_pts = _persistencia_equipos(df, df[COL_PPM])
+    p_res = _persistencia_equipos(df, df[COL_PPM] - (pendiente * df[XG_DIF] + base))
+    p2 = (f"Correlacionan {_fmt(r)} sobre {miles(len(c))} equipos-temporada cerrados: la diferencia de "
+          f"xG explica el {r ** 2 * 100:.0f}% de la variación de los puntos por partido. El {100 - r ** 2 * 100:.0f}% "
+          f"restante lo explican otras cosas que las ocasiones no cuentan, y con estos datos no se puede "
+          f"decir cuánto es suerte.")
+    if p_xg and p_pts and p_res:
+        p2 += (f"\n\nEntre una temporada cerrada y la siguiente, la diferencia de xG de un mismo equipo "
+               f"correlaciona {_entre(p_xg)} y los puntos por partido, {_entre(p_pts)}. Los puntos que un "
+               f"equipo saca de más o de menos respecto de lo que sugería su diferencia de xG (la distancia a "
+               f"la tendencia) correlacionan {_entre(p_res)}. {_se_repite(p_res)}")
+    distintos = int((df[PARTIDOS_XG] != df[PARTIDOS_FBREF]).sum())
+    aviso = ""
+    if distintos:
+        aviso = (f" En {distintos} de los {miles(len(df))} equipos-temporada los dos traen un partido "
+                 f"distinto (a Understat le falta o le sobra uno).")
+    return (
+        f"Los puntos son lo que cuenta en la tabla. La diferencia de xG por partido, el xG a favor menos el "
+        f"xG en contra, dice cómo se jugó. Se cruzan para ver cuándo el resultado y el juego cuentan lo "
+        f"mismo y cuándo no.\n\n"
+        f"{p2}\n\n"
+        f"Va por partido porque la Bundesliga juega 34 jornadas y las otras cuatro ligas 38. Los puntos son "
+        f"de FBref y cuentan todo lo que pasó, penales incluidos. El xG es de Understat y los deja fuera."
+        f"{aviso}"
+    )
+
+
+def puntos(df, season, liga=None):
     import numpy as np
 
     d, ambito = _ambito(df, season, liga)
-    menos_goles, menos_tiros = d.loc[d[GA_90].idxmin()], d.loc[d[SOTA_90].idxmin()]
-    fija = (f"En {ambito}, **{menos_goles['Squad']}** es el que menos goles encaja "
-            f"({_fmt(menos_goles[GA_90])} por 90') y **{menos_tiros['Squad']}** el que "
-            f"menos tiros a puerta recibe ({_fmt(menos_tiros[SOTA_90])} por 90').")
+    mejor = d.loc[d[COL_PPM].idxmax()]
+    fija = (f"En {ambito}, **{mejor['Squad']}** es el que más puntos saca por partido "
+            f"({_fmt(mejor[COL_PPM])}), con {_sg(mejor[XG_DIF])} de diferencia de xG por partido.")
     if len(d) < 4:
         return fija, None
-    pendiente, base = np.polyfit(d[SOTA_90], d[GA_90], 1)
-    resto = d[GA_90] - (pendiente * d[SOTA_90] + base)
+    pendiente, base = np.polyfit(d[XG_DIF], d[COL_PPM], 1)
+    resto = d[COL_PPM] - (pendiente * d[XG_DIF] + base)
     i = resto.abs().idxmax()
     e, delta = d.loc[i], resto[i]
     sentido = "más" if delta > 0 else "menos"
-    salta = (f"Respecto de lo que sus tiros recibidos hacían esperar, el que más se "
-             f"desvía es **{e['Squad']}**: recibe {_fmt(e[SOTA_90])} tiros a puerta "
-             f"por 90' y encaja {_fmt(e[GA_90])}, {_fmt(abs(delta))} goles {sentido} "
-             f"de lo normal para ese volumen.")
+    salta = (f"El que más se aleja de la tendencia es **{e['Squad']}**: tiene {_sg(e[XG_DIF])} de "
+             f"diferencia de xG por partido y saca {_fmt(e[COL_PPM])} puntos, {_fmt(abs(delta))} {sentido} "
+             f"de lo normal para ese juego. Eso se repite poco de una temporada a la siguiente (los números "
+             f"están en «Por qué estas variables»).")
     return fija, salta
 
+
+# --- Distribución por liga -------------------------------------------------------------------
 
 def nivel_liga_equipos_que_mirar():
     return ("Mira **dos cosas distintas**: qué liga está más arriba (su valor típico) y "
             "qué tan ancha es la caja (qué tan parejos son sus equipos). Cada punto es un "
             "equipo: pasa el mouse o toca uno para ver cuál.\n\n"
             "Ojo con las variables que se reparten dentro de cada liga, como la "
-            "diferencia de goles, la posesión o los puntos por partido: lo que gana un "
+            "diferencia de goles, la diferencia de xG, la posesión o los puntos por partido: lo que gana un "
             "equipo lo pierde otro de su misma liga, así que la mediana sale casi igual "
-            "en las cinco y solo cuenta el ancho de la caja. Ninguna variable de esta "
-            "lista mide qué liga es más fuerte. El filtro de nivel de club separa a los "
-            "grandes del resto, que casi siempre cuentan historias distintas.")
+            "en las cinco y solo cuenta el ancho de la caja.\n\n"
+            "Para comparar qué tan fuertes son las ligas sirve el **ELO**. Es una sola escala para todos "
+            "los clubes de Europa (clubelo) y se mueve con los partidos entre clubes de ligas distintas. "
+            "Con las demás variables, la mediana de una liga solo habla de cómo se juega ahí. El ELO al "
+            "arrancar la temporada es el que no contiene los resultados de esa misma temporada. El medio y "
+            "el final sí. El filtro de nivel de club separa a los grandes del resto, que casi siempre "
+            "cuentan historias distintas.")
