@@ -515,4 +515,5 @@ def build(assets_dir) -> list:
         paginas.append(chart_cover_stopper(df))
     else:
         print("  (sin columnas defensivas de fbref — se omite Cover vs. Stopper)")
-    return _ordenar_pestanas(paginas + [chart_shot_map(), chart_explorer(df)])
+    import edad   # aquí y no arriba: `edad` lee las mismas tablas y no debe depender de este módulo al importarse
+    return _ordenar_pestanas(paginas + [chart_shot_map(), edad.chart_age(), chart_explorer(df)])
