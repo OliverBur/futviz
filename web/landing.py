@@ -22,6 +22,7 @@ from html import escape
 from pathlib import Path
 
 import react_views
+from preguntas import PREGUNTAS as PREGUNTA_DE
 from site_utils import (
     BRAND_ROOT_CSS, COLOR_BG_CLARO, FONT_LINKS, SECTION_META, THEME_COLOR_META, THEME_INIT_SCRIPT,
     THEME_TOGGLE_SCRIPT, ArticlePage, favicon_links, site_bar,
@@ -35,14 +36,14 @@ PRESUPUESTO_INDICE_KB = 150   # gzip
 
 # Las preguntas de la portada y la vista que las responde. Si una vista cambia de nombre o desaparece, el
 # build falla aquí en vez de dejar un enlace roto.
-PREGUNTAS = [
-    ("Jugadores", "¿Quién marca más de lo que debería?", "goles-vs-xg"),
-    ("Jugadores", "¿Desde dónde se tira en las 5 ligas?", "mapa-tiros"),
-    ("Jugadores", "¿Quién genera más ocasiones para sus compañeros?", "pases-clave-vs-xa"),
-    ("Equipos", "¿Quién defiende mejor y cómo?", "defensa"),
-    ("Equipos", "¿Qué equipo aprovecha mejor sus ocasiones?", "eficiencia-definicion"),
-    ("Equipos", "¿Qué tan distinto es el nivel entre ligas?", "nivel-por-liga-equipos"),
-]
+PREGUNTAS = [(entidad, PREGUNTA_DE[slug], slug) for entidad, slug in (
+    ("Jugadores", "goles-vs-xg"),
+    ("Jugadores", "mapa-tiros"),
+    ("Jugadores", "pases-clave-vs-xa"),
+    ("Equipos", "defensa"),
+    ("Equipos", "eficiencia-definicion"),
+    ("Equipos", "nivel-por-liga-equipos"),
+)]
 
 # A qué gráficas manda el buscador a un jugador según su posición, en orden de relevancia. Solo entran las
 # dispersiones: son las que aceptan `fijar` en la URL (el mapa de tiros y las cajas no filtran por jugador
@@ -54,8 +55,9 @@ PRIORIDAD_JUGADOR = {
 }
 PRIORIDAD_EQUIPO = ["eficiencia-definicion", "creacion", "defensa"]
 VISTAS_POR_RESULTADO = 3   # la principal + "Ver a {nombre} en…" con dos más
-SUGERIDOS_JUGADORES = 4    # con el campo vacío: los máximos goleadores de la temporada más reciente
-SUGERIDAS_VISTAS = 3       # ...y las primeras gráficas de "Preguntas para empezar"
+SUGERIDOS_JUGADORES = 3    # con el campo vacío: los máximos goleadores de la temporada más reciente
+SUGERIDAS_VISTAS = 2       # ...las primeras gráficas de "Preguntas para empezar"
+SUGERIDOS_ARTICULOS = 2    # ...y los artículos de Machine Learning (el panel tiene que caber sin deslizar)
 
 # La combinación del mapa de calor de la portada: la más común (jugada abierta, pie derecho, tras un pase).
 CLAVE_MAPA = "jugada|pie_der|Pass"
@@ -183,7 +185,8 @@ def construir_indice(paginas_eda, articulos):
             break
     sugeridas = [v_idx[slug] for _, _, slug in PREGUNTAS if slug in v_idx][:SUGERIDAS_VISTAS]
     return {"t": temporadas, "l": ligas, "v": vistas, "j": jugadores, "e": equipos, "a": lecturas,
-            "s": {"titulo": f"Más goles en {ultima_t}", "j": sugeridos, "v": sugeridas}}
+            "s": {"titulo": f"Más goles en {ultima_t}", "j": sugeridos, "v": sugeridas,
+                  "a": list(range(min(len(lecturas), SUGERIDOS_ARTICULOS)))}}
 
 
 def escribir_indice(indice, dist_dir: Path):
@@ -434,8 +437,16 @@ __BRAND_ROOT__
   /* Ícono grande + título como un solo bloque centrado, del alto de los dos renglones del título. */
   .titular { display: flex; align-items: center; justify-content: center; gap: clamp(20px, 2.5vw, 32px); margin: 0 auto 36px; }
   .titular img { height: 2.1em; width: auto; font-size: clamp(36px, 7vw, 64px); flex: none; }
-  .leer { display: inline-flex; align-items: center; min-height: 44px; margin-top: 16px; font-size: 15px;
-    font-weight: 600; color: var(--color-interactive); text-decoration: none; }
+  /* Las dos secciones del sitio, con una frase de para qué sirve cada una (antes: "¿Prefieres leer?"). */
+  .puertas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 32px; max-width: 760px;
+    margin: 28px auto 0; text-align: left; }
+  .puerta { display: block; min-height: 44px; padding: 14px 0 0; border-top: 1px solid var(--color-border);
+    color: inherit; text-decoration: none; }
+  .puerta-nombre { display: block; font-size: 15px; font-weight: 700; color: var(--color-interactive); }
+  .puerta-desc { display: block; margin-top: 4px; font-size: 14.5px; line-height: 1.5; color: var(--color-text-body); }
+  .puerta:hover .puerta-nombre { text-decoration: underline; text-underline-offset: 4px; }
+  .intro-seccion { margin: -16px 0 28px; max-width: 62ch; font-size: 16px; line-height: 1.55; color: var(--color-text-body); }
+  @media (max-width: 640px) { .puertas { grid-template-columns: minmax(0, 1fr); gap: 14px; margin-top: 24px; } }
 
   /* Buscador: el campo es un combobox con la lista desplegada debajo (en pantallas chicas, a pantalla completa). */
   .buscador { position: relative; max-width: 760px; margin: 0 auto; text-align: left; }
@@ -489,7 +500,7 @@ __BRAND_ROOT__
     color: var(--color-primary); max-width: 20ch; text-wrap: balance; }
   .ir { display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; font-weight: 600;
     color: var(--color-interactive); text-decoration: none; }
-  .ir:hover, .leer:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .ir:hover { text-decoration: underline; text-underline-offset: 4px; }
   .todas { display: inline-flex; align-items: center; min-height: 44px; margin-top: 16px; font-weight: 600;
     color: var(--color-text-body); text-underline-offset: 4px; }
 
@@ -572,7 +583,7 @@ __BRAND_ROOT__
       <label class="sr-only" for="q">Busca un jugador, un equipo o una gráfica</label>
       <div class="campo">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        <input id="q" name="q" type="search" placeholder="Busca un jugador, un equipo o una gráfica…"
+        <input id="q" name="q" type="search" placeholder="Prueba con __EJEMPLO__, un equipo o una gráfica…" data-ejemplo="__EJEMPLO__"
           autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search"
           role="combobox" aria-expanded="false" aria-controls="sugerencias" aria-autocomplete="list">
         <button type="button" class="cerrar" id="cerrar">Cerrar</button>
@@ -583,12 +594,22 @@ __BRAND_ROOT__
       </div>
       <p class="sr-only" id="anuncio" aria-live="polite"></p>
     </form>
-    <a class="leer" href="__ARTICULO_URL__">¿Prefieres leer? Empieza por __ARTICULO_TITULO__ →</a>
+    <div class="puertas">
+      <a class="puerta" href="__EDA_URL__">
+        <span class="puerta-nombre">Análisis exploratorio →</span>
+        <span class="puerta-desc">__N_VISTAS__ gráficas para comparar jugadores y equipos de las 5 grandes ligas.</span>
+      </a>
+      <a class="puerta" href="__ML_URL__">
+        <span class="puerta-nombre">Machine Learning →</span>
+        <span class="puerta-desc">Artículos donde construyo modelos con estos datos. Empieza por «__ARTICULO_TITULO__».</span>
+      </a>
+    </div>
   </section>
 
   <section class="seccion" aria-labelledby="preguntas">
     <div class="contenedor">
       <h2 id="preguntas">Preguntas para empezar</h2>
+      <p class="intro-seccion">Cada pregunta abre una de las __N_VISTAS__ gráficas del análisis exploratorio. Toca un punto para ver quién es y usa los filtros para afinar.</p>
       <ul class="preguntas">__PREGUNTAS__</ul>
       <a class="todas" href="__EDA_URL__">Ver las __N_VISTAS__ gráficas</a>
     </div>
@@ -654,7 +675,12 @@ def escribir_landing(pages, dist_dir: Path):
                if ml.get("proximos") else "")
     sup = react_views.tabla_registrada("xg")["superficie"]
 
+    indice = construir_indice(paginas_eda, articulos)
+    sugeridos = indice["s"]["j"]
+    ejemplo = escape(sugeridos[0][0]) if sugeridos else "un jugador"
+
     html = (LANDING_TEMPLATE
+            .replace("__EJEMPLO__", ejemplo)
             .replace("__PREGUNTAS__", "".join(preguntas))
             .replace("__N_VISTAS__", str(len(paginas_eda)))
             .replace("__MAPA__", mapa_svg(sup))
@@ -682,7 +708,6 @@ def escribir_landing(pages, dist_dir: Path):
     salida = dist_dir / "index.html"
     salida.write_text(html, encoding="utf-8")
 
-    indice = construir_indice(paginas_eda, articulos)
     ruta_idx, kb, kb_gz = escribir_indice(indice, dist_dir)
     og = og_image(sup, dist_dir)
     return {"index": salida, "indice": ruta_idx, "og": og, "kb": kb, "kb_gz": kb_gz,

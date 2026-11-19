@@ -26,7 +26,7 @@
   var entradas = null, sugerencias = null, carga = null, opciones = [], activa = -1, tAnuncio = 0;
 
   // En un teléfono el texto completo no cabe en el campo: uno más corto que diga lo mismo.
-  if (movil.matches) input.placeholder = "Jugador, equipo o gráfica…";
+  if (movil.matches) input.placeholder = "Prueba con " + (input.getAttribute("data-ejemplo") || "un jugador") + "…";
 
   function norm(s) { return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase(); }
 
@@ -63,7 +63,8 @@
         var e = porNombre[x[0]];
         return { tipo: "j", nombre: e.nombre, det: e.det + " · " + x[1] + (x[1] === 1 ? " gol" : " goles"), acc: e.acc };
       }),
-      g: ix.s.v.map(function (i) { return out.filter(function (e) { return e.tipo === "g" && e.acc[0].url === EDA + "#" + v[i][0]; })[0]; })
+      g: ix.s.v.map(function (i) { return out.filter(function (e) { return e.tipo === "g" && e.acc[0].url === EDA + "#" + v[i][0]; })[0]; }),
+      a: (ix.s.a || []).map(function (i) { return out.filter(function (e) { return e.tipo === "g" && e.acc[0].url === ix.a[i][1]; })[0]; })
     };
     return out;
   }
@@ -201,7 +202,8 @@
   function pintarSugerencias() {
     if (!sugerencias) return;
     grupoDe("grupo-sj", sugerencias.titulo, sugerencias.j);
-    grupoDe("grupo-sg", "Gráficas para empezar", sugerencias.g);
+    grupoDe("grupo-sg", "Análisis exploratorio · gráficas para comparar", sugerencias.g);
+    if (sugerencias.a.length) grupoDe("grupo-sa", "Machine Learning · artículos con modelos", sugerencias.a);
     anunciar("Sugerencias: " + opciones.length);
   }
 
