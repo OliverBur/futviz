@@ -19,6 +19,7 @@ export const Cuadrito = ({ color, tam = 8 }) => (
 );
 
 export function Posiciones({ opciones, colores, valor, onChange, modo, etiqueta = "Posición" }) {
+  const hayPortero = opciones.includes("Portero");
   return (
     <>
       <ToggleButtonGroup size="small" fullWidth value={valor} aria-label={etiqueta}
@@ -41,9 +42,9 @@ export function Posiciones({ opciones, colores, valor, onChange, modo, etiqueta 
           );
         })}
       </ToggleButtonGroup>
-      {/* Sin ninguna marcada se ven todas; decirlo evita leer "nada seleccionado" como "nada". */}
+      {/* Sin ninguna marcada se ven todas (menos los porteros, si hay); decirlo evita leer "nada seleccionado" como "nada". */}
       <Typography sx={{ fontSize: 11.5, color: "text.secondary", mt: 0.5 }}>
-        {valor.length ? valor.join(" + ") : "Todas las posiciones"}
+        {valor.length ? valor.join(" + ") : hayPortero ? "Todas, sin porteros. Marca Portero para incluirlos." : "Todas las posiciones"}
       </Typography>
     </>
   );

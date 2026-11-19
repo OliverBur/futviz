@@ -10,7 +10,7 @@ import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } f
 import { entre, leerParams, usePublicarParams } from "./urlEstado.js";
 import { ThemeProvider, useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
+import Autocomplete from "@mui/material/Autocomplete";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -44,7 +44,7 @@ import { Grafica, FilaCtx } from "./Grafica.jsx";
 import { Ranking } from "./Ranking.jsx";
 import { Cuadrito, Posiciones } from "./Posiciones.jsx";
 import { Tabla } from "./Tabla.jsx";
-import { Aviso, Cargando, Encabezado, Md, Parrafos, Rotulo } from "./ui.jsx";
+import { Aviso, Cargando, Encabezado, Md, Parrafos, Rotulo, sinAcentos } from "./ui.jsx";
 import { acercar, ajustarA, centrarEn, esBase } from "./zoom.js";
 import { TOPE_DIF, colorRendimiento, conAlfa, divergente } from "./colores.js";
 import { desvPob, media } from "./stats.js";
@@ -53,7 +53,6 @@ import { GENERADORES, lecturaExplorador } from "./insights.js";
 const signo = (d, dec = 1) => (d >= 0 ? "+" : "−") + Math.abs(d).toFixed(dec);
 const AJUSTE_MAX = 5;   // lo más que la vista de arranque se acerca a la base (con pocos puntos, más sería ver ampliado el vacío)
 const MAX_PINES = 6;   // fijados a la vez: con más, las etiquetas y los anillos dejan de leerse
-const filtrar = createFilterOptions({ limit: 40, ignoreAccents: true });
 
 // Lo que el explorador avisa sobre el r² (no depende de los datos).
 const OJO_R2 = "El r² mide **relación lineal, y nada más**. Dos variables pueden tener un r² bajo y estar bien relacionadas de otra forma (en U, por ejemplo), y un r² alto no dice cuál causa cuál: puede haber una tercera cosa moviendo a las dos.\n\n"
@@ -120,7 +119,9 @@ function Vista({ cfg, T, modo, tk }) {
     { id: "x", etiqueta: "Eje X", ayuda: `Los de mayor ${X.label}` },
     { id: "y", etiqueta: "Eje Y", ayuda: `Los de mayor ${Y.label}` },
   ] : cfg.metricas), [exp, cfg, X.label, Y.label]);
-  const [metrica, setMetrica] = useState(() => entre(P.get("top"), metricas.map((m) => m.id), metricas[0].id));  // por qué se ordena el Top 5 (y qué se rotula)
+  // Por qué se ordena el Top 5 (y qué se rotula). Abre por la variable del eje Y: son los nombres que se conocen
+  // (los que más goles, más asistencias...), no los más atípicos, que casi siempre son desconocidos.
+  const [metrica, setMetrica] = useState(() => entre(P.get("top"), metricas.map((m) => m.id), "y"));
   const [hoverFila, setHoverFila] = useState(null);                // fila de la lista bajo el mouse
   const [pista, setPista] = useState(false);
   const [tablaAbierta, setTablaAbierta] = useState(false);
@@ -170,10 +171,13 @@ function Vista({ cfg, T, modo, tk }) {
   const visibles = useMemo(() => {
     const out = [];
     const posIdx = posiciones.map((p) => (T.posiciones || []).indexOf(p));
+    const iPortero = (T.posiciones || []).indexOf("Portero");
     const nivelIdx = nivel === "todos" ? -1 : (T.niveles || []).indexOf(nivel);
     for (const r of pobl) {
       if (T.f.t[r] !== tEf || !ligasOn.has(T.f.l[r])) continue;
-      if (posIdx.length && !posIdx.includes(T.f.p[r])) continue;
+      // Sin ninguna posición marcada se ven todas MENOS los porteros: 77 de cada 97 quedan en (0, 0) en las vistas de
+      // campo y, además, hacen casi todo "arriba del promedio". Marcar "Portero" (o las cuatro) los incluye.
+      if (posIdx.length ? !posIdx.includes(T.f.p[r]) : (iPortero >= 0 && T.f.p[r] === iPortero)) continue;
       if (nivelIdx >= 0 && T.f.v[r] !== nivelIdx) continue;
       if (sub21 && !T.f.u[r]) continue;
       out.push(r);
@@ -372,12 +376,13 @@ function Vista({ cfg, T, modo, tk }) {
     sub21: sub21 ? "1" : null,
     color: colorPor === "liga" ? null : colorPor,
     fijar: fijados.map((j) => T.nombres[j]),
-    top: metrica === metricas[0].id ? null : metrica,
+    top: metrica === "y" ? null : metrica,
     x: exp && colX !== exp.x ? colX : null,
     y: exp && colY !== exp.y ? colY : null,
   });
+  const sinPorteros = !posiciones.length && posDisp.includes("Portero");
   const estado = [tLabel, todasLigas ? "todas las ligas" : ambito,
-    ...posiciones, nivel !== "todos" ? nivel.replace("Clubes ", "clubes ") : null, sub21 ? "sub-21" : null]
+    ...(posiciones.length ? posiciones : sinPorteros ? ["sin porteros"] : []), nivel !== "todos" ? nivel.replace("Clubes ", "clubes ") : null, sub21 ? "sub-21" : null]
     .filter(Boolean).join(" · ");
 
   const info = useCallback((r) => ({
@@ -501,14 +506,18 @@ function Vista({ cfg, T, modo, tk }) {
         <Box>
           <Rotulo>Posición</Rotulo>
           <Posiciones opciones={posDisp} colores={T.coloresPos} valor={posiciones} modo={modo}
-            onChange={(v) => setPosiciones(v.length === posDisp.length ? [] : v)} />
+            onChange={(v) => setPosiciones(v)} />
         </Box>
       )}
 
       {/* Resaltar: antes se llamaba "Buscar"; lo que hace es marcar puntos, no encontrar gráficas */}
       <Box>
         <Rotulo>Resaltar {esJugadores ? "jugadores" : "clubes"}</Rotulo>
-        <Autocomplete multiple size="small" options={opcionesJug} filterOptions={filtrar}
+        <Autocomplete multiple size="small" options={opcionesJug}
+          filterOptions={(opciones, { inputValue }) => {
+            const q = sinAcentos(inputValue.trim());
+            return opciones.filter((j) => sinAcentos(T.nombres[j]).includes(q)).slice(0, 40);
+          }}
           value={fijados}
           onChange={(_e, v) => {
             const nuevo = v.filter((j) => !fijados.includes(j));

@@ -51,10 +51,11 @@ PREGUNTAS = [(entidad, PREGUNTA_DE[slug], slug) for entidad, slug in (
 PRIORIDAD_JUGADOR = {
     "Delantero": ["goles-vs-xg", "perfil-ofensivo", "asistencias-vs-xa"],
     "Medio": ["perfil-ofensivo", "pases-clave-vs-xa", "construir-vs-producir"],
-    "Defensa": ["perfil-defensivo", "recuperacion-vs-faltas", "perfil-dos-fases"],
+    "Defensa": ["perfil-defensivo", "recuperacion-vs-faltas"],
 }
 PRIORIDAD_EQUIPO = ["eficiencia-definicion", "creacion", "defensa"]
 VISTAS_POR_RESULTADO = 3   # la principal + "Ver a {nombre} en…" con dos más
+EJEMPLO_BUSCADOR = "Ødegaard"   # lo que se sugiere teclear en el campo; tiene que estar en el índice (ver `escribir_landing`)
 SUGERIDOS_JUGADORES = 3    # con el campo vacío: los máximos goleadores de la temporada más reciente
 SUGERIDAS_VISTAS = 2       # ...las primeras gráficas de "Preguntas para empezar"
 SUGERIDOS_ARTICULOS = 2    # ...y los artículos de Machine Learning (el panel tiene que caber sin deslizar)
@@ -676,8 +677,10 @@ def escribir_landing(pages, dist_dir: Path):
     sup = react_views.tabla_registrada("xg")["superficie"]
 
     indice = construir_indice(paginas_eda, articulos)
-    sugeridos = indice["s"]["j"]
-    ejemplo = escape(sugeridos[0][0]) if sugeridos else "un jugador"
+    ejemplo = next((j[0] for j in indice["j"] if EJEMPLO_BUSCADOR.lower() in j[0].lower()), None)
+    if ejemplo is None:
+        raise SystemExit(f"El ejemplo del campo de búsqueda («{EJEMPLO_BUSCADOR}») ya no está en el índice de jugadores.")
+    ejemplo = escape(ejemplo)
 
     html = (LANDING_TEMPLATE
             .replace("__EJEMPLO__", ejemplo)

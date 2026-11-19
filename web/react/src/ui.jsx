@@ -5,6 +5,12 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import InfoOutlined from "@mui/icons-material/InfoOutlined";
 
+// Para buscar por nombre: sin mayúsculas, sin acentos y con las letras que no se descomponen (ø, ł, ß...) en su
+// equivalente simple, así "odegaard" encuentra a "Ødegaard". Es la misma tabla que `consolidate_data.TRANSLITERA`.
+const TRANS = { ø: "o", ł: "l", đ: "d", ð: "d", ı: "i", ħ: "h", ŧ: "t", þ: "th", ß: "ss", æ: "ae", œ: "oe" };
+export const sinAcentos = (s) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+  .replace(/[øłđðıħŧþßæœ]/g, (c) => TRANS[c]);
+
 // "Texto con **negritas**" -> nodos. Los textos de insights.py traen ese marcado.
 export function Md({ texto }) {
   return texto.split(/\*\*(.+?)\*\*/g).map((t, i) => (i % 2 ? <strong key={i}>{t}</strong> : t));

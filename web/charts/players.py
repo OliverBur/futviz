@@ -27,7 +27,7 @@ SECTION = "Jugadores"
 # dejó de hacerlo), así que ese crédito es el default. Las dos gráficas puramente defensivas son al
 # revés: cada punto es una cuenta de FBref dividida por minutos de FBref, y Understat no aporta ni
 # una; acreditar a Understat un dato que no publica sería sencillamente falso. Hay mixtas que
-# acreditan a las dos: "Crea tu gráfico", "Producción vs. recuperación" y "Centros vs. xA".
+# acreditan a las dos: "Crea tu gráfico" (los centros y la producción contra la recuperación quedan ahí como variables).
 FUENTE_MIXTA = f"{FUENTE_UNDERSTAT} y {FUENTE_FBREF}"
 
 # Las variables que se pueden poner en cada eje de "Crea tu gráfico":
@@ -196,8 +196,8 @@ def _eje(col, label, corto, dec, dec_lista=None):
 def _metricas(x, y, referencia):
     """Qué se puede ordenar en el Top 5 (y por lo tanto qué se rotula en la gráfica)."""
     if referencia["tipo"] == "diagonal":
-        primera = {"id": "dif", "etiqueta": "Diferencia",
-                   "ayuda": f"Los que más se alejan de la diagonal ({referencia['dif']})"}
+        primera = {"id": "dif", "etiqueta": "Rendimiento",
+                   "ayuda": f"Los que más se alejan de la diagonal: rinden más o menos de lo esperado ({referencia['dif']})"}
     else:
         primera = {"id": "dist", "etiqueta": "Más atípicos",
                    "ayuda": "Los que más se alejan del grupo, para bien o para mal"}
@@ -306,20 +306,6 @@ def chart_defensive_profile(df, df_def):
         fuente=FUENTE_FBREF, extra_requiere=["recoveries90"])
 
 
-def chart_two_phase(df, df_def):
-    """En qué mitad de la cancha pesa cada jugador: la primera gráfica con un eje de cada fuente."""
-    x = _eje("xga90", "Producción esperada por 90' (xG + xA)", "Producción", 2)
-    y = _eje("recoveries90", "Recuperaciones por 90'", "Recup.", 2)
-    return _scatter(
-        "perfil-dos-fases", "Producción vs. recuperación",
-        "A la derecha, más producción arriba (xG + xA por 90'); arriba, más recuperaciones atrás (entradas + intercepciones).",
-        x=x, y=y, referencia=PROMEDIOS,
-        subtitulo="Jugadores con ≥{min} min · {temporada}"
-                  + _defensa_subtitulo(df, df_def),
-        textos=(ins.dos_fases_que_mirar, ins.dos_fases_por_que), insight="dos_fases", poblacion=df_def,
-        fuente=FUENTE_MIXTA)
-
-
 def _chart_creacion(df, *, slug, titulo, x, y, subtitulo, descripcion, textos, insight, fuente=FUENTE_UNDERSTAT):
     """Una vista de creación de juego: dos tasas por 90' y una línea en el promedio de cada eje.
     Se trabaja sobre los jugadores que tienen las dos columnas (los centros vienen de fbref y no todos
@@ -346,15 +332,6 @@ def chart_build_vs_produce(df):
         subtitulo="Jugadores con ≥{min} min · {temporada}",
         descripcion="A la derecha, quien más construye (xG de construcción por 90'); arriba, quien más produce directo (xG + xA).",
         textos=(ins.construir_que_mirar, ins.construir_por_que), insight="construir")
-
-
-def chart_crosses(df):
-    return _chart_creacion(
-        df, slug="centros-vs-xa", titulo="Centros vs. xA",
-        x=_eje("crosses90", "Centros por 90'", "Centros", 2), y=_eje("xA90", "xA por 90'", "xA90", 2),
-        subtitulo="Jugadores con ≥{min} min · {temporada}",
-        descripcion="A la derecha, quien más centra por 90'; arriba, quien más peligro crea (xA). Centrar mucho no es crear mucho.",
-        textos=(ins.centros_que_mirar, ins.centros_por_que), insight="centros", fuente=FUENTE_MIXTA)
 
 
 def chart_explorer(df):
@@ -406,10 +383,8 @@ PESTANAS = [
     ("asistencias-vs-xa", "Asistencias vs. xA", "Creación"),
     ("pases-clave-vs-xa", "Pases clave vs. xA", "Creación"),
     ("construir-vs-producir", "Construcción vs. producción", "Creación"),
-    ("centros-vs-xa", "Centros vs. xA", "Creación"),
     ("recuperacion-vs-faltas", "Recuperar vs. faltas", "Defensa"),
     ("perfil-defensivo", "Entradas vs. intercepciones", "Defensa"),
-    ("perfil-dos-fases", "Producción vs. recuperación", "Ataque + defensa"),
     ("crea-tu-grafico-jugadores", "Crea tu gráfico", "_explorar"),   # "_": grupo aparte, sin rótulo
 ]
 
@@ -471,7 +446,6 @@ def build(assets_dir) -> list:
         chart_profile(df),
         chart_key_passes(df),
         chart_build_vs_produce(df),
-        chart_crosses(df),
     ]
     # Defensivas: solo si fbref aportó sus columnas (ver `DEF_COLS`).
     if hay_defensivas(df):
@@ -479,7 +453,6 @@ def build(assets_dir) -> list:
         paginas += [
             chart_recoveries_vs_fouls(df, df_def),
             chart_defensive_profile(df, df_def),
-            chart_two_phase(df, df_def),
         ]
     else:
         print("  (sin columnas defensivas de fbref — se omiten sus 3 gráficas)")
