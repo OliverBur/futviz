@@ -1455,6 +1455,60 @@ def pases_asist(df, season, liga=None):
     return fija, salta
 
 
+# --------------------------------------------------------------------------
+# Defensa: Cover vs. Stopper (2026-11-19)
+# --------------------------------------------------------------------------
+#
+# Reemplaza a las dos vistas defensivas anteriores. Percentiles de 0 a 100 entre los defensas con el corte de 900
+# minutos, dentro de cada temporada: Stopper = promedio de los percentiles de entradas ganadas y faltas cometidas;
+# Cover = percentil de intercepciones. Las cuentan de FBref; despejes, bloqueos y duelos no existen en nuestros datos.
+
+def cover_stopper_que_mirar():
+    return ("Arriba a la izquierda, los **stoppers**: van al choque (entradas ganadas y faltas) y interceptan poco. "
+            "Abajo a la derecha, los **covers**: leen el pase y se anticipan, y entran y faltan poco. Arriba a la "
+            "derecha, los que hacen las dos cosas; abajo a la izquierda, los que casi no aparecen en estas acciones.\n\n"
+            "Cada eje es un **percentil de 0 a 100** entre los defensas de esa temporada: 90 quiere decir \"más que "
+            "el 90% de los defensas\". Las líneas parten en el 50.\n\n"
+            "Dos avisos. **El equipo manda**: quien juega en un club que no tiene la pelota defiende más, sin que "
+            "eso diga nada de él. Y aquí van juntos centrales y laterales, porque los datos no los separan: el "
+            "filtro de nivel del club ayuda a comparar entre iguales.")
+
+
+def cover_stopper_por_que(df):
+    d = df[df["pct_stopper"].notna()]
+    r = d["pct_stopper"].corr(d["pct_cover"])
+    return (
+        f"Es la idea de los dos perfiles de defensa, el que sale a disputar y el que se queda a leer el juego, "
+        f"con lo que hay. De las acciones defensivas de FBref solo sobreviven **entradas ganadas, intercepciones y "
+        f"faltas cometidas**; **no hay despejes, bloqueos ni duelos aéreos ni % de duelos ganados**, que son justo "
+        f"lo que más separa a un central de otro. Es una aproximación, no el perfil completo.\n\n"
+        f"El **Stopper** es el promedio de los percentiles de entradas ganadas y de faltas cometidas por 90': las "
+        f"faltas cuentan porque acompañan al choque, aunque no sean algo bueno en sí. El **Cover** es el "
+        f"percentil de intercepciones por 90', una sola variable. Los percentiles se sacan **dentro de cada "
+        f"temporada** entre los defensas con {MIN_MINUTOS_90} minutos o más (en la que va en curso, el corte que "
+        f"dice el subtítulo), y por eso las dos temporadas no se mezclan.\n\n"
+        f"Los dos ejes correlacionan {_fmt(r)}: {_cuanto(r)}. Las tres cuentas son de **FBref y no de "
+        f"Understat**, que solo registra lo que pasa alrededor de los tiros."
+        + _parrafo(_quiebre_intercepciones(d))
+    )
+
+
+def cover_stopper(df, season, liga=None):
+    d, ambito = _ambito(df, season, liga)
+    fija = f"En {ambito}: " + _lideres(
+        d, "pct_stopper", "pct_cover", "player", lambda v: _fmt(v, 0), lambda v: _fmt(v, 0),
+        "más Stopper", "más Cover")
+    if len(d) < 5:
+        return fija, None
+    stop, cov = d["pct_stopper"] > 50, d["pct_cover"] > 50
+    a, b, c = int((stop & ~cov).sum()), int((cov & ~stop).sum()), int((stop & cov).sum())
+    e = d.loc[(d["pct_stopper"] + d["pct_cover"]).idxmax()]
+    salta = (f"De {len(d)} defensas, {a} se inclinan al Stopper, {b} al Cover, {c} a los dos y {len(d) - a - b - c} a "
+             f"ninguno (las líneas parten en el percentil 50). El más completo es **{e['player']}** ({e['team']}): "
+             f"{_fmt(e['pct_stopper'], 0)} de Stopper y {_fmt(e['pct_cover'], 0)} de Cover.")
+    return fija, salta
+
+
 def centros_que_mirar():
     return ("La nube sube con el volumen pero con mucha dispersión: abajo a la derecha "
             "están los que centran de forma constante con poco peligro (la mayoría de los "

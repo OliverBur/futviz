@@ -156,6 +156,25 @@ def load_data():
         "xgbuild90": df["xg_buildup"] / noventas,
         "edad": df["temporada"].str[:4].astype(int) - df["born"],
     })], axis=1)
+    return con_percentiles_defensa(df)
+
+
+def con_percentiles_defensa(df):
+    """`pct_stopper` y `pct_cover` (0 a 100, un decimal; vacío para quien no es defensa o no pasa el corte por 90').
+    El percentil se saca DENTRO de cada temporada entre los defensas que pasan `MIN_MINUTES_90_POR_TEMPORADA` y tienen
+    las tres cuentas de fbref: así el cambio de criterio de las intercepciones entre temporadas no mueve a nadie.
+    Stopper = promedio de los percentiles de entradas ganadas y de faltas cometidas; Cover = percentil de
+    intercepciones (las recuperaciones de este proyecto son entradas + intercepciones: no son una variable más)."""
+    df = df.copy()
+    cols = ["tkl_w90", "fouls90", "interceptions90"]
+    if not all(c in df.columns for c in cols):
+        df["pct_stopper"] = df["pct_cover"] = float("nan")
+        return df
+    pop = ((df["posicion"] == "Defensa") & df[cols].notna().all(axis=1)
+           & (df["min"] >= df["temporada"].map(MIN_MINUTES_90_POR_TEMPORADA)))
+    pct = {c: df[c].where(pop).groupby(df["temporada"]).rank(pct=True) * 100 for c in cols}
+    df["pct_stopper"] = ((pct["tkl_w90"] + pct["fouls90"]) / 2).round(1)
+    df["pct_cover"] = pct["interceptions90"].round(1)
     return df
 
 
@@ -184,16 +203,6 @@ def hay_defensivas(df):
 def variables_disponibles(df):
     """Las variables que el explorador puede ofrecer con estos datos (las de fbref pueden faltar)."""
     return [v for v in VARIABLES if v[0] in df.columns]
-
-
-def _defensa_subtitulo(df, df_def):
-    """Cuántos quedan fuera por no cruzar entre Understat y fbref, dicho en el subtítulo en vez de
-    dejar que el lector suponga que están todos. Solo sobre las temporadas que se muestran: contar
-    contra todas mezclaría a quien no cruzó por nombre con quien no tiene dato porque su temporada
-    todavía no se bajó. "jugador-temporada" y no "jugadores": el número es el total de todas."""
-    dentro = df[df["temporada"].isin(set(df_def["temporada"]))]
-    faltan = len(dentro) - len(df_def)
-    return f" · sin {faltan} jugadores que no se encontraron en FBref (sumando temporadas)" if faltan else ""
 
 
 # --- configuración de las vistas ---------------------------------------------------------------
@@ -249,7 +258,7 @@ def con_minimo_por90(df):
 
 def _scatter(slug, titulo, descripcion, *, x, y, referencia, subtitulo, textos, insight, poblacion,
              fuente=FUENTE_UNDERSTAT, extra_requiere=(), color_por=None, minimo_por90=False,
-             posiciones_ini=None):
+             posiciones_ini=None, posicion=True, nota=None):
     """Una vista de dispersión con un par de variables fijo.
 
     `poblacion` es el DataFrame sobre el que se calculan los textos fijos ("por qué estas variables");
@@ -265,12 +274,14 @@ def _scatter(slug, titulo, descripcion, *, x, y, referencia, subtitulo, textos, 
         "x": x, "y": y, "referencia": referencia,
         "requiere": [x["col"], y["col"], *extra_requiere],
         "subtitulo": subtitulo,
-        "filtros": {"posicion": True, "nivel": True, "sub21": True},
+        "filtros": {"posicion": posicion, "nivel": True, "sub21": True},
         "metricas": _metricas(x, y, referencia),
         "queMirar": que_mirar(), "porQue": por_que(poblacion),
         "insight": insight, "fuente": fuente,
         "colorPor": color_por or ["liga"],
     }
+    if nota:
+        cfg["nota"] = nota
     if minimo_por90:
         cfg["minimoPor90"] = True
     if posiciones_ini:
@@ -318,33 +329,22 @@ def chart_profile(df):
         posiciones_ini=["Medio", "Delantero"])
 
 
-def chart_recoveries_vs_fouls(df, df_def):
-    """Cuánta pelota recupera cada jugador y a qué precio. El eje X suma entradas ganadas e
-    intercepciones: acá la pregunta no es CÓMO la quita sino CUÁNTA quita (la otra gráfica separa)."""
-    x = _eje("recoveries90", "Recuperaciones por 90'", "Recup.", 2)
-    y = _eje("fouls90", "Faltas cometidas por 90'", "Faltas", 2)
+def chart_cover_stopper(df):
+    """Defensa: percentil de Cover (intercepciones) contra percentil de Stopper (entradas ganadas y faltas), entre los
+    defensas con el corte por 90'. Los percentiles los calcula `load_data` (`pct_cover`, `pct_stopper`)."""
+    x = _eje("pct_cover", "Cover: percentil de intercepciones por 90'", "Cover", 0)
+    y = _eje("pct_stopper", "Stopper: percentil de entradas ganadas y faltas por 90'", "Stopper", 0)
     return _scatter(
-        "recuperacion-vs-faltas", "Recuperar vs. cortar con falta",
-        "A la derecha, más recuperaciones por 90' (entradas ganadas + intercepciones); arriba, más faltas cometidas.",
-        x=x, y=y, referencia=PROMEDIOS,
-        subtitulo="Jugadores con ≥{min} min · {temporada}"
-                  + _defensa_subtitulo(df, df_def),
-        textos=(ins.recuperar_que_mirar, ins.recuperar_por_que), insight="recuperar", poblacion=df_def,
-        fuente=FUENTE_FBREF, extra_requiere=["recoveries90"])
-
-
-def chart_defensive_profile(df, df_def):
-    """El espejo de "Perfil ofensivo": ir a disputar la pelota contra leer el pase."""
-    x = _eje("tkl_w90", "Entradas ganadas por 90'", "Entradas", 2)
-    y = _eje("interceptions90", "Intercepciones por 90'", "Intercep.", 2)
-    return _scatter(
-        "perfil-defensivo", "Perfil defensivo: entradas vs. intercepciones",
-        "A la derecha, más entradas ganadas por 90' (va al choque); arriba, más intercepciones (lee el pase).",
-        x=x, y=y, referencia=PROMEDIOS,
-        subtitulo="Jugadores con ≥{min} min · {temporada}"
-                  + _defensa_subtitulo(df, df_def),
-        textos=(ins.disputar_que_mirar, ins.disputar_por_que), insight="disputar", poblacion=df_def,
-        fuente=FUENTE_FBREF, extra_requiere=["recoveries90"])
+        "cover-vs-stopper", "Cover vs. Stopper",
+        "Percentiles entre los defensas: arriba, los que van al choque (Stopper); a la derecha, los que leen el pase (Cover).",
+        x=x, y=y,
+        referencia={"tipo": "promedios", "fijo": {"x": 50, "y": 50},
+                    "cuadrantes": {"tr": "hacen las dos", "tl": "stoppers", "br": "covers", "bl": "casi no aparecen"}},
+        subtitulo="Defensas con ≥{min} min · {temporada}",
+        textos=(ins.cover_stopper_que_mirar, ins.cover_stopper_por_que), insight="cover_stopper",
+        poblacion=df[df["pct_stopper"].notna()].reset_index(drop=True), fuente=FUENTE_FBREF,
+        minimo_por90=True, posicion=False,
+        nota="Solo hay entradas ganadas, intercepciones y faltas: sin despejes, bloqueos ni duelos aéreos.")
 
 
 def _chart_creacion(df, *, slug, titulo, x, y, subtitulo, descripcion, textos, insight, referencia=PROMEDIOS,
@@ -445,8 +445,7 @@ PESTANAS = [
     ("xa-vs-asistencias-90", "xA vs. asistencias por 90", "Creación"),
     ("pases-clave-vs-asistencias", "Pases clave vs. asistencias", "Creación"),
     ("construir-vs-producir", "Construcción vs. producción", "Creación"),
-    ("recuperacion-vs-faltas", "Recuperar vs. faltas", "Defensa"),
-    ("perfil-defensivo", "Entradas vs. intercepciones", "Defensa"),
+    ("cover-vs-stopper", "Cover vs. Stopper", "Defensa"),
     ("edad", "Edad", "_explorar"),
     ("crea-tu-grafico-jugadores", "Crea tu gráfico", "_explorar"),   # "_": grupo aparte, sin rótulo
 ]
@@ -479,7 +478,7 @@ EXACTAS = ["tkl_w90", "interceptions90", "xG90", "xA90"]
 
 def _registrar_tabla(df, seasons):
     # Las columnas que alimentan una derivada viajan aunque no estén entre las variables (conteos).
-    columnas = [v[0] for v in VARIABLES] + ["xg_chain", "xg_buildup", "key_passes", "shots"]
+    columnas = [v[0] for v in VARIABLES] + ["xg_chain", "xg_buildup", "key_passes", "shots", "pct_stopper", "pct_cover"]
     ligas = list(LEAGUE_ORDER)
     posiciones = posiciones_de(df)
     return react_views.registrar_tabla(
@@ -511,13 +510,9 @@ def build(assets_dir) -> list:
         chart_key_passes_assists(df),
         chart_build_vs_produce(df),
     ]
-    # Defensivas: solo si fbref aportó sus columnas (ver `DEF_COLS`).
+    # Defensa: solo si fbref aportó sus columnas (ver `DEF_COLS`).
     if hay_defensivas(df):
-        df_def = df[df["recoveries90"].notna()].reset_index(drop=True)
-        paginas += [
-            chart_recoveries_vs_fouls(df, df_def),
-            chart_defensive_profile(df, df_def),
-        ]
+        paginas.append(chart_cover_stopper(df))
     else:
-        print("  (sin columnas defensivas de fbref — se omiten sus 3 gráficas)")
+        print("  (sin columnas defensivas de fbref — se omite Cover vs. Stopper)")
     return _ordenar_pestanas(paginas + [chart_shot_map(), chart_explorer(df)])

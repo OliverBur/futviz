@@ -37,6 +37,7 @@ JUGADORES = [
     ("xg_goles_90", ins.xg_goles_90, ["npxg90", "npg90"]),
     ("xa_asist_90", ins.xa_asist_90, ["xA90", "a90"]),
     ("pases_asist", ins.pases_asist, ["kp90", "a90"]),
+    ("cover_stopper", ins.cover_stopper, ["pct_stopper", "pct_cover"]),   # los percentiles ya solo existen para defensas con el corte
 ]
 POR_90 = {"xg_goles_90", "xa_asist_90", "pases_asist"}
 EQUIPOS = [("definicion", ins.definicion, []), ("creacion", ins.creacion, []), ("defensa", ins.defensa, []),
@@ -79,7 +80,7 @@ def casos(df, seasons, ligas, insight, generador, requiere, entidad, rng, n_alea
     aleatorios = []
     for _ in range(n_aleatorios):
         pos = None
-        if posiciones and rng.random() < 0.6:
+        if len(posiciones) > 1 and rng.random() < 0.6:   # con una sola posición (solo defensas) no hay subconjunto propio
             pos = rng.sample(posiciones, rng.randint(1, len(posiciones) - 1))
             pos = [p for p in posiciones if p in pos]
         nivel = rng.choice(niveles) if niveles and rng.random() < 0.5 else None

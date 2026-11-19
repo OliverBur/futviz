@@ -12,8 +12,7 @@ PREGUNTAS = {
     "xa-vs-asistencias-90": "¿Quién da más asistencias de las que debería?",
     "pases-clave-vs-asistencias": "¿Quién crea ocasiones que sus compañeros desperdician?",
     "construir-vs-producir": "¿Quién construye, quién termina y quién lo hace todo?",
-    "recuperacion-vs-faltas": "¿Quién recupera más balones y a qué costo?",
-    "perfil-defensivo": "¿Quién defiende yendo al choque y quién leyendo el pase?",
+    "cover-vs-stopper": "¿Quién va al choque y quién lee el juego?",
     "crea-tu-grafico-jugadores": "¿Cómo se relacionan dos variables que tú elijas?",
     # Equipos
     "eficiencia-definicion": "¿Qué equipo aprovecha mejor sus ocasiones?",

@@ -220,8 +220,9 @@ function Vista({ cfg, T, modo, tk }) {
   // La línea de la élite (`referencia.zonas`): el valor de X que deja arriba al `1 − pct` de lo que se ve.
   const corteElite = useMemo(() => (ref && ref.zonas && visibles.length >= 5
     ? cuantil(visibles.map((r) => xs[r]), ref.zonas.pct) : null), [ref, visibles, xs]);
+  // Las líneas de promedio: el de las temporadas juntas, o un valor fijo de la vista (`fijo`: el percentil 50).
   const medias = useMemo(() => (ref && ref.tipo === "promedios" && pobl.length
-    ? { x: media(pobl.map((r) => xs[r])), y: media(pobl.map((r) => ys[r])) } : null), [ref, pobl, xs, ys]);
+    ? (ref.fijo || { x: media(pobl.map((r) => xs[r])), y: media(pobl.map((r) => ys[r])) }) : null), [ref, pobl, xs, ys]);
 
   // Memoizados: si cambiaran de identidad en cada render, `series` se recalcularía y MUI
   // volvería a pintar los ~2.000 marcadores en cada movimiento del mouse.
@@ -699,7 +700,8 @@ function Vista({ cfg, T, modo, tk }) {
 
           <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: 1, mt: 0.75 }}>
             <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
-              {ref && ref.tipo === "promedios" ? "Líneas punteadas: promedio de cada eje · " : ""}
+              {ref && ref.tipo === "promedios" ? (ref.fijo ? "Líneas punteadas: percentil 50 · " : "Líneas punteadas: promedio de cada eje · ") : ""}
+              {cfg.nota ? `${cfg.nota} · ` : ""}
               {ref && ref.banda ? "Franja gris: hasta donde llega el azar · " : ""}
               {ref && ref.zonas ? "Línea vertical: el 20% con más xG por 90' de los que ves · " : ""}
               {movil

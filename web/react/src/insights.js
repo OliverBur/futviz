@@ -201,6 +201,21 @@ export function pasesAsist(T, filas, ambito) {
   return { fija, salta };
 }
 
+// Defensa: Cover vs. Stopper. Mismo texto que `cover_stopper` de `code/insights.py`.
+export function coverStopper(T, filas, ambito) {
+  const f0 = (v) => fmt(v, 0);
+  const fija = `En ${ambito}: ` + lideres(T, filas, "pct_stopper", "pct_cover", f0, f0, "más Stopper", "más Cover");
+  if (filas.length < 5) return { fija, salta: null };
+  let a = 0, b = 0, c = 0;
+  for (const r of filas) {
+    const stop = T.c.pct_stopper[r] > 50, cov = T.c.pct_cover[r] > 50;
+    if (stop && !cov) a++; else if (cov && !stop) b++; else if (stop && cov) c++;
+  }
+  const e = filas[idxmax(filas.map((r) => T.c.pct_stopper[r] + T.c.pct_cover[r]))];
+  const salta = `De ${filas.length} defensas, ${a} se inclinan al Stopper, ${b} al Cover, ${c} a los dos y ${filas.length - a - b - c} a ninguno (las líneas parten en el percentil 50). El más completo es **${quien(T, e)}** (${T.equipo(e)}): ${f0(T.c.pct_stopper[e])} de Stopper y ${f0(T.c.pct_cover[e])} de Cover.`;
+  return { fija, salta };
+}
+
 export function centros(T, filas, ambito) {
   const fija = `En ${ambito}: ` + lideres(T, filas, "crosses90", "xA90", fmt1, fmt,
     "quien más centra por 90'", "quien más xA por 90'");
@@ -283,7 +298,7 @@ export function puntos(T, filas, ambito) {
 export const GENERADORES = {
   goles_xg: golesXg, asist_xa: asistXa, perfil, recuperar, disputar, dos_fases: dosFases,
   pases_clave: pasesClave, construir, centros, definicion, creacion, defensa, puntos,
-  xg_goles_90: xgGoles90, xa_asist_90: xaAsist90, pases_asist: pasesAsist,
+  xg_goles_90: xgGoles90, xa_asist_90: xaAsist90, pases_asist: pasesAsist, cover_stopper: coverStopper,
 };
 
 // ---- Mapa de calor de los tiros ---------------------------------------------------------------
