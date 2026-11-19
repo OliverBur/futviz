@@ -178,29 +178,23 @@ def _promedios(cuadrantes):
     return {"tipo": "promedios", "cuadrantes": cuadrantes}
 
 
-def _metricas(x, y, referencia, peor_primero=None):
-    """Qué se puede ordenar en el Top 5 (y por lo tanto qué se rotula en la gráfica). El Top 5 ordena de mayor
-    a menor. En los ejes donde menos es mejor (xG o goles en contra) eso pone primero a los peores:
-    `peor_primero` dice, por eje, cómo se llama a esos en la ayuda, para que nadie lea la lista al revés."""
-    peor_primero = peor_primero or {}
-    if referencia["tipo"] == "diagonal":
-        primera = {"id": "dif", "etiqueta": "Rendimiento",
-                   "ayuda": f"Los que más se alejan de la diagonal ({referencia['dif']})"}
-    else:
-        primera = {"id": "dist", "etiqueta": "Más atípicos",
-                   "ayuda": "Los que más se alejan del grupo, para bien o para mal"}
+def _metricas(x, y, referencia, menos_es_mejor=None):
+    """Qué se puede ordenar en el Top 5 (y por lo tanto qué se rotula en la gráfica): las dos variables. En los ejes
+    donde menos es mejor (xG o goles en contra) la lista abre por los que menos tienen: `menos_es_mejor` dice, por
+    eje, cómo se llama a esos en la ayuda."""
+    menos_es_mejor = menos_es_mejor or {}
 
-    def ayuda(id_, e):
-        extra = f": primero {peor_primero[id_]}" if id_ in peor_primero else ""
-        return f"Ordenados por {e['label']}{extra}"
+    def metrica(id_, e):
+        if id_ in menos_es_mejor:
+            return {"id": id_, "etiqueta": e["corto"], "menosEsMejor": True,
+                    "ayuda": f"Ordenados por {e['label']}: primero {menos_es_mejor[id_]}"}
+        return {"id": id_, "etiqueta": e["corto"], "ayuda": f"Ordenados por {e['label']}"}
 
-    return [primera,
-            {"id": "x", "etiqueta": x["corto"], "ayuda": ayuda("x", x)},
-            {"id": "y", "etiqueta": y["corto"], "ayuda": ayuda("y", y)}]
+    return [metrica("x", x), metrica("y", y)]
 
 
 def _scatter(df, slug, titulo, descripcion, *, x, y, referencia, subtitulo, textos, insight,
-             fuente=FUENTE_XG, peor_primero=None):
+             fuente=FUENTE_XG, menos_es_mejor=None):
     """Un scatter de equipos con el par fijo."""
     que_mirar, por_que = textos
     return _pagina(slug, titulo, descripcion, {
@@ -210,7 +204,7 @@ def _scatter(df, slug, titulo, descripcion, *, x, y, referencia, subtitulo, text
         "requiere": [x["col"], y["col"]],
         "subtitulo": subtitulo,
         "filtros": {"nivel": True},
-        "metricas": _metricas(x, y, referencia, peor_primero),
+        "metricas": _metricas(x, y, referencia, menos_es_mejor),
         "queMirar": que_mirar(), "porQue": por_que(df),
         "insight": insight, "fuente": fuente, "colorPor": ["liga"],
     })
@@ -242,7 +236,7 @@ def chart_creation(df):
                                "br": "dominan las ocasiones", "bl": "partidos cerrados"}),
         subtitulo="Equipos de las 5 ligas · {temporada} · por partido, sin penales",
         textos=(ins.creacion_que_mirar, ins.creacion_por_que), insight="creacion",
-        peor_primero={"y": "los que más ocasiones conceden"})
+        menos_es_mejor={"y": "los que menos ocasiones conceden"})
 
 
 def chart_defense(df):
@@ -258,7 +252,7 @@ def chart_defense(df):
                              "Recibe menos de lo esperado", invertir=True),
         subtitulo="Equipos de las 5 ligas · {temporada} · por partido, sin penales",
         textos=(ins.defensa_que_mirar, ins.defensa_por_que), insight="defensa",
-        peor_primero={"x": "los que más ocasiones conceden", "y": "los que más goles reciben"})
+        menos_es_mejor={"x": "los que menos ocasiones conceden", "y": "los que menos goles reciben"})
 
 
 def chart_points_vs_xg(df):

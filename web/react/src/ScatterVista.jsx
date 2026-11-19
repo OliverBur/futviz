@@ -47,7 +47,7 @@ import { Tabla } from "./Tabla.jsx";
 import { Aviso, Cargando, Encabezado, Md, Parrafos, Rotulo, sinAcentos } from "./ui.jsx";
 import { acercar, ajustarA, centrarEn, esBase } from "./zoom.js";
 import { TOPE_DIF, colorRendimiento, conAlfa, divergente } from "./colores.js";
-import { desvPob, media } from "./stats.js";
+import { media } from "./stats.js";
 import { GENERADORES, lecturaExplorador } from "./insights.js";
 
 const signo = (d, dec = 1) => (d >= 0 ? "+" : "−") + Math.abs(d).toFixed(dec);
@@ -88,8 +88,8 @@ function Vista({ cfg, T, modo, tk }) {
   const [colX, setColX] = useState(exp ? entre(P.get("x"), colesExp, exp.x) : cfg.x.col);
   const [colY, setColY] = useState(exp ? entre(P.get("y"), colesExp, exp.y) : cfg.y.col);
   const infoVar = useMemo(() => (exp ? Object.fromEntries(exp.variables.map((v) => [v.col, v])) : null), [exp]);
-  const X = exp ? { col: colX, label: infoVar[colX].label, corto: "Eje X", dec: infoVar[colX].dec } : cfg.x;
-  const Y = exp ? { col: colY, label: infoVar[colY].label, corto: "Eje Y", dec: infoVar[colY].dec } : cfg.y;
+  const X = exp ? { col: colX, label: infoVar[colX].label, corto: infoVar[colX].label, dec: infoVar[colX].dec } : cfg.x;
+  const Y = exp ? { col: colY, label: infoVar[colY].label, corto: infoVar[colY].label, dec: infoVar[colY].dec } : cfg.y;
   const xs = T.c[X.col], ys = T.c[Y.col];
   const decL = (a) => (a.decLista != null ? a.decLista : a.dec);   // decimales en la lista y en las etiquetas
   const ref = cfg.referencia || null;
@@ -118,8 +118,8 @@ function Vista({ cfg, T, modo, tk }) {
   const [hoverBruto, setHoverBruto] = useState(null);
   const [hoverLiga, setHoverLiga] = useState(null);
   const metricas = useMemo(() => (exp ? [
-    { id: "x", etiqueta: "Eje X", ayuda: `Los de mayor ${X.label}` },
-    { id: "y", etiqueta: "Eje Y", ayuda: `Los de mayor ${Y.label}` },
+    { id: "x", etiqueta: X.label, ayuda: `Los de mayor ${X.label}` },
+    { id: "y", etiqueta: Y.label, ayuda: `Los de mayor ${Y.label}` },
   ] : cfg.metricas), [exp, cfg, X.label, Y.label]);
   // Por qué se ordena el Top 5 (y qué se rotula). Abre por la variable del eje Y: son los nombres que se conocen
   // (los que más goles, más asistencias...), no los más atípicos, que casi siempre son desconocidos.
@@ -271,34 +271,23 @@ function Vista({ cfg, T, modo, tk }) {
   // lista no pueden contradecirse. La vista se difiere para que la lista no parpadee mientras
   // se arrastra o se hace zoom.
   const vistaDiferida = useDeferredValue(view);
-  // Para "Alejados": la distancia al centro de la nube, en desviaciones estándar de cada eje.
-  const centro = useMemo(() => {
-    if (visibles.length < 2) return null;
-    const vx = visibles.map((r) => xs[r]), vy = visibles.map((r) => ys[r]);
-    return { mx: media(vx), my: media(vy), sx: desvPob(vx) || 1, sy: desvPob(vy) || 1 };
-  }, [visibles, xs, ys]);
-  const valorDe = useCallback((r) => {
-    if (metrica === "dif") return Math.abs(ys[r] - xs[r]);
-    if (metrica === "dist") return centro ? Math.hypot((xs[r] - centro.mx) / centro.sx, (ys[r] - centro.my) / centro.sy) : 0;
-    return metrica === "x" ? xs[r] : ys[r];
-  }, [metrica, xs, ys, centro]);
+  // El Top 5 ordena por una de las dos variables. Donde MENOS es mejor (los goles o el xG en contra) abre por los
+  // que menos tienen: la lista es de los mejores, no de los peores (`menosEsMejor` en la configuración).
+  const menosEsMejor = !!(metricas.find((m) => m.id === metrica) || {}).menosEsMejor;
+  const valorDe = useCallback((r) => (metrica === "x" ? xs[r] : ys[r]), [metrica, xs, ys]);
   const ranking = useMemo(() => {
     const v = vistaDiferida;
     return visibles
       .filter((r) => xs[r] >= v.x0 && xs[r] <= v.x1 && ys[r] >= v.y0 && ys[r] <= v.y1)
-      // "Rendimiento" pide un mínimo de xG: con 0.5 de xG un solo gol ya es el mayor "sobrerrendimiento" de la liga.
-      .filter((r) => !(metrica === "dif" && ref && ref.piso) || xs[r] >= ref.piso)
-      .sort((a, b) => valorDe(b) - valorDe(a) || ys[b] - ys[a] || xs[b] - xs[a])
+      .sort((a, b) => (menosEsMejor ? -1 : 1) * (valorDe(b) - valorDe(a) || ys[b] - ys[a] || xs[b] - xs[a]))
       .slice(0, 5);
-  }, [visibles, vistaDiferida, valorDe, xs, ys, metrica, ref]);
+  }, [visibles, vistaDiferida, valorDe, xs, ys, menosEsMejor]);
   // Lo que se lee de cada fila, en la lista y en la etiqueta: el valor de la métrica elegida.
   const valX = (r) => xs[r].toFixed(decL(X)), valY = (r) => ys[r].toFixed(decL(Y));
   const textoValor = useCallback((r) => {
-    if (metrica === "dif") return signo(ys[r] - xs[r], decDif);
-    if (metrica === "dist") return `${valX(r)} · ${valY(r)}`;
     return metrica === "x" ? valX(r) : valY(r);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [metrica, xs, ys, X.dec, Y.dec, decDif]);
+  }, [metrica, xs, ys, X.dec, Y.dec]);
   const nombre = useCallback((r) => T.nombre(r), [T]);
   const rotulos = useMemo(() => {
     // Con jugadores fijados el resto se atenúa: rotular a los demás sería ponerle nombre a puntos casi
@@ -606,8 +595,7 @@ function Vista({ cfg, T, modo, tk }) {
   const ranking5 = (
     <Ranking metricas={metricas} metrica={metrica} onMetrica={setMetrica} filas={ranking} nombre={nombre}
       equipo={(r) => (esJugadores ? T.equipo(r) : "")} valor={textoValor} fijadas={pines} enZoom={hayZoom}
-      onElegir={alternarFila} onSobrevolar={setHoverFila}
-      encabezado={metrica === "dist" ? `${X.corto} · ${Y.corto}` : null} />
+      onElegir={alternarFila} onSobrevolar={setHoverFila} />
   );
 
   // Cuántos filtros "de verdad" hay puestos (temporada y color no cuentan: son vistas, no recortes).
