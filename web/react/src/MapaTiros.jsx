@@ -22,7 +22,7 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Typography from "@mui/material/Typography";
 import { useSitioTema } from "./theme.jsx";
 import { useTabla } from "./datos.js";
-import { Aviso, Cargando, Md, Parrafos, Rotulo } from "./ui.jsx";
+import { Aviso, Cargando, Encabezado, Md, Parrafos, Rotulo } from "./ui.jsx";
 import { tiros } from "./insights.js";
 import { agregar } from "./tiros.js";
 import { miles } from "./stats.js";
@@ -96,8 +96,7 @@ function Vista({ cfg, T, modo, tk }) {
     <>
       <Box sx={{ display: "grid", gap: 3, gridTemplateColumns: { xs: "minmax(0,1fr)", md: "minmax(0,1fr) 270px" }, alignItems: "start" }}>
         <Box sx={{ minWidth: 0 }}>
-          <Typography component="h2" sx={{ fontSize: 17, fontWeight: 700, color: "primary.main" }}>{cfg.titulo}</Typography>
-          <Typography sx={{ fontSize: 13, color: "text.secondary", mb: 1.5 }}>{subtitulo}</Typography>
+          <Encabezado pregunta={cfg.pregunta} titulo={cfg.titulo} bajada={cfg.bajada} muestra={subtitulo} />
 
           <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2, alignItems: "stretch" }}>
             <Box sx={{ flex: 1, minWidth: 0, maxWidth: 1000, position: "relative" }}>
@@ -192,11 +191,11 @@ function Vista({ cfg, T, modo, tk }) {
       </Box>
 
       <Box sx={{ mt: 3, maxWidth: 1040 }}>
-        <Rotulo>Qué mirar aquí</Rotulo>
+        <Rotulo>Qué más mirar</Rotulo>
         <Parrafos texto={cfg.queMirar} sx={{ color: "text.primary" }} />
         <Box sx={{ mt: 2, pl: 2, borderLeft: 3, borderColor: "success.main" }}>
           <Typography sx={{ fontSize: 10.5, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase", color: "success.main", mb: 0.75 }}>
-            En lo que estás viendo · {temporada === TODAS ? "todas las temporadas" : temporada} · {tipo.etiqueta}
+            Con estos filtros · {temporada === TODAS ? "todas las temporadas" : temporada} · {tipo.etiqueta}
           </Typography>
           <Typography sx={{ fontSize: 14, lineHeight: 1.6, mb: lectura.salta ? 1 : 0 }}><Md texto={lectura.fija} /></Typography>
           {lectura.salta && <Typography sx={{ fontSize: 14, lineHeight: 1.6 }}><Md texto={lectura.salta} /></Typography>}

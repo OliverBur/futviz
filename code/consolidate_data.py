@@ -620,6 +620,9 @@ def attach_fbref(players, season_dir, season):
     fb_pos = por_clave["pos"].reindex(players["fb_key"]).to_numpy()
     players["nation"] = (por_clave["nation"].reindex(players["fb_key"]).to_numpy()
                           if "nation" in por_clave.columns else pd.NA)
+    # El nombre como lo escribe fbref (con sus acentos): es el que el sitio muestra cuando hubo cruce
+    # (`web/charts/nombres.py`). `player` no se toca: los cruces de xG y de valor dependen de él.
+    players["player_fbref"] = por_clave["player"].reindex(players["fb_key"]).to_numpy()
 
     sin_match = players.loc[players["born"].isna(), ["player", "team", "liga", "min"]]
     edad = edad_en_temporada(players["born"], season)

@@ -18,6 +18,7 @@ import Badge from "@mui/material/Badge";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
+import Collapse from "@mui/material/Collapse";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import IconButton from "@mui/material/IconButton";
 import ListSubheader from "@mui/material/ListSubheader";
@@ -43,7 +44,7 @@ import { Grafica, FilaCtx } from "./Grafica.jsx";
 import { Ranking } from "./Ranking.jsx";
 import { Cuadrito, Posiciones } from "./Posiciones.jsx";
 import { Tabla } from "./Tabla.jsx";
-import { Aviso, Cargando, Md, Parrafos, Rotulo } from "./ui.jsx";
+import { Aviso, Cargando, Encabezado, Md, Parrafos, Rotulo } from "./ui.jsx";
 import { acercar, ajustarA, centrarEn, esBase } from "./zoom.js";
 import { TOPE_DIF, colorRendimiento, conAlfa, divergente } from "./colores.js";
 import { desvPob, media } from "./stats.js";
@@ -74,6 +75,7 @@ function Vista({ cfg, T, modo, tk }) {
   // `noSsr`: se lee de una vez y no tras el primer render, para no parpadear de escritorio a móvil.
   const movil = useMediaQuery(theme.breakpoints.down("md"), { noSsr: true });
   const exp = cfg.explorador || null;
+  const [masAbierto, setMasAbierto] = useState(false);   // "Más filtros" (solo en escritorio)
   const esJugadores = cfg.entidad === "jugadores";
   const plural = esJugadores ? "jugadores" : "equipos";
   const filtros = cfg.filtros || {};
@@ -449,6 +451,35 @@ function Vista({ cfg, T, modo, tk }) {
       </TextField>
     </Box>
   );
+  const hayNivel = filtros.nivel && nivelesDisp.length > 0;
+  const haySub = filtros.sub21 && haySub21;
+  const hayMas = hayNivel || haySub;
+  const nMas = (nivel !== "todos" ? 1 : 0) + (sub21 ? 1 : 0);
+  const bloqueNivel = !hayNivel ? null : (
+    <Box>
+      <Rotulo ayuda={ayudas.nivel}>Nivel del club</Rotulo>
+      <ToggleButtonGroup exclusive size="small" fullWidth value={nivel} aria-label="Nivel del club"
+        onChange={(_e, v) => v && setNivel(v)}>
+        <ToggleButton value="todos">Todos</ToggleButton>
+        {nivelesDisp.map((nv) => (
+          <ToggleButton key={nv} value={nv} sx={{ px: 0.5, fontSize: "11.5px !important" }}>
+            {nv.replace("Clubes ", "").replace(/^./, (c) => c.toUpperCase())}
+          </ToggleButton>
+        ))}
+      </ToggleButtonGroup>
+    </Box>
+  );
+  const bloqueSub21 = !haySub ? null : (
+    <FormControlLabel sx={{ m: 0 }}
+      label={<Typography sx={{ fontSize: 13, display: "flex", alignItems: "center", gap: 0.5 }}>
+        Jugadores sub-21
+        {ayudas.sub21 && <Tooltip title={ayudas.sub21} arrow enterTouchDelay={0}>
+          <Box component="span" aria-label="Más información" tabIndex={0}
+            sx={{ fontSize: 12, color: "text.secondary", cursor: "help", fontStyle: "italic", px: 0.5 }}>i</Box>
+        </Tooltip>}
+      </Typography>}
+      control={<Switch size="small" checked={sub21} onChange={(e) => setSub21(e.target.checked)} />} />
+  );
   const controles = (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2.25 }}>
       {exp && selectorVariable("Eje horizontal", colX, setColX)}
@@ -474,23 +505,9 @@ function Vista({ cfg, T, modo, tk }) {
         </Box>
       )}
 
-      {filtros.nivel && nivelesDisp.length > 0 && (
-        <Box>
-          <Rotulo ayuda={ayudas.nivel}>Nivel del club</Rotulo>
-          <ToggleButtonGroup exclusive size="small" fullWidth value={nivel} aria-label="Nivel del club"
-            onChange={(_e, v) => v && setNivel(v)}>
-            <ToggleButton value="todos">Todos</ToggleButton>
-            {nivelesDisp.map((n) => (
-              <ToggleButton key={n} value={n} sx={{ px: 0.5, fontSize: "11.5px !important" }}>
-                {n.replace("Clubes ", "").replace(/^./, (c) => c.toUpperCase())}
-              </ToggleButton>
-            ))}
-          </ToggleButtonGroup>
-        </Box>
-      )}
-
+      {/* Resaltar: antes se llamaba "Buscar"; lo que hace es marcar puntos, no encontrar gráficas */}
       <Box>
-        <Rotulo>Buscar {esJugadores ? "jugadores" : "clubes"}</Rotulo>
+        <Rotulo>Resaltar {esJugadores ? "jugadores" : "clubes"}</Rotulo>
         <Autocomplete multiple size="small" options={opcionesJug} filterOptions={filtrar}
           value={fijados}
           onChange={(_e, v) => {
@@ -528,28 +545,32 @@ function Vista({ cfg, T, modo, tk }) {
           }}
           renderInput={(p) => <TextField {...p} placeholder={fijados.length ? "" : `Escribe un ${palabra}…`} />} />
         <Typography sx={{ fontSize: 11.5, color: "text.secondary", mt: 0.5 }}>
-          Fija hasta {MAX_PINES} para compararlos.
+          Resalta hasta {MAX_PINES} para compararlos.
         </Typography>
       </Box>
 
-      {filtros.sub21 && haySub21 && (
-        <FormControlLabel sx={{ m: 0 }}
-          label={<Typography sx={{ fontSize: 13, display: "flex", alignItems: "center", gap: 0.5 }}>
-            Jugadores sub-21
-            {ayudas.sub21 && <Tooltip title={ayudas.sub21} arrow enterTouchDelay={0}>
-              <Box component="span" aria-label="Más información" tabIndex={0}
-                sx={{ fontSize: 12, color: "text.secondary", cursor: "help", fontStyle: "italic", px: 0.5 }}>i</Box>
-            </Tooltip>}
-          </Typography>}
-          control={<Switch size="small" checked={sub21} onChange={(e) => setSub21(e.target.checked)} />} />
-      )}
+      {hayMas && (movil ? <>{bloqueNivel}{bloqueSub21}</> : (
+        <Box>
+          <Button size="small" onClick={() => setMasAbierto((a) => !a)} aria-expanded={masAbierto} aria-controls="mas-filtros"
+            startIcon={<ExpandMore sx={{ transform: masAbierto ? "rotate(180deg)" : "none", transition: "transform .15s" }} />}
+            sx={{ textTransform: "none", fontWeight: 600, px: 0.75, ml: -0.75 }}>
+            Más filtros{nMas ? ` (${nMas})` : ""}
+          </Button>
+          <Collapse in={masAbierto}>
+            <Box id="mas-filtros" sx={{ display: "flex", flexDirection: "column", gap: 2.25, pt: 1.5 }}>
+              {bloqueNivel}{bloqueSub21}
+            </Box>
+          </Collapse>
+        </Box>
+      ))}
     </Box>
   );
 
   const ranking5 = (
     <Ranking metricas={metricas} metrica={metrica} onMetrica={setMetrica} filas={ranking} nombre={nombre}
       equipo={(r) => (esJugadores ? T.equipo(r) : "")} valor={textoValor} fijadas={pines} enZoom={hayZoom}
-      onElegir={alternarFila} onSobrevolar={setHoverFila} />
+      onElegir={alternarFila} onSobrevolar={setHoverFila}
+      encabezado={metrica === "dist" ? `${X.corto} · ${Y.corto}` : null} />
   );
 
   // Cuántos filtros "de verdad" hay puestos (temporada y color no cuentan: son vistas, no recortes).
@@ -571,21 +592,22 @@ function Vista({ cfg, T, modo, tk }) {
 
         {/* ---------------- columna del gráfico ---------------- */}
         <Box sx={{ minWidth: 0 }}>
-          <Typography component="h2" sx={{ fontSize: 17, fontWeight: 700, color: "primary.main" }}>{cfg.titulo}</Typography>
-          <Typography sx={{ fontSize: 13, color: "text.secondary", mb: 1.5 }}>{subtitulo}</Typography>
+          <Encabezado pregunta={cfg.pregunta} titulo={cfg.titulo} bajada={cfg.bajada} muestra={subtitulo} />
 
           {/* En móvil la temporada se queda a la vista; el resto de filtros van en el panel. */}
           {movil && (
-            <Box sx={{ mb: 1.5 }}>
-              {ctlTemporada}
-              <Box sx={{ display: "flex", gap: 1, mt: 1.25 }}>
-                <Badge color="primary" badgeContent={nFiltros} invisible={!nFiltros}>
-                  <Button variant="outlined" size="small" startIcon={<FilterList />} onClick={() => setFiltrosAbiertos(true)}
-                    sx={{ textTransform: "none", fontWeight: 600 }}>{exp ? "Ejes y filtros" : "Filtros"}</Button>
-                </Badge>
-                <Button variant="outlined" size="small" startIcon={<TableChart />} onClick={() => setTablaAbierta(true)}
-                  sx={{ textTransform: "none", fontWeight: 600 }}>Ver tabla</Button>
-              </Box>
+            <Box sx={{ display: "flex", gap: 1, alignItems: "center", mb: 1.5 }}>
+              <TextField select size="small" label="Temporada" value={tEf}
+                onChange={(e) => setTemporada(Number(e.target.value))}
+                slotProps={{ select: { native: true }, htmlInput: { "aria-label": "Temporada" } }} sx={{ minWidth: 112 }}>
+                {temporadasOk.map((i) => <option key={i} value={i}>{T.temporadas[i]}</option>)}
+              </TextField>
+              <Badge color="primary" badgeContent={nFiltros} invisible={!nFiltros}>
+                <Button variant="outlined" size="small" startIcon={<FilterList />} onClick={() => setFiltrosAbiertos(true)}
+                  sx={{ textTransform: "none", fontWeight: 600, minHeight: 40 }}>{exp ? "Ejes y filtros" : "Filtros"}</Button>
+              </Badge>
+              <Button variant="outlined" size="small" startIcon={<TableChart />} onClick={() => setTablaAbierta(true)}
+                sx={{ textTransform: "none", fontWeight: 600, minHeight: 40 }}>Ver tabla</Button>
             </Box>
           )}
 
@@ -640,9 +662,10 @@ function Vista({ cfg, T, modo, tk }) {
 
           <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: 1, mt: 0.75 }}>
             <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
+              {ref && ref.tipo === "promedios" ? "Líneas punteadas: promedio de cada eje · " : ""}
               {movil
-                ? "Arrastra para mover · usa los botones para hacer zoom · toca un punto para fijarlo"
-                : "Arrastra para mover · Ctrl + rueda o los botones para hacer zoom · clic en un punto para fijarlo"}
+                ? "Arrastra para mover · usa los botones para hacer zoom · toca un punto para resaltarlo"
+                : "Arrastra para mover · Ctrl + rueda o los botones para hacer zoom · clic en un punto para resaltarlo"}
             </Typography>
             <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
           </Box>
@@ -670,21 +693,21 @@ function Vista({ cfg, T, modo, tk }) {
       <Box sx={{ mt: 3, maxWidth: 1040 }}>
         {cfg.queMirar && (
           <>
-            <Rotulo>Qué mirar aquí</Rotulo>
+            <Rotulo>Qué más mirar</Rotulo>
             <Parrafos texto={cfg.queMirar} sx={{ color: "text.primary" }} />
           </>
         )}
         {lectura && (
           <Box sx={{ mt: cfg.queMirar ? 2 : 0, pl: 2, borderLeft: 3, borderColor: "success.main" }}>
             <Typography sx={{ fontSize: 10.5, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase", color: "success.main", mb: 0.75 }}>
-              En lo que estás viendo · {estado}
+              Con estos filtros · {estado}
             </Typography>
             <Typography sx={{ fontSize: 14, lineHeight: 1.6, mb: lectura.salta ? 1 : 0 }}><Md texto={lectura.fija} /></Typography>
             {lectura.salta && <Typography sx={{ fontSize: 14, lineHeight: 1.6 }}><Md texto={lectura.salta} /></Typography>}
             {jornadas && (
               <Typography sx={{ fontSize: 13, lineHeight: 1.55, mt: 1, color: "text.secondary" }}>
-                La temporada {tLabel} va en curso ({jornadas} jornadas): con tan pocos partidos, los extremos cambian mucho
-                de una semana a otra. Para conclusiones, mejor una temporada cerrada.
+                {tLabel} va en curso ({jornadas} jornadas): con tan pocos partidos, los extremos cambian mucho de una
+                semana a otra. Para sacar conclusiones, mejor una temporada cerrada.
               </Typography>
             )}
           </Box>

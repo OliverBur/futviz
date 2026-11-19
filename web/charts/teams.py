@@ -11,6 +11,8 @@ import pandas as pd
 import insights as ins
 import react_views
 from consolidate_data import ELO_TOP, NIVELES
+from nombres import aplicar_a_equipos
+from preguntas import PREGUNTAS
 from site_utils import PROCESSED_DIR, ChartPage, temporadas_en_curso
 from viz_theme import DIVERGING, FUENTE_FBREF, LEAGUE_COLORS, LEAGUE_COLORS_DARK, LEAGUE_ORDER
 
@@ -75,7 +77,7 @@ def load_data():
     Antes se asignaba la liga por bloques de filas *hardcodeados* (18/20/18/20/20), que no
     sobrevivían a las 5 temporadas (Ligue 1 pasó de 20 a 18 equipos en 2023-24). El consolidado ya
     trae `temporada` y `liga` resueltas y verifica los tamaños."""
-    df = pd.read_csv(PROCESSED_DIR / "teams_all_seasons.csv")
+    df = aplicar_a_equipos(pd.read_csv(PROCESSED_DIR / "teams_all_seasons.csv"))
 
     # Las derivadas se arman de una sola vez (un `df[nueva] = ...` por columna sobre un frame de 171
     # columnas lo fragmenta y pandas avisa).
@@ -108,7 +110,10 @@ def _eje(col, label, corto, dec):
 
 
 def _pagina(slug, titulo, descripcion, config, tipo="scatter", kind="scatter"):
-    config = {"id": slug, "titulo": titulo, **config}
+    """`descripcion` es la bajada de la tarjeta: una o dos líneas de cómo leer la gráfica, de unos 140
+    caracteres como máximo."""
+    assert len(descripcion) <= 160, f"{slug}: la bajada mide {len(descripcion)} caracteres"
+    config = {"id": slug, "titulo": titulo, "bajada": descripcion, "pregunta": PREGUNTAS[slug], **config}
     return ChartPage(
         slug=slug, section=SECTION, title=titulo, subtitle=descripcion,
         body_html=react_views.montar_html(tipo, slug, config), kind=kind)
@@ -127,8 +132,8 @@ def _scatter(df, slug, titulo, descripcion, *, x, y, cuadrantes, subtitulo, text
         "subtitulo": subtitulo,
         "filtros": {"nivel": True},
         "metricas": [
-            {"id": "dist", "etiqueta": "Extremos",
-             "ayuda": "Los más fuera de lo común: lejos del centro de la nube, para bien o para mal"},
+            {"id": "dist", "etiqueta": "Más atípicos",
+             "ayuda": "Los que más se alejan del grupo, para bien o para mal"},
             {"id": "x", "etiqueta": x["corto"], "ayuda": f"Ordenados por {x['label']}"},
             {"id": "y", "etiqueta": y["corto"], "ayuda": f"Ordenados por {y['label']}"},
         ],
@@ -140,12 +145,12 @@ def _scatter(df, slug, titulo, descripcion, *, x, y, cuadrantes, subtitulo, text
 def chart_def_efficiency(df):
     return _scatter(
         df, "eficiencia-definicion", "Eficiencia de definición",
-        "Precisión (SoT%) vs. definición (G/SoT) — un punto por equipo.",
+        "Cada punto es un equipo. A la derecha, mayor % de tiros a puerta; arriba, más goles por cada tiro a puerta.",
         x=_eje("sh_Standard_SoT%", "Precisión — % de tiros que van a puerta (SoT%)", "Precisión", 1),
         y=_eje("sh_Standard_G/SoT", "Definición — goles por tiro a puerta (G/SoT)", "Definición", 2),
         cuadrantes={"tr": "certeros y letales", "tl": "poco a puerta, letales",
                     "br": "a puerta, sin pegada", "bl": "ni certeros ni letales"},
-        subtitulo="Precisión (llegar a puerta) vs. definición (marcar una vez ahí) · {temporada}",
+        subtitulo="Equipos de las 5 ligas · {temporada}",
         textos=(ins.definicion_que_mirar, ins.definicion_por_que), insight="definicion")
 
 
@@ -154,13 +159,13 @@ def chart_creation(df):
     (sin pases clave ni xA: eso lo borró Opta) la creación se mide por su producto —asistencias por
     90'— contra la posesión. Lo interesante son las esquinas que no siguen la diagonal."""
     return _scatter(
-        df, "creacion", "Creación",
-        "Cuánto balón tiene cada equipo contra cuántas asistencias genera — un punto por equipo.",
+        df, "creacion", "Posesión vs. asistencias",
+        "A la derecha, más posesión; arriba, más asistencias por 90'. La diagonal es lo normal: más balón, más creación.",
         x=_eje("ov_Poss", "Posesión (%)", "Posesión", 1),
         y=_eje("ov_Per 90 Minutes_Ast", "Asistencias por 90'", "Asistencias", 2),
         cuadrantes={"tr": "dominan y crean", "tl": "crean sin el balón",
                     "br": "tienen el balón, crean poco", "bl": "ni balón ni creación"},
-        subtitulo="Posesión vs. asistencias por 90' · {temporada}",
+        subtitulo="Equipos de las 5 ligas · {temporada}",
         textos=(ins.creacion_que_mirar, ins.creacion_por_que), insight="creacion")
 
 
@@ -168,13 +173,13 @@ def chart_defense(df):
     """Cuánto le tiran a puerta a un equipo contra cuánto le entra. Los dos ejes son "menos es
     mejor", así que el cuadrante bueno es el de abajo a la izquierda."""
     return _scatter(
-        df, "defensa", "Defensa",
-        "Tiros a puerta que recibe cada equipo contra los goles que le entran — un punto por equipo.",
+        df, "defensa", "Tiros a puerta vs. goles recibidos",
+        "A la izquierda, menos tiros a puerta recibidos; abajo, menos goles recibidos. Abajo a la izquierda, los más sólidos.",
         x=_eje("p90_SoTA", "Tiros a puerta recibidos por 90'", "Tiros recibidos", 2),
         y=_eje("gk_Performance_GA90", "Goles recibidos por 90'", "Goles recibidos", 2),
         cuadrantes={"tr": "les tiran y les entra", "tl": "poco tiro, mucho gol",
                     "br": "mucho tiro, poco gol", "bl": "sólidos"},
-        subtitulo="Tiros a puerta que recibe vs. goles que le entran, por 90' · {temporada}",
+        subtitulo="Equipos de las 5 ligas · {temporada}",
         textos=(ins.defensa_que_mirar, ins.defensa_por_que), insight="defensa")
 
 
@@ -185,8 +190,8 @@ def chart_league_level(df):
     variables = [{"col": c, "label": e, "dec": d} for c, e, _, d in VARIABLES
                  if c in df.columns and c != "ms_Performance_CrdR"]
     return _pagina(
-        "nivel-por-liga-equipos", "Nivel por liga",
-        "Cómo se reparten los equipos de cada liga en la variable que elijas.",
+        "nivel-por-liga-equipos", "Distribución por liga",
+        "Cada caja resume una liga: la línea del medio es la mediana y la caja contiene a la mitad central de sus equipos.",
         {"tabla": "equipos", "entidad": "equipos", "variables": variables,
          # Abre en goles por 90': la diferencia de goles suma cero dentro de cada liga y todas las
          # medianas quedaban en 0 (ver `nivel_liga_equipos_que_mirar`).
@@ -201,7 +206,7 @@ def chart_explorer(df):
     el navegador sobre los puntos dibujados."""
     return _pagina(
         "crea-tu-grafico-equipos", "Crea tu gráfico",
-        f"Cruza cualquier par de las {len(VARIABLES)} variables de equipo — y el r² te dice si de verdad son dos cosas distintas o la misma medida dos veces.",
+        f"Cruza cualquier par de las {len(VARIABLES)} variables de equipo. El r² dice si son dos cosas distintas o la misma medida dos veces.",
         {"tabla": "equipos", "entidad": "equipos",
          "explorador": {
              "variables": [{"col": c, "label": e, "grupo": g, "dec": d} for c, e, g, d in VARIABLES],
@@ -214,11 +219,11 @@ def chart_explorer(df):
 # sitio los radares de liga, la evolución del estilo, las dos de portería y las tres de identidad de
 # liga (paridad, edad, disciplina); siguen en `code/eda_teams.ipynb`.
 PESTANAS = [
-    ("eficiencia-definicion", "Eficiencia de definición", "Ataque"),
-    ("creacion", "Creación", "Creación"),
-    ("defensa", "Defensa", "Defensa"),
-    ("nivel-por-liga-equipos", "Nivel por liga", "Comparar"),
-    ("crea-tu-grafico-equipos", "Crea tu gráfico", "Comparar"),
+    ("eficiencia-definicion", "Eficiencia de definición", ""),    # la primera: es la que abre la sección
+    ("creacion", "Posesión vs. asistencias", ""),
+    ("defensa", "Tiros a puerta vs. goles recibidos", ""),
+    ("nivel-por-liga-equipos", "Distribución por liga", ""),
+    ("crea-tu-grafico-equipos", "Crea tu gráfico", "_explorar"),   # "_": grupo aparte, sin rótulo
 ]
 
 

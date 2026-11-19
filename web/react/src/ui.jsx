@@ -30,6 +30,21 @@ export const Rotulo = ({ children, ayuda }) => (
   </Typography>
 );
 
+// El encabezado de cada tarjeta: la pregunta que responde (la misma de la portada), el título, UNA bajada de
+// cómo leer la gráfica (máximo ~140 caracteres) y, en gris, la muestra (mínimo de minutos, temporada).
+export function Encabezado({ pregunta, titulo, bajada, muestra }) {
+  return (
+    <Box sx={{ mb: 1.5 }}>
+      {pregunta && (
+        <Typography sx={{ fontSize: 13, fontWeight: 600, color: "success.main", mb: 0.25 }}>{pregunta}</Typography>
+      )}
+      <Typography component="h2" sx={{ fontSize: 17, fontWeight: 700, color: "primary.main" }}>{titulo}</Typography>
+      {bajada && <Typography sx={{ fontSize: 14.5, lineHeight: 1.5, mt: 0.5, maxWidth: 760 }}>{bajada}</Typography>}
+      {muestra && <Typography sx={{ fontSize: 12.5, color: "text.secondary", mt: 0.5 }}>{muestra}</Typography>}
+    </Box>
+  );
+}
+
 export function Cargando({ alto = 520 }) {
   return (
     <Box role="status" aria-label="Cargando la vista" sx={{ display: "grid", gap: 1.5 }}>

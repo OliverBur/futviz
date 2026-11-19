@@ -55,11 +55,9 @@ X_DEF, Y_DEF = "sh_Standard_SoT%", "sh_Standard_G/SoT"
 
 
 def definicion_que_mirar():
-    return ("Cada punto es un equipo. El eje horizontal es **llegar** (qué "
-            "porcentaje de sus tiros van a puerta) y el vertical es **definir** "
-            "(cuántos goles saca de cada tiro a puerta). Arriba a la derecha "
-            "están los que hacen bien las dos cosas; abajo a la derecha, los que "
-            "tiran mucho a puerta y no la meten.")
+    return ("Arriba a la derecha están los que hacen bien las dos cosas; abajo a la "
+            "derecha, los que llevan a puerta buena parte de sus tiros y marcan poco de "
+            "ellos.")
 
 
 def definicion_por_que(df):
@@ -592,9 +590,8 @@ def _top_dif(d, real, esperado, n=1):
 # --------------------------------------------------------------------------
 
 def goles_xg_que_mirar():
-    return ("La diagonal marca \"marcó exactamente lo que se esperaba\". Por encima "
-            "están los que metieron más de lo que decían sus ocasiones; por debajo, "
-            "los que metieron menos. Cuanto más a la derecha, más ocasiones tuvo.")
+    return ("Cuanto más a la derecha, más ocasiones tuvo. La diagonal marca \"marcó "
+            "exactamente lo que se esperaba\".")
 
 
 def _frase_persistencia(df, real, esperado, que):
@@ -657,9 +654,9 @@ def goles_xg(df, season, liga=None):
 # --------------------------------------------------------------------------
 
 def asist_xa_que_mirar():
-    return ("Mismo esquema que el de goles pero para crear: la diagonal es \"asistió "
-            "lo que sus pases merecían\". Por encima, jugadores cuyos compañeros "
-            "definieron bien lo que les pusieron.")
+    return ("Cuanto más a la derecha, más pases de peligro dio. Por encima de la diagonal "
+            "están los jugadores cuyos compañeros definieron bien lo que les pusieron: "
+            "parte del mérito es de quien remata.")
 
 
 def asist_xa_por_que(df):
@@ -705,14 +702,13 @@ def asist_xa(df, season, liga=None):
 # --------------------------------------------------------------------------
 
 def perfil_que_mirar():
-    return ("Las líneas punteadas son el promedio de cada eje. Abajo a la derecha, "
-            "rematadores puros; arriba a la izquierda, creadores puros; arriba a la "
-            "derecha, los que hacen las dos cosas.\n\n"
+    return ("Abajo a la derecha, rematadores puros; arriba a la izquierda, creadores "
+            "puros; arriba a la derecha, los que hacen las dos cosas.\n\n"
             "Ojo con leer la nube entera de un vistazo: **buena parte de la distancia "
             "entre dos puntos es el puesto en el que juegan**, no lo bueno que es cada "
-            "uno. Un central y un extremo caen lejísimos sin que eso diga nada de "
-            "ninguno de los dos. El filtro de posición deja la comparación entre "
-            "iguales, que es donde un xG90 alto empieza a significar algo.")
+            "uno. Un central y un extremo caen lejísimos sin que eso diga nada de ninguno "
+            "de los dos. El filtro de posición deja la comparación entre iguales, que es "
+            "donde un xG90 alto empieza a significar algo.")
 
 
 def perfil_por_que(df):
@@ -861,20 +857,15 @@ def _defensa_ambito(df, season, liga):
 
 
 def recuperar_que_mirar():
-    return ("Cada punto es un jugador. El eje horizontal es **cuánta pelota "
-            "recupera** —entradas ganadas más intercepciones por 90 minutos— y el "
-            "vertical, **lo que le cuesta**: faltas cometidas por 90'. Las líneas "
-            "punteadas son el promedio de cada eje.\n\n"
-            "Abajo a la derecha están los que roban mucho y limpio, que es el mejor "
-            "sitio del gráfico; arriba a la izquierda, los que hacen faltas sin "
-            "recuperar a cambio. La diagonal imaginaria entre esas dos esquinas es "
-            "lo interesante: dos jugadores con el mismo volumen de recuperación "
-            "pueden quedar muy separados en el eje vertical.\n\n"
-            "Dos avisos antes de sacar conclusiones. **La posición manda**: un "
-            "central y un extremo no compiten por lo mismo. Y **el equipo también**: "
-            "quien juega en un club que no tiene la pelota defiende más, sin que eso "
-            "diga nada de él. Los filtros de posición y de nivel del club son los "
-            "que dejan la comparación entre iguales.")
+    return ("Abajo a la derecha están los que roban mucho y limpio, que es el mejor sitio "
+            "del gráfico; arriba a la izquierda, los que hacen faltas sin recuperar a "
+            "cambio. Dos jugadores con el mismo volumen de recuperación pueden quedar muy "
+            "separados en el eje vertical.\n\n"
+            "Dos avisos antes de sacar conclusiones. **La posición manda**: un central y "
+            "un extremo no compiten por lo mismo. Y **el equipo también**: quien juega en "
+            "un club que no tiene la pelota defiende más, sin que eso diga nada de él. "
+            "Los filtros de posición y de nivel del club son los que dejan la comparación "
+            "entre iguales.")
 
 
 def recuperar_por_que(df):
@@ -934,16 +925,11 @@ def recuperar(df, season, liga=None):
 
 
 def disputar_que_mirar():
-    return ("Las dos formas de quitar la pelota, una en cada eje: **entrar a "
-            "disputarla** (entradas ganadas) contra **leer el pase antes de que "
-            "llegue** (intercepciones), las dos por 90 minutos.\n\n"
-            "A la derecha, los que van al choque; arriba, los que se anticipan; "
-            "arriba a la derecha, los que hacen las dos cosas. Las "
-            "líneas punteadas marcan el promedio de cada eje.\n\n"
-            "Vale el mismo aviso que en la otra defensiva: buena parte de la "
-            "distancia entre dos puntos es **la posición y el equipo**, no el "
-            "jugador. Un central intercepta más que un extremo porque juega donde "
-            "llegan los pases, no porque lea mejor el juego.")
+    return ("Arriba a la derecha, los que hacen las dos cosas: van al choque y además se "
+            "anticipan.\n\n"
+            "Un aviso: buena parte de la distancia entre dos puntos es **la posición y el "
+            "equipo**, no el jugador. Un central intercepta más que un extremo porque "
+            "juega donde llegan los pases, no porque lea mejor el juego.")
 
 
 def disputar_por_que(df):
@@ -954,7 +940,7 @@ def disputar_por_que(df):
         f"los dos crecen con el volumen defensivo. **Correlacionan {_fmt(r)}** sobre "
         f"las {miles(len(d))} jugador-temporadas de todas las temporadas: "
         f"{_cuanto(r)} (comparten un {r ** 2 * 100:.0f}% de su variación). Por eso "
-        f"van cruzadas y no sumadas; sumadas son el eje X de \"Quitar vs. cortar con "
+        f"van cruzadas y no sumadas; sumadas son el eje X de \"Recuperar vs. cortar con "
         f"falta\", que es la otra pregunta.\n\n"
         f"Se usan **entradas ganadas** y no entradas intentadas porque FBref dejó de "
         f"publicar las segundas (y con ellas los duelos, los bloqueos y los "
@@ -1001,17 +987,13 @@ def disputar(df, season, liga=None):
 # desaparece en la defensa— y eso solo se ve cruzándolas.
 
 def dos_fases_que_mirar():
-    return ("El eje horizontal es lo que un jugador **produce arriba** (xG más xA "
-            "por 90') y el vertical lo que **recupera atrás** (entradas ganadas más "
-            "intercepciones por 90'). Las líneas punteadas son el promedio de cada "
-            "eje.\n\n"
-            "Abajo a la derecha, el atacante puro: pesa en el área rival y no "
-            "aparece en la propia. Arriba a la izquierda, el recuperador puro. "
-            "**Arriba a la derecha**, los que hacen las dos cosas.\n\n"
+    return ("Abajo a la derecha, el atacante puro: pesa en el área rival y no aparece en "
+            "la propia. Arriba a la izquierda, el recuperador puro. **Arriba a la "
+            "derecha**, los que hacen las dos cosas.\n\n"
             "Aquí el filtro de posición es parte del análisis: la nube entera está "
-            "ordenada por puesto antes que por jugador, y la relación entre los dos "
-            "ejes **cambia mucho según el puesto** (los números están en \"Por qué "
-            "estas variables\").")
+            "ordenada por puesto antes que por jugador, y la relación entre los dos ejes "
+            "**cambia mucho según el puesto** (los números están en \"Por qué estas "
+            "variables\").")
 
 
 def dos_fases_por_que(df):
@@ -1106,18 +1088,17 @@ def miles(n):
 
 
 def tiros_que_mirar():
-    return ("El mapa mira **hacia la portería**: la línea de fondo es el borde de "
-            "arriba, los dos rectángulos son el área grande y el área chica, y la "
-            "izquierda del mapa es la izquierda del ataque.\n\n"
-            "Cada celda es un cuadrado de 2×2 m, y el color **no cuenta tiros**: "
-            "reparte entre las celdas el 100% de los tiros que estás viendo. Una "
-            "celda oscura dice \"de aquí salió una parte grande de estos tiros\", "
-            "no \"de aquí salieron muchos tiros\". El reparto se rehace cada vez "
-            "que cambias un filtro, y por eso la forma de un tipo de tiro se puede "
-            "comparar con la de otro aunque haya veinte veces más de uno que de "
+    return ("El mapa mira **hacia la portería**: la línea de fondo es el borde de arriba, "
+            "los dos rectángulos son el área grande y el área chica, y la izquierda del "
+            "mapa es la izquierda del ataque.\n\n"
+            "El color **no cuenta tiros**: reparte el 100% de los tiros que estás viendo "
+            "entre las celdas de 2×2 m. Una celda oscura dice \"de aquí salió una parte "
+            "grande de estos tiros\", no \"de aquí salieron muchos tiros\". El reparto se "
+            "rehace cada vez que cambias un filtro, y por eso la forma de un tipo de tiro "
+            "se puede comparar con la de otro aunque haya veinte veces más de uno que de "
             "otro.\n\n"
-            "Pasa el mouse o toca una celda para ver los números crudos: cuántos "
-            "tiros salieron de ahí y cuántos acabaron en gol.")
+            "Pasa el mouse o toca una celda para ver los números crudos: cuántos tiros "
+            "salieron de ahí y cuántos acabaron en gol.")
 
 
 def tiros_por_que(n_mapa, n_penales, n_fuera):
@@ -1229,14 +1210,11 @@ def _lideres(d, col_a, col_b, nombre, fmt_a, fmt_b, que_a, que_b, equipo="team")
 
 
 def pases_clave_que_mirar():
-    return ("Cada punto es un jugador. A la derecha, quien da más pases clave por 90' "
-            "(los que terminan en tiro); arriba, quien genera más ocasión de gol, "
-            "medida en xA. Las líneas punteadas son el promedio de cada eje.\n\n"
-            "Lo que enseña es la **calidad** y no solo el volumen: por debajo de la "
-            "nube están los que dan muchos pases clave de poco peligro (pases "
-            "largos, tiros de lejos de sus compañeros); por encima, los que dan "
-            "pocos pero que acaban en ocasiones claras. Como casi siempre, la "
-            "posición pesa: el filtro de la cancha deja comparar entre iguales.")
+    return ("Lo que enseña es la **calidad** y no solo el volumen: por debajo de la nube "
+            "están los que dan muchos pases clave de poco peligro (pases largos, tiros de "
+            "lejos de sus compañeros); por encima, los que dan pocos pero que acaban en "
+            "ocasiones claras. Como casi siempre, la posición pesa: el filtro de la "
+            "cancha deja comparar entre iguales.")
 
 
 def pases_clave_por_que(df):
@@ -1277,13 +1255,13 @@ def pases_clave(df, season, liga=None):
 
 
 def construir_que_mirar():
-    return ("A la derecha, quien participa más en jugadas de tiro **sin ser quien "
-            "tira ni quien da el último pase** (el xG de construcción); arriba, quien "
-            "produce más directo (xG + xA). Las líneas son el promedio.\n\n"
+    return ("El eje horizontal mide quién participa más en jugadas de tiro **sin ser "
+            "quien tira ni quien da el último pase** (el xG de construcción, que "
+            "Understat llama xGBuildup).\n\n"
             "Abajo a la derecha están los constructores puros: centrales, pivotes y "
-            "laterales que mueven al equipo pero casi nunca acaban la jugada. Arriba "
-            "a la izquierda, los finalizadores que reciben el balón ya listo. Arriba "
-            "a la derecha, los pocos que construyen y también terminan.")
+            "laterales que mueven al equipo pero casi nunca acaban la jugada. Arriba a la "
+            "izquierda, los finalizadores que reciben el balón ya listo. Arriba a la "
+            "derecha, los pocos que construyen y también terminan.")
 
 
 def construir_por_que(df):
@@ -1318,14 +1296,11 @@ def construir(df, season, liga=None):
 
 
 def centros_que_mirar():
-    return ("A la derecha, quien más centra por 90'; arriba, quien más ocasión de "
-            "gol genera (xA). Las líneas son el promedio de cada eje.\n\n"
-            "**Centrar mucho no es crear mucho.** La nube sube con el volumen pero "
-            "con mucha dispersión: abajo a la derecha están los que centran de "
-            "forma constante con poco peligro (la mayoría de los centros no "
-            "encuentra a nadie); arriba, los que generan ocasión por otras vías "
-            "además del centro. Casi todo lo de la derecha son laterales y "
-            "extremos, así que conviene filtrar por posición.")
+    return ("La nube sube con el volumen pero con mucha dispersión: abajo a la derecha "
+            "están los que centran de forma constante con poco peligro (la mayoría de los "
+            "centros no encuentra a nadie); arriba, los que generan ocasión por otras "
+            "vías además del centro. Casi todo lo de la derecha son laterales y extremos, "
+            "así que conviene filtrar por posición.")
 
 
 def centros_por_que(df):
@@ -1369,12 +1344,9 @@ SOTA_90, GA_90 = "p90_SoTA", "gk_Performance_GA90"
 
 
 def creacion_que_mirar():
-    return ("A la derecha, los equipos que más tienen el balón; arriba, los que más "
-            "asistencias dan por 90'. Las líneas punteadas son el promedio.\n\n"
-            "La diagonal es la lectura \"normal\": más balón, más creación. Lo "
-            "interesante son las esquinas que no la siguen. **Abajo a la derecha**: "
-            "equipos con posesión que no se convierte en asistencias. **Arriba a la "
-            "izquierda**: equipos directos, que crean sin tener la pelota.")
+    return ("Lo interesante son las esquinas que no siguen la diagonal. **Abajo a la "
+            "derecha**: equipos con posesión que no se convierte en asistencias. **Arriba "
+            "a la izquierda**: equipos directos, que crean sin tener la pelota.")
 
 
 def creacion_por_que(df):
@@ -1416,14 +1388,10 @@ def creacion(df, season, liga=None):
 
 
 def defensa_que_mirar():
-    return ("Los dos ejes son \"menos es mejor\": a la izquierda, equipos a los que "
-            "tiran poco a puerta; abajo, a los que les entran pocos goles. Las "
-            "líneas son el promedio.\n\n"
-            "**Abajo a la izquierda** están los sólidos. Las esquinas que cuentan "
-            "algo son las otras: **arriba a la izquierda**, reciben pocos tiros y "
-            "aun así les entran (portería floja o mala suerte); **abajo a la "
-            "derecha**, les tiran mucho a puerta y les entra poco (portería estelar "
-            "o buena suerte).")
+    return ("Las esquinas que cuentan algo son las otras: **arriba a la izquierda**, "
+            "reciben pocos tiros y aun así les entran (portería floja o mala suerte); "
+            "**abajo a la derecha**, les tiran mucho a puerta y les entra poco (portería "
+            "estelar o buena suerte).")
 
 
 def defensa_por_que(df):
@@ -1464,14 +1432,12 @@ def defensa(df, season, liga=None):
 
 
 def nivel_liga_equipos_que_mirar():
-    return ("Cada caja resume una liga para la variable que elijas: la línea del "
-            "medio es la mediana, la caja contiene a la mitad central de los equipos "
-            "y cada punto es un equipo (pasa el mouse o toca un punto para ver cuál).\n\n"
-            "Mira **dos cosas distintas**: qué liga está más arriba (su valor típico) "
-            "y qué tan ancha es la caja (qué tan parejos son sus equipos). Ojo con las "
-            "variables que se reparten dentro de cada liga, como la diferencia de "
-            "goles, la posesión o los puntos por partido: lo que gana un equipo lo "
-            "pierde otro de su misma liga, así que la mediana sale casi igual en las "
-            "cinco y solo cuenta el ancho de la caja. Ninguna variable de esta lista "
-            "mide qué liga es más fuerte. El filtro de nivel de club separa a los "
+    return ("Mira **dos cosas distintas**: qué liga está más arriba (su valor típico) y "
+            "qué tan ancha es la caja (qué tan parejos son sus equipos). Cada punto es un "
+            "equipo: pasa el mouse o toca uno para ver cuál.\n\n"
+            "Ojo con las variables que se reparten dentro de cada liga, como la "
+            "diferencia de goles, la posesión o los puntos por partido: lo que gana un "
+            "equipo lo pierde otro de su misma liga, así que la mediana sale casi igual "
+            "en las cinco y solo cuenta el ancho de la caja. Ninguna variable de esta "
+            "lista mide qué liga es más fuerte. El filtro de nivel de club separa a los "
             "grandes del resto, que casi siempre cuentan historias distintas.")

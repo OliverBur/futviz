@@ -13,6 +13,8 @@ import insights as ins
 import react_views
 import shot_map
 from consolidate_data import ELO_TOP, NIVELES, POSICIONES
+from nombres import aplicar_a_jugadores
+from preguntas import PREGUNTAS
 from site_utils import PROCESSED_DIR, ChartPage, temporadas_en_curso
 from viz_theme import (
     DIVERGING, FUENTE_FBREF, FUENTE_UNDERSTAT, LEAGUE_COLORS, LEAGUE_COLORS_DARK, LEAGUE_ORDER,
@@ -111,6 +113,7 @@ def load_data():
     en `eda_players.ipynb`."""
     df = pd.read_csv(PROCESSED_DIR / "players_all_seasons.csv")
     df["team"] = df["team"].str.split(",").str[-1].str.strip()
+    df = aplicar_a_jugadores(df)       # nombres como se dicen: «Kylian Mbappé», «Atlético Madrid»
     df["liga"] = pd.Categorical(df["liga"], categories=LEAGUE_ORDER, ordered=True)
 
     global MIN_MINUTES_POR_TEMPORADA
@@ -196,8 +199,8 @@ def _metricas(x, y, referencia):
         primera = {"id": "dif", "etiqueta": "Diferencia",
                    "ayuda": f"Los que más se alejan de la diagonal ({referencia['dif']})"}
     else:
-        primera = {"id": "dist", "etiqueta": "Extremos",
-                   "ayuda": "Los más fuera de lo común: lejos del centro de la nube, para bien o para mal"}
+        primera = {"id": "dist", "etiqueta": "Más atípicos",
+                   "ayuda": "Los que más se alejan del grupo, para bien o para mal"}
     return [primera,
             {"id": "x", "etiqueta": x["corto"], "ayuda": f"Ordenados por {x['label']}"},
             {"id": "y", "etiqueta": y["corto"], "ayuda": f"Ordenados por {y['label']}"}]
@@ -211,7 +214,10 @@ PROMEDIOS = {"tipo": "promedios"}   # líneas punteadas en el promedio de cada e
 
 
 def _pagina(slug, titulo, descripcion, config, kind="scatter"):
-    config = {"id": slug, "titulo": titulo, **config}
+    """`descripcion` es la bajada de la tarjeta: una o dos líneas de cómo leer la gráfica, de unos 140
+    caracteres como máximo (en el teléfono es lo que cabe sin que nadie la salte)."""
+    assert len(descripcion) <= 160, f"{slug}: la bajada mide {len(descripcion)} caracteres"
+    config = {"id": slug, "titulo": titulo, "bajada": descripcion, "pregunta": PREGUNTAS[slug], **config}
     return ChartPage(
         slug=slug, section=SECTION, title=titulo, subtitle=descripcion,
         body_html=react_views.montar_html("scatter", slug, config), kind=kind)
@@ -242,9 +248,10 @@ def _scatter(slug, titulo, descripcion, *, x, y, referencia, subtitulo, textos, 
 def chart_goals_vs_xg(df):
     x, y = _eje("xG", "xG", "xG", 1, dec_lista=2), _eje("goals", "Goles", "Goles", 0)
     return _scatter(
-        "goles-vs-xg", "Goles vs. xG", "Sobre/bajo-rendimiento de definición — un punto por jugador.",
+        "goles-vs-xg", "Goles vs. xG",
+        "Cada punto es un jugador. Sobre la diagonal marcó más de lo que valían sus ocasiones (xG); debajo, menos.",
         x=x, y=y, referencia=_diagonal(x, y, "goles − xG"),
-        subtitulo="¿Quién sobre/bajo-rindió su expected goals? Jugadores con ≥{min} min · {temporada}",
+        subtitulo="Jugadores con ≥{min} min · {temporada}",
         textos=(ins.goles_xg_que_mirar, ins.goles_xg_por_que), insight="goles_xg", poblacion=df,
         color_por=["liga", "rendimiento"])
 
@@ -252,9 +259,10 @@ def chart_goals_vs_xg(df):
 def chart_assists_vs_xa(df):
     x, y = _eje("xA", "xA", "xA", 1, dec_lista=2), _eje("a", "Asistencias", "Asist.", 0)
     return _scatter(
-        "asistencias-vs-xa", "Asistencias vs. xA", "Sobre/bajo-rendimiento de creación — un punto por jugador.",
+        "asistencias-vs-xa", "Asistencias vs. xA",
+        "Cada punto es un jugador. Sobre la diagonal dio más asistencias de las que valían sus pases (xA); debajo, menos.",
         x=x, y=y, referencia=_diagonal(x, y, "asistencias − xA"),
-        subtitulo="¿Quién sobre/bajo-rindió su expected assists? Jugadores con ≥{min} min · {temporada}",
+        subtitulo="Jugadores con ≥{min} min · {temporada}",
         textos=(ins.asist_xa_que_mirar, ins.asist_xa_por_que), insight="asist_xa", poblacion=df,
         color_por=["liga", "rendimiento"])
 
@@ -263,9 +271,9 @@ def chart_profile(df):
     x, y = _eje("xG90", "xG por 90'", "xG90", 2), _eje("xA90", "xA por 90'", "xA90", 2)
     return _scatter(
         "perfil-ofensivo", "Perfil ofensivo: xG90 vs. xA90",
-        "Tasas por 90' — killer puro, creador puro o todocampo, un punto por jugador.",
+        "A la derecha, más xG por 90' (remata); arriba, más xA por 90' (crea). Compara dentro de una misma posición.",
         x=x, y=y, referencia=PROMEDIOS,
-        subtitulo="Killer puro, creador puro o todocampo — jugadores con ≥{min} min · {temporada}",
+        subtitulo="Jugadores con ≥{min} min · {temporada}",
         textos=(ins.perfil_que_mirar, ins.perfil_por_que), insight="perfil", poblacion=df)
 
 
@@ -275,10 +283,10 @@ def chart_recoveries_vs_fouls(df, df_def):
     x = _eje("recoveries90", "Recuperaciones por 90'", "Recup.", 2)
     y = _eje("fouls90", "Faltas cometidas por 90'", "Faltas", 2)
     return _scatter(
-        "recuperacion-vs-faltas", "Quitar vs. cortar con falta",
-        "Cuánta pelota recupera cada jugador y a qué precio — un punto por jugador.",
+        "recuperacion-vs-faltas", "Recuperar vs. cortar con falta",
+        "A la derecha, más recuperaciones por 90' (entradas ganadas + intercepciones); arriba, más faltas cometidas.",
         x=x, y=y, referencia=PROMEDIOS,
-        subtitulo="¿Quién recupera limpio y quién corta con falta? Jugadores con ≥{min} min · {temporada}"
+        subtitulo="Jugadores con ≥{min} min · {temporada}"
                   + _defensa_subtitulo(df, df_def),
         textos=(ins.recuperar_que_mirar, ins.recuperar_por_que), insight="recuperar", poblacion=df_def,
         fuente=FUENTE_FBREF, extra_requiere=["recoveries90"])
@@ -290,9 +298,9 @@ def chart_defensive_profile(df, df_def):
     y = _eje("interceptions90", "Intercepciones por 90'", "Intercep.", 2)
     return _scatter(
         "perfil-defensivo", "Perfil defensivo: entradas vs. intercepciones",
-        "Tasas por 90' — el que va al choque, el que lee el pase o las dos cosas, un punto por jugador.",
+        "A la derecha, más entradas ganadas por 90' (va al choque); arriba, más intercepciones (lee el pase).",
         x=x, y=y, referencia=PROMEDIOS,
-        subtitulo="Disputar, anticipar o las dos cosas — jugadores con ≥{min} min · {temporada}"
+        subtitulo="Jugadores con ≥{min} min · {temporada}"
                   + _defensa_subtitulo(df, df_def),
         textos=(ins.disputar_que_mirar, ins.disputar_por_que), insight="disputar", poblacion=df_def,
         fuente=FUENTE_FBREF, extra_requiere=["recoveries90"])
@@ -304,9 +312,9 @@ def chart_two_phase(df, df_def):
     y = _eje("recoveries90", "Recuperaciones por 90'", "Recup.", 2)
     return _scatter(
         "perfil-dos-fases", "Producción vs. recuperación",
-        "Lo que produce arriba contra lo que recupera atrás — el atacante puro, el recuperador puro y los raros que hacen las dos.",
+        "A la derecha, más producción arriba (xG + xA por 90'); arriba, más recuperaciones atrás (entradas + intercepciones).",
         x=x, y=y, referencia=PROMEDIOS,
-        subtitulo="¿Pesa arriba, atrás o en las dos? Jugadores con ≥{min} min · {temporada}"
+        subtitulo="Jugadores con ≥{min} min · {temporada}"
                   + _defensa_subtitulo(df, df_def),
         textos=(ins.dos_fases_que_mirar, ins.dos_fases_por_que), insight="dos_fases", poblacion=df_def,
         fuente=FUENTE_MIXTA)
@@ -325,18 +333,18 @@ def chart_key_passes(df):
     return _chart_creacion(
         df, slug="pases-clave-vs-xa", titulo="Pases clave vs. xA",
         x=_eje("kp90", "Pases clave por 90'", "Pases clave", 2), y=_eje("xA90", "xA por 90'", "xA90", 2),
-        subtitulo="Cuántas ocasiones arma contra qué tan buenas son — jugadores con ≥{min} min · {temporada}",
-        descripcion="Cuántos pases clave da cada jugador y cuánta ocasión de gol valen — un punto por jugador.",
+        subtitulo="Jugadores con ≥{min} min · {temporada}",
+        descripcion="A la derecha, más pases clave por 90' (los que acaban en tiro); arriba, más peligro en esos pases (xA).",
         textos=(ins.pases_clave_que_mirar, ins.pases_clave_por_que), insight="pases_clave")
 
 
 def chart_build_vs_produce(df):
     return _chart_creacion(
-        df, slug="construir-vs-producir", titulo="Construir vs. producir",
+        df, slug="construir-vs-producir", titulo="Construcción vs. producción",
         x=_eje("xgbuild90", "xG de construcción por 90'", "Construcción", 2),
         y=_eje("xga90", "xG + xA por 90'", "Producción", 2),
-        subtitulo="Quien arma la jugada desde atrás contra quien la termina — jugadores con ≥{min} min · {temporada}",
-        descripcion="El que mueve el balón antes del último pase contra el que produce el tiro o el pase final.",
+        subtitulo="Jugadores con ≥{min} min · {temporada}",
+        descripcion="A la derecha, quien más construye (xG de construcción por 90'); arriba, quien más produce directo (xG + xA).",
         textos=(ins.construir_que_mirar, ins.construir_por_que), insight="construir")
 
 
@@ -344,8 +352,8 @@ def chart_crosses(df):
     return _chart_creacion(
         df, slug="centros-vs-xa", titulo="Centros vs. xA",
         x=_eje("crosses90", "Centros por 90'", "Centros", 2), y=_eje("xA90", "xA por 90'", "xA90", 2),
-        subtitulo="Cuánto centra y cuánto peligro genera — jugadores con ≥{min} min · {temporada}",
-        descripcion="Volumen de centros contra la ocasión que crea cada jugador.",
+        subtitulo="Jugadores con ≥{min} min · {temporada}",
+        descripcion="A la derecha, quien más centra por 90'; arriba, quien más peligro crea (xA). Centrar mucho no es crear mucho.",
         textos=(ins.centros_que_mirar, ins.centros_por_que), insight="centros", fuente=FUENTE_MIXTA)
 
 
@@ -365,7 +373,7 @@ def chart_explorer(df):
     }
     return _pagina(
         "crea-tu-grafico-jugadores", "Crea tu gráfico",
-        f"Cruza cualquier par de las {len(variables)} variables de jugador — y el r² te dice si de verdad son dos cosas distintas o la misma medida dos veces.",
+        f"Cruza cualquier par de las {len(variables)} variables de jugador. El r² dice si son dos cosas distintas o la misma medida dos veces.",
         cfg, kind="explorer")
 
 
@@ -380,27 +388,29 @@ def chart_shot_map():
         "queMirar": ins.tiros_que_mirar(),
         "porQue": ins.tiros_por_que(len(df), descartes["penales"], descartes["fuera"]),
     }
-    config = {"id": "mapa-tiros", "titulo": "Mapa de calor de los tiros", **cfg}
+    bajada = "Cada celda es el % de los tiros que salió de ahí, no un conteo: oscuro es una parte grande del total."
+    config = {"id": "mapa-tiros", "titulo": "Mapa de calor de los tiros", "bajada": bajada,
+              "pregunta": PREGUNTAS["mapa-tiros"], **cfg}
     return ChartPage(
         slug="mapa-tiros", section=SECTION, title="Mapa de calor de los tiros",
-        subtitle="Desde dónde se remata, con filtro de temporada y tipo de tiro.",
+        subtitle=bajada,
         body_html=react_views.montar_html("tiros", "mapa-tiros", config), kind="heatmap")
 
 
 # Orden y agrupación de las pestañas de la sección: (slug, texto corto, familia). Lo que no esté acá
 # no se muestra, así que una vista nueva obliga a decidir en qué familia vive.
 PESTANAS = [
-    ("perfil-ofensivo", "Perfil xG90 / xA90", "Ataque"),   # la primera: es la que abre la página
-    ("goles-vs-xg", "Goles vs. xG", "Ataque"),
+    ("goles-vs-xg", "Goles vs. xG", "Ataque"),                    # la primera: es la que abre la página
+    ("perfil-ofensivo", "Rematar vs. crear", "Ataque"),
     ("mapa-tiros", "Mapa de tiros", "Ataque"),
-    ("asistencias-vs-xa", "Asist. vs. xA", "Creación"),
+    ("asistencias-vs-xa", "Asistencias vs. xA", "Creación"),
     ("pases-clave-vs-xa", "Pases clave vs. xA", "Creación"),
-    ("construir-vs-producir", "Construir vs. producir", "Creación"),
+    ("construir-vs-producir", "Construcción vs. producción", "Creación"),
     ("centros-vs-xa", "Centros vs. xA", "Creación"),
-    ("recuperacion-vs-faltas", "Quitar vs. faltas", "Defensa"),
-    ("perfil-defensivo", "Perfil defensivo", "Defensa"),
+    ("recuperacion-vs-faltas", "Recuperar vs. faltas", "Defensa"),
+    ("perfil-defensivo", "Entradas vs. intercepciones", "Defensa"),
     ("perfil-dos-fases", "Producción vs. recuperación", "Ataque + defensa"),
-    ("crea-tu-grafico-jugadores", "Crea tu gráfico", ""),
+    ("crea-tu-grafico-jugadores", "Crea tu gráfico", "_explorar"),   # "_": grupo aparte, sin rótulo
 ]
 
 

@@ -32,7 +32,7 @@ export function Tabla({ abierta, onCerrar, filas, columnas, ordenInicial, fijada
         <Box>
           <Typography component="h2" sx={{ fontSize: 17, fontWeight: 700, color: "primary.main" }}>Tabla de {entidad}</Typography>
           <Typography sx={{ fontSize: 13, color: "text.secondary" }}>
-            {titulo} · {filas.length.toLocaleString("es-MX")} {entidad} · clic en una fila para fijarla en la gráfica
+            {titulo} · {filas.length.toLocaleString("es-MX")} {entidad} · clic en una fila para resaltarla en la gráfica
           </Typography>
         </Box>
         <IconButton aria-label="Cerrar la tabla" onClick={onCerrar} edge="end"><Close /></IconButton>

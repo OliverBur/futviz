@@ -12,7 +12,7 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Typography from "@mui/material/Typography";
 
 export function Ranking({ metricas, metrica, onMetrica, filas, nombre, equipo, valor, fijadas, onElegir,
-  onSobrevolar, enZoom }) {
+  onSobrevolar, enZoom, encabezado }) {
   const actual = metricas.find((m) => m.id === metrica) || metricas[0];
   return (
     <Box>
@@ -28,6 +28,11 @@ export function Ranking({ metricas, metrica, onMetrica, filas, nombre, equipo, v
         {actual.ayuda}{enZoom ? " · dentro del zoom" : ""}
       </Typography>
 
+      {encabezado && (
+        <Typography sx={{ fontSize: 11, fontWeight: 600, color: "text.secondary", textAlign: "right", mb: 0.25 }}>
+          {encabezado}
+        </Typography>
+      )}
       <List dense disablePadding aria-label="Top 5">
         {filas.map((r, i) => {
           const sel = fijadas.has(r);

@@ -23,7 +23,7 @@ import { useDrawingArea } from "@mui/x-charts/hooks";
 import { useSitioTema } from "./theme.jsx";
 import { useTabla } from "./datos.js";
 import { EstilosGrafica } from "./Grafica.jsx";
-import { Aviso, Cargando, Parrafos, Rotulo } from "./ui.jsx";
+import { Aviso, Cargando, Encabezado, Parrafos, Rotulo } from "./ui.jsx";
 import { cuantil, mediana } from "./stats.js";
 
 const FilaCtx = createContext(null);
@@ -180,11 +180,9 @@ function Vista({ cfg, T, modo, tk }) {
     <FilaCtx.Provider value={ctx}>
       <Box sx={{ display: "grid", gap: 3, gridTemplateColumns: { xs: "minmax(0,1fr)", md: "minmax(0,1fr) 270px" }, alignItems: "start" }}>
         <Box sx={{ minWidth: 0 }}>
-          <Typography component="h2" sx={{ fontSize: 17, fontWeight: 700, color: "primary.main" }}>{cfg.titulo}</Typography>
-          <Typography sx={{ fontSize: 13, color: "text.secondary", mb: 1.5 }}>
-            {cfg.subtitulo.replace("{variable}", v.label).replace("{temporada}",
-              T.enCurso && T.enCurso[tLabel] ? `${tLabel} (en curso, ${T.enCurso[tLabel]} jornadas)` : tLabel)}
-          </Typography>
+          <Encabezado pregunta={cfg.pregunta} titulo={cfg.titulo} bajada={cfg.bajada}
+            muestra={cfg.subtitulo.replace("{variable}", v.label).replace("{temporada}",
+              T.enCurso && T.enCurso[tLabel] ? `${tLabel} (en curso, ${T.enCurso[tLabel]} jornadas)` : tLabel)} />
           <Box ref={setCaja} className="rx-chart" sx={{
             position: "relative", width: "100%", userSelect: "none",
             "& .MuiChartsAxis-tickLabel": { fill: tk["text-body"], fontSize: 12, fontWeight: 600 },
@@ -262,7 +260,7 @@ function Vista({ cfg, T, modo, tk }) {
       </Box>
 
       <Box sx={{ mt: 3, maxWidth: 1040 }}>
-        <Rotulo>Qué mirar aquí</Rotulo>
+        <Rotulo>Qué más mirar</Rotulo>
         <Parrafos texto={cfg.queMirar} sx={{ color: "text.primary" }} />
       </Box>
     </FilaCtx.Provider>

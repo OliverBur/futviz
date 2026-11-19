@@ -91,7 +91,15 @@ __PAGE_HEADER_CSS__
     .seg-group .seg button:hover:not([aria-selected="true"]) { background: var(--color-surface); color: var(--color-primary); }
   }
 
-  .view-desc { color: var(--color-text-body); font-size: 14px; line-height: 1.5; margin: 0 0 14px 2px; min-height: 21px; }
+  /* El selector de vista (solo en pantallas angostas; en escritorio el menú es la lista de la izquierda). */
+  .vista-sel { display: none; }
+  .vista-sel label { display: block; font-size: 11px; font-weight: 600; color: var(--color-muted); margin: 0 0 6px 2px; }
+  .vista-sel select { width: 100%; min-height: 44px; font: 600 14px "Inter", system-ui, sans-serif; padding: 10px 36px 10px 12px;
+    border-radius: 10px; border: 1px solid var(--color-border); background-color: var(--color-surface); color: var(--color-primary);
+    cursor: pointer; appearance: none; -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1.5l5 5 5-5' fill='none' stroke='%23738' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat; background-position: right 12px center; }
+  .vista-sel select:focus-visible { outline: 2px solid var(--color-interactive); outline-offset: 2px; }
   .chart-scroll { max-width: 100%; overflow-x: auto; background: var(--color-bg);
     border: 1px solid var(--color-border); border-radius: 14px; padding: 20px; }
   .view { animation: view-in .24s ease-out; }
@@ -107,8 +115,12 @@ __PAGE_HEADER_CSS__
 
   @media (min-width: 640px) { .shell { padding: 0 24px 72px; } }
 
-  /* Hasta 960 px el menú queda arriba y cada familia es una tira de chips que se desliza. */
+  /* Hasta 960 px el menú queda arriba y es un selector con las vistas agrupadas por familia: cuatro filas de
+     chips que se deslizaban empujaban la gráfica a más de una pantalla de distancia. */
   @media (max-width: 959px) {
+    .seg-nav { display: none; }
+    .vista-sel:not([hidden]) { display: block; }
+    .vista-sel select { font-size: 16px; }   /* 16 px: iOS no hace zoom al enfocar */
     .seg-group .seg { flex-direction: row; gap: 6px; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain;
       padding-bottom: 2px; }
     .seg-group .seg::-webkit-scrollbar { display: none; }
@@ -140,10 +152,10 @@ __PAGE_HEADER__
 <div class="shell">
   <nav class="rail" aria-label="Vistas de __NAME__" id="rail">
     <div class="ent-nav"><div class="seg" role="tablist" aria-label="Qué analizar">__ENTIDADES__</div></div>
+    __SELECTS__
     __TABS__
   </nav>
   <main class="content" id="contenido" tabindex="-1">
-    <p class="view-desc" id="view-desc" aria-live="polite"></p>
     <div class="chart-scroll">__PANELS__</div>
   </main>
 </div>
@@ -155,7 +167,7 @@ __PAGE_HEADER__
   var entTabs = Array.prototype.slice.call(document.querySelectorAll('.ent-nav [role="tab"]'));
   var navs = Array.prototype.slice.call(document.querySelectorAll('.seg-nav'));
   var ultima = {};  // entidad -> última vista que se miró, para volver a ella
-  var desc = document.getElementById('view-desc');
+  var selects = Array.prototype.slice.call(document.querySelectorAll('.vista-sel'));
   var contenido = document.getElementById('contenido');
   var cargas = {};   // slug -> Promise del montaje (ya hecho o en curso)
   var pedidos = {};  // slug -> Promise del texto del fragmento (también lo usa el prefetch)
@@ -253,7 +265,10 @@ __PAGE_HEADER__
       t.setAttribute('aria-selected', on ? 'true' : 'false');
       t.tabIndex = on ? 0 : -1;
     });
-    desc.textContent = vista(slug).subtitle;
+    selects.forEach(function(w) {
+      w.hidden = w.dataset.entity !== ent;
+      if (!w.hidden) w.querySelector('select').value = slug;
+    });
     document.title = vista(slug).tab + ' · ' + ent + ' · FutViz';
     if (!primera) irArriba();
     avisar(slug);
@@ -292,11 +307,23 @@ __PAGE_HEADER__
       entTabs[j].click(); entTabs[j].focus();
     });
   });
+  selects.forEach(function(w) {
+    w.querySelector('select').addEventListener('change', function(e) { location.hash = e.target.value; });
+  });
   document.getElementById('skip').addEventListener('click', function(e) { e.preventDefault(); contenido.focus(); });
 
 
   window.addEventListener('hashchange', function() { activar(slugDe(location.hash.slice(1))); });
+  var llegoConEnlace = !!slugDe(location.hash.slice(1));
   activar(slugDe(location.hash.slice(1)) || DEFECTO);
+  // Con un enlace directo a una vista (las preguntas de la portada) en pantalla angosta, el título y el menú
+  // ocupaban la primera pantalla y la gráfica quedaba ~860 px abajo: se baja hasta la tarjeta.
+  if (llegoConEnlace && window.innerWidth < 960) {
+    cargas[actual].then(function() {
+      var tarjeta = document.querySelector('.chart-scroll');
+      if (tarjeta) window.scrollTo({top: Math.max(0, tarjeta.getBoundingClientRect().top + window.scrollY - 12), behavior: 'auto'});
+    });
+  }
 })();
 </script>
 __THEME_SCRIPT__
@@ -317,10 +344,27 @@ def _tabs_html(pages, entidad):
             f'<button type="button" role="tab" id="t-{p.slug}" data-slug="{p.slug}" '
             f'aria-controls="v-{p.slug}" aria-selected="false" tabindex="-1">{p.tab or p.title}</button>'
             for p in miembros)
-        rotulo = f'<div class="seg-label">{nombre}</div>' if nombre else ""
+        rotulo = f'<div class="seg-label">{nombre}</div>' if nombre and not nombre.startswith("_") else ""
         partes.append(f'<div class="seg-group" role="presentation">{rotulo}<div class="seg" role="presentation">{botones}</div></div>')
     return (f'<nav class="seg-nav" role="tablist" data-entity="{entidad}" '
             f'aria-label="Vistas de {entidad}" hidden>{"".join(partes)}</nav>')
+
+
+def _select_html(pages, entidad):
+    """El mismo menú como un `<select>` con `<optgroup>` por familia (el nativo del sistema: accesible, y
+    funciona abierto con doble clic). Los grupos sin rótulo (los que empiezan con "_" o están vacíos) quedan
+    como opciones sueltas."""
+    grupos = {}
+    for p in pages:
+        grupos.setdefault(p.group, []).append(p)
+    partes = []
+    for nombre, miembros in grupos.items():
+        opciones = "".join(f'<option value="{p.slug}">{p.tab or p.title}</option>' for p in miembros)
+        partes.append(opciones if not nombre or nombre.startswith("_") else f'<optgroup label="{nombre}">{opciones}</optgroup>')
+    ident = f"sel-{entidad.lower()}"
+    return (f'<div class="vista-sel" data-entity="{entidad}" hidden>'
+            f'<label for="{ident}">Gráfica</label><select id="{ident}" aria-label="Gráfica de {entidad}">'
+            f'{"".join(partes)}</select></div>')
 
 
 def write_section_views(section, entities, dist_dir: Path):
@@ -331,7 +375,7 @@ def write_section_views(section, entities, dist_dir: Path):
     vista de la primera entidad es la que abre la página; las demás se cargan al
     activarlas. Devuelve las rutas escritas."""
     meta = SECTION_META[section]
-    salidas, vistas, tabs, paneles, botones_ent = [], [], [], [], []
+    salidas, vistas, tabs, selects, paneles, botones_ent = [], [], [], [], [], []
     orden = meta.get("entidades") or list(entities)
     for entidad in (e for e in orden if e in entities):
         pages = entities[entidad]
@@ -349,6 +393,7 @@ def write_section_views(section, entities, dist_dir: Path):
                            "entity": entidad, "src": f"vistas/{slug_ent}/{p.slug}.js"})
             paneles.append(f'<div class="view" id="v-{p.slug}" role="tabpanel" aria-labelledby="t-{p.slug}" hidden></div>')
         tabs.append(_tabs_html(pages, entidad))
+        selects.append(_select_html(pages, entidad))
         botones_ent.append(
             f'<button type="button" role="tab" data-entity="{entidad}" aria-selected="false" '
             f'tabindex="-1">{entidad}</button>')
@@ -363,6 +408,7 @@ def write_section_views(section, entities, dist_dir: Path):
             .replace("__DESCRIPTION__", meta["description"])
             .replace("__PRELOAD__", vistas[0]["src"])
             .replace("__ENTIDADES__", "".join(botones_ent))
+            .replace("__SELECTS__", "".join(selects))
             .replace("__TABS__", "".join(tabs))
             .replace("__PANELS__", "".join(paneles))
             .replace("__VIEWS_JSON__", ids)
