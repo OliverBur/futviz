@@ -25,6 +25,8 @@ tiros caen por debajo de 0.5; Leão (0.58), Nico Williams (0.56) y Coman (0.52)
 juegan por la izquierda y caen por encima.
 """
 
+import html
+
 import numpy as np
 import pandas as pd
 
@@ -77,6 +79,12 @@ TIPOS = [
 HINT = ("\"Otro balón parado\" son las faltas y saques puestos al área que "
         "no acaban en tiro libre directo.")
 
+# Los índices de jugada y de parte del cuerpo con los que viajan los tiros (la tabla agregada y la de cada temporada
+# usan los mismos, para que el filtro de tipo de tiro sea una sola función en el navegador).
+JUGADAS = [k for k, _, _, c, _, _ in TIPOS if c == "situation"]
+PARTES = ["Head", "Right Foot", "Left Foot", "Other"]
+LIGAS = ["Premier League", "La Liga", "Serie A", "Bundesliga", "Ligue 1"]
+
 # Bordes de las celdas. `ancho` crece hacia la derecha del mapa y `fondo` hacia
 # el fondo de la cancha; el eje vertical se invierte después, al dibujar.
 BORDES_ANCHO = np.linspace(0, ANCHO, NX + 1)
@@ -92,6 +100,10 @@ def load(path):
     los conteos de lo que se sacó, que los textos de lectura necesitan para
     poder explicarlo."""
     d = pd.read_csv(path, encoding="utf-8-sig")
+    # Understat deja entidades HTML en los nombres (`M&#039;Bala Nzola`); `consolidate_data` ya las corrige en la
+    # tabla de jugadores, y los nombres de los tiros tienen que coincidir con los de esa tabla.
+    for col in ("player", "team", "rival"):   # `rival` viene vacío en 95 tiros
+        d[col] = d[col].map(lambda s: html.unescape(s) if isinstance(s, str) else s)
 
     # Los autogoles se van por lo mismo que en el modelo de xG: Understat los
     # registra como un remate más, pero no son un intento de tiro del equipo
@@ -133,8 +145,7 @@ def tabla_agregada(df, descartes, seasons):
 
     `n` y `g` son los tiros y los goles de la celda. La celda es `fila * NX + columna`, con la fila
     contada desde la línea de fondo y la columna desde la izquierda del ataque."""
-    jugadas = [k for k, _, _, c, _, _ in TIPOS if c == "situation"]
-    partes = ["Head", "Right Foot", "Left Foot", "Other"]
+    jugadas, partes = JUGADAS, PARTES
     d = df.copy()
     d["t"] = d["temporada"].map({s: i for i, s in enumerate(seasons)})
     d["s"] = d["situation"].map({k: i for i, k in enumerate(jugadas)})
@@ -158,6 +169,50 @@ def tabla_agregada(df, descartes, seasons):
         "hint": HINT, "descartes": descartes, "total": len(df),
         "rampa": SEQUENTIAL_BLUE,
         "f": cols,
+    }
+
+
+def tabla_temporada(df, temporada, nombre_jugador, nombre_club):
+    """Los tiros de UNA temporada, uno por uno y en columnas de enteros, para dibujar los de un jugador o un
+    equipo. Es lo que el navegador pide cuando alguien elige a quién mirar (`datos-tiros-<temporada>.js`); el mapa
+    de todos sigue saliendo de `tabla_agregada`, que pesa una fracción.
+
+    Son los MISMOS tiros que la tabla agregada (sin penales, sin autogoles, a menos de `PROFUNDIDAD` m de la línea de
+    fondo): sumar los de todos los jugadores da el total de esa temporada en el mapa de todos. Un jugador se
+    identifica por el `player_id` de Understat (hay 26 nombres que se repiten entre jugadores distintos) y un tiro
+    sabe contra quién fue (`v`), así que el equipo se puede mirar a favor y en contra.
+
+    `nombre_jugador(temporada, nombre_understat)` y `nombre_club(nombre_understat)` dan los nombres como se dicen.
+    Posición en decímetros (`x` a lo ancho, con la izquierda del ataque a la izquierda; `y` desde la línea de
+    fondo), xG en milésimas, `g` 1 si fue gol. `s` y `b` son los índices de `JUGADAS` y `PARTES`."""
+    d = df[df["temporada"] == temporada]
+    d = d.assign(club=d["team"].map(nombre_club), club_rival=d["rival"].map(nombre_club))
+
+    # un jugador por player_id; su nombre y sus clubes (el de más tiros primero) son los de esta temporada
+    ids = sorted(d["player_id"].unique())
+    pos = {pid: k for k, pid in enumerate(ids)}
+    nombres, clubes = [], []
+    for pid, g in d.groupby("player_id", sort=True):
+        nombres.append(nombre_jugador(temporada, g["player"].iloc[0]))
+        clubes.append(list(g["club"].value_counts().index))
+    eq = sorted(set(d["club"]) | set(d["club_rival"].dropna()))
+    pos_eq = {n: k for k, n in enumerate(eq)}
+    liga_de = d.drop_duplicates("club").set_index("club")["liga"]
+    c = {
+        "x": [int(v) for v in (d["ancho"] * 10).round()],
+        "y": [int(v) for v in (d["fondo"] * 10).round()],
+        "xg": [int(v) for v in (d["xg"] * 1000).round()],
+        "g": [int(v) for v in d["gol"]],
+        "j": [pos[v] for v in d["player_id"]],
+        "e": [pos_eq[v] for v in d["club"]],
+        "v": [pos_eq.get(v, -1) for v in d["club_rival"]],      # -1: Understat no dice contra quién
+        "s": [JUGADAS.index(v) for v in d["situation"]],
+        "b": [PARTES.index(v) for v in d["body_part"]],
+    }
+    return {
+        "t": temporada, "n": len(d), "jug": nombres, "jugClubes": [", ".join(c_) for c_ in clubes],
+        "eq": eq, "eqLiga": [LIGAS.index(liga_de[n]) if n in liga_de.index else -1 for n in eq],
+        "ligas": LIGAS, "c": c,
     }
 
 

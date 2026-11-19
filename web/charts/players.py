@@ -13,7 +13,7 @@ import insights as ins
 import react_views
 import shot_map
 from consolidate_data import ELO_TOP, NIVELES, POSICIONES
-from nombres import aplicar_a_jugadores
+from nombres import JUGADORES, aplicar_a_jugadores, club_visible
 from preguntas import PREGUNTAS
 from site_utils import PROCESSED_DIR, ChartPage, temporadas_en_curso
 from viz_theme import (
@@ -363,14 +363,29 @@ def chart_explorer(df):
         cfg, kind="explorer")
 
 
+def _nombre_jugador_de_tiros():
+    """`f(temporada, nombre de Understat)` -> el nombre como lo ve el resto del sitio (el de FBref cuando cruzó, los
+    alias de `nombres.py` cuando no). Los tiros no traen el cruce con FBref; lo trae la tabla de jugadores."""
+    p = pd.read_csv(PROCESSED_DIR / "players_all_seasons.csv", encoding="utf-8-sig",
+                    usecols=["temporada", "player", "team", "player_fbref"]).drop_duplicates(["temporada", "player"])
+    p["visible"] = aplicar_a_jugadores(p)["player"].to_numpy()
+    mapa = dict(zip(zip(p["temporada"], p["player"]), p["visible"]))
+    return lambda t, nombre: mapa.get((t, nombre)) or JUGADORES.get(nombre, nombre)
+
+
 def chart_shot_map():
     """Mapa de calor de los tiros: el único gráfico de la sección que no sale de la tabla de jugadores
     sino del detalle de tiros, y el único cuyo punto no es un jugador sino un remate."""
     df, descartes = shot_map.load(PROCESSED_DIR / "shots_all_seasons.csv")
     seasons = sorted(df["temporada"].unique())
     react_views.registrar_payload("tiros", shot_map.tabla_agregada(df, descartes, seasons))
+    # los tiros uno por uno, una tabla por temporada: el navegador pide la de la temporada que se mira cuando
+    # alguien elige un jugador o un equipo (el mapa de todos no la necesita)
+    nombre_jugador = _nombre_jugador_de_tiros()
+    for t in seasons:
+        react_views.registrar_payload(f"tiros-{t}", shot_map.tabla_temporada(df, t, nombre_jugador, club_visible))
     cfg = {
-        "tabla": "tiros", "fuente": FUENTE_UNDERSTAT,
+        "tabla": "tiros", "fuente": FUENTE_UNDERSTAT, "enCurso": temporadas_en_curso(),
         "queMirar": ins.tiros_que_mirar(),
         "porQue": ins.tiros_por_que(len(df), descartes["penales"], descartes["fuera"]),
     }

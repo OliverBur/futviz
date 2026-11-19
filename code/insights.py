@@ -1109,7 +1109,11 @@ def tiros_que_mirar():
             "se puede comparar con la de otro aunque haya veinte veces más de uno que de "
             "otro.\n\n"
             "Pasa el mouse o toca una celda para ver los números crudos: cuántos tiros "
-            "salieron de ahí y cuántos acabaron en gol.")
+            "salieron de ahí y cuántos acabaron en gol.\n\n"
+            "Con **Ver** puedes cambiar el mapa de calor por los tiros de **un jugador** o de **un equipo**, "
+            "uno por uno: cada punto es un remate, lleno si fue gol y vacío si no, y más grande cuanto más "
+            "valía la ocasión (su xG). De un equipo se pueden ver los tiros que hizo o los que le hicieron. "
+            "Se ve una temporada a la vez, y el texto de abajo compara con el tiro medio de las 5 ligas.")
 
 
 def tiros_por_que(n_mapa, n_penales, n_fuera):
