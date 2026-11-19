@@ -264,7 +264,17 @@ export function Grafica({
     ro.observe(caja.current);
     return () => ro.disconnect();
   }, []);
-  const alto = Math.max(360, Math.min(640, Math.round(ancho * 0.74)));
+  // En escritorio la gráfica empieza ~360-380 px abajo (cabecera, tarjeta y filtros): se acota con el alto de la
+  // ventana para que el eje X entre sin deslizar (a 1440×900 pasa de 551 a ~500 px). En el teléfono la gráfica
+  // empieza más abajo de todos modos y no hay nada que ganar, así que ahí manda el ancho.
+  const [altoVentana, setAltoVentana] = useState(() => window.innerHeight);
+  useEffect(() => {
+    const alCambiar = () => setAltoVentana(window.innerHeight);
+    window.addEventListener("resize", alCambiar);
+    return () => window.removeEventListener("resize", alCambiar);
+  }, []);
+  const cabe = window.innerWidth >= 960 ? Math.max(400, altoVentana - 400) : Infinity;
+  const alto = Math.max(360, Math.min(640, Math.round(ancho * 0.74), cabe));
 
   const px = (x) => area.left + ((x - view.x0) / (view.x1 - view.x0)) * area.width;
   const py = (y) => area.top + (1 - (y - view.y0) / (view.y1 - view.y0)) * area.height;
