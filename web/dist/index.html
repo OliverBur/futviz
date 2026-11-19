@@ -76,13 +76,18 @@
   @keyframes futviz-fade-in { from { opacity: 0; } to { opacity: 1; } }
   @media (prefers-reduced-motion: reduce) { body { animation: none; } }
 
-  .theme-toggle { flex: none; display: inline-flex; align-items: center; justify-content: center;
+  .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+  /* Los dos botones cuadrados de la barra: la lupa del buscador (`.buscar-abrir`) y el tema (`.theme-toggle`). */
+  .theme-toggle, .buscar-abrir { flex: none; display: inline-flex; align-items: center; justify-content: center;
     width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--color-border);
     background: var(--color-surface); color: var(--color-primary); cursor: pointer; padding: 0;
     transition: border-color .15s ease, background-color .15s ease, color .15s ease; }
-  .theme-toggle:hover { border-color: var(--color-interactive); }
-  .theme-toggle:focus-visible { outline: 2px solid var(--color-interactive); outline-offset: 2px; }
-  .theme-toggle svg { width: 18px; height: 18px; }
+  .theme-toggle:hover, .buscar-abrir:hover, .buscar-abrir[aria-expanded="true"] { border-color: var(--color-interactive); }
+  .theme-toggle:focus-visible, .buscar-abrir:focus-visible { outline: 2px solid var(--color-interactive); outline-offset: 2px; }
+  .theme-toggle svg, .buscar-abrir svg { width: 18px; height: 18px; }
+  @media (prefers-reduced-motion: reduce) { .theme-toggle, .buscar-abrir { transition: none; } }
   .theme-toggle .icon-sun { display: none; }
   html[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
   html[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
@@ -106,17 +111,85 @@
   .sitebar-nav a:hover { color: var(--color-interactive); }
   .sitebar-nav a[aria-current="page"] { color: var(--color-primary); font-weight: 600; text-decoration: underline;
     text-decoration-color: var(--color-brand-accent); text-decoration-thickness: 2px; text-underline-offset: 8px; }
-  .sitebar .theme-toggle { width: 44px; height: 44px; border-radius: 10px; }
+  .sitebar-acciones { display: flex; align-items: center; gap: 8px; }
+  .sitebar .theme-toggle, .sitebar .buscar-abrir { width: 44px; height: 44px; border-radius: 10px; }
   @media (max-width: 640px) {
-    .sitebar { min-height: 0; padding: 10px 16px 0; }   /* dos renglones: logo y tema, abajo las secciones */
+    .sitebar { min-height: 0; padding: 10px 16px 0; }   /* dos renglones: logo, lupa y tema; abajo las secciones */
     .sitebar .marca img { height: 26px; }
     .sitebar-nav { order: 3; width: 100%; padding-bottom: 4px; }
   }
 
+  .buscador { position: relative; max-width: 760px; margin: 0 auto; text-align: left; }
+  .buscador .campo { display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 0 16px 0 18px;
+    background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 12px;
+    transition: border-color .12s ease, box-shadow .12s ease; }
+  .buscador .campo:focus-within { border-color: var(--color-interactive); box-shadow: 0 0 0 3px var(--color-interactive-soft); }
+  .buscador .campo svg { width: 20px; height: 20px; flex: none; color: var(--color-muted); }
+  .buscador .campo input { flex: 1; min-width: 0; height: 58px; border: 0; background: transparent; outline: none;
+    font: 500 17px/1.2 "Inter", system-ui, sans-serif; color: var(--color-text-body); }
+  .buscador .campo input::placeholder { color: var(--color-muted); opacity: 1; }
+  .buscador .campo input::-webkit-search-cancel-button { display: none; }
+  .buscador .cerrar { display: none; min-height: 44px; padding: 0 4px; border: 0; background: none; cursor: pointer;
+    font: 600 15px "Inter", system-ui, sans-serif; color: var(--color-interactive); }
+  .buscador .cerrar:focus-visible { outline: 2px solid var(--color-interactive); outline-offset: 2px; border-radius: 6px; }
+  .buscador .panel { position: absolute; left: 0; right: 0; top: calc(100% + 8px); z-index: 30; max-height: min(70vh, 560px);
+    overflow-y: auto; overscroll-behavior: contain; background: var(--color-surface);
+    border: 1px solid var(--color-border); border-radius: 12px; padding: 8px 0;
+    box-shadow: 0 16px 40px color-mix(in srgb, var(--color-primary) 18%, transparent);
+    opacity: 0; transform: translateY(-4px); transition: opacity .12s ease, transform .12s ease; }
+  .buscador .panel.visible { opacity: 1; transform: none; }
+  .buscador .panel[hidden] { display: none; }
+  .buscador .panel ul { list-style: none; margin: 0; padding: 0; }
+  .buscador .grupo { display: block; padding: 10px 18px 4px; font-size: 11px; font-weight: 700; letter-spacing: .07em;
+    text-transform: uppercase; color: var(--color-muted); }
+  .buscador .opcion { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 8px 18px; cursor: pointer; }
+  .buscador .opcion[aria-selected="true"] { background: var(--color-interactive-soft); box-shadow: inset 2px 0 0 var(--color-interactive); }
+  .buscador .opcion .txt { flex: 1; min-width: 0; }
+  .buscador .opcion .nom { display: block; font-size: 15px; font-weight: 600; color: var(--color-primary); }
+  .buscador .opcion .det { display: block; font-size: 13px; color: var(--color-muted); }
+  /* sobre el resaltado, el gris no llega a 4.5:1 en oscuro: el detalle pasa al color del texto */
+  .buscador .opcion[aria-selected="true"] .det { color: var(--color-text-body); }
+  .buscador .opcion .acc { flex: none; font-size: 13px; font-weight: 600; color: var(--color-interactive); }
+  .buscador .opcion.sec { min-height: 44px; padding-left: 34px; }
+  .buscador .opcion.sec .nom { font-weight: 500; font-size: 14px; color: var(--color-text-body); }
+  .buscador .opcion mark { background: transparent; color: inherit; text-decoration: underline;
+    text-decoration-color: var(--color-interactive); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+  .buscador .aviso { padding: 14px 18px; font-size: 14.5px; line-height: 1.5; color: var(--color-text-body); }
+  .buscador .aviso a { color: var(--color-interactive); font-weight: 600; }
+
+  /* El buscador dentro de un <dialog> (todas las páginas menos la portada). Sin padding en el <dialog>: así un
+     clic sobre él, y no sobre su contenido, es siempre un clic en el fondo oscuro, que lo cierra. */
+  dialog.buscar { width: min(680px, calc(100% - 32px)); max-width: none; max-height: calc(100% - 16vh); margin: 8vh auto auto;
+    padding: 0; overflow: hidden; border: 1px solid var(--color-border); border-radius: 16px;
+    background: var(--color-bg); color: var(--color-text-body); box-shadow: 0 24px 64px rgba(10, 18, 20, .35); }
+  dialog.buscar::backdrop { background: rgba(10, 18, 20, .55); }
+  dialog.buscar .buscador { max-width: none; padding: 12px; }
+  dialog.buscar .campo { min-height: 54px; }
+  dialog.buscar .campo input { height: 52px; }
+  dialog.buscar .panel { position: static; margin-top: 8px; padding: 4px 0 0; max-height: min(60vh, 460px);
+    border: 0; border-radius: 0; background: transparent; box-shadow: none; transform: none; }
+  html:has(dialog.buscar[open]) { overflow: hidden; }
+  @media (min-width: 641px) { html:has(dialog.buscar[open]) { scrollbar-gutter: stable; } }
+
+  @media (max-width: 640px) {
+    .buscador .campo input { font-size: 16px; }   /* 16 px: iOS no hace zoom al enfocar */
+    /* Portada: el buscador abierto ocupa la pantalla: el teclado del teléfono deja poco espacio para la lista. */
+    .buscador.abierto { position: fixed; inset: 0; z-index: 50; max-width: none; padding: 12px 16px;
+      background: var(--color-bg); overflow-y: auto; overscroll-behavior: contain; }
+    .buscador.abierto .cerrar { display: inline-flex; align-items: center; }
+    .buscador.abierto .panel { position: static; margin-top: 10px; max-height: none; box-shadow: none; }
+    /* Demás páginas: el <dialog> es la pantalla; la lista ocupa lo que queda y se desliza ella sola. */
+    dialog.buscar { width: 100%; height: 100%; height: 100dvh; max-height: none; margin: 0; border: 0; border-radius: 0; }
+    dialog.buscar .buscador { height: 100%; display: flex; flex-direction: column; padding: 12px 16px; }
+    dialog.buscar .cerrar { display: inline-flex; align-items: center; }
+    dialog.buscar .panel { flex: 1 1 auto; min-height: 0; max-height: none; margin-top: 10px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .buscador .panel, .buscador .campo { transition: none; }
+  }
+
   /* Sin tarjetas: la estructura la dan líneas de 1px con --color-border. */
   .contenedor { max-width: 1200px; margin: 0 auto; padding-left: 32px; padding-right: 32px; }
-  .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden;
-    clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
   .skip { position: absolute; left: 12px; top: -60px; z-index: 60; padding: 10px 14px; border-radius: 8px;
     background: var(--color-primary); color: var(--color-bg); font-weight: 600; font-size: 14px; text-decoration: none; }
   .skip:focus-visible { top: 12px; outline: 2px solid var(--color-interactive); outline-offset: 2px; }
@@ -146,43 +219,7 @@
   .intro-seccion { margin: -16px 0 28px; max-width: 62ch; font-size: 16px; line-height: 1.55; color: var(--color-text-body); }
   @media (max-width: 640px) { .puertas { grid-template-columns: minmax(0, 1fr); gap: 14px; margin-top: 24px; } }
 
-  /* Buscador: el campo es un combobox con la lista desplegada debajo (en pantallas chicas, a pantalla completa). */
-  .buscador { position: relative; max-width: 760px; margin: 0 auto; text-align: left; }
-  .campo { display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 0 16px 0 18px;
-    background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 12px;
-    transition: border-color .12s ease, box-shadow .12s ease; }
-  .campo:focus-within { border-color: var(--color-interactive); box-shadow: 0 0 0 3px var(--color-interactive-soft); }
-  .campo svg { width: 20px; height: 20px; flex: none; color: var(--color-muted); }
-  .campo input { flex: 1; min-width: 0; height: 58px; border: 0; background: transparent; outline: none;
-    font: 500 17px/1.2 "Inter", system-ui, sans-serif; color: var(--color-text-body); }
-  .campo input::placeholder { color: var(--color-muted); opacity: 1; }
-  .campo input::-webkit-search-cancel-button { display: none; }
-  .cerrar { display: none; min-height: 44px; padding: 0 4px; border: 0; background: none; cursor: pointer;
-    font: 600 15px "Inter", system-ui, sans-serif; color: var(--color-interactive); }
-  .panel { position: absolute; left: 0; right: 0; top: calc(100% + 8px); z-index: 30; max-height: min(70vh, 560px);
-    overflow-y: auto; overscroll-behavior: contain; background: var(--color-surface);
-    border: 1px solid var(--color-border); border-radius: 12px; padding: 8px 0;
-    box-shadow: 0 16px 40px color-mix(in srgb, var(--color-primary) 18%, transparent);
-    opacity: 0; transform: translateY(-4px); transition: opacity .12s ease, transform .12s ease; }
-  .panel.visible { opacity: 1; transform: none; }
-  .panel[hidden] { display: none; }
-  .panel ul { list-style: none; margin: 0; padding: 0; }
-  .grupo { display: block; padding: 10px 18px 4px; font-size: 11px; font-weight: 700; letter-spacing: .07em;
-    text-transform: uppercase; color: var(--color-muted); }
-  .opcion { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 8px 18px; cursor: pointer; }
-  .opcion[aria-selected="true"] { background: var(--color-interactive-soft); box-shadow: inset 2px 0 0 var(--color-interactive); }
-  .opcion .txt { flex: 1; min-width: 0; }
-  .opcion .nom { display: block; font-size: 15px; font-weight: 600; color: var(--color-primary); }
-  .opcion .det { display: block; font-size: 13px; color: var(--color-muted); }
-  /* sobre el resaltado, el gris no llega a 4.5:1 en oscuro: el detalle pasa al color del texto */
-  .opcion[aria-selected="true"] .det { color: var(--color-text-body); }
-  .opcion .acc { flex: none; font-size: 13px; font-weight: 600; color: var(--color-interactive); }
-  .opcion.sec { min-height: 44px; padding-left: 34px; }
-  .opcion.sec .nom { font-weight: 500; font-size: 14px; color: var(--color-text-body); }
-  .opcion mark { background: transparent; color: inherit; text-decoration: underline;
-    text-decoration-color: var(--color-interactive); text-decoration-thickness: 2px; text-underline-offset: 3px; }
-  .aviso { padding: 14px 18px; font-size: 14.5px; line-height: 1.5; color: var(--color-text-body); }
-  .aviso a { color: var(--color-interactive); font-weight: 600; }
+  /* El buscador: su CSS es compartido con el <dialog> de las demás páginas (`site_utils.BUSCADOR_CSS`). */
 
   /* Secciones */
   .seccion { padding: clamp(48px, 7vw, 88px) 0; border-top: 1px solid var(--color-border); }
@@ -253,15 +290,6 @@
     .titular img { height: 56px; }
     h1 { text-align: center; }
     .preguntas h3 { font-size: 21px; }
-    /* El buscador abierto ocupa la pantalla: el teclado del teléfono deja poco espacio para la lista. */
-    .buscador.abierto { position: fixed; inset: 0; z-index: 50; max-width: none; padding: 12px 16px;
-      background: var(--color-bg); overflow-y: auto; overscroll-behavior: contain; }
-    .buscador.abierto .cerrar { display: inline-flex; align-items: center; }
-    .buscador.abierto .panel { position: static; margin-top: 10px; max-height: none; box-shadow: none; }
-    .campo input { font-size: 16px; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .panel, .campo { transition: none; }
   }
 </style>
 </head>
@@ -270,8 +298,10 @@
 <header class="site-header">
   <div class="sitebar">
   <a class="marca" href="index.html" aria-current="page"><img class="site-logo logo-theme-light" src="assets/logo.png" alt="FutViz — volver al inicio"><img class="site-logo logo-theme-dark" src="assets/logo-dark.png" alt="" aria-hidden="true"></a>
-  <nav class="sitebar-nav" aria-label="Secciones"><a href="analisis-exploratorio.html">Análisis exploratorio</a><a href="machine-learning.html">Machine Learning</a></nav>
-  <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Cambiar entre modo claro y oscuro">
+  <nav class="sitebar-nav" aria-label="Secciones"><a href="analisis-exploratorio.html" aria-label="Análisis exploratorio: gráficas de jugadores y equipos" title="Análisis exploratorio: gráficas de jugadores y equipos">Gráficas</a><a href="machine-learning.html" aria-label="Machine Learning: modelos y artículos" title="Machine Learning: modelos y artículos">Modelos</a></nav>
+  <div class="sitebar-acciones">
+    <button type="button" class="buscar-abrir" id="buscador-abrir" aria-label="Buscar" title="Buscar (tecla /)" aria-keyshortcuts="/" aria-controls="buscador-q"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Cambiar entre modo claro y oscuro">
   <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
   </svg>
@@ -279,6 +309,7 @@
     <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/>
   </svg>
 </button>
+  </div>
 </div>
 </header>
 <main id="main">
@@ -288,25 +319,25 @@
       <img class="logo-theme-dark" src="assets/logo-icono-dark.png" alt="" width="353" height="240">
       <h1 id="titulo">Pregúntale a los<br> datos del fútbol</h1>
     </div>
-    <form class="buscador" id="buscador" action="analisis-exploratorio.html" role="search">
-      <label class="sr-only" for="q">Busca un jugador, un equipo o una gráfica</label>
+    <form class="buscador" id="buscador" action="analisis-exploratorio.html" data-prefijo="" role="search">
+      <label class="sr-only" for="buscador-q">Busca un jugador, un equipo o una gráfica</label>
       <div class="campo">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        <input id="q" name="q" type="search" placeholder="Prueba con Martin Ødegaard, un equipo o una gráfica…" data-ejemplo="Martin Ødegaard"
+        <input id="buscador-q" name="q" type="search" placeholder="Prueba con Martin Ødegaard, un equipo o una gráfica…" data-ejemplo="Martin Ødegaard"
           autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search"
-          role="combobox" aria-expanded="false" aria-controls="sugerencias" aria-autocomplete="list">
-        <button type="button" class="cerrar" id="cerrar">Cerrar</button>
+          role="combobox" aria-expanded="false" aria-controls="buscador-lista" aria-autocomplete="list">
+        <button type="button" class="cerrar" id="buscador-cerrar">Cerrar</button>
       </div>
-      <div class="panel" id="panel" hidden>
-        <ul id="sugerencias" role="listbox" aria-label="Resultados de la búsqueda"></ul>
-        <div class="aviso" id="aviso" hidden></div>
+      <div class="panel" id="buscador-panel" hidden>
+        <ul id="buscador-lista" role="listbox" aria-label="Resultados de la búsqueda"></ul>
+        <div class="aviso" id="buscador-aviso" hidden></div>
       </div>
-      <p class="sr-only" id="anuncio" aria-live="polite"></p>
+      <p class="sr-only" id="buscador-anuncio" aria-live="polite"></p>
     </form>
     <div class="puertas">
       <a class="puerta" href="analisis-exploratorio.html">
         <span class="puerta-nombre">Análisis exploratorio →</span>
-        <span class="puerta-desc">14 gráficas para comparar jugadores y equipos de las 5 grandes ligas.</span>
+        <span class="puerta-desc">15 gráficas para comparar jugadores y equipos de las 5 grandes ligas.</span>
       </a>
       <a class="puerta" href="machine-learning.html">
         <span class="puerta-nombre">Machine Learning →</span>
@@ -318,9 +349,9 @@
   <section class="seccion" aria-labelledby="preguntas">
     <div class="contenedor">
       <h2 id="preguntas">Preguntas para empezar</h2>
-      <p class="intro-seccion">Cada pregunta abre una de las 14 gráficas del análisis exploratorio. Toca un punto para ver quién es y usa los filtros para afinar.</p>
-      <ul class="preguntas"><li><span class="etiqueta">Jugadores</span><h3>¿Quién marca más de lo que debería?</h3><a class="ir" href="analisis-exploratorio.html#goles-vs-xg">Goles vs. xG →</a></li><li><span class="etiqueta">Jugadores</span><h3>¿Desde dónde se tira en las 5 ligas?</h3><a class="ir" href="analisis-exploratorio.html#mapa-tiros">Mapa de tiros →</a></li><li><span class="etiqueta">Jugadores</span><h3>¿Quién genera más ocasiones para sus compañeros?</h3><a class="ir" href="analisis-exploratorio.html#pases-clave-vs-xa">Pases clave vs. xA →</a></li><li><span class="etiqueta">Equipos</span><h3>¿Quién defiende mejor y cómo?</h3><a class="ir" href="analisis-exploratorio.html#defensa">Tiros a puerta vs. goles recibidos →</a></li><li><span class="etiqueta">Equipos</span><h3>¿Qué equipo aprovecha mejor sus ocasiones?</h3><a class="ir" href="analisis-exploratorio.html#eficiencia-definicion">Eficiencia de definición →</a></li><li><span class="etiqueta">Equipos</span><h3>¿Qué tan parejos son los equipos de cada liga?</h3><a class="ir" href="analisis-exploratorio.html#nivel-por-liga-equipos">Distribución por liga →</a></li></ul>
-      <a class="todas" href="analisis-exploratorio.html">Ver las 14 gráficas</a>
+      <p class="intro-seccion">Cada pregunta abre una de las 15 gráficas del análisis exploratorio. Toca un punto para ver quién es y usa los filtros para afinar.</p>
+      <ul class="preguntas"><li><span class="etiqueta">Jugadores</span><h3>¿Quién marca más de lo que debería?</h3><a class="ir" href="analisis-exploratorio.html#goles-vs-xg">Goles vs. xG →</a></li><li><span class="etiqueta">Jugadores</span><h3>¿Desde dónde se tira en las 5 ligas?</h3><a class="ir" href="analisis-exploratorio.html#mapa-tiros">Mapa de tiros →</a></li><li><span class="etiqueta">Jugadores</span><h3>¿Quién genera más ocasiones para sus compañeros?</h3><a class="ir" href="analisis-exploratorio.html#pases-clave-vs-xa">Pases clave vs. xA →</a></li><li><span class="etiqueta">Equipos</span><h3>¿Quién defiende mejor y cómo?</h3><a class="ir" href="analisis-exploratorio.html#defensa">Goles recibidos vs. xG →</a></li><li><span class="etiqueta">Equipos</span><h3>¿Qué equipo aprovecha mejor sus ocasiones?</h3><a class="ir" href="analisis-exploratorio.html#eficiencia-definicion">Goles vs. xG →</a></li><li><span class="etiqueta">Equipos</span><h3>¿Qué tan parejos son los equipos de cada liga?</h3><a class="ir" href="analisis-exploratorio.html#nivel-por-liga-equipos">Distribución por liga →</a></li></ul>
+      <a class="todas" href="analisis-exploratorio.html">Ver las 15 gráficas</a>
     </div>
   </section>
 

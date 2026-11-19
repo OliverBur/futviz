@@ -1,10 +1,17 @@
-// Buscador de la landing: un jugador, un equipo o una gráfica, y a la vista que lo muestra.
+// Buscador del sitio: un jugador, un equipo o una gráfica, y a la vista que lo muestra.
 //
-// El campo del hero es un combobox (patrón ARIA "combobox + listbox") con la lista desplegada debajo;
-// en pantallas chicas se abre a pantalla completa porque el teclado del teléfono deja poco espacio.
+// El campo es un combobox (patrón ARIA "combobox + listbox") con la lista desplegada debajo. Hay UN solo
+// buscador y dos lugares donde vive (el marcado y el CSS están en `web/site_utils.py`):
+//  - la portada: el campo grande del hero; en pantallas chicas se abre a pantalla completa porque el teclado
+//    del teléfono deja poco espacio. La lupa de la barra solo lo enfoca.
+//  - las demás páginas: dentro de un <dialog> modal (`dialogo`) que abre la lupa de la barra. Escape, el clic
+//    en el fondo y "Cerrar" (solo en móvil) lo cierran, y el foco vuelve a la lupa.
 // El índice (`assets/search-index.js`, lo escribe `web/landing.py`) se pide la primera vez que alguien
 // apunta o enfoca el campo, nunca al cargar la página, y con <script> y no fetch para que funcione
 // también desde file://. Sin JS el campo es un <form> que lleva al análisis exploratorio.
+//
+// `data-prefijo` del formulario es la ruta de la página a la raíz del sitio ("" o "../", las páginas de
+// `analisis/`): se antepone al índice y a los enlaces a artículos. Los de las gráficas ya la traen en `action`.
 //
 // Un jugador o equipo lleva a las dispersiones con `?t=<temporada>&fijar=<nombre>` (el esquema de
 // `react/src/urlEstado.js`): la temporada es la última en la que tiene punto en ESA gráfica, así nunca
@@ -13,20 +20,24 @@
   "use strict";
   var form = document.getElementById("buscador");
   if (!form) return;
-  var input = document.getElementById("q");
-  var panel = document.getElementById("panel");
-  var lista = document.getElementById("sugerencias");
-  var aviso = document.getElementById("aviso");
-  var anuncio = document.getElementById("anuncio");
-  var cerrar = document.getElementById("cerrar");
+  var input = document.getElementById("buscador-q");
+  var panel = document.getElementById("buscador-panel");
+  var lista = document.getElementById("buscador-lista");
+  var aviso = document.getElementById("buscador-aviso");
+  var anuncio = document.getElementById("buscador-anuncio");
+  var cerrar = document.getElementById("buscador-cerrar");
+  var lupa = document.getElementById("buscador-abrir");
+  var dialogo = form.closest("dialog");
   var EDA = form.getAttribute("action");
+  var PREFIJO = form.getAttribute("data-prefijo") || "";
   var MAX = 8;
   var GRUPOS = [["j", "Jugadores"], ["e", "Equipos"], ["g", "Gráficas"]];
   var movil = window.matchMedia("(max-width: 640px)");
   var entradas = null, sugerencias = null, carga = null, opciones = [], activa = -1, tAnuncio = 0;
 
-  // En un teléfono el texto completo no cabe en el campo: uno más corto que diga lo mismo.
-  if (movil.matches) input.placeholder = "Prueba con " + (input.getAttribute("data-ejemplo") || "un jugador") + "…";
+  // En un teléfono el texto completo no cabe en el campo: uno más corto que diga lo mismo (solo la portada).
+  var ejemplo = input.getAttribute("data-ejemplo");
+  if (ejemplo && movil.matches) input.placeholder = "Prueba con " + ejemplo + "…";
 
   // Sin acentos y con las letras que no se descomponen (ø, ł, ß...) en su equivalente simple: "odegaard" encuentra a
   // "Ødegaard". Es la misma tabla que `consolidate_data.TRANSLITERA`.
@@ -56,7 +67,7 @@
       out.push({ tipo: "g", nombre: x[1], det: "Análisis exploratorio · " + x[3], peso: 0, acc: [{ etiqueta: "", url: EDA + "#" + x[0] }] });
     });
     ix.a.forEach(function (x) {
-      out.push({ tipo: "g", nombre: x[0], det: x[2] + " · lectura", peso: 0, acc: [{ etiqueta: "", url: x[1] }] });
+      out.push({ tipo: "g", nombre: x[0], det: x[2] + " · lectura", peso: 0, acc: [{ etiqueta: "", url: PREFIJO + x[1] }] });
     });
     out.forEach(function (e) { e.n = norm(e.nombre); });
     // Con el campo vacío (ver landing.construir_indice): goleadores de la última temporada y unas gráficas.
@@ -69,7 +80,7 @@
         return { tipo: "j", nombre: e.nombre, det: e.det + " · " + x[1] + (x[1] === 1 ? " gol" : " goles"), acc: e.acc };
       }),
       g: ix.s.v.map(function (i) { return out.filter(function (e) { return e.tipo === "g" && e.acc[0].url === EDA + "#" + v[i][0]; })[0]; }),
-      a: (ix.s.a || []).map(function (i) { return out.filter(function (e) { return e.tipo === "g" && e.acc[0].url === ix.a[i][1]; })[0]; })
+      a: (ix.s.a || []).map(function (i) { return out.filter(function (e) { return e.tipo === "g" && e.acc[0].url === PREFIJO + ix.a[i][1]; })[0]; })
     };
     return out;
   }
@@ -78,7 +89,7 @@
     if (!carga) {
       carga = new Promise(function (ok, mal) {
         var s = document.createElement("script");
-        s.src = "assets/search-index.js";
+        s.src = PREFIJO + "assets/search-index.js";
         s.onload = function () { window.futvizIndice ? ok(entradas = preparar(window.futvizIndice)) : mal(); };
         s.onerror = function () { s.remove(); mal(); };
         document.head.appendChild(s);
@@ -241,16 +252,43 @@
     activa = -1;
   }
 
-  // En pantallas chicas el buscador abierto ocupa la pantalla (CSS `.buscador.abierto`).
-  function abrirMovil() {
-    if (!movil.matches || form.classList.contains("abierto")) return;
-    form.classList.add("abierto");
-    document.documentElement.style.overflow = "hidden";
+  // Panel abierto; mientras llega el índice (la primera vez) dice "Cargando…" en lugar de quedar en blanco.
+  function abrirConAviso() {
     abrir();
     if (!input.value.trim() && !entradas) {
       aviso.textContent = "Cargando…";
       aviso.hidden = false;
     }
+  }
+
+  // En pantallas chicas el buscador de la portada abierto ocupa la pantalla (CSS `.buscador.abierto`).
+  // En el <dialog> no hace falta: él mismo ya es la pantalla.
+  function abrirMovil() {
+    if (dialogo || !movil.matches || form.classList.contains("abierto")) return;
+    form.classList.add("abierto");
+    document.documentElement.style.overflow = "hidden";
+    abrirConAviso();
+  }
+
+  // La lupa de la barra. En la portada lleva al campo grande (con scroll arriba si quedó fuera de la
+  // pantalla); en las demás páginas abre el <dialog> con el foco en el campo, que conserva lo que se tecleó.
+  function abrirBuscador() {
+    if (!dialogo) {
+      var r = input.getBoundingClientRect();
+      if (r.top < 0 || r.bottom > window.innerHeight) window.scrollTo(0, 0);
+      input.focus();
+      return;
+    }
+    if (dialogo.open) return;
+    dialogo.showModal();
+    if (lupa) lupa.setAttribute("aria-expanded", "true");
+    abrirConAviso();
+    input.focus();
+    input.select();
+  }
+
+  function cerrarBuscador() {
+    if (dialogo && dialogo.open) dialogo.close();
   }
 
   function cerrarMovil() {
@@ -269,7 +307,15 @@
     opciones[i].li.scrollIntoView({ block: "nearest" });
   }
 
-  function ir(destino) { window.location.href = destino; }
+  // Las gráficas leen sus filtros de la URL una sola vez, al montarse: desde la misma página, cambiar solo el
+  // hash no los aplicaría (el jugador no se resaltaría), así que ahí se vuelve a cargar con el hash nuevo.
+  function ir(destino) {
+    var u = new URL(destino, window.location.href);
+    var mismaPagina = u.pathname === window.location.pathname && u.hash.indexOf("?") > 0;
+    cerrarBuscador();
+    window.location.href = destino;
+    if (mismaPagina) window.location.reload();
+  }
 
   function actualizar() {
     var q = input.value;
@@ -321,31 +367,46 @@
       marcar(ev.key === "Home" ? 0 : n - 1);
     } else if (ev.key === "Escape") {
       ev.preventDefault();
-      if (form.classList.contains("abierto")) cerrarMovil();
+      if (dialogo) cerrarBuscador();
+      else if (form.classList.contains("abierto")) cerrarMovil();
       else if (!panel.hidden) cerrarPanel();
       else input.value = "";
     }
   });
-  cerrar.addEventListener("click", cerrarMovil);
-  // A pantalla completa el foco no sale del buscador: Tab va del campo a "Cerrar" y de vuelta.
+  cerrar.addEventListener("click", dialogo ? cerrarBuscador : cerrarMovil);
+  // A pantalla completa (y en el <dialog>) el foco no sale del buscador: Tab recorre lo visible, que es el
+  // campo, "Cerrar" (solo en móvil) y el enlace del aviso, y da la vuelta.
   form.addEventListener("keydown", function (ev) {
-    if (ev.key !== "Tab" || !form.classList.contains("abierto")) return;
+    if (ev.key !== "Tab" || !(dialogo || form.classList.contains("abierto"))) return;
+    var f = [input, cerrar, aviso.querySelector("a")].filter(function (x) { return x && x.getClientRects().length; });
+    var i = f.indexOf(document.activeElement);
     ev.preventDefault();
-    (document.activeElement === input ? cerrar : input).focus();
+    f[i < 0 ? 0 : (i + (ev.shiftKey ? f.length - 1 : 1)) % f.length].focus();
   });
-  // En escritorio la lista se cierra al salir del buscador.
+  // En escritorio la lista de la portada se cierra al salir del buscador (la del <dialog>, al cerrarlo).
   form.addEventListener("focusout", function (ev) {
-    if (!form.classList.contains("abierto") && !form.contains(ev.relatedTarget)) cerrarPanel();
+    if (!dialogo && !form.classList.contains("abierto") && !form.contains(ev.relatedTarget)) cerrarPanel();
   });
   document.addEventListener("pointerdown", function (ev) {
-    if (!form.contains(ev.target) && !form.classList.contains("abierto")) cerrarPanel();
+    if (dialogo) { if (ev.target === dialogo) cerrarBuscador(); }   // el clic en el fondo oscuro
+    else if (!form.contains(ev.target) && !form.classList.contains("abierto")) cerrarPanel();
   });
+  if (dialogo) {
+    dialogo.addEventListener("close", function () {   // Escape, "Cerrar", el fondo o un destino: todos pasan por aquí
+      cerrarPanel();
+      if (lupa) { lupa.setAttribute("aria-expanded", "false"); lupa.focus(); }
+    });
+  }
+  if (lupa) {
+    lupa.addEventListener("click", abrirBuscador);
+    lupa.addEventListener("pointerenter", precargar);
+  }
   // "/" fuera de un campo de texto lleva al buscador.
   document.addEventListener("keydown", function (ev) {
     if (ev.key !== "/" || ev.ctrlKey || ev.metaKey || ev.altKey) return;
     var t = ev.target;
     if (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return;
     ev.preventDefault();
-    input.focus();
+    abrirBuscador();
   });
 })();
