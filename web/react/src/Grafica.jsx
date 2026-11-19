@@ -381,6 +381,15 @@ export function Grafica({
           <g clipPath={`url(#${clipFondo})`}>
             <path d={`${lienzo} L ${px(-T)},${py(T)} Z`} fill={conAlfa(pos, 0.08)} />
             <path d={`${lienzo} L ${px(T)},${py(-T)} Z`} fill={conAlfa(neg, 0.08)} />
+            {/* La franja de azar: goles = xG ± k·√xG (una Poisson). Dentro de ella, la diferencia con el xG es lo que
+                se esperaría solo por suerte (k = 1.64 deja el 90% adentro). */}
+            {referencia.banda && (() => {
+              const k = referencia.banda, x0 = Math.max(0, view.x0), x1 = view.x1, n = 90;
+              const xs = Array.from({ length: n + 1 }, (_, i) => x0 + ((x1 - x0) * i) / n);
+              const arriba = xs.map((x) => `${px(x)},${py(x + k * Math.sqrt(x))}`);
+              const abajo = xs.map((x) => `${px(x)},${py(Math.max(0, x - k * Math.sqrt(x)))}`).reverse();
+              return <path d={`M ${arriba.join(" L ")} L ${abajo.join(" L ")} Z`} fill={conAlfa(tk.muted, 0.16)} />;
+            })()}
           </g>
           {/* Los rótulos van en las esquinas, pero solo valen mientras esa esquina siga a su lado de la
               diagonal: con zoom profundo la de arriba a la izquierda puede quedar en zona roja. */}

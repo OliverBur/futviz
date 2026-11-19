@@ -590,8 +590,9 @@ def _top_dif(d, real, esperado, n=1):
 # --------------------------------------------------------------------------
 
 def goles_xg_que_mirar():
-    return ("Cuanto más a la derecha, más ocasiones tuvo. La diagonal marca \"marcó "
-            "exactamente lo que se esperaba\".")
+    return ("Cuanto más a la derecha, más ocasiones tuvo. La diagonal marca \"marcó exactamente lo que se "
+            "esperaba\" y la franja gris, hasta dónde llega el azar: dentro de ella, la diferencia con el xG es lo "
+            "que se esperaría solo por suerte.")
 
 
 def _frase_persistencia(df, real, esperado, que):
@@ -605,17 +606,27 @@ def _frase_persistencia(df, real, esperado, que):
 
 
 def goles_xg_por_que(df):
-    dif = (df["goals"] - df["xG"])
+    dif = (df["np_goals"] - df["np_xg"])
+    tira = df[df["goals"] != df["np_goals"]]            # jugador-temporadas con algún penal anotado
+    cambia = int((((tira["goals"] - tira["xG"]) > 0) != ((tira["np_goals"] - tira["np_xg"]) > 0)).sum())
     return (
         f"El xG mide la **calidad de las ocasiones**, no el acierto: suma la "
         f"probabilidad de gol de cada remate según desde dónde y cómo se hizo. "
         f"Restarlo de los goles deja la definición más la suerte, y en una temporada "
         f"no hay forma de separarlas.\n\n"
+        f"La gráfica va **sin penales**, en los goles y en el xG. Un penal vale cerca de 0.76 de xG y casi siempre "
+        f"entra, así que quien los tira en su equipo aparece \"de más\" sin haber definido mejor. En estos datos, a "
+        f"{miles(cambia)} de los {miles(len(tira))} jugador-temporadas con algún penal anotado el signo de "
+        f"\"goles menos xG\" se invierte al quitarlos.\n\n"
+        f"La **franja gris** es el azar: si un jugador definiera exactamente como se espera, sus goles caerían ahí "
+        f"el 90% de las veces (la franja crece con la raíz del xG, porque con pocas ocasiones un gol más o menos "
+        f"mueve mucho). Quien queda fuera de la franja se alejó de lo esperado más de lo que explica la suerte; "
+        f"quien queda dentro, no se distingue de ella.\n\n"
         f"Primera advertencia: **una temporada es poca muestra para separar talento de "
         f"suerte**. Con unas decenas de remates, un par de goles de más o de menos "
         f"mueve mucho a un jugador respecto de la diagonal, así que quien está muy "
         f"arriba este año no necesariamente lo estará el próximo."
-        + _frase_persistencia(df, "goals", "xG", "goles y xG") + "\n\n"
+        + _frase_persistencia(df, "np_goals", "np_xg", "goles y xG sin penales") + "\n\n"
         f"Segunda: el xG que se usa aquí es el de Understat, y en estos datos suma "
         f"{'más' if dif.mean() < 0 else 'menos'} de lo que entra: el jugador promedio mete {_fmt(abs(dif.mean()))} goles "
         f"{'menos' if dif.mean() < 0 else 'más'} que su xG. Eso empuja a toda la nube "
@@ -633,14 +644,14 @@ def goles_xg(df, season, liga=None):
         d = d[d["liga"] == liga]
         ambito = liga
 
-    top = d.loc[d["goals"].idxmax()]
-    fija = (f"En {ambito}, el máximo goleador es **{top['player']}** "
-            f"({top['team']}) con {int(top['goals'])} goles sobre "
-            f"{_fmt(top['xG'], 1)} de xG.")
+    top = d.loc[d["np_goals"].idxmax()]
+    fija = (f"En {ambito}, el máximo goleador sin penales es **{top['player']}** "
+            f"({top['team']}) con {int(top['np_goals'])} goles sobre "
+            f"{_fmt(top['np_xg'], 1)} de xG.")
 
     if len(d) < 5:
         return fija, None
-    arriba, abajo, dif = _top_dif(d, "goals", "xG")
+    arriba, abajo, dif = _top_dif(d, "np_goals", "np_xg")
     salta = (f"El que más superó su xG es **{arriba['player']}** "
              f"(+{_fmt(dif.max(), 1)} goles) y el que más se quedó corto, "
              f"**{abajo['player']}** ({_fmt(dif.min(), 1)}). Antes de sacar "

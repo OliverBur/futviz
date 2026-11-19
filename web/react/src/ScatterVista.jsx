@@ -276,9 +276,11 @@ function Vista({ cfg, T, modo, tk }) {
     const v = vistaDiferida;
     return visibles
       .filter((r) => xs[r] >= v.x0 && xs[r] <= v.x1 && ys[r] >= v.y0 && ys[r] <= v.y1)
+      // "Rendimiento" pide un mínimo de xG: con 0.5 de xG un solo gol ya es el mayor "sobrerrendimiento" de la liga.
+      .filter((r) => !(metrica === "dif" && ref && ref.piso) || xs[r] >= ref.piso)
       .sort((a, b) => valorDe(b) - valorDe(a) || ys[b] - ys[a] || xs[b] - xs[a])
       .slice(0, 5);
-  }, [visibles, vistaDiferida, valorDe, xs, ys]);
+  }, [visibles, vistaDiferida, valorDe, xs, ys, metrica, ref]);
   // Lo que se lee de cada fila, en la lista y en la etiqueta: el valor de la métrica elegida.
   const valX = (r) => xs[r].toFixed(decL(X)), valY = (r) => ys[r].toFixed(decL(Y));
   const textoValor = useCallback((r) => {
@@ -672,6 +674,7 @@ function Vista({ cfg, T, modo, tk }) {
           <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: 1, mt: 0.75 }}>
             <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
               {ref && ref.tipo === "promedios" ? "Líneas punteadas: promedio de cada eje · " : ""}
+              {ref && ref.banda ? "Franja gris: hasta donde llega el azar · " : ""}
               {movil
                 ? "Arrastra para mover · usa los botones para hacer zoom · toca un punto para resaltarlo"
                 : "Arrastra para mover · Ctrl + rueda o los botones para hacer zoom · clic en un punto para resaltarlo"}

@@ -28,9 +28,9 @@ function lideres(T, filas, colA, colB, fmtA, fmtB, queA, queB) {
 // ---- Jugadores -------------------------------------------------------------------------
 
 export function golesXg(T, filas, ambito) {
-  const goles = col(T, "goals", filas), xg = col(T, "xG", filas);
+  const goles = col(T, "np_goals", filas), xg = col(T, "np_xg", filas);
   const top = filas[idxmax(goles)];
-  const fija = `En ${ambito}, el máximo goleador es **${quien(T, top)}** (${T.equipo(top)}) con ${Math.trunc(T.c.goals[top])} goles sobre ${fmt1(T.c.xG[top])} de xG.`;
+  const fija = `En ${ambito}, el máximo goleador sin penales es **${quien(T, top)}** (${T.equipo(top)}) con ${Math.trunc(T.c.np_goals[top])} goles sobre ${fmt1(T.c.np_xg[top])} de xG.`;
   if (filas.length < 5) return { fija, salta: null };
   const dif = goles.map((g, i) => g - xg[i]);
   const salta = `El que más superó su xG es **${quien(T, filas[idxmax(dif)])}** (+${fmt1(Math.max(...dif))} goles) y el que más se quedó corto, **${quien(T, filas[idxmin(dif)])}** (${fmt1(Math.min(...dif))}). Antes de sacar conclusiones: una diferencia así se repite poco de una temporada a la siguiente (los números están en «Por qué estas variables»).`;

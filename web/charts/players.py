@@ -196,8 +196,10 @@ def _eje(col, label, corto, dec, dec_lista=None):
 def _metricas(x, y, referencia):
     """Qué se puede ordenar en el Top 5 (y por lo tanto qué se rotula en la gráfica)."""
     if referencia["tipo"] == "diagonal":
+        piso = referencia.get("piso")
         primera = {"id": "dif", "etiqueta": "Rendimiento",
-                   "ayuda": f"Los que más se alejan de la diagonal: rinden más o menos de lo esperado ({referencia['dif']})"}
+                   "ayuda": f"Los que más se alejan de la diagonal ({referencia['dif']})"
+                            + (f", con al menos {piso:g} de xG" if piso else "")}
     else:
         primera = {"id": "dist", "etiqueta": "Más atípicos",
                    "ayuda": "Los que más se alejan del grupo, para bien o para mal"}
@@ -206,8 +208,15 @@ def _metricas(x, y, referencia):
             {"id": "y", "etiqueta": y["corto"], "ayuda": f"Ordenados por {y['label']}"}]
 
 
-def _diagonal(x, y, dif, sobre="Sobrerrendimiento", bajo="Bajo rendimiento"):
-    return {"tipo": "diagonal", "dif": dif, "sobre": sobre, "bajo": bajo}
+def _diagonal(x, y, dif, sobre="Sobrerrendimiento", bajo="Bajo rendimiento", banda=None, piso=None):
+    """La diagonal "marcó lo esperado". `banda`: la franja de azar (el valor z de una Poisson alrededor del xG, 1.64 =
+    90%); `piso`: el xG mínimo para entrar al Top 5 de "Rendimiento" (con menos, un gol cambia todo)."""
+    ref = {"tipo": "diagonal", "dif": dif, "sobre": sobre, "bajo": bajo}
+    if banda:
+        ref["banda"] = banda
+    if piso:
+        ref["piso"] = piso
+    return ref
 
 
 PROMEDIOS = {"tipo": "promedios"}   # líneas punteadas en el promedio de cada eje (de TODAS las temporadas)
@@ -246,11 +255,11 @@ def _scatter(slug, titulo, descripcion, *, x, y, referencia, subtitulo, textos, 
 
 
 def chart_goals_vs_xg(df):
-    x, y = _eje("xG", "xG", "xG", 1, dec_lista=2), _eje("goals", "Goles", "Goles", 0)
+    x, y = _eje("np_xg", "xG sin penales", "xG", 1, dec_lista=2), _eje("np_goals", "Goles sin penales", "Goles", 0)
     return _scatter(
-        "goles-vs-xg", "Goles vs. xG",
+        "goles-vs-xg", "Goles vs. xG, sin penales",
         "Cada punto es un jugador. Sobre la diagonal marcó más de lo que valían sus ocasiones (xG); debajo, menos.",
-        x=x, y=y, referencia=_diagonal(x, y, "goles − xG"),
+        x=x, y=y, referencia=_diagonal(x, y, "goles − xG, sin penales", banda=1.64, piso=2),
         subtitulo="Jugadores con ≥{min} min · {temporada}",
         textos=(ins.goles_xg_que_mirar, ins.goles_xg_por_que), insight="goles_xg", poblacion=df,
         color_por=["liga", "rendimiento"])
