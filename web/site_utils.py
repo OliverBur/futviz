@@ -8,6 +8,7 @@ import json
 import re
 import sys
 from dataclasses import dataclass
+from html import escape as escapar_html
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -179,20 +180,80 @@ THEME_TOGGLE_HTML = """<button type="button" class="theme-toggle" id="theme-togg
 </button>"""
 
 
-# Barra de arriba de todas las páginas: logo a la izquierda (vuelve al inicio), secciones y tema a la derecha.
+# El buscador (jugadores, equipos, gráficas y artículos). Es UN solo marcado y UN solo script
+# (`web/static/buscador.js`) para todo el sitio. En la portada es el campo grande del hero; en las demás
+# páginas vive dentro de un <dialog> que abre la lupa de la barra (ver `site_bar`). Los ids llevan el prefijo
+# `buscador-` porque otras páginas ya tienen un `#anuncio` (el lector de Machine Learning) y no deben chocar.
+#
+#  `accion`   a dónde lleva el formulario sin JS: la página de gráficas, con la ruta de la página a la raíz.
+#  `prefijo`  esa ruta ("" o "../"): el script la antepone al pedir el índice y a los enlaces a artículos.
+#  `ejemplo`  el jugador que se sugiere teclear; solo la portada lo trae (lo toma de los datos).
+BUSCADOR_HTML = """<form class="buscador" id="buscador" action="__ACCION__" data-prefijo="__PREFIJO__" role="search">
+      <label class="sr-only" for="buscador-q">Busca un jugador, un equipo o una gráfica</label>
+      <div class="campo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="buscador-q" name="q" type="search" placeholder="__PLACEHOLDER__"__EJEMPLO_ATTR__
+          autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search"
+          role="combobox" aria-expanded="false" aria-controls="buscador-lista" aria-autocomplete="list">
+        <button type="button" class="cerrar" id="buscador-cerrar">Cerrar</button>
+      </div>
+      <div class="panel" id="buscador-panel" hidden>
+        <ul id="buscador-lista" role="listbox" aria-label="Resultados de la búsqueda"></ul>
+        <div class="aviso" id="buscador-aviso" hidden></div>
+      </div>
+      <p class="sr-only" id="buscador-anuncio" aria-live="polite"></p>
+    </form>"""
+
+
+def buscador_html(accion, prefijo="", ejemplo=None):
+    """El formulario del buscador. `ejemplo` ya viene escapado para HTML."""
+    if ejemplo:
+        placeholder = f"Prueba con {ejemplo}, un equipo o una gráfica…"
+        atributo = f' data-ejemplo="{ejemplo}"'
+    else:
+        placeholder, atributo = "Jugador, equipo o gráfica…", ""
+    return (BUSCADOR_HTML.replace("__ACCION__", accion).replace("__PREFIJO__", prefijo)
+            .replace("__PLACEHOLDER__", placeholder).replace("__EJEMPLO_ATTR__", atributo))
+
+
+LUPA_SVG = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" '
+            'stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>')
+
+
+# Barra de arriba de todas las páginas: logo a la izquierda (vuelve al inicio), secciones, lupa y tema a la derecha.
 # `actual` es el nombre de la sección de la página ("Análisis exploratorio", "Machine Learning") o None en la
 # portada; esa sección lleva `aria-current`. El CSS está en `BRAND_ROOT_CSS` (`.sitebar`).
-def site_bar(prefijo="", actual=None):
+#
+# Los enlaces de la barra usan el nombre corto de `SECTION_META[...]["barra"]` ("Gráficas", "Modelos"): los
+# títulos de las páginas siguen siendo "Análisis exploratorio" y "Machine Learning", y el nombre completo va en
+# `aria-label` y `title` del enlace (el `aria-label` contiene el texto visible, como pide WCAG 2.5.3).
+#
+# La lupa abre el buscador desde cualquier página (`buscador.js`). Con `portada=True` no hay <dialog> ni
+# <script>: la portada ya tiene el campo grande y su propio <script>, y la lupa solo lo enfoca.
+def site_bar(prefijo="", actual=None, portada=False):
     def enlace(nombre):
-        slug = SECTION_META[nombre]["slug"]
+        meta = SECTION_META[nombre]
         marca = ' aria-current="page"' if nombre == actual else ""
-        return f'<a href="{prefijo}{slug}.html"{marca}>{nombre}</a>'
+        return (f'<a href="{prefijo}{meta["slug"]}.html"{marca} aria-label="{meta["barra"]["titulo"]}" '
+                f'title="{meta["barra"]["titulo"]}">{meta["barra"]["texto"]}</a>')
     inicio = ' aria-current="page"' if actual is None else ""
+    if portada:
+        lupa_attrs, dialogo = 'aria-controls="buscador-q"', ""
+    else:
+        lupa_attrs = 'aria-haspopup="dialog" aria-expanded="false" aria-controls="buscador-dialogo"'
+        dialogo = (f'\n  <dialog class="buscar" id="buscador-dialogo" aria-label="Buscar en FutViz">\n'
+                   f'    {buscador_html(prefijo + SECTION_META["Análisis exploratorio"]["slug"] + ".html", prefijo)}\n'
+                   f'  </dialog>\n'
+                   f'  <script src="{prefijo}assets/buscador.js" defer></script>')
     return (f'<div class="sitebar">\n'
             f'  <a class="marca" href="{prefijo}index.html"{inicio}>{logo_img(prefijo)}</a>\n'
             f'  <nav class="sitebar-nav" aria-label="Secciones">'
             f'{enlace("Análisis exploratorio")}{enlace("Machine Learning")}</nav>\n'
-            f'  {THEME_TOGGLE_HTML}\n'
+            f'  <div class="sitebar-acciones">\n'
+            f'    <button type="button" class="buscar-abrir" id="buscador-abrir" aria-label="Buscar" title="Buscar (tecla /)" '
+            f'aria-keyshortcuts="/" {lupa_attrs}>{LUPA_SVG}</button>\n'
+            f'    {THEME_TOGGLE_HTML}\n'
+            f'  </div>{dialogo}\n'
             f'</div>')
 
 # Fondo y borde del tema claro: UNA definición. `BRAND_ROOT_CSS` los pone en `--color-bg` / `--color-border` y
@@ -536,6 +597,12 @@ SECTION_META = {
         "slug": "analisis-exploratorio",
         "description": "Rendimiento, estilo y nivel de jugadores y equipos de las 5 grandes ligas, "
                        "con filtros y un explorador para cruzar cualquier par de variables.",
+        # El encabezado de esta página es compacto (`page_header_html`): la bajada visible es esta, de un
+        # renglón, y `description` se queda como <meta name="description">. Sin `lead`, la bajada es `description`.
+        "lead": "Compara jugadores y equipos de las 5 ligas. Toca un punto para ver quién es.",
+        # Cómo se llama en la barra de arriba (el título de la página sigue siendo el de la clave) y el nombre
+        # completo, que va en el `aria-label` y el `title` del enlace.
+        "barra": {"texto": "Gráficas", "titulo": "Análisis exploratorio: gráficas de jugadores y equipos"},
         "views": True,
         "entidades": ["Jugadores", "Equipos"],  # orden de la fila de arriba; la primera abre la página
     },
@@ -543,6 +610,7 @@ SECTION_META = {
         "slug": "machine-learning",
         "description": "Aplicación de modelos de Machine Learning para buscar patrones "
                         "que no estén a simple vista.",
+        "barra": {"texto": "Modelos", "titulo": "Machine Learning: modelos y artículos"},
         "reader": True,   # una sola página con lector (`ml_reader.py`), no una grilla de cards
         # Artículos en preparación: salen en el carrusel como "Próximamente" y no cuentan en la
         # landing. Cuando uno se publique, se borra de aquí y entra solo como `ArticlePage`.
@@ -601,6 +669,87 @@ PAGE_TEMPLATE = """<!doctype html>
 </html>
 """
 
+# El CSS del buscador (ver `BUSCADOR_HTML`), compartido por la portada y el <dialog> de las demás páginas:
+# entra en `BRAND_ROOT_CSS`, así que lo lleva toda página con barra. Los selectores van bajo `.buscador` para no
+# chocar con nada de las gráficas ni de los artículos.
+#
+# - Portada: el formulario es el campo del hero y la lista se despliega debajo. En pantallas chicas, al enfocar
+#   el campo, `buscador.js` le pone `.abierto` y ocupa la pantalla (el teclado deja poco espacio).
+# - Demás páginas: `dialog.buscar` (modal nativo: foco atrapado, Escape y fondo inerte los pone el navegador),
+#   con la lista siempre debajo del campo. Desde 640px abajo ocupa toda la pantalla y muestra "Cerrar".
+#   Mientras está abierto la página de atrás no se desliza (`overflow: hidden`) y, en escritorio,
+#   `scrollbar-gutter` evita que salte cuando desaparece su barra de scroll (en móvil el <dialog> la tapa).
+BUSCADOR_CSS = """
+  .buscador { position: relative; max-width: 760px; margin: 0 auto; text-align: left; }
+  .buscador .campo { display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 0 16px 0 18px;
+    background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 12px;
+    transition: border-color .12s ease, box-shadow .12s ease; }
+  .buscador .campo:focus-within { border-color: var(--color-interactive); box-shadow: 0 0 0 3px var(--color-interactive-soft); }
+  .buscador .campo svg { width: 20px; height: 20px; flex: none; color: var(--color-muted); }
+  .buscador .campo input { flex: 1; min-width: 0; height: 58px; border: 0; background: transparent; outline: none;
+    font: 500 17px/1.2 "Inter", system-ui, sans-serif; color: var(--color-text-body); }
+  .buscador .campo input::placeholder { color: var(--color-muted); opacity: 1; }
+  .buscador .campo input::-webkit-search-cancel-button { display: none; }
+  .buscador .cerrar { display: none; min-height: 44px; padding: 0 4px; border: 0; background: none; cursor: pointer;
+    font: 600 15px "Inter", system-ui, sans-serif; color: var(--color-interactive); }
+  .buscador .cerrar:focus-visible { outline: 2px solid var(--color-interactive); outline-offset: 2px; border-radius: 6px; }
+  .buscador .panel { position: absolute; left: 0; right: 0; top: calc(100% + 8px); z-index: 30; max-height: min(70vh, 560px);
+    overflow-y: auto; overscroll-behavior: contain; background: var(--color-surface);
+    border: 1px solid var(--color-border); border-radius: 12px; padding: 8px 0;
+    box-shadow: 0 16px 40px color-mix(in srgb, var(--color-primary) 18%, transparent);
+    opacity: 0; transform: translateY(-4px); transition: opacity .12s ease, transform .12s ease; }
+  .buscador .panel.visible { opacity: 1; transform: none; }
+  .buscador .panel[hidden] { display: none; }
+  .buscador .panel ul { list-style: none; margin: 0; padding: 0; }
+  .buscador .grupo { display: block; padding: 10px 18px 4px; font-size: 11px; font-weight: 700; letter-spacing: .07em;
+    text-transform: uppercase; color: var(--color-muted); }
+  .buscador .opcion { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 8px 18px; cursor: pointer; }
+  .buscador .opcion[aria-selected="true"] { background: var(--color-interactive-soft); box-shadow: inset 2px 0 0 var(--color-interactive); }
+  .buscador .opcion .txt { flex: 1; min-width: 0; }
+  .buscador .opcion .nom { display: block; font-size: 15px; font-weight: 600; color: var(--color-primary); }
+  .buscador .opcion .det { display: block; font-size: 13px; color: var(--color-muted); }
+  /* sobre el resaltado, el gris no llega a 4.5:1 en oscuro: el detalle pasa al color del texto */
+  .buscador .opcion[aria-selected="true"] .det { color: var(--color-text-body); }
+  .buscador .opcion .acc { flex: none; font-size: 13px; font-weight: 600; color: var(--color-interactive); }
+  .buscador .opcion.sec { min-height: 44px; padding-left: 34px; }
+  .buscador .opcion.sec .nom { font-weight: 500; font-size: 14px; color: var(--color-text-body); }
+  .buscador .opcion mark { background: transparent; color: inherit; text-decoration: underline;
+    text-decoration-color: var(--color-interactive); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+  .buscador .aviso { padding: 14px 18px; font-size: 14.5px; line-height: 1.5; color: var(--color-text-body); }
+  .buscador .aviso a { color: var(--color-interactive); font-weight: 600; }
+
+  /* El buscador dentro de un <dialog> (todas las páginas menos la portada). Sin padding en el <dialog>: así un
+     clic sobre él, y no sobre su contenido, es siempre un clic en el fondo oscuro, que lo cierra. */
+  dialog.buscar { width: min(680px, calc(100% - 32px)); max-width: none; max-height: calc(100% - 16vh); margin: 8vh auto auto;
+    padding: 0; overflow: hidden; border: 1px solid var(--color-border); border-radius: 16px;
+    background: var(--color-bg); color: var(--color-text-body); box-shadow: 0 24px 64px rgba(10, 18, 20, .35); }
+  dialog.buscar::backdrop { background: rgba(10, 18, 20, .55); }
+  dialog.buscar .buscador { max-width: none; padding: 12px; }
+  dialog.buscar .campo { min-height: 54px; }
+  dialog.buscar .campo input { height: 52px; }
+  dialog.buscar .panel { position: static; margin-top: 8px; padding: 4px 0 0; max-height: min(60vh, 460px);
+    border: 0; border-radius: 0; background: transparent; box-shadow: none; transform: none; }
+  html:has(dialog.buscar[open]) { overflow: hidden; }
+  @media (min-width: 641px) { html:has(dialog.buscar[open]) { scrollbar-gutter: stable; } }
+
+  @media (max-width: 640px) {
+    .buscador .campo input { font-size: 16px; }   /* 16 px: iOS no hace zoom al enfocar */
+    /* Portada: el buscador abierto ocupa la pantalla: el teclado del teléfono deja poco espacio para la lista. */
+    .buscador.abierto { position: fixed; inset: 0; z-index: 50; max-width: none; padding: 12px 16px;
+      background: var(--color-bg); overflow-y: auto; overscroll-behavior: contain; }
+    .buscador.abierto .cerrar { display: inline-flex; align-items: center; }
+    .buscador.abierto .panel { position: static; margin-top: 10px; max-height: none; box-shadow: none; }
+    /* Demás páginas: el <dialog> es la pantalla; la lista ocupa lo que queda y se desliza ella sola. */
+    dialog.buscar { width: 100%; height: 100%; height: 100dvh; max-height: none; margin: 0; border: 0; border-radius: 0; }
+    dialog.buscar .buscador { height: 100%; display: flex; flex-direction: column; padding: 12px 16px; }
+    dialog.buscar .cerrar { display: inline-flex; align-items: center; }
+    dialog.buscar .panel { flex: 1 1 auto; min-height: 0; max-height: none; margin-top: 10px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .buscador .panel, .buscador .campo { transition: none; }
+  }
+"""
+
 # CSS compartido por las tres capas del sitio (landing, secciones, páginas
 # de chart): mismo :root de variables de marca + fade-in de página, para
 # que todo el sitio se sienta consistente de punta a punta.
@@ -614,7 +763,7 @@ PAGE_TEMPLATE = """<!doctype html>
 #   interactuar — cualquier estado interactivo, más legible que el brand.
 # - --color-*-soft son SIEMPRE fondos de baja opacidad (chips, washes de
 #   hover), nunca texto — ahí el contraste no aplica.
-BRAND_ROOT_CSS = """
+BRAND_ROOT_CSS = ("""
   :root {
     --color-bg: __BG_CLARO__;
     --color-surface: #FFFFFF;
@@ -655,13 +804,18 @@ BRAND_ROOT_CSS = """
   @keyframes futviz-fade-in { from { opacity: 0; } to { opacity: 1; } }
   @media (prefers-reduced-motion: reduce) { body { animation: none; } }
 
-  .theme-toggle { flex: none; display: inline-flex; align-items: center; justify-content: center;
+  .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+  /* Los dos botones cuadrados de la barra: la lupa del buscador (`.buscar-abrir`) y el tema (`.theme-toggle`). */
+  .theme-toggle, .buscar-abrir { flex: none; display: inline-flex; align-items: center; justify-content: center;
     width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--color-border);
     background: var(--color-surface); color: var(--color-primary); cursor: pointer; padding: 0;
     transition: border-color .15s ease, background-color .15s ease, color .15s ease; }
-  .theme-toggle:hover { border-color: var(--color-interactive); }
-  .theme-toggle:focus-visible { outline: 2px solid var(--color-interactive); outline-offset: 2px; }
-  .theme-toggle svg { width: 18px; height: 18px; }
+  .theme-toggle:hover, .buscar-abrir:hover, .buscar-abrir[aria-expanded="true"] { border-color: var(--color-interactive); }
+  .theme-toggle:focus-visible, .buscar-abrir:focus-visible { outline: 2px solid var(--color-interactive); outline-offset: 2px; }
+  .theme-toggle svg, .buscar-abrir svg { width: 18px; height: 18px; }
+  @media (prefers-reduced-motion: reduce) { .theme-toggle, .buscar-abrir { transition: none; } }
   .theme-toggle .icon-sun { display: none; }
   html[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
   html[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
@@ -685,13 +839,14 @@ BRAND_ROOT_CSS = """
   .sitebar-nav a:hover { color: var(--color-interactive); }
   .sitebar-nav a[aria-current="page"] { color: var(--color-primary); font-weight: 600; text-decoration: underline;
     text-decoration-color: var(--color-brand-accent); text-decoration-thickness: 2px; text-underline-offset: 8px; }
-  .sitebar .theme-toggle { width: 44px; height: 44px; border-radius: 10px; }
+  .sitebar-acciones { display: flex; align-items: center; gap: 8px; }
+  .sitebar .theme-toggle, .sitebar .buscar-abrir { width: 44px; height: 44px; border-radius: 10px; }
   @media (max-width: 640px) {
-    .sitebar { min-height: 0; padding: 10px 16px 0; }   /* dos renglones: logo y tema, abajo las secciones */
+    .sitebar { min-height: 0; padding: 10px 16px 0; }   /* dos renglones: logo, lupa y tema; abajo las secciones */
     .sitebar .marca img { height: 26px; }
     .sitebar-nav { order: 3; width: 100%; padding-bottom: 4px; }
   }
-""".replace("__BG_CLARO__", COLOR_BG_CLARO).replace("__BORDE_CLARO__", COLOR_BORDE_CLARO)
+""" + BUSCADOR_CSS).replace("__BG_CLARO__", COLOR_BG_CLARO).replace("__BORDE_CLARO__", COLOR_BORDE_CLARO)
 
 SECTION_PAGE_TEMPLATE = """<!doctype html>
 <html lang="es">
@@ -842,9 +997,18 @@ PAGE_HEADER_CSS = """
     h1.page-title { font-size: 24px; }
     .lead { font-size: 14px; }
   }
+  /* Variante compacta (la página de gráficas, ver `page_header_html`): el eje X de la gráfica tiene que caber en
+     pantalla, y el título y la bajada de dos renglones se comían ~190 px. Título más chico, bajada de un renglón. */
+  .page-header--compacto .page-intro { padding: 0 24px 14px; }
+  .page-header--compacto h1.page-title { font-size: 22px; line-height: 1.25; margin: 0 0 2px; padding-left: 12px; }
+  .page-header--compacto h1.page-title::before { top: 2px; bottom: 2px; }
+  .page-header--compacto .lead { font-size: 14px; line-height: 1.5; max-width: none; }
+  @media (max-width: 640px) {
+    .page-header--compacto .page-intro { padding: 4px 16px 12px; }
+    .page-header--compacto h1.page-title { font-size: 20px; }
+    .page-header--compacto .lead { font-size: 13.5px; }
+  }
 
-  .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden;
-    clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
   .skip { position: absolute; left: 12px; top: -48px; z-index: 40; padding: 9px 14px; border-radius: 8px;
     background: var(--color-primary); color: var(--color-bg); font-size: 13px; font-weight: 600; text-decoration: none;
     transition: transform .15s ease; }
@@ -852,12 +1016,19 @@ PAGE_HEADER_CSS = """
   @media (prefers-reduced-motion: reduce) { .skip { transition: none; } }
 """
 
+#
+# Si la sección tiene `lead` en `SECTION_META` (hoy solo el análisis exploratorio), el encabezado es compacto y
+# la bajada visible es ese texto corto; `description` queda solo en el <meta name="description"> de la página.
+# Las demás (Machine Learning) siguen con el encabezado de siempre y `description` como bajada.
 def page_header_html(nombre):
-    return f"""<header class="page-header">
+    lead = SECTION_META[nombre].get("lead")
+    clase = "page-header page-header--compacto" if lead else "page-header"
+    bajada = escapar_html(lead) if lead else "__DESCRIPTION__"
+    return f"""<header class="{clase}">
   {site_bar(actual=nombre)}
   <div class="page-intro">
     <h1 class="page-title">__NAME__</h1>
-    <div class="lead">__DESCRIPTION__</div>
+    <div class="lead">{bajada}</div>
   </div>
 </header>"""
 

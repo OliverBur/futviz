@@ -25,7 +25,7 @@ import react_views
 from preguntas import PREGUNTAS as PREGUNTA_DE
 from site_utils import (
     BRAND_ROOT_CSS, COLOR_BG_CLARO, FONT_LINKS, SECTION_META, THEME_COLOR_META, THEME_INIT_SCRIPT,
-    THEME_TOGGLE_SCRIPT, ArticlePage, favicon_links, site_bar,
+    THEME_TOGGLE_SCRIPT, ArticlePage, buscador_html, favicon_links, site_bar,
 )
 
 SITIO_URL = "https://futviz-lake.vercel.app/"
@@ -418,8 +418,6 @@ __FONT_LINKS__
 __BRAND_ROOT__
   /* Sin tarjetas: la estructura la dan líneas de 1px con --color-border. */
   .contenedor { max-width: 1200px; margin: 0 auto; padding-left: 32px; padding-right: 32px; }
-  .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden;
-    clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
   .skip { position: absolute; left: 12px; top: -60px; z-index: 60; padding: 10px 14px; border-radius: 8px;
     background: var(--color-primary); color: var(--color-bg); font-weight: 600; font-size: 14px; text-decoration: none; }
   .skip:focus-visible { top: 12px; outline: 2px solid var(--color-interactive); outline-offset: 2px; }
@@ -449,43 +447,7 @@ __BRAND_ROOT__
   .intro-seccion { margin: -16px 0 28px; max-width: 62ch; font-size: 16px; line-height: 1.55; color: var(--color-text-body); }
   @media (max-width: 640px) { .puertas { grid-template-columns: minmax(0, 1fr); gap: 14px; margin-top: 24px; } }
 
-  /* Buscador: el campo es un combobox con la lista desplegada debajo (en pantallas chicas, a pantalla completa). */
-  .buscador { position: relative; max-width: 760px; margin: 0 auto; text-align: left; }
-  .campo { display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 0 16px 0 18px;
-    background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 12px;
-    transition: border-color .12s ease, box-shadow .12s ease; }
-  .campo:focus-within { border-color: var(--color-interactive); box-shadow: 0 0 0 3px var(--color-interactive-soft); }
-  .campo svg { width: 20px; height: 20px; flex: none; color: var(--color-muted); }
-  .campo input { flex: 1; min-width: 0; height: 58px; border: 0; background: transparent; outline: none;
-    font: 500 17px/1.2 "Inter", system-ui, sans-serif; color: var(--color-text-body); }
-  .campo input::placeholder { color: var(--color-muted); opacity: 1; }
-  .campo input::-webkit-search-cancel-button { display: none; }
-  .cerrar { display: none; min-height: 44px; padding: 0 4px; border: 0; background: none; cursor: pointer;
-    font: 600 15px "Inter", system-ui, sans-serif; color: var(--color-interactive); }
-  .panel { position: absolute; left: 0; right: 0; top: calc(100% + 8px); z-index: 30; max-height: min(70vh, 560px);
-    overflow-y: auto; overscroll-behavior: contain; background: var(--color-surface);
-    border: 1px solid var(--color-border); border-radius: 12px; padding: 8px 0;
-    box-shadow: 0 16px 40px color-mix(in srgb, var(--color-primary) 18%, transparent);
-    opacity: 0; transform: translateY(-4px); transition: opacity .12s ease, transform .12s ease; }
-  .panel.visible { opacity: 1; transform: none; }
-  .panel[hidden] { display: none; }
-  .panel ul { list-style: none; margin: 0; padding: 0; }
-  .grupo { display: block; padding: 10px 18px 4px; font-size: 11px; font-weight: 700; letter-spacing: .07em;
-    text-transform: uppercase; color: var(--color-muted); }
-  .opcion { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 8px 18px; cursor: pointer; }
-  .opcion[aria-selected="true"] { background: var(--color-interactive-soft); box-shadow: inset 2px 0 0 var(--color-interactive); }
-  .opcion .txt { flex: 1; min-width: 0; }
-  .opcion .nom { display: block; font-size: 15px; font-weight: 600; color: var(--color-primary); }
-  .opcion .det { display: block; font-size: 13px; color: var(--color-muted); }
-  /* sobre el resaltado, el gris no llega a 4.5:1 en oscuro: el detalle pasa al color del texto */
-  .opcion[aria-selected="true"] .det { color: var(--color-text-body); }
-  .opcion .acc { flex: none; font-size: 13px; font-weight: 600; color: var(--color-interactive); }
-  .opcion.sec { min-height: 44px; padding-left: 34px; }
-  .opcion.sec .nom { font-weight: 500; font-size: 14px; color: var(--color-text-body); }
-  .opcion mark { background: transparent; color: inherit; text-decoration: underline;
-    text-decoration-color: var(--color-interactive); text-decoration-thickness: 2px; text-underline-offset: 3px; }
-  .aviso { padding: 14px 18px; font-size: 14.5px; line-height: 1.5; color: var(--color-text-body); }
-  .aviso a { color: var(--color-interactive); font-weight: 600; }
+  /* El buscador: su CSS es compartido con el <dialog> de las demás páginas (`site_utils.BUSCADOR_CSS`). */
 
   /* Secciones */
   .seccion { padding: clamp(48px, 7vw, 88px) 0; border-top: 1px solid var(--color-border); }
@@ -556,15 +518,6 @@ __BRAND_ROOT__
     .titular img { height: 56px; }
     h1 { text-align: center; }
     .preguntas h3 { font-size: 21px; }
-    /* El buscador abierto ocupa la pantalla: el teclado del teléfono deja poco espacio para la lista. */
-    .buscador.abierto { position: fixed; inset: 0; z-index: 50; max-width: none; padding: 12px 16px;
-      background: var(--color-bg); overflow-y: auto; overscroll-behavior: contain; }
-    .buscador.abierto .cerrar { display: inline-flex; align-items: center; }
-    .buscador.abierto .panel { position: static; margin-top: 10px; max-height: none; box-shadow: none; }
-    .campo input { font-size: 16px; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .panel, .campo { transition: none; }
   }
 </style>
 </head>
@@ -580,21 +533,7 @@ __BRAND_ROOT__
       <img class="logo-theme-dark" src="assets/logo-icono-dark.png" alt="" width="353" height="240">
       <h1 id="titulo">Pregúntale a los<br> datos del fútbol</h1>
     </div>
-    <form class="buscador" id="buscador" action="__EDA_URL__" role="search">
-      <label class="sr-only" for="q">Busca un jugador, un equipo o una gráfica</label>
-      <div class="campo">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        <input id="q" name="q" type="search" placeholder="Prueba con __EJEMPLO__, un equipo o una gráfica…" data-ejemplo="__EJEMPLO__"
-          autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search"
-          role="combobox" aria-expanded="false" aria-controls="sugerencias" aria-autocomplete="list">
-        <button type="button" class="cerrar" id="cerrar">Cerrar</button>
-      </div>
-      <div class="panel" id="panel" hidden>
-        <ul id="sugerencias" role="listbox" aria-label="Resultados de la búsqueda"></ul>
-        <div class="aviso" id="aviso" hidden></div>
-      </div>
-      <p class="sr-only" id="anuncio" aria-live="polite"></p>
-    </form>
+    __BUSCADOR__
     <div class="puertas">
       <a class="puerta" href="__EDA_URL__">
         <span class="puerta-nombre">Análisis exploratorio →</span>
@@ -683,7 +622,7 @@ def escribir_landing(pages, dist_dir: Path):
     ejemplo = escape(ejemplo)
 
     html = (LANDING_TEMPLATE
-            .replace("__EJEMPLO__", ejemplo)
+            .replace("__BUSCADOR__", buscador_html(eda_url, ejemplo=ejemplo))
             .replace("__PREGUNTAS__", "".join(preguntas))
             .replace("__N_VISTAS__", str(len(paginas_eda)))
             .replace("__MAPA__", mapa_svg(sup))
@@ -701,7 +640,7 @@ def escribir_landing(pages, dist_dir: Path):
             .replace("__TITULO__", escape(TITULO))
             .replace("__DESCRIPCION__", escape(DESCRIPCION))
             .replace("__URL__", SITIO_URL)
-            .replace("__SITE_BAR__", site_bar())
+            .replace("__SITE_BAR__", site_bar(portada=True))
             .replace("__THEME_COLOR__", THEME_COLOR_META)
             .replace("__FAVICON__", favicon_links())
             .replace("__THEME_INIT__", THEME_INIT_SCRIPT)
