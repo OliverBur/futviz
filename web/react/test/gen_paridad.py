@@ -33,13 +33,20 @@ JUGADORES = [
     ("pases_clave", ins.pases_clave, ["kp90", "xA90"]),
     ("construir", ins.construir, ["xgbuild90", "xga90"]),
     ("centros", ins.centros, ["crosses90", "xA90"]),
+    # Las vistas "por 90'" usan el corte de 900 minutos (`players.MIN_MINUTES_90_POR_TEMPORADA`)
+    ("xg_goles_90", ins.xg_goles_90, ["npxg90", "npg90"]),
+    ("xa_asist_90", ins.xa_asist_90, ["xA90", "a90"]),
+    ("pases_asist", ins.pases_asist, ["kp90", "a90"]),
 ]
+POR_90 = {"xg_goles_90", "xa_asist_90", "pases_asist"}
 EQUIPOS = [("definicion", ins.definicion, []), ("creacion", ins.creacion, []), ("defensa", ins.defensa, []),
            ("puntos", ins.puntos, [])]
 
 
 def casos(df, seasons, ligas, insight, generador, requiere, entidad, rng, n_aleatorios):
     pob = df
+    if insight in POR_90:
+        pob = players.con_minimo_por90(pob)
     for c in requiere:
         pob = pob[pob[c].notna()]
     pob = pob.reset_index(drop=True)
@@ -65,7 +72,8 @@ def casos(df, seasons, ligas, insight, generador, requiere, entidad, rng, n_alea
             fija, salta = generador(d, season, liga)
         return {"insight": insight, "entidad": entidad, "temporada": season,
                 "liga": None if liga == LIGA_TODAS else liga, "posiciones": list(pos or []),
-                "nivel": nivel, "sub21": bool(sub21), "requiere": requiere, "fija": fija, "salta": salta}
+                "nivel": nivel, "sub21": bool(sub21), "requiere": requiere, "minimo90": insight in POR_90,
+                "fija": fija, "salta": salta}
 
     sin_filtros = [una(s, l, None, None, False) for s in temporadas for l in [LIGA_TODAS, *ligas]]
     aleatorios = []

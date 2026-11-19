@@ -162,6 +162,7 @@ __PAGE_HEADER__
 <script>
 (function() {
   var VIEWS = __VIEWS_JSON__;
+  var ALIAS = __ALIAS_JSON__;   // vistas que cambiaron de nombre o se reemplazaron: sus enlaces viejos siguen valiendo
   var DEFECTO = VIEWS[0].slug;
   var tabs = Array.prototype.slice.call(document.querySelectorAll('.seg-nav [role="tab"]'));
   var entTabs = Array.prototype.slice.call(document.querySelectorAll('.ent-nav [role="tab"]'));
@@ -313,7 +314,13 @@ __PAGE_HEADER__
   document.getElementById('skip').addEventListener('click', function(e) { e.preventDefault(); contenido.focus(); });
 
 
-  window.addEventListener('hashchange', function() { activar(slugDe(location.hash.slice(1))); });
+  // Un enlace viejo (`#goles-vs-xg?t=2025-26`) se lleva a la vista que lo reemplazó, con los mismos filtros.
+  function resolverAlias() {
+    var h = location.hash.slice(1), i = h.indexOf('?'), s = decodeURIComponent(i < 0 ? h : h.slice(0, i));
+    if (ALIAS[s]) history.replaceState(history.state, '', '#' + ALIAS[s] + (i < 0 ? '' : h.slice(i)));
+  }
+  window.addEventListener('hashchange', function() { resolverAlias(); activar(slugDe(location.hash.slice(1))); });
+  resolverAlias();
   var llegoConEnlace = !!slugDe(location.hash.slice(1));
   activar(slugDe(location.hash.slice(1)) || DEFECTO);
   // Con un enlace directo a una vista (las preguntas de la portada) en pantalla angosta, el título y el menú
@@ -330,6 +337,16 @@ __THEME_SCRIPT__
 </body>
 </html>
 """
+
+
+# Las vistas que ya no existen con su nombre de antes -> la que las reemplaza. Los slugs son únicos en todo el sitio.
+ALIAS_VISTAS = {
+    "goles-vs-xg": "xg-vs-goles-90",
+    "asistencias-vs-xa": "xa-vs-asistencias-90",
+    "pases-clave-vs-xa": "pases-clave-vs-asistencias",
+    "recuperacion-vs-faltas": "cover-vs-stopper",
+    "perfil-defensivo": "cover-vs-stopper",
+}
 
 
 def _tabs_html(pages, entidad):
@@ -412,6 +429,7 @@ def write_section_views(section, entities, dist_dir: Path):
             .replace("__TABS__", "".join(tabs))
             .replace("__PANELS__", "".join(paneles))
             .replace("__VIEWS_JSON__", ids)
+            .replace("__ALIAS_JSON__", json.dumps(ALIAS_VISTAS))
             .replace("__THEME_INIT__", THEME_INIT_SCRIPT)
             .replace("__FONT_LINKS__", FONT_LINKS)
             .replace("__BRAND_ROOT__", BRAND_ROOT_CSS)

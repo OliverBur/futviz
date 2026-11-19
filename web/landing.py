@@ -37,9 +37,9 @@ PRESUPUESTO_INDICE_KB = 150   # gzip
 # Las preguntas de la portada y la vista que las responde. Si una vista cambia de nombre o desaparece, el
 # build falla aquí en vez de dejar un enlace roto.
 PREGUNTAS = [(entidad, PREGUNTA_DE[slug], slug) for entidad, slug in (
-    ("Jugadores", "goles-vs-xg"),
+    ("Jugadores", "xg-vs-goles-90"),
     ("Jugadores", "mapa-tiros"),
-    ("Jugadores", "pases-clave-vs-xa"),
+    ("Jugadores", "pases-clave-vs-asistencias"),
     ("Equipos", "defensa"),
     ("Equipos", "eficiencia-definicion"),
     ("Equipos", "nivel-por-liga-equipos"),
@@ -49,8 +49,8 @@ PREGUNTAS = [(entidad, PREGUNTA_DE[slug], slug) for entidad, slug in (
 # dispersiones: son las que aceptan `fijar` en la URL (el mapa de tiros y las cajas no filtran por jugador
 # ni equipo; ver docs/BUSCADOR-MEJORAS.md). Lo que no esté aquí se completa con el orden de las pestañas.
 PRIORIDAD_JUGADOR = {
-    "Delantero": ["goles-vs-xg", "perfil-ofensivo", "asistencias-vs-xa"],
-    "Medio": ["perfil-ofensivo", "pases-clave-vs-xa", "construir-vs-producir"],
+    "Delantero": ["xg-vs-goles-90", "perfil-ofensivo", "xa-vs-asistencias-90"],
+    "Medio": ["perfil-ofensivo", "pases-clave-vs-asistencias", "construir-vs-producir"],
     "Defensa": ["perfil-defensivo", "recuperacion-vs-faltas"],
 }
 PRIORIDAD_EQUIPO = ["eficiencia-definicion", "creacion", "defensa"]

@@ -47,7 +47,7 @@ import { Tabla } from "./Tabla.jsx";
 import { Aviso, Cargando, Encabezado, Md, Parrafos, Rotulo, sinAcentos } from "./ui.jsx";
 import { acercar, ajustarA, centrarEn, esBase } from "./zoom.js";
 import { TOPE_DIF, colorRendimiento, conAlfa, divergente } from "./colores.js";
-import { media } from "./stats.js";
+import { cuantil, media } from "./stats.js";
 import { GENERADORES, lecturaExplorador } from "./insights.js";
 
 const signo = (d, dec = 1) => (d >= 0 ? "+" : "−") + Math.abs(d).toFixed(dec);
@@ -217,6 +217,9 @@ function Vista({ cfg, T, modo, tk }) {
 
   // Los promedios de las líneas punteadas son los de las temporadas juntas, no los de la mostrada:
   // si se movieran con cada cambio, "estar por encima del promedio" significaría algo distinto en cada una.
+  // La línea de la élite (`referencia.zonas`): el valor de X que deja arriba al `1 − pct` de lo que se ve.
+  const corteElite = useMemo(() => (ref && ref.zonas && visibles.length >= 5
+    ? cuantil(visibles.map((r) => xs[r]), ref.zonas.pct) : null), [ref, visibles, xs]);
   const medias = useMemo(() => (ref && ref.tipo === "promedios" && pobl.length
     ? { x: media(pobl.map((r) => xs[r])), y: media(pobl.map((r) => ys[r])) } : null), [ref, pobl, xs, ys]);
 
@@ -691,13 +694,14 @@ function Vista({ cfg, T, modo, tk }) {
             // En móvil, el título corto del eje ("Precisión") en vez de la frase entera, que no cabe.
             ejeX={movil && !exp ? X.corto : X.label} ejeY={movil && !exp ? Y.corto : Y.label}
             claveDatos={claveDatos} pines={pines} idsPorSerie={idsPorSerie}
-            referencia={ref} medias={medias} vacio={vacio}
+            referencia={ref} medias={medias} corte={corteElite} vacio={vacio}
             soloPositivoX={rx.lo >= 0} soloPositivoY={ry.lo >= 0} />
 
           <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: 1, mt: 0.75 }}>
             <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
               {ref && ref.tipo === "promedios" ? "Líneas punteadas: promedio de cada eje · " : ""}
               {ref && ref.banda ? "Franja gris: hasta donde llega el azar · " : ""}
+              {ref && ref.zonas ? "Línea vertical: el 20% con más xG por 90' de los que ves · " : ""}
               {movil
                 ? "Arrastra para mover · usa los botones para hacer zoom · toca un punto para resaltarlo"
                 : "Arrastra para mover · Ctrl + rueda o los botones para hacer zoom · clic en un punto para resaltarlo"}

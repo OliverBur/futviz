@@ -1311,6 +1311,150 @@ def construir(df, season, liga=None):
     return fija, salta
 
 
+# --------------------------------------------------------------------------
+# Las tres vistas "por 90'" de goles y asistencias (2026-11-19)
+# --------------------------------------------------------------------------
+#
+# xG vs. goles por 90', xA vs. asistencias por 90' y pases clave vs. asistencias por 90'. Las tres usan el corte de
+# 900 minutos (`players.MIN_MINUTES_90`): una tasa por 90' con 500 minutos se dispara con un solo gol.
+
+# "Élite": el 20% con más xG por 90' de los que se ven. Tiene que valer lo mismo en `insights.js` (`ELITE_PCT`) y en
+# la línea que dibuja la gráfica (`referencia.zonas.pct`, que sale de aquí).
+ELITE_PCT = 0.8
+MIN_MINUTOS_90 = 900
+
+
+def _corte90():
+    return (f"El corte de {MIN_MINUTOS_90} minutos (en la temporada que va en curso, el que dice el subtítulo)")
+
+
+def xg_goles_90_que_mirar():
+    return ("A la derecha, los que generan más ocasiones por 90' (xG sin penales); arriba, los que más goles "
+            "marcan. La diagonal es \"marcó lo que valían sus ocasiones\".\n\n"
+            "La línea vertical separa a la **élite en ocasiones**: el 20% con más xG por 90' de los que ves. A su "
+            "derecha y arriba de la diagonal están los que son élite generando **y** finalizando; a su derecha y "
+            "debajo, los que generan como élite pero marcan menos de lo que generan: su producción de goles "
+            "podría mejorar. A su izquierda y debajo de la diagonal, los que ni generan como élite ni convierten lo "
+            "que generan.\n\n"
+            "Compara dentro de una misma posición: un central y un delantero caen lejísimos sin que eso diga nada de "
+            "ninguno de los dos.")
+
+
+def xg_goles_90_por_que(df):
+    r = df["npxg90"].corr(df["npg90"])
+    dif = (df["npg90"] - df["npxg90"]).mean()
+    return (
+        f"El xG mide la **calidad de las ocasiones**, no el acierto: suma la probabilidad de gol de cada remate "
+        f"según desde dónde y cómo se hizo. Restarlo de los goles deja la definición más la suerte, y en una "
+        f"temporada no hay forma de separarlas.\n\n"
+        f"Va **por 90 minutos**, para comparar a un suplente con un titular, y **sin penales**: un penal vale cerca "
+        f"de 0.76 de xG y casi siempre entra, así que quien los tira aparece \"de más\" sin haber definido mejor. "
+        f"{_corte90()} existe por lo mismo: con pocos minutos, un gol de rebote da una tasa imposible.\n\n"
+        f"Los dos ejes correlacionan {_fmt(r)}: {_cuanto(r)}. Que un jugador esté en la zona de élite dice que "
+        f"genera mucho **esta temporada**; que marque menos de lo que genera no es un defecto probado: "
+        f"**una temporada es poca muestra para separar talento de suerte**."
+        + _frase_persistencia(df, "np_goals", "np_xg", "goles y xG sin penales") + "\n\n"
+        f"Además, el xG que se usa es el de Understat, y en estos datos suma "
+        f"{'más' if dif < 0 else 'menos'} de lo que entra: el jugador promedio mete {_fmt(abs(dif))} goles por 90' "
+        f"{'menos' if dif < 0 else 'más'} que su xG. Eso empuja a toda la nube "
+        f"{'por debajo' if dif < 0 else 'por encima'} de la diagonal: es una referencia, no un cero calibrado."
+    )
+
+
+def xg_goles_90(df, season, liga=None):
+    d, ambito = _ambito(df, season, liga)
+    fija = f"En {ambito}: " + _lideres(
+        d, "npxg90", "npg90", "player", _fmt, _fmt,
+        "más xG por 90' sin penales", "más goles por 90' sin penales")
+    if len(d) < 5:
+        return fija, None
+    corte = d["npxg90"].quantile(ELITE_PCT)
+    elite = d[d["npxg90"] >= corte]
+    mas = elite[elite["npg90"] >= elite["npxg90"]]
+    menos = elite[elite["npg90"] < elite["npxg90"]]
+    salta = (f"El 20% con más xG por 90' son {len(elite)} jugadores (desde {_fmt(corte)}): {len(mas)} marcan al "
+             f"menos lo que generan y {len(menos)} marcan menos.")
+    if len(menos):
+        p = menos.loc[(menos["npg90"] - menos["npxg90"]).idxmin()]
+        salta += (f" El que más se queda corto es **{p['player']}**: {_fmt(p['npg90'])} goles contra "
+                  f"{_fmt(p['npxg90'])} de xG por 90'.")
+    return fija, salta
+
+
+def xa_asist_90_que_mirar():
+    return ("A la derecha, los que dan pases de más peligro por 90' (xA); arriba, los que más asistencias dan. "
+            "Por encima de la diagonal están los jugadores cuyos compañeros definieron mejor de lo esperado lo que "
+            "les pusieron: parte del mérito es de quien remata. Debajo, a los que les desperdician más pases de lo "
+            "normal.")
+
+
+def xa_asist_90_por_que(df):
+    r = df["xA90"].corr(df["a90"])
+    return (
+        f"El xA mide la calidad de los pases de gol que dio un jugador: **cuánta probabilidad de gol generó el "
+        f"remate que habilitó**. Por 90' correlaciona {_fmt(r)} con las asistencias reales.\n\n"
+        f"La diferencia con la gráfica de goles: aquí el que está por encima de la diagonal **no hizo nada "
+        f"distinto**. Una asistencia depende de que otro la meta, así que estar arriba dice sobre todo que quien "
+        f"remató estuvo acertado. Conviene leerla como una medida de creación de ocasiones (el eje horizontal) más "
+        f"que como rendimiento sobre lo esperado. {_corte90()} evita que una asistencia de rebote dispare la tasa."
+        + _frase_persistencia(df, "a", "xA", "asistencias y xA")
+    )
+
+
+def xa_asist_90(df, season, liga=None):
+    d, ambito = _ambito(df, season, liga)
+    fija = f"En {ambito}: " + _lideres(
+        d, "xA90", "a90", "player", _fmt, _fmt,
+        "más xA por 90'", "más asistencias por 90'")
+    if len(d) < 5:
+        return fija, None
+    dif = d["a90"] - d["xA90"]
+    arriba, abajo = d.loc[dif.idxmax()], d.loc[dif.idxmin()]
+    salta = (f"**{arriba['player']}** es el que más se pasa de su xA ({_sg(dif.max())} asistencias por 90'), y a "
+             f"**{abajo['player']}** es a quien más le desperdician ({_sg(dif.min())}). En los dos casos habla "
+             f"tanto de ellos como de quienes remataron sus pases.")
+    return fija, salta
+
+
+def pases_asist_que_mirar():
+    return ("A la derecha, los que dan más pases clave por 90' (pases que acaban en tiro); arriba, los que más "
+            "asistencias dan. **Abajo a la derecha** están los que crean mucho pero a quienes sus compañeros no les "
+            "terminan las jugadas; arriba a la izquierda, los que dan pocos pases clave y muy bien aprovechados.\n\n"
+            "Ojo: dar pases clave y que los conviertan no son lo mismo y la segunda parte no depende de quien pasa. "
+            "La posición pesa mucho: compara entre iguales.")
+
+
+def pases_asist_por_que(df):
+    r = df["kp90"].corr(df["a90"])
+    return (
+        f"El **pase clave** cuenta los pases que terminaron en un tiro, sea gol o no, y sin importar qué tan bueno "
+        f"fue el tiro; la **asistencia** es el pase que termina en gol. La distancia entre los dos es lo que "
+        f"hacen quienes reciben el pase: rematar bien, rematar mal, o que el portero pare. Es una gráfica para "
+        f"ver a quien crea más de lo que se convierte, no para culparlo.\n\n"
+        f"Correlacionan {_fmt(r)}: {_cuanto(r)}. Por 90' para que un suplente que rinde en poco tiempo no "
+        f"quede enterrado, y con {_corte90().lower()} para que un pase afortunado no dé una tasa imposible. "
+        f"Con una temporada hay mucho azar: pocos pases clave en 900 minutos y un par de goles de más o de menos "
+        f"mueven mucho a un jugador."
+    )
+
+
+def pases_asist(df, season, liga=None):
+    d, ambito = _ambito(df, season, liga)
+    fija = f"En {ambito}: " + _lideres(
+        d, "kp90", "a90", "player", lambda v: _fmt(v, 1), _fmt,
+        "más pases clave por 90'", "más asistencias por 90'")
+    if len(d) < 5:
+        return fija, None
+    corte = d["kp90"].quantile(0.75)
+    muchos = d[d["kp90"] >= corte]
+    if muchos.empty:
+        return fija, None
+    p = muchos.loc[muchos["a90"].idxmin()]
+    salta = (f"Entre el 25% que más pases clave da, al que menos le convierten es **{p['player']}**: "
+             f"{_fmt(p['kp90'], 1)} pases clave por 90' y {_fmt(p['a90'])} asistencias.")
+    return fija, salta
+
+
 def centros_que_mirar():
     return ("La nube sube con el volumen pero con mucha dispersión: abajo a la derecha "
             "están los que centran de forma constante con poco peligro (la mayoría de los "

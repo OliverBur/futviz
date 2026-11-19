@@ -35,6 +35,7 @@ function filas(T, c) {
     if (niv >= 0 && T.f.v[r] !== niv) continue;
     if (c.sub21 && !T.f.u[r]) continue;
     if (c.requiere.some((col) => T.c[col][r] == null)) continue;
+    if (c.minimo90 && T.c.min[r] < T.minimos90[T.temporadas[T.f.t[r]]]) continue;
     out.push(r);
   }
   return out;

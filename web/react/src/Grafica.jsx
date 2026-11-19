@@ -250,7 +250,7 @@ export function EstilosGrafica() {
 export function Grafica({
   series, view, viewRef, base, onView, rotulos, destacado, onDestacar, onClicPunto,
   tk, pos, neg, hayZoom, pista, onPista, ejeX, ejeY, claveDatos, pines, idsPorSerie,
-  referencia, medias, vacio, soloPositivoX, soloPositivoY,
+  referencia, medias, corte, vacio, soloPositivoX, soloPositivoY,
 }) {
   const pinCtx = useMemo(() => ({ pines, ids: idsPorSerie }), [pines, idsPorSerie]);
   const idFondo = "rx-clip-fondo-" + useId().replace(/:/g, "");   // único por instancia: hay varias vistas montadas a la vez
@@ -280,6 +280,13 @@ export function Grafica({
   const py = (y) => area.top + (1 - (y - view.y0) / (view.y1 - view.y0)) * area.height;
   const diag = referencia && referencia.tipo === "diagonal";
   const prom = referencia && referencia.tipo === "promedios" && medias;
+  // Tres zonas con la línea de la élite (`referencia.zonas`, p. ej. el 20% con más xG por 90'): `corte` es el valor de X
+  // de esa línea. Solo se rotulan mientras la línea siga a la vista; con zoom profundo se vuelve a los rótulos de
+  // esquina de la diagonal.
+  const zonas = diag && referencia.zonas ? referencia.zonas : null;
+  const vCorte = zonas && corte != null && area.width > 0 ? px(corte) : null;
+  const hayZonas = vCorte != null && vCorte > area.left + 24 && vCorte < area.left + area.width - 24;
+  const estrecho = area.width < 560;   // en pantalla angosta el rótulo de abajo a la izquierda sube un renglón
 
   // --- la referencia, en píxeles (y las cajas que ocupan sus rótulos, para que las etiquetas las esquiven)
   const ref = { diagonal: null, promedios: null };
@@ -291,9 +298,20 @@ export function Grafica({
       ref.diagonal = { x1: px(-T), y1: py(-T), x2: px(T), y2: py(T) };
       // Los rótulos de esquina solo valen mientras esa esquina siga a su lado de la diagonal: con
       // zoom profundo la de arriba a la izquierda puede quedar en zona roja.
-      if (view.y1 > view.x0) obstaculos.push({ x0: area.left, x1: area.left + 140, y0: area.top, y1: area.top + 22 });
-      if (view.y0 < view.x1) obstaculos.push({ x0: area.left + area.width - 128, x1: area.left + area.width,
-        y0: area.top + area.height - 22, y1: area.top + area.height });
+      if (hayZonas) {
+        const caja = (texto, derecha, y) => {
+          const w = texto.length * 5.9 + 14;
+          obstaculos.push(derecha ? { x0: area.left + area.width - w, x1: area.left + area.width, y0: y - 14, y1: y + 4 }
+            : { x0: area.left, x1: area.left + w, y0: y - 14, y1: y + 4 });
+        };
+        caja(zonas.elite, true, area.top + 16);
+        caja(zonas.mejorable, true, area.top + area.height - 8);
+        caja(zonas.debajo, false, area.top + area.height - (estrecho ? 24 : 8));
+      } else {
+        if (view.y1 > view.x0) obstaculos.push({ x0: area.left, x1: area.left + 140, y0: area.top, y1: area.top + 22 });
+        if (view.y0 < view.x1) obstaculos.push({ x0: area.left + area.width - 128, x1: area.left + area.width,
+          y0: area.top + area.height - 22, y1: area.top + area.height });
+      }
     }
     if (prom) {
       const vx = px(medias.x), hy = py(medias.y);
@@ -328,7 +346,7 @@ export function Grafica({
   const etiquetas = useMemo(() => colocarEtiquetas({ rotulos, area, view, obstaculos }),
     // `obstaculos` se reconstruye en cada render; depende solo de estas cosas.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [rotulos, area, view, referencia, medias]);
+    [rotulos, area, view, referencia, medias, corte]);
 
   // La animación de entrada corre mientras `fin` (la última clave de datos cuya animación ya
   // terminó) sea distinta de la clave actual. Se deriva así, y no con un estado que un efecto
@@ -400,15 +418,29 @@ export function Grafica({
               const abajo = xs.map((x) => `${px(x)},${py(Math.max(0, x - k * Math.sqrt(x)))}`).reverse();
               return <path d={`M ${arriba.join(" L ")} L ${abajo.join(" L ")} Z`} fill={conAlfa(tk.muted, 0.16)} />;
             })()}
+            {hayZonas && (
+              <line x1={vCorte} x2={vCorte} y1={area.top} y2={area.top + area.height} stroke={tk.muted} strokeWidth={1.3}
+                strokeDasharray="5 4" />
+            )}
           </g>
           {/* Los rótulos van en las esquinas, pero solo valen mientras esa esquina siga a su lado de la
               diagonal: con zoom profundo la de arriba a la izquierda puede quedar en zona roja. */}
-          {view.y1 > view.x0 && (
-            <text x={area.left + 8} y={area.top + 16} fontSize={11.5} fontWeight={600} fill={pos}>↑ {referencia.sobre}</text>
-          )}
-          {view.y0 < view.x1 && (
-            <text x={area.left + area.width - 8} y={area.top + area.height - 8} fontSize={11.5} fontWeight={600}
-              fill={neg} textAnchor="end">↓ {referencia.bajo}</text>
+          {hayZonas ? (
+            <g fontSize={11.5} fontWeight={600} paintOrder="stroke" stroke={tk.surface} strokeWidth={3} strokeLinejoin="round">
+              <text x={area.left + area.width - 8} y={area.top + 16} fill={pos} textAnchor="end">↑ {zonas.elite}</text>
+              <text x={area.left + area.width - 8} y={area.top + area.height - 8} fill={neg} textAnchor="end">↓ {zonas.mejorable}</text>
+              <text x={area.left + 8} y={area.top + area.height - (estrecho ? 24 : 8)} fill={tk.muted}>{zonas.debajo}</text>
+            </g>
+          ) : (
+            <>
+              {view.y1 > view.x0 && (
+                <text x={area.left + 8} y={area.top + 16} fontSize={11.5} fontWeight={600} fill={pos}>↑ {referencia.sobre}</text>
+              )}
+              {view.y0 < view.x1 && (
+                <text x={area.left + area.width - 8} y={area.top + area.height - 8} fontSize={11.5} fontWeight={600}
+                  fill={neg} textAnchor="end">↓ {referencia.bajo}</text>
+              )}
+            </>
           )}
         </svg>
       )}

@@ -213,16 +213,23 @@ def _metricas(x, y, referencia):
             {"id": "y", "etiqueta": y["corto"], "ayuda": f"Ordenados por {y['label']}"}]
 
 
-def _diagonal(x, y, dif, sobre="Sobrerrendimiento", bajo="Bajo rendimiento", banda=None):
+def _diagonal(x, y, dif, sobre="Sobrerrendimiento", bajo="Bajo rendimiento", banda=None, dec_dif=None):
     """La diagonal "marcó lo esperado". `banda`: la franja de azar (el valor z de una Poisson alrededor del xG, 1.64 =
-    90%)."""
+    90%); sin ella en las vistas por 90'. `dec_dif`: decimales de la diferencia (por 90' son centésimas: 2)."""
     ref = {"tipo": "diagonal", "dif": dif, "sobre": sobre, "bajo": bajo}
     if banda:
         ref["banda"] = banda
+    if dec_dif is not None:
+        ref["decDif"] = dec_dif
     return ref
 
 
 PROMEDIOS = {"tipo": "promedios"}   # líneas punteadas en el promedio de cada eje (de TODAS las temporadas)
+
+
+def _promedios(cuadrantes):
+    """Las líneas de promedio con un rótulo por cuadrante (`tr`, `tl`, `br`, `bl`)."""
+    return {"tipo": "promedios", "cuadrantes": cuadrantes}
 
 
 def _pagina(slug, titulo, descripcion, config, kind="scatter"):
@@ -271,36 +278,44 @@ def _scatter(slug, titulo, descripcion, *, x, y, referencia, subtitulo, textos, 
     return _pagina(slug, titulo, descripcion, cfg)
 
 
-def chart_goals_vs_xg(df):
-    x, y = _eje("np_xg", "xG sin penales", "xG", 1, dec_lista=2), _eje("np_goals", "Goles sin penales", "Goles", 0)
+def chart_xg_goals_90(df):
+    """xG por 90' contra goles por 90', sin penales, con la línea de la élite en ocasiones y tres zonas rotuladas."""
+    x = _eje("npxg90", "xG por 90', sin penales", "xG por 90'", 2)
+    y = _eje("npg90", "Goles por 90', sin penales", "Goles por 90'", 2)
+    ref = _diagonal(x, y, "goles − xG por 90', sin penales", dec_dif=2)
+    ref["zonas"] = {"pct": ins.ELITE_PCT, "elite": "Élite en chances y finalización",
+                    "mejorable": "Élite en chances; podría convertir más", "debajo": "Por debajo de lo que debería generar"}
     return _scatter(
-        "goles-vs-xg", "Goles vs. xG, sin penales",
-        "Cada punto es un jugador. Sobre la diagonal marcó más de lo que valían sus ocasiones (xG); debajo, menos.",
-        x=x, y=y, referencia=_diagonal(x, y, "goles − xG, sin penales", banda=1.64),
+        "xg-vs-goles-90", "xG vs. goles por 90'",
+        "Cada punto es un jugador. Sobre la diagonal marcó más de lo que valían sus ocasiones; la línea vertical marca al 20% con más xG.",
+        x=x, y=y, referencia=ref,
         subtitulo="Jugadores con ≥{min} min · {temporada}",
-        textos=(ins.goles_xg_que_mirar, ins.goles_xg_por_que), insight="goles_xg", poblacion=df,
-        color_por=["liga", "rendimiento"])
+        textos=(ins.xg_goles_90_que_mirar, ins.xg_goles_90_por_que), insight="xg_goles_90", poblacion=df,
+        color_por=["liga", "rendimiento"], minimo_por90=True)
 
 
-def chart_assists_vs_xa(df):
-    x, y = _eje("xA", "xA", "xA", 1, dec_lista=2), _eje("a", "Asistencias", "Asist.", 0)
+def chart_xa_assists_90(df):
+    x, y = _eje("xA90", "xA por 90'", "xA por 90'", 2), _eje("a90", "Asistencias por 90'", "Asistencias por 90'", 2)
     return _scatter(
-        "asistencias-vs-xa", "Asistencias vs. xA",
+        "xa-vs-asistencias-90", "xA vs. asistencias por 90'",
         "Cada punto es un jugador. Sobre la diagonal dio más asistencias de las que valían sus pases (xA); debajo, menos.",
-        x=x, y=y, referencia=_diagonal(x, y, "asistencias − xA"),
+        x=x, y=y, referencia=_diagonal(x, y, "asistencias − xA por 90'", dec_dif=2,
+                                       sobre="Asiste más de lo esperado", bajo="Asiste menos de lo esperado"),
         subtitulo="Jugadores con ≥{min} min · {temporada}",
-        textos=(ins.asist_xa_que_mirar, ins.asist_xa_por_que), insight="asist_xa", poblacion=df,
-        color_por=["liga", "rendimiento"])
+        textos=(ins.xa_asist_90_que_mirar, ins.xa_asist_90_por_que), insight="xa_asist_90", poblacion=df,
+        color_por=["liga", "rendimiento"], minimo_por90=True)
 
 
 def chart_profile(df):
     x, y = _eje("xG90", "xG por 90'", "xG90", 2), _eje("xA90", "xA por 90'", "xA90", 2)
     return _scatter(
         "perfil-ofensivo", "Perfil ofensivo: xG90 vs. xA90",
-        "A la derecha, más xG por 90' (remata); arriba, más xA por 90' (crea). Compara dentro de una misma posición.",
-        x=x, y=y, referencia=PROMEDIOS,
+        "A la derecha, más xG por 90' (remata); arriba, más xA por 90' (crea). Abre con medios y delanteros; cambia las posiciones a gusto.",
+        x=x, y=y,
+        referencia=_promedios({"tr": "rematan y crean", "tl": "crean", "br": "rematan", "bl": "participan poco"}),
         subtitulo="Jugadores con ≥{min} min · {temporada}",
-        textos=(ins.perfil_que_mirar, ins.perfil_por_que), insight="perfil", poblacion=df)
+        textos=(ins.perfil_que_mirar, ins.perfil_por_que), insight="perfil", poblacion=df,
+        posiciones_ini=["Medio", "Delantero"])
 
 
 def chart_recoveries_vs_fouls(df, df_def):
@@ -332,31 +347,37 @@ def chart_defensive_profile(df, df_def):
         fuente=FUENTE_FBREF, extra_requiere=["recoveries90"])
 
 
-def _chart_creacion(df, *, slug, titulo, x, y, subtitulo, descripcion, textos, insight, fuente=FUENTE_UNDERSTAT):
+def _chart_creacion(df, *, slug, titulo, x, y, subtitulo, descripcion, textos, insight, referencia=PROMEDIOS,
+                    fuente=FUENTE_UNDERSTAT, minimo_por90=False):
     """Una vista de creación de juego: dos tasas por 90' y una línea en el promedio de cada eje.
     Se trabaja sobre los jugadores que tienen las dos columnas (los centros vienen de fbref y no todos
     cruzaron), y las temporadas del selector son las que de verdad tienen dato."""
     d = df[df[x["col"]].notna() & df[y["col"]].notna()].reset_index(drop=True)
-    return _scatter(slug, titulo, descripcion, x=x, y=y, referencia=PROMEDIOS, subtitulo=subtitulo,
-                    textos=textos, insight=insight, poblacion=d, fuente=fuente)
+    return _scatter(slug, titulo, descripcion, x=x, y=y, referencia=referencia, subtitulo=subtitulo,
+                    textos=textos, insight=insight, poblacion=d, fuente=fuente, minimo_por90=minimo_por90)
 
 
-def chart_key_passes(df):
+def chart_key_passes_assists(df):
     return _chart_creacion(
-        df, slug="pases-clave-vs-xa", titulo="Pases clave vs. xA",
-        x=_eje("kp90", "Pases clave por 90'", "Pases clave", 2), y=_eje("xA90", "xA por 90'", "xA90", 2),
+        df, slug="pases-clave-vs-asistencias", titulo="Pases clave vs. asistencias por 90'",
+        x=_eje("kp90", "Pases clave por 90'", "Pases clave por 90'", 2),
+        y=_eje("a90", "Asistencias por 90'", "Asistencias por 90'", 2),
         subtitulo="Jugadores con ≥{min} min · {temporada}",
-        descripcion="A la derecha, más pases clave por 90' (los que acaban en tiro); arriba, más peligro en esos pases (xA).",
-        textos=(ins.pases_clave_que_mirar, ins.pases_clave_por_que), insight="pases_clave")
+        descripcion="A la derecha, más pases clave por 90' (los que acaban en tiro); arriba, más asistencias. Abajo a la derecha: crean y no los terminan.",
+        referencia=_promedios({"tr": "crean y los terminan", "br": "crean; no los terminan",
+                               "tl": "pocos, muy aprovechados", "bl": "poca creación"}),
+        textos=(ins.pases_asist_que_mirar, ins.pases_asist_por_que), insight="pases_asist", minimo_por90=True)
 
 
 def chart_build_vs_produce(df):
     return _chart_creacion(
         df, slug="construir-vs-producir", titulo="Construcción vs. producción",
         x=_eje("xgbuild90", "xG de construcción por 90'", "Construcción", 2),
-        y=_eje("xga90", "xG + xA por 90'", "Producción", 2),
+        y=_eje("xga90", "Producción esperada por 90' (xG + xA)", "Producción", 2),
         subtitulo="Jugadores con ≥{min} min · {temporada}",
         descripcion="A la derecha, quien más construye (xG de construcción por 90'); arriba, quien más produce directo (xG + xA).",
+        referencia=_promedios({"tr": "construyen y finalizan", "tl": "finalizan", "br": "construyen",
+                               "bl": "poco peso ofensivo"}),
         textos=(ins.construir_que_mirar, ins.construir_por_que), insight="construir")
 
 
@@ -418,14 +439,15 @@ def chart_shot_map():
 # Orden y agrupación de las pestañas de la sección: (slug, texto corto, familia). Lo que no esté acá
 # no se muestra, así que una vista nueva obliga a decidir en qué familia vive.
 PESTANAS = [
-    ("goles-vs-xg", "Goles vs. xG", "Ataque"),                    # la primera: es la que abre la página
+    ("xg-vs-goles-90", "xG vs. goles por 90", "Ataque"),          # la primera: es la que abre la página
     ("perfil-ofensivo", "Rematar vs. crear", "Ataque"),
     ("mapa-tiros", "Mapa de tiros", "Ataque"),
-    ("asistencias-vs-xa", "Asistencias vs. xA", "Creación"),
-    ("pases-clave-vs-xa", "Pases clave vs. xA", "Creación"),
+    ("xa-vs-asistencias-90", "xA vs. asistencias por 90", "Creación"),
+    ("pases-clave-vs-asistencias", "Pases clave vs. asistencias", "Creación"),
     ("construir-vs-producir", "Construcción vs. producción", "Creación"),
     ("recuperacion-vs-faltas", "Recuperar vs. faltas", "Defensa"),
     ("perfil-defensivo", "Entradas vs. intercepciones", "Defensa"),
+    ("edad", "Edad", "_explorar"),
     ("crea-tu-grafico-jugadores", "Crea tu gráfico", "_explorar"),   # "_": grupo aparte, sin rótulo
 ]
 
@@ -483,10 +505,10 @@ def build(assets_dir) -> list:
     seasons = seasons_of(df)
     _registrar_tabla(df, seasons)
     paginas = [
-        chart_goals_vs_xg(df),
-        chart_assists_vs_xa(df),
+        chart_xg_goals_90(df),
+        chart_xa_assists_90(df),
         chart_profile(df),
-        chart_key_passes(df),
+        chart_key_passes_assists(df),
         chart_build_vs_produce(df),
     ]
     # Defensivas: solo si fbref aportó sus columnas (ver `DEF_COLS`).

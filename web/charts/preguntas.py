@@ -6,12 +6,12 @@ buscador leen de aquí. Si una vista cambia de nombre o se quita, hay que tocar 
 
 PREGUNTAS = {
     # Jugadores
-    "goles-vs-xg": "¿Quién marca más de lo que debería?",
+    "xg-vs-goles-90": "¿Quién genera más ocasiones y quién las convierte?",
     "perfil-ofensivo": "¿Quién remata y quién crea?",
     "mapa-tiros": "¿Desde dónde se tira en las 5 ligas?",
-    "asistencias-vs-xa": "¿Quién da más asistencias de las que debería?",
-    "pases-clave-vs-xa": "¿Quién genera más ocasiones para sus compañeros?",
-    "construir-vs-producir": "¿Quién arma la jugada y quién la termina?",
+    "xa-vs-asistencias-90": "¿Quién da más asistencias de las que debería?",
+    "pases-clave-vs-asistencias": "¿Quién crea ocasiones que sus compañeros desperdician?",
+    "construir-vs-producir": "¿Quién construye, quién termina y quién lo hace todo?",
     "recuperacion-vs-faltas": "¿Quién recupera más balones y a qué costo?",
     "perfil-defensivo": "¿Quién defiende yendo al choque y quién leyendo el pase?",
     "crea-tu-grafico-jugadores": "¿Cómo se relacionan dos variables que tú elijas?",

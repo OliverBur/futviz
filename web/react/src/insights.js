@@ -160,6 +160,47 @@ export function construir(T, filas, ambito) {
   return { fija, salta };
 }
 
+// Las tres vistas "por 90'" de goles y asistencias. Mismo texto que `xg_goles_90`, `xa_asist_90` y `pases_asist`
+// de `code/insights.py`. `ELITE_PCT` tiene que valer lo mismo que allá (y que `referencia.zonas.pct` de la gráfica).
+export const ELITE_PCT = 0.8;
+
+export function xgGoles90(T, filas, ambito) {
+  const fija = `En ${ambito}: ` + lideres(T, filas, "npxg90", "npg90", fmt, fmt,
+    "más xG por 90' sin penales", "más goles por 90' sin penales");
+  if (filas.length < 5) return { fija, salta: null };
+  const corte = cuantil(col(T, "npxg90", filas), ELITE_PCT);
+  const elite = filas.filter((r) => T.c.npxg90[r] >= corte);
+  const mas = elite.filter((r) => T.c.npg90[r] >= T.c.npxg90[r]);
+  const menos = elite.filter((r) => T.c.npg90[r] < T.c.npxg90[r]);
+  let salta = `El 20% con más xG por 90' son ${elite.length} jugadores (desde ${fmt(corte)}): ${mas.length} marcan al menos lo que generan y ${menos.length} marcan menos.`;
+  if (menos.length) {
+    const p = menos[idxmin(menos.map((r) => T.c.npg90[r] - T.c.npxg90[r]))];
+    salta += ` El que más se queda corto es **${quien(T, p)}**: ${fmt(T.c.npg90[p])} goles contra ${fmt(T.c.npxg90[p])} de xG por 90'.`;
+  }
+  return { fija, salta };
+}
+
+export function xaAsist90(T, filas, ambito) {
+  const fija = `En ${ambito}: ` + lideres(T, filas, "xA90", "a90", fmt, fmt,
+    "más xA por 90'", "más asistencias por 90'");
+  if (filas.length < 5) return { fija, salta: null };
+  const dif = filas.map((r) => T.c.a90[r] - T.c.xA90[r]);
+  const arriba = filas[idxmax(dif)], abajo = filas[idxmin(dif)];
+  const salta = `**${quien(T, arriba)}** es el que más se pasa de su xA (${sg(Math.max(...dif))} asistencias por 90'), y a **${quien(T, abajo)}** es a quien más le desperdician (${sg(Math.min(...dif))}). En los dos casos habla tanto de ellos como de quienes remataron sus pases.`;
+  return { fija, salta };
+}
+
+export function pasesAsist(T, filas, ambito) {
+  const fija = `En ${ambito}: ` + lideres(T, filas, "kp90", "a90", fmt1, fmt, "más pases clave por 90'", "más asistencias por 90'");
+  if (filas.length < 5) return { fija, salta: null };
+  const corte = cuantil(col(T, "kp90", filas), 0.75);
+  const muchos = filas.filter((r) => T.c.kp90[r] >= corte);
+  if (!muchos.length) return { fija, salta: null };
+  const p = muchos[idxmin(muchos.map((r) => T.c.a90[r]))];
+  const salta = `Entre el 25% que más pases clave da, al que menos le convierten es **${quien(T, p)}**: ${fmt1(T.c.kp90[p])} pases clave por 90' y ${fmt(T.c.a90[p])} asistencias.`;
+  return { fija, salta };
+}
+
 export function centros(T, filas, ambito) {
   const fija = `En ${ambito}: ` + lideres(T, filas, "crosses90", "xA90", fmt1, fmt,
     "quien más centra por 90'", "quien más xA por 90'");
@@ -242,6 +283,7 @@ export function puntos(T, filas, ambito) {
 export const GENERADORES = {
   goles_xg: golesXg, asist_xa: asistXa, perfil, recuperar, disputar, dos_fases: dosFases,
   pases_clave: pasesClave, construir, centros, definicion, creacion, defensa, puntos,
+  xg_goles_90: xgGoles90, xa_asist_90: xaAsist90, pases_asist: pasesAsist,
 };
 
 // ---- Mapa de calor de los tiros ---------------------------------------------------------------
