@@ -33,28 +33,30 @@ No tenemos presión (PPDA), pases ni posiciones de jugadores en el campo. No pro
 | 3 | `origen-xg` | De dónde sale el xG | ¿Vive de los córners o construye jugando? | Barras apiladas por equipo: jugada abierta, córner, tiro libre directo, otro balón parado. A favor o en contra; en % o por partido; filtro de liga y temporada | `shots.csv` |
 | 4 | `cantidad-calidad` | Cantidad vs. calidad de los tiros | ¿Dispara mucho o espera la ocasión clara? | Dispersión: tiros por partido contra xG por tiro | `shots.csv` |
 | 5 | `local-visitante` | Local vs. visitante | ¿Quién depende de su estadio? | Dispersión con diagonal: diferencia de xG por partido en casa contra fuera | `partidos.csv` |
-| 6 | `dependencia` | Dependencia de la plantilla | ¿Qué pasa si se lesiona la estrella? | Dispersión: cuántos jugadores reparten el 80% de los minutos contra qué parte del xG + xA aporta el que más aporta | `alineaciones.csv` (sin 2026-27) |
+| 6 | ~~`dependencia`~~ | ~~Dependencia de la plantilla~~ | | **Descartada por el usuario el 2026-11-20** | |
 | 7 | `trayectoria-elo` | Trayectoria del club en ELO | ¿Cómo ha cambiado la fuerza de este club? | Líneas con el ELO por temporada, con selector de clubes (reutiliza el componente de líneas de la vista 2) | `teams_all_seasons.csv` (sin 2026-27) |
 
 **Método de la 1 (xPts):** puntos esperados de cada partido a partir de las probabilidades de ganar, empatar y perder que dan los xG de los tiros de ese partido (los goles de cada equipo como suma de Bernoullis con la probabilidad `xg` de cada tiro, independientes entre equipos). Hay que documentar qué se hace con penales y autogoles, comparar contra la alternativa de Poisson sobre el xG total del partido, y reportar: correlación entre puntos reales y esperados por liga-temporada, y cuánto de la diferencia (real − esperada) se repite de una temporada a la siguiente. Si casi no se repite, la vista lo dice.
 
-Las vistas 4, 5 y 6 son dispersiones normales (`ScatterVista`, con `referencias`, líneas de percentil y cuadrantes como las de jugadores): solo hay que calcular las columnas nuevas por equipo-temporada en el build, sin regenerar los CSV.
+Las vistas 4 y 5 son dispersiones normales (`ScatterVista`, con `referencias`, líneas de percentil y cuadrantes como las de jugadores): solo hay que calcular las columnas nuevas por equipo-temporada en el build, sin regenerar los CSV.
 
 ## Lotes
 
-1. **Lote 1 (agentes en paralelo):** vistas 1, 2 y 3. Cada una en sus propios archivos (`web/charts/<modulo>.py`, `web/react/src/<Vista>.jsx`, `web/tests/test_<modulo>.py`). La vista 2 construye el dibujo de las líneas como componente reutilizable.
-2. **Lote 2 (un agente):** vistas 4, 5 y 6 (columnas nuevas en el cálculo de equipos y tres configuraciones de dispersión).
-3. **Lote 3:** vista 7 (con el componente de líneas del lote 1), reordenar el menú de Equipos, preguntas de la portada y el buscador, y verificación completa.
+1. **Lote 1 (hecho, en la rama `integra-equipos`):** vistas 1, 2 y 3. La vista 2 dejó el dibujo de líneas como componente reutilizable (`web/react/src/LineasSvg.jsx`).
+2. **Lote 2 (en marcha, 2026-11-20):** vistas 4 y 5 (un agente: columnas nuevas en el cálculo de equipos y dos configuraciones de dispersión) y vista 7 (otro agente, con `LineasSvg`). La vista 6 se descartó.
+3. **Lote 3:** preguntas de la portada y el buscador, y verificación completa.
 
 ## Menú final propuesto de Equipos
 
 - **Temporada:** Tabla real vs. esperada · Forma
 - **Ocasiones:** Goles vs. xG del equipo · Ocasiones a favor y en contra · De dónde sale el xG · Cantidad vs. calidad de los tiros
 - **Defensa:** Goles recibidos vs. xG en contra
-- **Contexto:** Puntos vs. xG · Local vs. visitante · Dependencia de la plantilla · Trayectoria ELO · Distribución por liga
+- **Contexto:** Puntos vs. xG · Local vs. visitante · Trayectoria ELO · Distribución por liga
 - **Crea tu gráfico**
 
 ## Reglas de integración
+
+- **Los filtros van a la derecha** (columna de ~270 px a la derecha de la gráfica, como en las dispersiones y en `MapaTiros`); en pantalla angosta, arriba de la gráfica. Pedido del usuario el 2026-11-20 para todas las vistas nuevas de Equipos.
 
 - Los agentes trabajan en worktrees y **no confirman `web/dist` ni `web/react/build`**; el integrador reconstruye el sitio una sola vez.
 - No tocar `players.py`, `main.jsx` más allá de una línea, ni lo de jugadores. Otra sesión puede estar editando esos archivos.
