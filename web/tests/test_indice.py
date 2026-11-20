@@ -87,7 +87,8 @@ class TestIndice(unittest.TestCase):
     def test_enlaces_de_la_portada(self):
         slugs = {v[0] for v in self.ix["v"]}
         enlaces = re.findall(r'href="analisis-exploratorio\.html#([^"?]+)"', self.html)
-        self.assertGreaterEqual(len(enlaces), 6)
+        from landing import PREGUNTAS
+        self.assertGreaterEqual(len(enlaces), len(PREGUNTAS))
         for slug in enlaces:
             self.assertIn(slug, slugs, f"la portada enlaza a una vista que no existe: {slug}")
         self.assertIn(f"Ver las {len(self.ix['v'])} gráficas", self.html)

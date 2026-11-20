@@ -39,8 +39,6 @@ PRESUPUESTO_INDICE_KB = 150   # gzip
 PREGUNTAS = [(entidad, PREGUNTA_DE[slug], slug) for entidad, slug in (
     ("Jugadores", "xg-vs-goles-90"),
     ("Jugadores", "mapa-tiros"),
-    ("Jugadores", "pases-clave-vs-asistencias"),
-    ("Equipos", "defensa"),
     ("Equipos", "tabla-esperada"),
     ("Equipos", "origen-xg"),
 )]
