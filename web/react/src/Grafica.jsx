@@ -108,6 +108,10 @@ function partirRotulo(t) {
   return mejor < 0 ? [t] : [t.slice(0, mejor), t.slice(mejor + 1)];
 }
 
+// Todos los rótulos de la gráfica (cuadrantes, zonas y esquinas de la diagonal) comparten tamaño, peso, color y contorno:
+// el azul y el rojo ya los pone el sombreado de la diagonal.
+const ROTULO = { fontSize: 11, fontWeight: 500, strokeWidth: 3, paintOrder: "stroke", strokeLinejoin: "round" };
+
 // Más allá de cualquier zoom, en el espacio de la gráfica (con un eje al revés los valores van negados: se toma el valor absoluto).
 const alcance = (b) => Math.max(Math.abs(b.x0), Math.abs(b.x1), Math.abs(b.y0), Math.abs(b.y1)) * 3;
 
@@ -129,8 +133,7 @@ function CapaSuperior({ area, referencia, etiquetas, rotulosCuadrante, tk }) {
         </g>
       )}
       {rotulosCuadrante.map((q) => (
-        <text key={q.clave} x={q.x} y={q.y} textAnchor={q.ancla} fontSize={10.5} fill={tk.muted}
-          stroke={tk.surface} strokeWidth={3} paintOrder="stroke" strokeLinejoin="round">
+        <text key={q.clave} x={q.x} y={q.y} textAnchor={q.ancla} {...ROTULO} fill={tk.muted} stroke={tk.surface}>
           {q.lineas.map((l, i) => <tspan key={i} x={q.x} dy={i ? 12 : 0}>{l}</tspan>)}
         </text>
       ))}
@@ -341,8 +344,8 @@ export function Grafica({
         caja(zonas.br, true, area.top + area.height - 8);
         caja(zonas.bl, false, area.top + area.height - (estrecho ? 24 : 8));
       } else {
-        if (view.y1 > view.x0) obstaculos.push({ x0: area.left, x1: area.left + (referencia.sobre.length + 2) * 5.9 + 14, y0: area.top, y1: area.top + 22 });
-        if (view.y0 < view.x1) obstaculos.push({ x0: area.left + area.width - ((referencia.bajo.length + 2) * 5.9 + 14), x1: area.left + area.width,
+        if (view.y1 > view.x0) obstaculos.push({ x0: area.left, x1: area.left + referencia.sobre.length * 5.9 + 14, y0: area.top, y1: area.top + 22 });
+        if (view.y0 < view.x1) obstaculos.push({ x0: area.left + area.width - (referencia.bajo.length * 5.9 + 14), x1: area.left + area.width,
           y0: area.top + area.height - 22, y1: area.top + area.height });
       }
     }
@@ -361,7 +364,7 @@ export function Grafica({
         const poner = (clave, ok, x, y, ancla, hacia) => {
           if (!ok || !q[clave]) return;
           const ls = partirRotulo(q[clave]), n = ls.length;
-          const w = Math.max(...ls.map((l) => l.length)) * 5.7 + 6;
+          const w = Math.max(...ls.map((l) => l.length)) * 5.9 + 6;
           const salto = 12 * n + 2;
           // Pegado a la línea de promedio, pero sin salirse del recuadro. Si no cabe entre la línea y el borde
           // (pantalla angosta, o la línea muy cerca de un lado), se pega al borde un renglón más adentro: corrido
@@ -479,21 +482,20 @@ export function Grafica({
           {/* Los rótulos van en las esquinas, pero solo valen mientras esa esquina siga a su lado de la
               diagonal: con zoom profundo la de arriba a la izquierda puede quedar en zona roja. */}
           {hayZonas ? (
-            <g fontSize={11.5} fontWeight={600} paintOrder="stroke" stroke={tk.surface} strokeWidth={3} strokeLinejoin="round">
-              <text x={area.left + area.width - 8} y={area.top + 16} fill={pos} textAnchor="end">{zonas.tr}</text>
-              <text x={area.left + 8} y={area.top + (estrecho ? 32 : 16)} fill={tk.muted}>{zonas.tl}</text>
-              <text x={area.left + area.width - 8} y={area.top + area.height - 8} fill={neg} textAnchor="end">{zonas.br}</text>
+            <g {...ROTULO} fill={tk.muted} stroke={tk.surface}>
+              <text x={area.left + area.width - 8} y={area.top + 16} textAnchor="end">{zonas.tr}</text>
+              <text x={area.left + 8} y={area.top + (estrecho ? 32 : 16)}>{zonas.tl}</text>
+              <text x={area.left + area.width - 8} y={area.top + area.height - 8} textAnchor="end">{zonas.br}</text>
               <text x={area.left + 8} y={area.top + area.height - (estrecho ? 24 : 8)} fill={tk.muted}>{zonas.bl}</text>
             </g>
           ) : (
             <>
               {view.y1 > view.x0 && (
-                <text x={area.left + 8} y={area.top + 16} fontSize={11.5} fontWeight={600} fill={pos} paintOrder="stroke" stroke={tk.surface}
-                  strokeWidth={3} strokeLinejoin="round">↑ {referencia.sobre}</text>
+                <text x={area.left + 8} y={area.top + 16} {...ROTULO} fill={tk.muted} stroke={tk.surface}>{referencia.sobre}</text>
               )}
               {view.y0 < view.x1 && (
-                <text x={area.left + area.width - 8} y={area.top + area.height - 8} fontSize={11.5} fontWeight={600}
-                  fill={neg} textAnchor="end" paintOrder="stroke" stroke={tk.surface} strokeWidth={3} strokeLinejoin="round">↓ {referencia.bajo}</text>
+                <text x={area.left + area.width - 8} y={area.top + area.height - 8} {...ROTULO} fill={tk.muted} stroke={tk.surface}
+                  textAnchor="end">{referencia.bajo}</text>
               )}
             </>
           )}

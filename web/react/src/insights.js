@@ -345,7 +345,7 @@ export function localVisitante(T, filas, ambito) {
   });
   const dif = dl.map((l, i) => l - dv[i]);
   const e = filas[idxmax(dif)];
-  const salta = `De ${filas.length} equipos, ${tr} dominan las ocasiones en casa y fuera, ${br} solo en casa, ${tl} solo fuera y ${bl} las sufren en los dos. El que más cambia de un estadio a otro es **${quien(T, e)}**: ${sg(T.c[DIF_LOCAL][e])} de local y ${sg(T.c[DIF_VISITA][e])} de visitante (${fmt(Math.max(...dif))} de diferencia por partido). Cuánto de eso es del equipo y cuánto de la temporada lo dice «Por qué estas variables».`;
+  const salta = `De ${filas.length} equipos, ${tr} dominan las ocasiones de local y de visita, ${br} solo de local, ${tl} solo de visita y ${bl} las sufren en los dos lados. El que más cambia de un estadio a otro es **${quien(T, e)}**: ${sg(T.c[DIF_LOCAL][e])} de local y ${sg(T.c[DIF_VISITA][e])} de visitante (${fmt(Math.max(...dif))} de diferencia por partido). Cuánto de eso es del equipo y cuánto de la temporada lo dice «Por qué estas variables».`;
   return { fija, salta };
 }
 

@@ -1937,10 +1937,10 @@ def cantidad_calidad_por_que(df):
 
 
 def local_visitante_que_mirar():
-    return ("Casi todos los equipos tienen mejor diferencia de local que de visitante: jugar en casa ayuda a casi todos, "
-            "así que lo que cuenta es cuánto más y no que sea más. **Arriba a la derecha**: dominan las ocasiones en casa y "
-            "fuera. **Abajo a la derecha**: solo las dominan en casa. **Abajo a la izquierda**: las sufren en los dos "
-            "lados. **Arriba a la izquierda**: solo dominan fuera, un cuadrante casi vacío.\n\n"
+    return ("Casi todos los equipos tienen mejor diferencia de local que de visitante: jugar de local ayuda a casi todos, "
+            "así que lo que cuenta es cuánto más y no que sea más. **Arriba a la derecha**: dominan las ocasiones de local "
+            "y de visita. **Abajo a la derecha**: solo las dominan de local. **Abajo a la izquierda**: las sufren en los "
+            "dos lados. **Arriba a la izquierda**: solo dominan de visita, un cuadrante casi vacío.\n\n"
             "Que un equipo «dependa de su estadio» solo vale si se repite de una temporada a la siguiente; si eso pasa o "
             "no lo dice «Por qué estas variables». Haz clic en un cuadrante para acercarte a esos equipos.")
 
@@ -1964,7 +1964,7 @@ def local_visitante_por_que(df):
                   "hacer en la siguiente: es más un accidente de la temporada que un rasgo del equipo." if hi < 0.3 else
                   "Con esa cifra, una parte de la dependencia del estadio es del equipo y otra de la temporada." if hi < 0.6
                   else "Con esa cifra, la dependencia del estadio es en buena medida un rasgo del equipo.")
-        p3 = (f"\n\nLo que importa para «depende de su estadio» es la diferencia entre jugar en casa y fuera (local menos "
+        p3 = (f"\n\nLo que importa para «depende de su estadio» es la diferencia entre jugar de local y de visita (local menos "
               f"visitante). Entre una temporada cerrada y la siguiente, esa diferencia de un "
               f"mismo equipo correlaciona {_entre(p)}. {_se_repite(p)} {cierre}")
     pl = c[[PARTIDOS_LOCAL, PARTIDOS_VISITA]]
@@ -1972,8 +1972,8 @@ def local_visitante_por_que(df):
                else f"{int(pl.min().min())} a {int(pl.max().max())}")
     return (
         f"Cada eje es la diferencia de xG por partido (xG a favor menos xG en contra, de Understat y sin penales) en "
-        f"los partidos de una sede: la horizontal, de local; la vertical, de visitante. Cada equipo juega una vez en "
-        f"casa de cada rival y una vez fuera, así que las dos sedes enfrentan a los mismos rivales.\n\n"
+        f"los partidos de una sede: la horizontal, de local; la vertical, de visitante. Cada equipo recibe una "
+        f"vez a cada rival y lo visita una vez, así que las dos sedes enfrentan a los mismos rivales.\n\n"
         f"{p2}{p3}\n\n"
         f"Cada punto promedia {'de ' if 'a' in muestra else ''}{muestra} partidos por sede, y de un partido a otro el xG se mueve mucho: una temporada es "
         f"poca muestra. {_frase_calibra(df)} Los partidos sin ningún tiro en Understat no cuentan de local ni de "
