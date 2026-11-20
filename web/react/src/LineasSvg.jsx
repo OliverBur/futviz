@@ -30,7 +30,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 
-const MG = { l: 46, r: 14, t: 10 };      // márgenes del SVG
+const MG = { l: 46, r: 14, rCats: 26, t: 10 };      // márgenes del SVG
 const FILA = 17, SEPARACION = 9, ALTO_EJE = 26;
 const PASOS = [1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000];
 
@@ -97,7 +97,9 @@ function Marca({ cx, cy, forma, color, hueco, fondo, r = 4.4 }) {
   return <circle cx={cx} cy={cy} r={r} {...rel} />;
 }
 
-export default function LineasSvg({ tk, ariaLabel, series, x, y = {}, referencias = [], marcas = [], filasMarcas = [],
+const VACIO = [], SIN_EJE = {};   // por defecto: la MISMA lista en cada render (una nueva borraría el hover a cada paso)
+
+export default function LineasSvg({ tk, ariaLabel, series, x, y = SIN_EJE, referencias = VACIO, marcas = VACIO, filasMarcas = VACIO,
   tooltip, alto = 260 }) {
   const caja = useRef(null);
   const w = useAncho(caja);
@@ -107,7 +109,7 @@ export default function LineasSvg({ tk, ariaLabel, series, x, y = {}, referencia
 
   const cats = x.categorias;
   const [d0, d1] = cats ? [0, Math.max(cats.length - 1, 1)] : x.dominio;
-  const pw = Math.max(80, w - MG.l - MG.r);
+  const pw = Math.max(80, w - MG.l - (cats ? MG.rCats : MG.r));   // con categorías el último rótulo (centrado) es ancho y se saldría
   const px = (v) => MG.l + ((v - d0) / (d1 - d0 || 1)) * pw;
   const [y0, y1] = useMemo(() => dominioY(series, referencias, y.marcas, y.dominio), [series, referencias, y.marcas, y.dominio]);
   const marcasY = y.marcas || marcasRedondas(y0, y1, 5);

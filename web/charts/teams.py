@@ -17,6 +17,7 @@ import insights as ins
 import origen_xg
 import react_views
 import tabla_esperada
+import trayectoria_elo
 import xg_equipos
 from consolidate_data import ELO_TOP, NIVELES
 from nombres import aplicar_a_equipos
@@ -375,6 +376,7 @@ PESTANAS = [
     ("defensa", "Goles recibidos vs. xG", "Defensa"),
     ("puntos-vs-xg", "Puntos vs. xG", "Contexto"),
     ("local-visitante", "Local vs. visitante", "Contexto"),
+    ("trayectoria-elo", "Trayectoria ELO", "Contexto"),
     ("nivel-por-liga-equipos", "Distribución por liga", "Contexto"),
     ("crea-tu-grafico-equipos", "Crea tu gráfico", "_explorar"),   # "_": grupo aparte, sin rótulo
 ]
@@ -410,6 +412,7 @@ def build(assets_dir) -> list:
         chart_explorer(df),
         tabla_esperada.chart_tabla_esperada(),
         forma.chart_forma(),
+        trayectoria_elo.chart_trayectoria_elo(),
     )}
     salida = []
     for slug, tab, grupo in PESTANAS:
