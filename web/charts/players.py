@@ -432,10 +432,14 @@ def _nombre_jugador_de_tiros():
     return lambda t, nombre: mapa.get((t, nombre)) or JUGADORES.get(nombre, nombre)
 
 
+TEMPORADAS_MAPA = 3   # las que ofrece el mapa de tiros: la actual y las dos anteriores
+
+
 def chart_shot_map():
     """Mapa de calor de los tiros: el único gráfico de la sección que no sale de la tabla de jugadores
     sino del detalle de tiros, y el único cuyo punto no es un jugador sino un remate."""
-    df, descartes = shot_map.load(PROCESSED_DIR / "shots_all_seasons.csv")
+    # Solo la actual y las dos anteriores: es lo que el mapa ofrece, y no se arma ni se manda nada de las demás.
+    df, descartes = shot_map.load(PROCESSED_DIR / "shots_all_seasons.csv", ultimas=TEMPORADAS_MAPA)
     seasons = sorted(df["temporada"].unique())
     react_views.registrar_payload("tiros", shot_map.tabla_agregada(df, descartes, seasons))
     # los tiros uno por uno, una tabla por temporada: el navegador pide la de la temporada que se mira cuando

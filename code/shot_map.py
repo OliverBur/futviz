@@ -93,13 +93,15 @@ CENTROS_ANCHO = (BORDES_ANCHO[:-1] + BORDES_ANCHO[1:]) / 2
 CENTROS_FONDO = (BORDES_FONDO[:-1] + BORDES_FONDO[1:]) / 2
 
 
-def load(path):
-    """Los tiros de las 5 temporadas, listos para el mapa.
+def load(path, ultimas=None):
+    """Los tiros de las últimas `ultimas` temporadas (todas si es `None`), listos para el mapa.
 
     Devuelve `(df, descartes)`: el DataFrame recortado a la región dibujada y
     los conteos de lo que se sacó, que los textos de lectura necesitan para
     poder explicarlo."""
     d = pd.read_csv(path, encoding="utf-8-sig")
+    if ultimas:
+        d = d[d["temporada"].isin(sorted(d["temporada"].unique())[-ultimas:])]
     # Understat deja entidades HTML en los nombres (`M&#039;Bala Nzola`); `consolidate_data` ya las corrige en la
     # tabla de jugadores, y los nombres de los tiros tienen que coincidir con los de esa tabla.
     for col in ("player", "team", "rival"):   # `rival` viene vacío en 95 tiros

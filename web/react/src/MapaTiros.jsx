@@ -34,7 +34,7 @@ import { agregar, filasDe, lecturaEntidad, sumar } from "./tiros.js";
 import { miles } from "./stats.js";
 import { conAlfa } from "./colores.js";
 
-const TODAS = "todas", TODOS = "todos";
+const TODOS = "todos";
 const VERES = ["equipo", "jugador"];                    // "todos" es el mapa de calor
 const RADIO_MIN = 0.3, RADIO_POR_XG = 1.5;              // el punto de un tiro, en metros: crece con su xG
 
@@ -53,15 +53,12 @@ function Vista({ cfg, T, modo, tk }) {
   const [P] = useState(() => leerParams(cfg.id));
   const ultima = T.temporadas[T.temporadas.length - 1];
   const [ver, setVer] = useState(() => entre(P.get("ver"), VERES, TODOS));
-  const [temporada, setTemporada] = useState(() => {
-    const t = entre(P.get("t"), T.temporadas, TODAS);
-    return t === TODAS && VERES.includes(P.get("ver")) ? ultima : t;   // un jugador o un equipo, de una temporada
-  });
+  const [temporada, setTemporada] = useState(() => entre(P.get("t"), T.temporadas, ultima));
   const [tipoId, setTipoId] = useState(() => entre(P.get("tipo"), T.tipos.map((t) => t.id), TODOS));
   const [contra, setContra] = useState(() => P.get("lado") === "contra");
   const [quien, setQuien] = useState(() => P.get("quien") || "");   // «Nombre · clubes»; se busca en la tabla de la temporada
   usePublicarParams(cfg.id, {
-    t: temporada === TODAS ? null : temporada,
+    t: temporada === ultima ? null : temporada,
     tipo: tipoId === TODOS ? null : tipoId,
     ver: ver === TODOS ? null : ver,
     quien: ver === TODOS || !quien ? null : quien,
@@ -72,7 +69,7 @@ function Vista({ cfg, T, modo, tk }) {
   const svgRef = useRef(null);
 
   // --- los tiros de la temporada, solo si se mira a alguien -----------------------------------------------
-  const porEntidad = ver !== TODOS && temporada !== TODAS;
+  const porEntidad = ver !== TODOS;
   const [D, setD] = useState(null);
   const [errorD, setErrorD] = useState(false);
   useEffect(() => {
@@ -84,7 +81,7 @@ function Vista({ cfg, T, modo, tk }) {
   }, [porEntidad, temporada]);
   const Dt = porEntidad && D && D.t === temporada ? D : null;   // la tabla de ESTA temporada (al cambiar, hay un instante de carga)
 
-  const ti = temporada === TODAS ? null : T.temporadas.indexOf(temporada);
+  const ti = T.temporadas.indexOf(temporada);
   const tipo = T.tipos.find((t) => t.id === tipoId);
   const tipoAgg = tipoId === TODOS ? null : tipo;
   const sel = useMemo(() => agregar(T, ti, tipoAgg), [T, ti, tipoAgg]);
@@ -129,7 +126,7 @@ function Vista({ cfg, T, modo, tk }) {
     return { sin: orden.filter((i) => !Dt.c.g[i]), gol: orden.filter((i) => Dt.c.g[i]) };
   }, [Dt, elegido, filas]);
 
-  const ambito = temporada === TODAS ? `las ${T.temporadas.length} temporadas` : temporada;
+  const ambito = temporada;
   const lectura = useMemo(() => {
     if (Dt && elegido) {
       return lecturaEntidad({
@@ -139,14 +136,13 @@ function Vista({ cfg, T, modo, tk }) {
     }
     return tiros(sel.tot, base, tipo.frase || "", ambito);
   }, [sel, base, tipo, ambito, T, Dt, elegido, filas, ver, contra, temporada]);
-  const periodo = temporada === TODAS ? `${T.temporadas[0]} a ${ultima}` : temporada;
+  const periodo = temporada;
   const subtitulo = Dt && elegido
     ? `${tipo.etiqueta} · ${periodo} · ${miles(filas.length)} remates ${ver === "equipo" && contra ? "contra " : "de "}${elegido.nombre}, sin penales`
     : `${tipo.etiqueta} · ${periodo} · ${miles(total)} remates, sin penales`;
   const enCurso = cfg.enCurso && cfg.enCurso[temporada];
   const cambiarVer = (v) => {
     setVer(v); setQuien(""); setTiroSobre(null);
-    if (v !== TODOS && temporada === TODAS) setTemporada(ultima);
   };
   const nombreTipo = (s, b) => {   // «Jugada abierta · Pie derecho» para el tooltip de un tiro
     const j = T.tipos.find((t) => t.col === "situation" && t.valor === T.jugadas[s]);
@@ -353,7 +349,7 @@ function Vista({ cfg, T, modo, tk }) {
               {Dt && !elegido && candidatos.length > 0 && (
                 <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 0.5, mt: 0.75 }}>
                   <Typography sx={{ fontSize: 11.5, color: "text.secondary" }}>Prueba con</Typography>
-                  {candidatos.slice(0, 4).map((o) => (
+                  {candidatos.slice(0, 3).map((o) => (
                     <Chip key={o.id} size="small" variant="outlined" label={o.nombre} onClick={() => setQuien(o.etiqueta)} />
                   ))}
                 </Box>
@@ -374,7 +370,6 @@ function Vista({ cfg, T, modo, tk }) {
             <Rotulo>Temporada</Rotulo>
             <ToggleButtonGroup exclusive size="small" fullWidth value={temporada} aria-label="Temporada"
               onChange={(_e, v) => v && setTemporada(v)} sx={{ flexWrap: "wrap" }}>
-              <ToggleButton value={TODAS} disabled={ver !== TODOS} sx={{ flexBasis: "100%", borderRadius: 1 }}>Todas las temporadas</ToggleButton>
               {T.temporadas.map((t) => (
                 <ToggleButton key={t} value={t} aria-label={t} sx={{ px: 0.5, fontSize: "11.5px !important", flex: "1 0 16%" }}>{t.slice(2)}</ToggleButton>
               ))}
@@ -405,7 +400,7 @@ function Vista({ cfg, T, modo, tk }) {
         <Parrafos texto={cfg.queMirar} sx={{ color: "text.primary" }} />
         <Box sx={{ mt: 2, pl: 2, borderLeft: 3, borderColor: "success.main" }}>
           <Typography sx={{ fontSize: 10.5, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase", color: "success.main", mb: 0.75 }}>
-            Con estos filtros · {temporada === TODAS ? "todas las temporadas" : temporada} · {tipo.etiqueta}
+            Con estos filtros · {temporada} · {tipo.etiqueta}
             {Dt && elegido ? ` · ${elegido.nombre}${ver === "equipo" ? (contra ? " (en contra)" : " (a favor)") : ""}` : ""}
           </Typography>
           <Typography sx={{ fontSize: 14, lineHeight: 1.6, mb: lectura.salta ? 1 : 0 }}><Md texto={lectura.fija} /></Typography>
