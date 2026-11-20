@@ -341,8 +341,8 @@ export function Grafica({
         caja(zonas.br, true, area.top + area.height - 8);
         caja(zonas.bl, false, area.top + area.height - (estrecho ? 24 : 8));
       } else {
-        if (view.y1 > view.x0) obstaculos.push({ x0: area.left, x1: area.left + 140, y0: area.top, y1: area.top + 22 });
-        if (view.y0 < view.x1) obstaculos.push({ x0: area.left + area.width - 128, x1: area.left + area.width,
+        if (view.y1 > view.x0) obstaculos.push({ x0: area.left, x1: area.left + (referencia.sobre.length + 2) * 5.9 + 14, y0: area.top, y1: area.top + 22 });
+        if (view.y0 < view.x1) obstaculos.push({ x0: area.left + area.width - ((referencia.bajo.length + 2) * 5.9 + 14), x1: area.left + area.width,
           y0: area.top + area.height - 22, y1: area.top + area.height });
       }
     }
@@ -357,6 +357,7 @@ export function Grafica({
         const hayArriba = hy > area.top + 18, hayAbajo = hy < area.top + area.height - 12;
         const hayDer = vx < area.left + area.width - 40, hayIzq = vx > area.left + 40;
         // `hacia`: +1 en los de arriba (el renglón extra va hacia abajo), −1 en los de abajo.
+        const puestos = [];   // las cajas de los rótulos ya colocados: dos rótulos de la misma fila no se pisan
         const poner = (clave, ok, x, y, ancla, hacia) => {
           if (!ok || !q[clave]) return;
           const ls = partirRotulo(q[clave]), n = ls.length;
@@ -368,10 +369,14 @@ export function Grafica({
           if (ancla === "start" && x + w > area.left + area.width - 2) { x = area.left + area.width - 2; ancla = "end"; y += salto * hacia; }
           else if (ancla === "end" && x - w < area.left + 2) { x = area.left + 2; ancla = "start"; y += salto * hacia; }
           const x0 = ancla === "start" ? x : x - w;
-          // Arriba el rótulo crece hacia abajo desde `y`; abajo, su última línea queda en `y`.
-          const y1 = hacia > 0 ? y : y - 12 * (n - 1);
-          rotulosCuadrante.push({ clave, x, y: y1, ancla, lineas: ls });
-          obstaculos.push({ x0, x1: x0 + w, y0: y1 - 12, y1: y1 + 12 * (n - 1) + 3 });
+          // Arriba el rótulo crece hacia abajo desde `y`; abajo, su última línea queda en `y`. Si en una pantalla angosta
+          // se pisa con otro rótulo (los dos pegados a su borde), se apila un bloque más adentro.
+          const caja = (yy) => { const y1 = hacia > 0 ? yy : yy - 12 * (n - 1); return { y1, x0, x1: x0 + w, a: y1 - 12, b: y1 + 12 * (n - 1) + 3 }; };
+          let c = caja(y);
+          for (let k = 0; k < 3 && puestos.some((o) => c.x0 < o.x1 && o.x0 < c.x1 && c.a < o.b && o.a < c.b); k++) c = caja(y += salto * hacia);
+          puestos.push(c);
+          rotulosCuadrante.push({ clave, x, y: c.y1, ancla, lineas: ls });
+          obstaculos.push({ x0, x1: x0 + w, y0: c.a, y1: c.b });
         };
         poner("tr", hayArriba && hayDer, vx + 6, arriba, "start", 1);
         poner("tl", hayArriba && hayIzq, vx - 6, arriba, "end", 1);
@@ -483,11 +488,12 @@ export function Grafica({
           ) : (
             <>
               {view.y1 > view.x0 && (
-                <text x={area.left + 8} y={area.top + 16} fontSize={11.5} fontWeight={600} fill={pos}>↑ {referencia.sobre}</text>
+                <text x={area.left + 8} y={area.top + 16} fontSize={11.5} fontWeight={600} fill={pos} paintOrder="stroke" stroke={tk.surface}
+                  strokeWidth={3} strokeLinejoin="round">↑ {referencia.sobre}</text>
               )}
               {view.y0 < view.x1 && (
                 <text x={area.left + area.width - 8} y={area.top + area.height - 8} fontSize={11.5} fontWeight={600}
-                  fill={neg} textAnchor="end">↓ {referencia.bajo}</text>
+                  fill={neg} textAnchor="end" paintOrder="stroke" stroke={tk.surface} strokeWidth={3} strokeLinejoin="round">↓ {referencia.bajo}</text>
               )}
             </>
           )}

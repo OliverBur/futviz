@@ -1319,7 +1319,7 @@ def construir(df, season, liga=None):
 # xG vs. goles por 90', xA vs. asistencias por 90' y pases clave vs. asistencias por 90'. Las tres usan el corte de
 # 900 minutos (`players.MIN_MINUTES_90`): una tasa por 90' con 500 minutos se dispara con un solo gol.
 
-# "Élite": el 20% con más xG por 90' de los que se ven. Tiene que valer lo mismo en `insights.js` (`ELITE_PCT`) y en
+# "Élite": el 30% con más xG por 90' de los que se ven (percentil 70). Tiene que valer lo mismo en `insights.js` (`ELITE_PCT`) y en
 # la línea que dibuja la gráfica (`referencia.zonas.pct`, que sale de aquí).
 ELITE_PCT = 0.7
 # Las líneas punteadas de las demás vistas de dos ejes ("élite" en cada eje, p. ej. el 20% con más pases clave): tiene que
@@ -1350,10 +1350,10 @@ def xg_goles_90_que_mirar():
     return ("A la derecha, los que generan más ocasiones por 90' (xG sin penales); arriba, los que más goles "
             "marcan. La diagonal es \"marcó lo que valían sus ocasiones\".\n\n"
             f"La línea vertical deja a su derecha al {_pct_elite()} con más xG por 90' de los que ves, y la diagonal "
-            "parte cada lado en dos. **Arriba a la derecha**: grandes ocasiones y finalizadores de élite. **Abajo a "
-            "la derecha**: grandes ocasiones con peor finalización, o sea que su producción de goles podría mejorar. "
-            "**Abajo a la izquierda**: sin ocasiones y peor finalizador. **Arriba a la izquierda**: pocas chances y "
-            "gran finalizador.\n\n"
+            "parte cada lado en dos. **Arriba a la derecha**: muchas ocasiones y las meten. **Abajo a "
+            "la derecha**: muchas ocasiones pero las fallan, o sea que su producción de goles podría mejorar. "
+            "**Abajo a la izquierda**: pocas ocasiones y las fallan. **Arriba a la izquierda**: pocas ocasiones "
+            "pero las meten.\n\n"
             "Haz clic en un cuadrante para acercarte a esos jugadores. Compara dentro de una misma posición: un "
             "central y un delantero caen lejísimos sin que eso diga nada de ninguno de los dos.")
 

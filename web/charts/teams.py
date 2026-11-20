@@ -245,7 +245,7 @@ def chart_def_efficiency(df):
         df, "eficiencia-definicion", "Goles vs. xG del equipo",
         "A la derecha, más xG por partido; arriba, más goles. Sobre la diagonal el equipo marcó más de lo que valían sus ocasiones.",
         x=x, y=y,
-        referencia=_diagonal("goles − xG", "Marca más de lo esperado", "Marca menos de lo esperado"),
+        referencia=_diagonal("goles − xG", "Marcan más de lo esperado", "Marcan menos de lo esperado"),
         subtitulo="Equipos de las 5 ligas · {temporada} · por partido, sin penales",
         textos=(ins.definicion_que_mirar, ins.definicion_por_que), insight="definicion")
 
@@ -260,7 +260,7 @@ def chart_creation(df):
         "A la derecha, más xG a favor; arriba, menos xG en contra. Arriba a la derecha dominan las ocasiones.",
         x=x, y=y,
         referencia=_promedios({"tr": "Dominan las ocasiones", "tl": "Partidos cerrados",
-                               "br": "Partidos abiertos", "bl": "Los rivales dominan"}),
+                               "br": "Partidos abiertos", "bl": "Dominan los rivales"}),
         subtitulo="Equipos de las 5 ligas · {temporada} · por partido, sin penales",
         textos=(ins.creacion_que_mirar, ins.creacion_por_que), insight="creacion",
         menos_es_mejor={"y": "los que menos ocasiones conceden"})
@@ -276,8 +276,8 @@ def chart_defense(df):
         df, "defensa", "Goles recibidos vs. xG en contra",
         "A la derecha, menos xG en contra; arriba, menos goles recibidos. Arriba a la derecha, los mejores.",
         x=x, y=y,
-        referencia=_diagonal("goles recibidos − xG en contra", "Recibe menos de lo esperado",
-                             "Recibe más de lo esperado"),
+        referencia=_diagonal("goles recibidos − xG en contra", "Reciben menos de lo esperado",
+                             "Reciben más de lo esperado"),
         subtitulo="Equipos de las 5 ligas · {temporada} · por partido, sin penales",
         textos=(ins.defensa_que_mirar, ins.defensa_por_que), insight="defensa",
         menos_es_mejor={"x": "los que menos ocasiones conceden", "y": "los que menos goles reciben"})
@@ -292,8 +292,8 @@ def chart_points_vs_xg(df):
         df, "puntos-vs-xg", "Puntos vs. diferencia de xG",
         "A la derecha, más xG a favor que en contra por partido; arriba, más puntos. Arriba a la izquierda y abajo a la derecha, puntos y juego no coinciden.",
         x=x, y=y,
-        referencia=_promedios({"tr": "juegan y puntúan", "tl": "puntos de más",
-                               "br": "puntos de menos", "bl": "ni juegan ni puntúan"}),
+        referencia=_promedios({"tr": "Juegan bien y suman", "tl": "Suman más de lo que juegan",
+                               "br": "Suman menos de lo que juegan", "bl": "Ni juegan bien ni suman"}),
         subtitulo="Equipos de las 5 ligas · {temporada} · xG por partido, sin penales",
         textos=(ins.puntos_que_mirar, ins.puntos_por_que), insight="puntos",
         fuente=FUENTE_XG_PUNTOS)
@@ -309,8 +309,8 @@ def chart_shots_quantity_quality(df):
         df, "cantidad-calidad", "Cantidad vs. calidad de los tiros",
         "A la derecha, más tiros por partido; arriba, más xG por tiro. Las líneas dejan al 20% con más de cada uno.",
         x=x, y=y,
-        referencia=_promedios({"tr": "Muchos tiros y de buena calidad", "tl": "Pocos tiros pero de buena calidad",
-                               "br": "Tiran mucho pero no son de calidad", "bl": "Pocos tiros y no tan buenos"},
+        referencia=_promedios({"tr": "Muchos tiros y buena calidad", "tl": "Pocos tiros pero buena calidad",
+                               "br": "Muchos tiros pero poca calidad", "bl": "Pocos tiros y poca calidad"},
                               cuantil=ins.LINEA_PCT),
         subtitulo="Equipos de las 5 ligas · {temporada} · por partido, sin penales",
         textos=(ins.cantidad_calidad_que_mirar, ins.cantidad_calidad_por_que), insight="cantidad_calidad")
@@ -325,8 +325,8 @@ def chart_home_away(df):
         df, "local-visitante", "Local vs. visitante",
         "A la derecha, mejor diferencia de xG de local; arriba, de visitante. Las líneas están en cero.",
         x=x, y=y,
-        referencia=_promedios({"tr": "Dominan en casa y fuera", "tl": "Solo dominan fuera",
-                               "br": "Solo dominan en casa", "bl": "Sufren en los dos"},
+        referencia=_promedios({"tr": "Dominan de local y de visita", "tl": "Dominan solo de visita",
+                               "br": "Dominan solo de local", "bl": "Sufren de local y de visita"},
                               fijo={"x": 0, "y": 0}, etiqueta="Líneas punteadas en cero"),
         subtitulo="Equipos de las 5 ligas · {temporada} · diferencia de xG por partido, sin penales",
         textos=(ins.local_visitante_que_mirar, ins.local_visitante_por_que), insight="local_visitante")
