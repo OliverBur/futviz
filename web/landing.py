@@ -51,7 +51,7 @@ PREGUNTAS = [(entidad, PREGUNTA_DE[slug], slug) for entidad, slug in (
 PRIORIDAD_JUGADOR = {
     "Delantero": ["xg-vs-goles-90", "perfil-ofensivo", "xa-vs-asistencias-90"],
     "Medio": ["perfil-ofensivo", "pases-clave-vs-asistencias", "construir-vs-producir"],
-    "Defensa": ["cover-vs-stopper"],
+    "Defensa": ["corte-vs-cobertura"],
 }
 PRIORIDAD_EQUIPO = ["eficiencia-definicion", "creacion", "defensa"]
 VISTAS_POR_RESULTADO = 3   # la principal + "Ver a {nombre} en…" con dos más

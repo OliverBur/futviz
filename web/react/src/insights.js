@@ -163,7 +163,7 @@ export function construir(T, filas, ambito) {
 // Las tres vistas "por 90'" de goles y asistencias. Mismo texto que `xg_goles_90`, `xa_asist_90` y `pases_asist`
 // de `code/insights.py`. `ELITE_PCT` tiene que valer lo mismo que allá (y que `referencia.zonas.pct` de la gráfica).
 export const ELITE_PCT = 0.7;
-const LINEA_PERCENTIL = 80;   // Cover vs. Stopper: ver `LINEA_PERCENTIL` de insights.py
+const LINEA_PERCENTIL = 70;   // Cover vs. Stopper: ver `LINEA_PERCENTIL` de insights.py
 
 export function xgGoles90(T, filas, ambito) {
   const fija = `En ${ambito}: ` + lideres(T, filas, "npxg90", "npg90", fmt, fmt,
@@ -202,10 +202,10 @@ export function pasesAsist(T, filas, ambito) {
   return { fija, salta };
 }
 
-// Defensa: Cover vs. Stopper. Mismo texto que `cover_stopper` de `code/insights.py`.
+// Defensa: Corte vs. Cobertura. Mismo texto que `cover_stopper` de `code/insights.py`.
 export function coverStopper(T, filas, ambito) {
   const f0 = (v) => fmt(v, 0);
-  const fija = `En ${ambito}: ` + lideres(T, filas, "pct_stopper", "pct_cover", f0, f0, "más Stopper", "más Cover");
+  const fija = `En ${ambito}: ` + lideres(T, filas, "pct_stopper", "pct_cover", f0, f0, "más corte", "más cobertura");
   if (filas.length < 5) return { fija, salta: null };
   let a = 0, b = 0, c = 0;
   for (const r of filas) {
@@ -213,7 +213,7 @@ export function coverStopper(T, filas, ambito) {
     if (stop && !cov) a++; else if (cov && !stop) b++; else if (stop && cov) c++;
   }
   const e = filas[idxmax(filas.map((r) => T.c.pct_stopper[r] + T.c.pct_cover[r]))];
-  const salta = `De ${filas.length} defensas, ${a} se inclinan al Stopper, ${b} al Cover, ${c} a los dos y ${filas.length - a - b - c} a ninguno (las líneas están en el percentil ${LINEA_PERCENTIL}). El más completo es **${quien(T, e)}** (${T.equipo(e)}): ${f0(T.c.pct_stopper[e])} de Stopper y ${f0(T.c.pct_cover[e])} de Cover.`;
+  const salta = `De ${filas.length} defensas, ${a} se inclinan al corte, ${b} a la cobertura, ${c} a los dos y ${filas.length - a - b - c} a ninguno (las líneas están en el percentil ${LINEA_PERCENTIL}). El más completo es **${quien(T, e)}** (${T.equipo(e)}): ${f0(T.c.pct_stopper[e])} de corte y ${f0(T.c.pct_cover[e])} de cobertura.`;
   return { fija, salta };
 }
 

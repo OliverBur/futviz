@@ -310,7 +310,7 @@ def chart_xg_goals_90(df):
                     "tl": "Pocas chances y gran finalizador"}
     return _scatter(
         "xg-vs-goles-90", "xG vs. goles por 90'",
-        f"Cada punto es un jugador. Sobre la diagonal marcó más de lo que valían sus ocasiones; la línea vertical deja a la derecha al {ins._pct_elite()} con más xG.",
+        f"Sobre la diagonal marcó más que su xG; a la derecha de la línea, el {ins._pct_elite()} con más xG.",
         x=x, y=y, referencia=ref,
         subtitulo="Jugadores con ≥{min} min · {temporada}",
         textos=(ins.xg_goles_90_que_mirar, ins.xg_goles_90_por_que), insight="xg_goles_90", poblacion=df,
@@ -319,11 +319,15 @@ def chart_xg_goals_90(df):
 
 def chart_xa_assists_90(df):
     x, y = _eje("xA90", "xA por 90'", "xA por 90'", 2), _eje("a90", "Asistencias por 90'", "Asistencias por 90'", 2)
+    ref = _diagonal(x, y, "asistencias − xA por 90'", dec_dif=2,
+                    sobre="Asiste más de lo esperado", bajo="Asiste menos de lo esperado")
+    # La vertical (el 20% con más xA) y la diagonal (dio lo esperado) parten la gráfica en cuatro zonas.
+    ref["zonas"] = {"pct": ins.LINEA_PCT, "variable": "xA por 90'", "tl": "Asisten más de lo esperado",
+                    "tr": "Élite en creación", "bl": "Poco involucramiento", "br": "Asisten menos de lo esperado"}
     return _scatter(
         "xa-vs-asistencias-90", "xA vs. asistencias por 90'",
-        "Cada punto es un jugador. Sobre la diagonal dio más asistencias de las que valían sus pases (xA); debajo, menos.",
-        x=x, y=y, referencia=_diagonal(x, y, "asistencias − xA por 90'", dec_dif=2,
-                                       sobre="Asiste más de lo esperado", bajo="Asiste menos de lo esperado"),
+        "Sobre la diagonal dio más asistencias que su xA; a la derecha de la línea, el 20% con más xA.",
+        x=x, y=y, referencia=ref,
         subtitulo="Jugadores con ≥{min} min · {temporada}",
         textos=(ins.xa_asist_90_que_mirar, ins.xa_asist_90_por_que), insight="xa_asist_90", poblacion=df,
         color_por=["liga", "rendimiento"], minimo_por90=True, posiciones_ini=POSICIONES_INI)
@@ -333,9 +337,12 @@ def chart_profile(df):
     x, y = _eje("xG90", "xG por 90'", "xG90", 2), _eje("xA90", "xA por 90'", "xA90", 2)
     return _scatter(
         "perfil-ofensivo", "Perfil ofensivo: xG90 vs. xA90",
-        "A la derecha, más xG por 90' (remata); arriba, más xA por 90' (crea). Abre con medios y delanteros; cambia las posiciones a gusto.",
+        "A la derecha, más xG por 90' (remata); arriba, más xA por 90' (crea). Abre con medios y delanteros.",
         x=x, y=y,
-        referencia=_promedios({"tr": "rematan y crean", "tl": "crean", "br": "rematan", "bl": "participan poco"}),
+        referencia=_promedios({"tl": "Élite en creación, pocos remates: generan",
+                               "tr": "Élite en creación y remates: generan y finalizan",
+                               "br": "Poca creación y élite en remates: finalizan",
+                               "bl": "Poca creación y pocos remates: poco involucramiento"}),
         subtitulo="Jugadores con ≥{min} min · {temporada}",
         textos=(ins.perfil_que_mirar, ins.perfil_por_que), insight="perfil", poblacion=df,
         posiciones_ini=["Medio", "Delantero"])   # el de atacantes: no incluye defensas
@@ -344,14 +351,14 @@ def chart_profile(df):
 def chart_cover_stopper(df):
     """Defensa: percentil de Cover (intercepciones) contra percentil de Stopper (entradas ganadas y faltas), entre los
     defensas con el corte por 90'. Los percentiles los calcula `load_data` (`pct_cover`, `pct_stopper`)."""
-    x = _eje("pct_cover", "Cover: percentil de intercepciones por 90'", "Cover", 0)
-    y = _eje("pct_stopper", "Stopper: percentil de entradas ganadas y faltas por 90'", "Stopper", 0)
+    x = _eje("pct_cover", "Cobertura: percentil de intercepciones por 90'", "Cobertura", 0)
+    y = _eje("pct_stopper", "Corte: percentil de entradas ganadas y faltas por 90'", "Corte", 0)
     return _scatter(
-        "cover-vs-stopper", "Cover vs. Stopper",
-        "Percentiles entre los defensas: arriba, los que van al choque (Stopper); a la derecha, los que leen el pase (Cover).",
+        "corte-vs-cobertura", "Corte vs. Cobertura",
+        "Arriba, los defensas que van al choque (corte); a la derecha, los que leen el pase (cobertura).",
         x=x, y=y,
         referencia={"tipo": "promedios", "fijo": {"x": ins.LINEA_PERCENTIL, "y": ins.LINEA_PERCENTIL},
-                    "cuadrantes": {"tr": "hacen las dos", "tl": "stoppers", "br": "covers", "bl": "casi no aparecen"}},
+                    "cuadrantes": {"tr": "Corte y cobertura", "tl": "Corte", "br": "Cobertura", "bl": "Casi no aparecen"}},
         subtitulo="Defensas con ≥{min} min · {temporada}",
         textos=(ins.cover_stopper_que_mirar, ins.cover_stopper_por_que), insight="cover_stopper",
         poblacion=df[df["pct_stopper"].notna()].reset_index(drop=True), fuente=FUENTE_FBREF,
@@ -376,9 +383,9 @@ def chart_key_passes_assists(df):
         x=_eje("kp90", "Pases clave por 90'", "Pases clave por 90'", 2),
         y=_eje("a90", "Asistencias por 90'", "Asistencias por 90'", 2),
         subtitulo="Jugadores con ≥{min} min · {temporada}",
-        descripcion="A la derecha, más pases clave por 90' (los que acaban en tiro); arriba, más asistencias. Abajo a la derecha: crean y no los terminan.",
-        referencia=_promedios({"tr": "crean y los terminan", "br": "crean; no los terminan",
-                               "tl": "pocos, muy aprovechados", "bl": "poca creación"}),
+        descripcion="A la derecha, más pases clave por 90' (los que acaban en tiro); arriba, más asistencias por 90'.",
+        referencia=_promedios({"tl": "Pocos pases clave, muy aprovechados", "tr": "Élite en creación y finalizan",
+                               "bl": "Poco involucramiento", "br": "Élite en creación pero no finalizan"}),
         textos=(ins.pases_asist_que_mirar, ins.pases_asist_por_que), insight="pases_asist", minimo_por90=True,
         posiciones_ini=POSICIONES_INI)
 
@@ -390,8 +397,8 @@ def chart_build_vs_produce(df):
         y=_eje("xga90", "Producción esperada por 90' (xG + xA)", "Producción", 2),
         subtitulo="Jugadores con ≥{min} min · {temporada}",
         descripcion="A la derecha, quien más construye (xG de construcción por 90'); arriba, quien más produce directo (xG + xA).",
-        referencia=_promedios({"tr": "construyen y finalizan", "tl": "finalizan", "br": "construyen",
-                               "bl": "poco peso ofensivo"}),
+        referencia=_promedios({"tl": "Finalizadores", "tr": "Élite en construcción y finalización",
+                               "bl": "Poco involucramiento", "br": "Creación de juego"}),
         textos=(ins.construir_que_mirar, ins.construir_por_que), insight="construir", posiciones_ini=POSICIONES_INI)
 
 
@@ -459,7 +466,7 @@ PESTANAS = [
     ("xa-vs-asistencias-90", "xA vs. asistencias por 90", "Creación"),
     ("pases-clave-vs-asistencias", "Pases clave vs. asistencias", "Creación"),
     ("construir-vs-producir", "Construcción vs. producción", "Creación"),
-    ("cover-vs-stopper", "Cover vs. Stopper", "Defensa"),
+    ("corte-vs-cobertura", "Corte vs. Cobertura", "Defensa"),
     ("edad", "Edad", "_explorar"),
     ("crea-tu-grafico-jugadores", "Crea tu gráfico", "_explorar"),   # "_": grupo aparte, sin rótulo
 ]

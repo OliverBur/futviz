@@ -12,7 +12,7 @@ PREGUNTAS = {
     "xa-vs-asistencias-90": "¿Quién da más asistencias de las que debería?",
     "pases-clave-vs-asistencias": "¿Quién crea ocasiones que sus compañeros desperdician?",
     "construir-vs-producir": "¿Quién construye, quién termina y quién lo hace todo?",
-    "cover-vs-stopper": "¿Quién va al choque y quién lee el juego?",
+    "corte-vs-cobertura": "¿Quién va al choque y quién lee el juego?",
     "edad": "¿A qué edad se juega más y a cuál se rinde mejor?",
     "crea-tu-grafico-jugadores": "¿Cómo se relacionan dos variables que tú elijas?",
     # Equipos

@@ -1323,10 +1323,10 @@ def construir(df, season, liga=None):
 # la línea que dibuja la gráfica (`referencia.zonas.pct`, que sale de aquí).
 ELITE_PCT = 0.7
 # Las líneas punteadas de las demás vistas de dos ejes ("élite" en cada eje, p. ej. el 20% con más pases clave): tiene que
-# valer lo mismo en `insights.js` (`LINEA_PCT`) y en `players._promedios`. Las de Cover vs. Stopper van en el percentil
-# 80 de una escala que ya es de percentiles (`LINEA_PERCENTIL`).
+# valer lo mismo en `insights.js` (`LINEA_PCT`) y en `players._promedios`. Las de Corte vs. Cobertura van en el percentil
+# 70 de una escala que ya es de percentiles (`LINEA_PERCENTIL`).
 LINEA_PCT = 0.8
-LINEA_PERCENTIL = 80
+LINEA_PERCENTIL = 70
 MIN_MINUTOS_90 = 900
 
 
@@ -1403,7 +1403,11 @@ def xa_asist_90_que_mirar():
     return ("A la derecha, los que dan pases de más peligro por 90' (xA); arriba, los que más asistencias dan. "
             "Por encima de la diagonal están los jugadores cuyos compañeros definieron mejor de lo esperado lo que "
             "les pusieron: parte del mérito es de quien remata. Debajo, a los que les desperdician más pases de lo "
-            "normal.")
+            "normal.\n\n"
+            f"La línea vertical deja a su derecha al {round((1 - LINEA_PCT) * 100)}% con más xA por 90' de los que ves, "
+            "y la diagonal parte cada lado en dos. **Arriba a la derecha**: élite en creación. **Abajo a la derecha**: "
+            "asisten menos de lo esperado. **Arriba a la izquierda**: asisten más de lo esperado. **Abajo a la "
+            "izquierda**: poco involucramiento. Haz clic en un cuadrante para acercarte a esos jugadores.")
 
 
 def xa_asist_90_por_que(df):
@@ -1475,20 +1479,20 @@ def pases_asist(df, season, liga=None):
 
 
 # --------------------------------------------------------------------------
-# Defensa: Cover vs. Stopper (2026-11-19)
+# Defensa: Corte vs. Cobertura (2026-11-19)
 # --------------------------------------------------------------------------
 #
 # Reemplaza a las dos vistas defensivas anteriores. Percentiles de 0 a 100 entre los defensas con el corte de 900
-# minutos, dentro de cada temporada: Stopper = promedio de los percentiles de entradas ganadas y faltas cometidas;
-# Cover = percentil de intercepciones. Las cuentan de FBref; despejes, bloqueos y duelos no existen en nuestros datos.
+# minutos, dentro de cada temporada: corte = promedio de los percentiles de entradas ganadas y faltas cometidas;
+# cobertura = percentil de intercepciones. Las cuentan de FBref; despejes, bloqueos y duelos no existen en nuestros datos.
 
 def cover_stopper_que_mirar():
-    return ("Arriba a la izquierda, los **stoppers**: van al choque (entradas ganadas y faltas) y interceptan poco. "
-            "Abajo a la derecha, los **covers**: leen el pase y se anticipan, y entran y faltan poco. Arriba a la "
+    return ("Arriba a la izquierda, los de **corte**: van al choque (entradas ganadas y faltas) e interceptan poco. "
+            "Abajo a la derecha, los de **cobertura**: leen el pase y se anticipan, y entran y faltan poco. Arriba a la "
             "derecha, los que hacen las dos cosas; abajo a la izquierda, los que casi no aparecen en estas acciones.\n\n"
             "Cada eje es un **percentil de 0 a 100** entre los defensas de esa temporada: 90 quiere decir \"más que "
             f"el 90% de los defensas\". Las líneas están en el {LINEA_PERCENTIL}, así que arriba a la derecha quedan "
-            "solo los más destacados de los dos. Haz clic en un cuadrante para acercarte a esos jugadores.\n\n"
+            "los más destacados de los dos. Haz clic en un cuadrante para acercarte a esos jugadores.\n\n"
             "Dos avisos. **El equipo manda**: quien juega en un club que no tiene la pelota defiende más, sin que "
             "eso diga nada de él. Y aquí van juntos centrales y laterales, porque los datos no los separan: el "
             "filtro de nivel del club ayuda a comparar entre iguales.")
@@ -1502,8 +1506,8 @@ def cover_stopper_por_que(df):
         f"con lo que hay. De las acciones defensivas de FBref solo sobreviven **entradas ganadas, intercepciones y "
         f"faltas cometidas**; **no hay despejes, bloqueos ni duelos aéreos ni % de duelos ganados**, que son justo "
         f"lo que más separa a un central de otro. Es una aproximación, no el perfil completo.\n\n"
-        f"El **Stopper** es el promedio de los percentiles de entradas ganadas y de faltas cometidas por 90': las "
-        f"faltas cuentan porque acompañan al choque, aunque no sean algo bueno en sí. El **Cover** es el "
+        f"El **corte** es el promedio de los percentiles de entradas ganadas y de faltas cometidas por 90': las "
+        f"faltas cuentan porque acompañan al choque, aunque no sean algo bueno en sí. La **cobertura** es el "
         f"percentil de intercepciones por 90', una sola variable. Los percentiles se sacan **dentro de cada "
         f"temporada** entre los defensas con {MIN_MINUTOS_90} minutos o más (en la que va en curso, el corte que "
         f"dice el subtítulo), y por eso las dos temporadas no se mezclan.\n\n"
@@ -1517,15 +1521,15 @@ def cover_stopper(df, season, liga=None):
     d, ambito = _ambito(df, season, liga)
     fija = f"En {ambito}: " + _lideres(
         d, "pct_stopper", "pct_cover", "player", lambda v: _fmt(v, 0), lambda v: _fmt(v, 0),
-        "más Stopper", "más Cover")
+        "más corte", "más cobertura")
     if len(d) < 5:
         return fija, None
     stop, cov = d["pct_stopper"] > LINEA_PERCENTIL, d["pct_cover"] > LINEA_PERCENTIL
     a, b, c = int((stop & ~cov).sum()), int((cov & ~stop).sum()), int((stop & cov).sum())
     e = d.loc[(d["pct_stopper"] + d["pct_cover"]).idxmax()]
-    salta = (f"De {len(d)} defensas, {a} se inclinan al Stopper, {b} al Cover, {c} a los dos y {len(d) - a - b - c} a "
+    salta = (f"De {len(d)} defensas, {a} se inclinan al corte, {b} a la cobertura, {c} a los dos y {len(d) - a - b - c} a "
              f"ninguno (las líneas están en el percentil {LINEA_PERCENTIL}). El más completo es **{e['player']}** ({e['team']}): "
-             f"{_fmt(e['pct_stopper'], 0)} de Stopper y {_fmt(e['pct_cover'], 0)} de Cover.")
+             f"{_fmt(e['pct_stopper'], 0)} de corte y {_fmt(e['pct_cover'], 0)} de cobertura.")
     return fija, salta
 
 

@@ -344,8 +344,9 @@ ALIAS_VISTAS = {
     "goles-vs-xg": "xg-vs-goles-90",
     "asistencias-vs-xa": "xa-vs-asistencias-90",
     "pases-clave-vs-xa": "pases-clave-vs-asistencias",
-    "recuperacion-vs-faltas": "cover-vs-stopper",
-    "perfil-defensivo": "cover-vs-stopper",
+    "recuperacion-vs-faltas": "corte-vs-cobertura",
+    "perfil-defensivo": "corte-vs-cobertura",
+    "cover-vs-stopper": "corte-vs-cobertura",
 }
 
 

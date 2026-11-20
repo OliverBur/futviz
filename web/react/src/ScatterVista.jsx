@@ -729,7 +729,7 @@ function Vista({ cfg, T, modo, tk }) {
                     : "Líneas punteadas: promedio de cada eje · ") : ""}
               {cfg.nota ? `${cfg.nota} · ` : ""}
               {ref && ref.banda ? "Franja gris: hasta donde llega el azar · " : ""}
-              {ref && ref.zonas ? `Línea vertical: el ${Math.round((1 - ref.zonas.pct) * 100)}% con más xG por 90' de los que ves · ` : ""}
+              {ref && ref.zonas ? `Línea vertical: el ${Math.round((1 - ref.zonas.pct) * 100)}% con más ${ref.zonas.variable || "xG por 90'"} de los que ves · ` : ""}
               {lineas ? "Clic en un cuadrante para acercarte a esos jugadores · " : ""}
               {movil
                 ? "Arrastra para mover · usa los botones para hacer zoom · toca un punto para resaltarlo"

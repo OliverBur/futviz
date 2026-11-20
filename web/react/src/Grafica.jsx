@@ -98,6 +98,16 @@ function PuntoTooltip(props) {
   );
 }
 
+// Un rótulo largo de cuadrante se parte en dos renglones, por el espacio más cercano a la mitad: a un lado de la línea
+// punteada suele haber poco lugar y en una sola línea se encimaba con la línea y con los puntos.
+function partirRotulo(t) {
+  if (t.length <= 26) return [t];
+  const m = t.length / 2;
+  let mejor = -1;
+  for (let i = 0; i < t.length; i++) if (t[i] === " " && (mejor < 0 || Math.abs(i - m) < Math.abs(mejor - m))) mejor = i;
+  return mejor < 0 ? [t] : [t.slice(0, mejor), t.slice(mejor + 1)];
+}
+
 // --- capas dentro del <svg> -----------------------------------------------------
 function CapaSuperior({ area, referencia, etiquetas, rotulosCuadrante, tk }) {
   const id = "rx-clip-" + useId().replace(/:/g, "");
@@ -117,7 +127,9 @@ function CapaSuperior({ area, referencia, etiquetas, rotulosCuadrante, tk }) {
       )}
       {rotulosCuadrante.map((q) => (
         <text key={q.clave} x={q.x} y={q.y} textAnchor={q.ancla} fontSize={10.5} fill={tk.muted}
-          stroke={tk.surface} strokeWidth={3} paintOrder="stroke" strokeLinejoin="round">{q.texto}</text>
+          stroke={tk.surface} strokeWidth={3} paintOrder="stroke" strokeLinejoin="round">
+          {q.lineas.map((l, i) => <tspan key={i} x={q.x} dy={i ? 12 : 0}>{l}</tspan>)}
+        </text>
       ))}
       {etiquetas.map((e) => (
         // `rx-etiquetas`: mientras corre la entrada, las etiquetas esperan a que lleguen sus puntos.
@@ -344,15 +356,19 @@ export function Grafica({
         // `hacia`: +1 en los de arriba (el renglón extra va hacia abajo), −1 en los de abajo.
         const poner = (clave, ok, x, y, ancla, hacia) => {
           if (!ok || !q[clave]) return;
-          const w = q[clave].length * 5.7 + 6;
+          const ls = partirRotulo(q[clave]), n = ls.length;
+          const w = Math.max(...ls.map((l) => l.length)) * 5.7 + 6;
+          const salto = 12 * n + 2;
           // Pegado a la línea de promedio, pero sin salirse del recuadro. Si no cabe entre la línea y el borde
           // (pantalla angosta, o la línea muy cerca de un lado), se pega al borde un renglón más adentro: corrido
           // hacia dentro en el mismo renglón se encimaba con el rótulo del otro lado.
-          if (ancla === "start" && x + w > area.left + area.width - 2) { x = area.left + area.width - 2; ancla = "end"; y += 14 * hacia; }
-          else if (ancla === "end" && x - w < area.left + 2) { x = area.left + 2; ancla = "start"; y += 14 * hacia; }
+          if (ancla === "start" && x + w > area.left + area.width - 2) { x = area.left + area.width - 2; ancla = "end"; y += salto * hacia; }
+          else if (ancla === "end" && x - w < area.left + 2) { x = area.left + 2; ancla = "start"; y += salto * hacia; }
           const x0 = ancla === "start" ? x : x - w;
-          rotulosCuadrante.push({ clave, x, y, ancla, texto: q[clave] });
-          obstaculos.push({ x0, x1: x0 + w, y0: y - 12, y1: y + 3 });
+          // Arriba el rótulo crece hacia abajo desde `y`; abajo, su última línea queda en `y`.
+          const y1 = hacia > 0 ? y : y - 12 * (n - 1);
+          rotulosCuadrante.push({ clave, x, y: y1, ancla, lineas: ls });
+          obstaculos.push({ x0, x1: x0 + w, y0: y1 - 12, y1: y1 + 12 * (n - 1) + 3 });
         };
         poner("tr", hayArriba && hayDer, vx + 6, arriba, "start", 1);
         poner("tl", hayArriba && hayIzq, vx - 6, arriba, "end", 1);
