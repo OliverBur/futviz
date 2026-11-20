@@ -149,28 +149,24 @@ function Vista({ cfg, D, modo, tk }) {
   const solos = [1, 2, 4];
 
   // El logo va dentro del SVG como imagen incrustada: un SVG que se dibuja en un canvas no puede cargar archivos externos.
-  const cargarLogo = async () => {
-    try {
-      const ruta = modo === "dark" ? "assets/logo-dark.png" : "assets/logo.png";
-      const blob = await (await fetch(ruta)).blob();
-      return await new Promise((ok, fallo) => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.onerror = fallo; fr.readAsDataURL(blob); });
-    } catch { return null; }
-  };
+  // Viene en los datos (un data URI): pedirlo con fetch fallaba en una página abierta desde el disco.
+  const cargarLogo = async () => (D.logos && D.logos[paleta]) || null;
 
   const descargar = async () => {
     const pn = pastillas(venn, V.cut, corte, 1);
     const full = acomodar(V.reg, pn.map((p) => p.bloq), false);
     const marca = construirSvg({ ...contexto, fichas: full, pills: pn, hover: null });
     const logo = await cargarLogo();
-    const TW = 1200, TH = 1340, LH = 64, LW = LH * 1682 / 416;
+    const TW = 1200, TH = 1340, LH = 56, LW = LH * ((D.logos && D.logos.proporcion) || 4);
     const doc = `<svg xmlns="http://www.w3.org/2000/svg" width="${TW}" height="${TH}" viewBox="0 0 ${TW} ${TH}" font-family="Inter, 'Segoe UI', Arial, sans-serif">`
       + `<rect width="${TW}" height="${TH}" fill="${tk.surface}"/>`
       + `<text x="60" y="96" font-size="52" font-weight="800" fill="${tk.primary}">${esc(venn.titulo)}</text>`
       + `<text x="60" y="140" font-size="23" fill="${tk.muted}">${esc(sub)}</text>`
       + `<text x="60" y="180" font-size="23" font-weight="600" fill="${tk["text-body"]}">${esc(L.centro.replace(/\*\*/g, "").split(" (")[0] + (V.reg[7].length ? "." : ""))}</text>`
       + `<svg x="60" y="200" width="1080" height="1066" viewBox="${VIEWBOX}">${marca}</svg>`
-      + (logo ? `<image href="${logo}" x="${TW - 60 - LW}" y="${TH - 40 - LH}" width="${LW}" height="${LH}"/>` : "")
-      + `<text x="60" y="1312" font-size="20" fill="${tk.muted}">Datos: ${esc(cfg.fuente)} · corte: el ${corte}% de arriba de su posición</text></svg>`;
+      + (logo ? `<image href="${logo}" x="60" y="${TH - 28 - LH}" width="${LW}" height="${LH}"/>`
+        : `<text x="60" y="1312" font-size="30" font-weight="800" fill="${tk.primary}">FutViz</text>`)
+      + `<text x="${TW - 60}" y="1308" text-anchor="end" font-size="10.5" fill="${tk.muted}">Datos: ${esc(cfg.fuente)} · corte: el ${corte}% de arriba de su posición</text></svg>`;
     const url = URL.createObjectURL(new Blob([doc], { type: "image/svg+xml;charset=utf-8" }));
     const img = new Image();
     img.onload = () => {
