@@ -45,7 +45,7 @@ import { Ranking } from "./Ranking.jsx";
 import { Cuadrito, Posiciones } from "./Posiciones.jsx";
 import { Tabla } from "./Tabla.jsx";
 import { Aviso, Cargando, Encabezado, Md, Parrafos, Rotulo, sinAcentos } from "./ui.jsx";
-import { acercar, ajustarA, ajustarEjes, centrarEn, esBase, zonaDe } from "./zoom.js";
+import { acercar, ajustarA, centrarEn, esBase, vistaDeZona, zonaDe } from "./zoom.js";
 import { TOPE_DIF, colorRendimiento, conAlfa, divergente } from "./colores.js";
 import { cuantil, media } from "./stats.js";
 import { GENERADORES, lecturaExplorador } from "./insights.js";
@@ -375,15 +375,12 @@ function Vista({ cfg, T, modo, tk }) {
     if (r != null) setFijados((p) => (p.includes(T.f.j[r]) ? p.filter((x) => x !== T.f.j[r]) : [...p, T.f.j[r]].slice(-MAX_PINES)));
   }, [idsPorSerie, T]);
 
-  // Un clic en un cuadrante: la vista se ajusta a los jugadores que caen en él (el clic en el mismo cuadrante ya acercado no cambia nada).
+  // Un clic en un cuadrante: la vista se recorta justo en las líneas punteadas y se ajusta a los jugadores que caen en él.
   const alZona = (id) => {
     if (!lineas) return;
     const pts = visibles.filter((r) => zonaDe(lineas, xs[r], ys[r]) === id).map((r) => ({ x: xs[r], y: ys[r] }));
     if (!pts.length) return;
-    // La esquina donde se cruzan las líneas también entra en la vista, para que se vea desde dónde empieza el cuadrante. Con la
-    // diagonal se acerca por igual en los dos ejes (la diagonal no se deforma); en las demás, cada eje por su cuenta.
-    if (lineas.tipo === "rect") mover(ajustarEjes([...pts, { x: lineas.cx, y: lineas.cy }], base, 0.08));
-    else mover(ajustarA([...pts, { x: lineas.cx, y: lineas.cx }], base, 0.12));
+    mover(vistaDeZona(pts, lineas, id, base));
   };
 
   const alternarLiga = (li) => setLigasOn((on) => {

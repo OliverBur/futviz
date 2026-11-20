@@ -1322,11 +1322,11 @@ def construir(df, season, liga=None):
 # "Élite": el 20% con más xG por 90' de los que se ven. Tiene que valer lo mismo en `insights.js` (`ELITE_PCT`) y en
 # la línea que dibuja la gráfica (`referencia.zonas.pct`, que sale de aquí).
 ELITE_PCT = 0.7
-# Las líneas punteadas de las demás vistas de dos ejes ("élite" en cada eje, p. ej. el 30% con más pases clave): tiene que
+# Las líneas punteadas de las demás vistas de dos ejes ("élite" en cada eje, p. ej. el 20% con más pases clave): tiene que
 # valer lo mismo en `insights.js` (`LINEA_PCT`) y en `players._promedios`. Las de Cover vs. Stopper van en el percentil
-# 70 de una escala que ya es de percentiles (`LINEA_PERCENTIL`).
-LINEA_PCT = 0.7
-LINEA_PERCENTIL = 70
+# 80 de una escala que ya es de percentiles (`LINEA_PERCENTIL`).
+LINEA_PCT = 0.8
+LINEA_PERCENTIL = 80
 MIN_MINUTOS_90 = 900
 
 

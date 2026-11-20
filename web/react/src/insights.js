@@ -163,7 +163,7 @@ export function construir(T, filas, ambito) {
 // Las tres vistas "por 90'" de goles y asistencias. Mismo texto que `xg_goles_90`, `xa_asist_90` y `pases_asist`
 // de `code/insights.py`. `ELITE_PCT` tiene que valer lo mismo que allá (y que `referencia.zonas.pct` de la gráfica).
 export const ELITE_PCT = 0.7;
-const LINEA_PERCENTIL = 70;   // Cover vs. Stopper: ver `LINEA_PERCENTIL` de insights.py
+const LINEA_PERCENTIL = 80;   // Cover vs. Stopper: ver `LINEA_PERCENTIL` de insights.py
 
 export function xgGoles90(T, filas, ambito) {
   const fija = `En ${ambito}: ` + lideres(T, filas, "npxg90", "npg90", fmt, fmt,

@@ -73,20 +73,32 @@ export function ajustarA(puntos, base, margen = 0.08, acercamientoMax = ZOOM_MAX
   }, base);
 }
 
-// Como `ajustarA`, pero cada eje por su cuenta: para las vistas cuyos ejes tienen unidades distintas (pases clave contra
-// asistencias), donde no hay diagonal que deformar y conservar la proporción de la base dejaba casi sin acercar un cuadrante
-// ancho. `encuadrar` lo mantiene dentro de la base.
-export function ajustarEjes(puntos, base, margen = 0.08) {
+// La vista de un cuadrante: cada eje por su cuenta (no hay por qué conservar la proporción de la base) y recortada JUSTO en
+// las líneas punteadas del lado donde el cuadrante termina en una línea, así lo de los demás cuadrantes sale de la vista.
+// Por los otros lados deja un margen sobre los puntos. `id`: "tr", "tl", "br" o "bl". Con las líneas "diag" (la vertical y la
+// diagonal y = x) solo la vertical es un corte recto: el lado de la diagonal queda en los puntos. `encuadrar` lo mantiene
+// dentro de la base.
+export function vistaDeZona(puntos, lineas, id, base, margen = 0.06) {
   if (!puntos.length) return base;
   let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
   for (const p of puntos) {
     if (p.x < x0) x0 = p.x; if (p.x > x1) x1 = p.x;
     if (p.y < y0) y0 = p.y; if (p.y > y1) y1 = p.y;
   }
-  const w = Math.max((x1 - x0) * (1 + margen * 2), anchoDe(base) / ZOOM_MAX);
-  const h = Math.max((y1 - y0) * (1 + margen * 2), altoDe(base) / ZOOM_MAX);
-  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
-  return encuadrar({ x0: cx - w / 2, x1: cx + w / 2, y0: cy - h / 2, y1: cy + h / 2 }, base);
+  const minW = anchoDe(base) / ZOOM_MAX, minH = altoDe(base) / ZOOM_MAX;
+  const padX = Math.max(x1 - x0, minW) * margen, padY = Math.max(y1 - y0, minH) * margen;
+  const derecha = id[1] === "r", arriba = id[0] === "t";
+  // los lados que son una línea: exactos; los demás, con margen
+  if (derecha) { x0 = lineas.cx; x1 += padX; } else { x1 = lineas.cx; x0 -= padX; }
+  if (lineas.tipo === "rect") {
+    if (arriba) { y0 = lineas.cy; y1 += padY; } else { y1 = lineas.cy; y0 -= padY; }
+  } else {
+    if (arriba) { y0 = derecha ? Math.min(y0, lineas.cx) : y0 - padY; y1 += padY; } else { y0 -= padY; y1 += padY; }
+  }
+  // un cuadrante con casi nadie no se acerca más de la cuenta
+  if (x1 - x0 < minW) { const m = (x0 + x1) / 2; x0 = m - minW / 2; x1 = m + minW / 2; }
+  if (y1 - y0 < minH) { const m = (y0 + y1) / 2; y0 = m - minH / 2; y1 = m + minH / 2; }
+  return encuadrar({ x0, x1, y0, y1 }, base);
 }
 
 // El cuadrante de un punto respecto de las líneas de una vista: "tr", "tl", "br" o "bl" (arriba o abajo, derecha o izquierda).
