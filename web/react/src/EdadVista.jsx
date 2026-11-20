@@ -1,9 +1,5 @@
-// Edad: dos paneles que comparten el eje de la edad (17 a 38 años).
-//
-//  1. Minutos por edad: mediana y rango típico (percentil 25 a 75) del % de los minutos de su club que jugó cada
-//     jugador-temporada, con barras que cuentan cuántos hay en cada edad.
-//  2. Rendimiento por edad, por el método del cambio de un año al siguiente: la curva relativa al nivel a los 22 años
-//     (= 100) con su intervalo de bootstrap. Delantero y Medio comparten métrica; Defensa tiene la suya; Portero no entra.
+// Edad: los minutos por edad (17 a 38 años). Mediana y rango típico (percentil 25 a 75) del % de los minutos de su club que
+// jugó cada jugador-temporada, con barras que cuentan cuántos hay en cada edad.
 //
 // Todo el cálculo está hecho en el build (`web/charts/edad.py`): aquí solo se dibuja lo que viaja en `datos-edad.js`.
 // SVG propio, en el mismo lenguaje que el resto de las gráficas (rejilla suave, ejes en gris, números en el hover).
@@ -22,8 +18,8 @@ import { conAlfa } from "./colores.js";
 import { lecturaEdad } from "./edadLectura.js";
 import { miles } from "./stats.js";
 
-const MG = { l: 46, r: 12, t: 10 };       // márgenes de los dos SVG (los mismos: el eje X se alinea)
-const ALTO1 = 200, ALTO_BARRAS = 36, ALTO2 = 240, ALTO_EJE = 24;
+const MG = { l: 46, r: 12, t: 10 };       // márgenes del SVG
+const ALTO1 = 220, ALTO_BARRAS = 36, ALTO_EJE = 24;
 const r0 = (x) => Math.round(x);
 
 // Edades consecutivas -> tramos [i, j] de índices: una edad sin dato (menos de 30) corta la línea en vez de unirla.
@@ -32,20 +28,6 @@ function tramos(edades) {
   let ini = 0;
   for (let i = 1; i <= edades.length; i++) {
     if (i === edades.length || edades[i] !== edades[i - 1] + 1) { out.push([ini, i - 1]); ini = i; }
-  }
-  return out;
-}
-
-// Marcas "bonitas" del eje Y.
-function marcas(min, max, n = 5) {
-  const crudo = (max - min) / Math.max(1, n - 1);
-  const pot = 10 ** Math.floor(Math.log10(crudo));
-  const paso = [1, 2, 2.5, 5, 10].map((k) => k * pot).find((p) => p >= crudo) || 10 * pot;
-  const out = [];
-  // de la marca por debajo del mínimo a la primera por encima del máximo: las marcas cubren todos los datos
-  for (let v = Math.floor(min / paso) * paso; ; v += paso) {
-    out.push(Math.round(v * 1e6) / 1e6);
-    if (v >= max - paso * 1e-6) break;
   }
   return out;
 }
@@ -109,26 +91,12 @@ function Vista({ cfg, D, modo, tk }) {
   const geo = { a0, a1, pw, banda, l: MG.l, cx: (a) => MG.l + (a - a0 + 0.5) * banda };
 
   const M = D.minutos[pos];
-  const posRend = pos === "campo" ? ["Defensa", "Medio", "Delantero"] : pos === "Portero" ? [] : [pos];
-  const curvas = posRend.map((p) => ({ pos: p, r: D.rendimiento[p] })).filter((c) => c.r);
-  const lectura = useMemo(() => lecturaEdad(D, pos, etiqueta, ["campo", "Defensa", "Medio", "Delantero"]), [D, pos, etiqueta]);
-  const multiple = curvas.length > 1;
-  const colorDe = (p) => (multiple ? D.coloresPos[p] : tk.primary);
+  const lectura = useMemo(() => lecturaEdad(D, pos, etiqueta), [D, pos, etiqueta]);
 
-  // --- panel 1 ---
   const y1 = (v) => MG.t + ALTO1 * (1 - v / 100);
   const baseBarras = MG.t + ALTO1 + 12 + ALTO_BARRAS;
   const nmax = Math.max(1, ...M.n);
   const alto1 = baseBarras + ALTO_EJE;
-
-  // --- panel 2 ---
-  const todos = curvas.flatMap((c) => [...c.r.lo, ...c.r.hi, 100]);
-  const dom = todos.length ? [Math.min(...todos), Math.max(...todos)] : [90, 110];
-  const margen = (dom[1] - dom[0]) * 0.06;
-  const ticks2 = marcas(dom[0] - margen, dom[1] + margen, 5);
-  const d2 = [ticks2[0], ticks2[ticks2.length - 1]];
-  const y2 = (v) => MG.t + ALTO2 * (1 - (v - d2[0]) / (d2[1] - d2[0]));
-  const alto2 = MG.t + ALTO2 + ALTO_EJE;
 
   const edadDe = (e) => {
     const r = e.currentTarget.getBoundingClientRect();
@@ -163,32 +131,12 @@ function Vista({ cfg, D, modo, tk }) {
       ) : (
         <Box sx={{ color: "text.secondary" }}>Menos de {D.minJugadores} jugador-temporadas: no se dibuja.</Box>
       )}
-      {curvas.length > 0 && <Box sx={{ color: "text.secondary", fontSize: 11.5, mt: 0.75 }}>Rendimiento · {curvas[0].r.metrica}{multiple ? " (cada posición con la suya)" : ""}</Box>}
-      {curvas.map((c) => {
-        const k = c.r.e.indexOf(hover.a);
-        return (
-          <Box key={c.pos}>
-            {k < 0 ? <Box sx={{ color: "text.secondary" }}>{multiple ? `${c.pos}: ` : ""}sin curva a esta edad (pocos pares)</Box> : (
-              <>
-                <Box>{multiple && <strong>{c.pos}: </strong>}<strong>{c.r.curva[k].toFixed(1)}</strong> (franja {r0(c.r.lo[k])} a {r0(c.r.hi[k])})</Box>
-                <Box sx={{ color: "text.secondary" }}>
-                  {k === 0 ? "Punto de partida de la cadena" : `${miles(c.r.pares[k - 1])} pares de ${hover.a - 1} a ${hover.a}`}
-                </Box>
-              </>
-            )}
-          </Box>
-        );
-      })}
     </Paper>
   );
 
   const resumen1 = M.e.length
     ? `Mediana del porcentaje de minutos jugados por edad, ${etiqueta.toLowerCase()}: de ${r0(M.med[0])}% a los ${M.e[0]} años a ${r0(M.med[M.e.length - 1])}% a los ${M.e[M.e.length - 1]}, con el máximo de ${r0(Math.max(...M.med))}% a los ${M.e[M.med.indexOf(Math.max(...M.med))]} años.`
     : "Sin edades con suficientes jugadores.";
-  const resumen2 = curvas.map((c) => {
-    const k = c.r.e.indexOf(c.r.pico);
-    return `${c.pos}: la curva llega a ${c.r.curva[k].toFixed(0)} a los ${c.r.pico} años, contra 100 a los ${c.r.ancla}.`;
-  }).join(" ");
 
   return (
     <>
@@ -212,7 +160,6 @@ function Vista({ cfg, D, modo, tk }) {
       <Box ref={caja} sx={{ maxWidth: 1000, width: "100%", position: "relative" }}>
         {w > 0 && (
           <>
-            {/* panel 1: minutos */}
             <Typography component="h3" sx={{ fontSize: 13.5, fontWeight: 700, mb: 0.25 }}>
               Minutos jugados <Box component="span" sx={{ fontWeight: 500, color: "text.secondary" }}>· % de los minutos de su club</Box>
             </Typography>
@@ -243,69 +190,11 @@ function Vista({ cfg, D, modo, tk }) {
               </g>
               <EjeX geo={geo} tk={tk} y={baseBarras} />
             </svg>
-            <Typography sx={{ fontSize: 11.5, color: "text.secondary", mb: 2.5 }}>
+            <Typography sx={{ fontSize: 11.5, color: "text.secondary" }}>
               Línea: mediana. Franja: del percentil 25 al 75.
               {M.ocultas.length > 0 && ` No se dibuja ${M.ocultas.length > 1 ? "las edades" : "la edad"} ${M.ocultas.join(", ")} (menos de ${D.minJugadores} jugador-temporadas).`}
             </Typography>
 
-            {/* panel 2: rendimiento */}
-            <Typography component="h3" sx={{ fontSize: 13.5, fontWeight: 700, mb: 0.25 }}>
-              Rendimiento <Box component="span" sx={{ fontWeight: 500, color: "text.secondary" }}>
-                · {curvas.length === 1 ? `${curvas[0].r.metrica}; ${D.ancla} años = 100` : curvas.length > 1 ? `cada posición con su métrica; ${D.ancla} años = 100` : "no se calcula"}
-              </Box>
-            </Typography>
-            {multiple && (
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5, mb: 0.5, fontSize: 12 }}>
-                {curvas.map((c) => (
-                  <Box key={c.pos} sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                    <Box sx={{ width: 14, height: 3, borderRadius: 1, bgcolor: colorDe(c.pos) }} />{c.pos}: {c.r.metrica}
-                  </Box>
-                ))}
-              </Box>
-            )}
-            {curvas.length === 0 ? (
-              <Box sx={{ border: 1, borderColor: "divider", borderRadius: 2, p: 2, minHeight: 120, display: "grid", placeItems: "center", textAlign: "center", color: "text.secondary", fontSize: 13.5 }}>
-                {pos === "Portero"
-                  ? "No hay curva de rendimiento para porteros: ni npxG + xA ni las acciones defensivas describen lo que hacen."
-                  : "No hay suficientes jugadores con 900 minutos o más en dos temporadas seguidas para dibujar la curva."}
-              </Box>
-            ) : (
-              <svg role="img" aria-label={`Curva de rendimiento por edad relativa a los ${D.ancla} años, con su intervalo. ${resumen2}`}
-                width={w} height={alto2} {...manejadores}>
-                <Rejilla geo={geo} tk={tk} y={y2} marcasY={ticks2} fmt={(v) => `${v}`} />
-                {hover && columna(hover.a, ALTO2)}
-                {/* la referencia: el nivel a los 22 años */}
-                <line x1={MG.l} x2={MG.l + pw} y1={y2(100)} y2={y2(100)} stroke={tk.muted} strokeWidth={1.2} strokeDasharray="5 4" />
-                <text x={MG.l + pw - 2} y={y2(100) - 5} textAnchor="end" fontSize={10.5} fill={tk.muted}
-                  stroke={tk.surface} strokeWidth={3} paintOrder="stroke" strokeLinejoin="round">{D.ancla} años = 100</text>
-                {curvas.map((c) => {
-                  const { e, curva, lo, hi, pico } = c.r;
-                  const col = colorDe(c.pos);
-                  const k = e.indexOf(pico);
-                  const arriba = e.map((a, q) => `${geo.cx(a)},${y2(hi[q])}`);
-                  const abajo = e.map((a, q) => `${geo.cx(a)},${y2(lo[q])}`).reverse();
-                  const px = geo.cx(pico), py = y2(curva[k]);
-                  const ancla = px > MG.l + pw - 70 ? "end" : px < MG.l + 70 ? "start" : "middle";
-                  return (
-                    <g key={c.pos}>
-                      <polygon points={[...arriba, ...abajo].join(" ")} fill={conAlfa(col, multiple ? 0.1 : modo === "dark" ? 0.28 : 0.2)} />
-                      <polyline points={e.map((a, q) => `${geo.cx(a)},${y2(curva[q])}`).join(" ")} fill="none" stroke={col} strokeWidth={2.2} strokeLinejoin="round" />
-                      {e.map((a, q) => <circle key={a} cx={geo.cx(a)} cy={y2(curva[q])} r={hover && hover.a === a ? 4.5 : 2.6} fill={col} stroke={tk.surface} strokeWidth={1} />)}
-                      <circle cx={px} cy={py} r={6} fill="none" stroke={col} strokeWidth={1.8} />
-                      {!multiple && (
-                        <text x={px} y={py - 11} textAnchor={ancla} fontSize={11.5} fontWeight={600} fill={tk["text-body"]}
-                          stroke={tk.surface} strokeWidth={3.5} paintOrder="stroke" strokeLinejoin="round">máximo a los {pico}</text>
-                      )}
-                    </g>
-                  );
-                })}
-                <EjeX geo={geo} tk={tk} y={MG.t + ALTO2} />
-              </svg>
-            )}
-            <Typography sx={{ fontSize: 11.5, color: "text.secondary", mt: 0.5 }}>
-              {curvas.length > 0 && <>Línea: cambio encadenado del mismo jugador de un año al siguiente. Franja: intervalo del {(100 - D.nivelIc) / 2}% al {100 - (100 - D.nivelIc) / 2}%. Círculo: máximo de la curva. </>}
-              {curvas.length > 0 && cfg.avisoSesgo}
-            </Typography>
           </>
         )}
         {tip}
