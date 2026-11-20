@@ -21,6 +21,7 @@ PREGUNTAS = {
     "defensa": "¿Quién defiende mejor y cómo?",
     "tabla-esperada": "¿Quién está en el lugar que merece?",
     "puntos-vs-xg": "¿Los puntos reflejan el juego o la suerte?",
+    "origen-xg": "¿Vive de los córners o construye jugando?",
     "nivel-por-liga-equipos": "¿Qué tan parejos son los equipos de cada liga?",
     "forma": "¿Viene mejorando o cayendo?",
     "crea-tu-grafico-equipos":"¿Cómo se relacionan dos variables que tú elijas?",

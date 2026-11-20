@@ -13,6 +13,7 @@ import pandas as pd
 
 import forma
 import insights as ins
+import origen_xg
 import react_views
 import tabla_esperada
 import xg_equipos
@@ -309,13 +310,14 @@ def chart_explorer(df):
 # sitio los radares de liga, la evolución del estilo, las dos de portería y las tres de identidad de
 # liga (paridad, edad, disciplina); siguen en `code/eda_teams.ipynb`.
 PESTANAS = [
-    ("eficiencia-definicion", "Goles vs. xG", ""),    # la primera: es la que abre la sección
-    ("creacion", "Ocasiones a favor y en contra", ""),
-    ("defensa", "Goles recibidos vs. xG", ""),
-    ("puntos-vs-xg", "Puntos vs. xG", ""),
-    ("tabla-esperada", "Tabla real vs. esperada", "Temporada"),
-    ("nivel-por-liga-equipos", "Distribución por liga", ""),
+    ("tabla-esperada", "Tabla real vs. esperada", "Temporada"),    # la primera: es la que abre la sección
     ("forma", "Forma", "Temporada"),
+    ("eficiencia-definicion", "Goles vs. xG", "Ocasiones"),
+    ("creacion", "Ocasiones a favor y en contra", "Ocasiones"),
+    ("origen-xg", "De dónde sale el xG", "Ocasiones"),
+    ("defensa", "Goles recibidos vs. xG", "Defensa"),
+    ("puntos-vs-xg", "Puntos vs. xG", "Contexto"),
+    ("nivel-por-liga-equipos", "Distribución por liga", "Contexto"),
     ("crea-tu-grafico-equipos", "Crea tu gráfico", "_explorar"),   # "_": grupo aparte, sin rótulo
 ]
 
@@ -343,6 +345,7 @@ def build(assets_dir) -> list:
         chart_creation(df),
         chart_defense(df),
         chart_points_vs_xg(df),
+        origen_xg.chart_origen_xg(),
         chart_league_level(df),
         chart_explorer(df),
         tabla_esperada.chart_tabla_esperada(),
