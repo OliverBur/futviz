@@ -186,7 +186,7 @@ function Vista({ cfg, D, modo, tk }) {
           {D.ligas.map((l) => <MenuItem key={l} value={l} sx={{ fontSize: 13 }}>{l}</MenuItem>)}
         </TextField>
         <Typography sx={{ fontSize: 11.5, color: "text.secondary", mt: 0.5 }}>
-          Acota el buscador y las sugerencias. La liga de un club es la de su última temporada con ELO.
+          Muestra los clubes que jugaron en esa liga su última temporada con ELO: uno que subió o bajó sale en la liga donde jugó al final.
         </Typography>
         {sugeridos.length > 0 && (
           <Box sx={{ mt: 0.75 }}>
