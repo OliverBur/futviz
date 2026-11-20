@@ -154,28 +154,23 @@ def textos(r):
     jt = r["jt"]
     ts = r["temporadas"]
     sin_nac = jt.attrs["sin_nacimiento"]
-    ambiguos = int(jt["posicion"].isna().sum())
     que_mirar = (
-        "La línea es la **mediana** y la franja el **rango típico** (del percentil 25 al 75): la mitad de los "
-        "jugadores de esa edad cae dentro de la franja. Las barras de abajo cuentan los jugador-temporadas de cada edad: "
-        "donde son pocos, la línea se mueve más.\n\n"
-        "Pasa el cursor o toca una edad para leer los números.")
+        "La línea es la **mediana** y la franja el **rango típico** (percentil 25 a 75): la mitad de los jugadores de esa "
+        "edad cae dentro. Las barras de abajo cuentan los jugador-temporadas de cada edad: donde son pocos, la línea se "
+        "mueve más.")
     por_que = (
-        f"**De dónde salen los minutos.** Cada jugador-temporada de las {len(ts)} temporadas cerradas ({ts[0]} a {ts[-1]}; "
-        f"la que va en curso no entra) se mide contra los minutos que jugó su club ese año: partidos del equipo × 90, de la "
-        f"tabla de equipos de FBref. No hay corte de minutos: quien jugó 20 minutos también cuenta, porque lo que se quiere "
-        f"ver es cuánto juega la gente joven que juega poco. El porcentaje se topa en 100 (el tiempo añadido puede dar "
-        f"más de 90 minutos por partido). Quien jugó en dos ligas el mismo año viene en dos filas y se junta en una: "
-        f"minutos sumados, contra los partidos del club con más partidos.\n\n"
-        f"**Qué población es.** Hay {_n(len(jt))} jugador-temporadas con edad. Solo aparece quien jugó al menos un minuto, "
-        f"así que quien nunca pisó la cancha no está, y la mediana de los más jóvenes es la de los que sí llegaron a jugar. "
-        f"Se dejan fuera {_n(sin_nac)} sin año de nacimiento (no cruzaron con FBref) y no se dibuja una edad con menos de "
-        f"{MIN_JUGADORES} jugador-temporadas. «{ETIQUETA_CAMPO}» son Defensa, Medio y Delantero; los porteros van aparte porque sus "
-        f"minutos no se parecen a los de campo (la mitad juega el 80% o más de los minutos de su club, contra menos de la "
-        f"quinta parte en campo) y mezclarlos movería la mediana de cualquier edad. La edad es el año en que arranca la temporada menos "
-        f"el año de nacimiento, como en los demás filtros del sitio: FBref solo publica el año, así que puede pasarse por uno.\n\n"
-        f"**Qué no dice.** Los minutos dependen del equipo y de lo que el entrenador decide, no solo del jugador: un "
-        f"joven que juega poco puede ser suplente de un titular indiscutido o estar lesionado.")
+        f"**De dónde salen los minutos.** Cada jugador-temporada de las {len(ts)} temporadas cerradas ({ts[0]} a {ts[-1]}) "
+        f"se mide contra los minutos que jugó su club ese año (partidos × 90, de FBref). No hay corte de minutos: quien "
+        f"jugó 20 minutos también cuenta, porque se quiere ver cuánto juega la gente joven que juega poco. El porcentaje se "
+        f"topa en 100, y quien jugó en dos ligas el mismo año se junta en una fila.\n\n"
+        f"**Población.** Hay {_n(len(jt))} jugador-temporadas con edad; quien nunca pisó la cancha no está, así que la "
+        f"mediana de los más jóvenes es la de los que sí llegaron a jugar. Se dejan fuera {_n(sin_nac)} sin año de "
+        f"nacimiento y no se dibuja una edad con menos de {MIN_JUGADORES} jugador-temporadas. Los porteros van aparte porque "
+        f"sus minutos no se parecen a los de campo (la mitad juega el 80% o más de los de su club, contra menos de la "
+        f"quinta parte en campo). La edad es el año en que arranca la temporada menos el de nacimiento, así que puede "
+        f"pasarse por uno.\n\n"
+        f"**Qué no dice.** Los minutos dependen del equipo y del entrenador, no solo del jugador: un joven que juega poco "
+        f"puede ser suplente de un titular indiscutido o estar lesionado.")
     return que_mirar, por_que
 
 

@@ -267,35 +267,6 @@ function Vista({ cfg, D, modo: tema, tk }) {
             <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
           </Box>
 
-          <details style={{ marginTop: 12, maxWidth: 1000 }}>
-            <summary style={{ cursor: "pointer", font: "600 12.5px Inter, system-ui", color: "var(--color-muted)", padding: "4px 0" }}>
-              Ver los números en tabla
-            </summary>
-            <Box sx={{ overflowX: "auto", mt: 0.5 }}>
-              <table style={{ borderCollapse: "collapse", fontSize: 12.5, minWidth: 460, width: "100%" }}>
-                <caption style={{ textAlign: "left", fontSize: 12, color: "var(--color-muted)", padding: "4px 0" }}>
-                  {ladoTxt} · {medida === "pct" ? "% del xG" : "xG por partido"} · {ambito} · {tLabel}
-                </caption>
-                <thead>
-                  <tr>{["Equipo", ...BALON_PARADO.map((id) => etiquetaSeg[id]), etiquetaSeg.abierta, "xG por partido"].map((h, c) => (
-                    <th key={h} scope="col" style={{ textAlign: c ? "right" : "left", padding: "4px 8px", borderBottom: "1px solid var(--color-border)" }}>{h}</th>))}</tr>
-                </thead>
-                <tbody>
-                  {ordenadas.map((i) => (
-                    <tr key={i}>
-                      <th scope="row" style={{ textAlign: "left", fontWeight: 600, padding: "3px 8px" }}>{nombreFila(i)}</th>
-                      {[...BALON_PARADO, "abierta"].map((id) => (
-                        <td key={id} style={{ textAlign: "right", padding: "3px 8px" }}>
-                          {medida === "pct" ? `${fmt(valorSeg(D, i, lado, id, "pct"), 1)}%` : fmt(valorSeg(D, i, lado, id, "xg"), 2)}
-                        </td>))}
-                      <td style={{ textAlign: "right", padding: "3px 8px" }}>{fmt(xgTotal(D, i, lado) / D.c.pj[i], 2)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </Box>
-          </details>
-
         </Box>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2.25, order: { xs: -1, md: 0 } }}>
           {/* --- controles --- */}

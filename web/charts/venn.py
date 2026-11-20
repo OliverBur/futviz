@@ -105,28 +105,23 @@ def tabla(df, minimos):
 
 def textos():
     que_mirar = (
-        "Cada círculo es algo que un jugador hace muy bien comparado con los de su puesto. Quien cae en el centro lo hace "
-        "bien en las tres cosas a la vez.\n\n"
-        "Con el deslizador decides qué tan exigente es «muy bien»: con 5% solo entran los mejores de cada cosa y casi nadie "
-        "llega al centro; con 30%, dos de cada tres jugadores caen en algún círculo, pero al centro llegan menos de 4 de cada 100. "
-        "Los tres criterios no son independientes: entre los medios, recuperar y aportar en ataque casi no "
-        "coinciden, y el centro queda casi vacío.\n\n"
-        "Pasa el cursor o toca una ficha para ver sus cifras. Si una región tiene más jugadores de los que caben, se muestran "
-        "los que más destacan y un «+N» cuenta el resto. Arriba del diagrama dice cuántos caen en el centro y cuántos "
-        "caerían si las tres cosas no tuvieran relación.")
+        "Cada círculo es algo que un jugador hace muy bien comparado con los de su puesto; quien cae en el centro lo hace "
+        "bien en las tres cosas.\n\n"
+        "Con el deslizador decides qué tan exigente es «muy bien»: con 5% casi nadie llega al centro; con 30%, dos de cada "
+        "tres jugadores caen en algún círculo, pero al centro llegan menos de 4 de cada 100. Los criterios no son "
+        "independientes (entre los medios, recuperar y aportar en ataque casi no coinciden). Pasa el cursor o toca una ficha "
+        "para ver sus cifras; si una región tiene más jugadores de los que caben, un «+N» cuenta el resto.")
     por_que = (
-        "**Qué población es.** Jugadores de campo de las cinco ligas que pasan el corte de minutos de las vistas por 90' "
-        "(900 en una temporada cerrada; en la que va en curso, una fracción de lo jugado hasta ahora) y que cruzaron "
-        "con FBref. Cada diagrama compara solo a los de una posición.\n\n"
-        f"**Cómo se corta.** El corte no es un valor fijo sino un percentil dentro de la posición y la temporada elegidas: "
-        f"«el {CORTE_INI}% de arriba de los medios». Un valor fijo (digamos, 2.8 recuperaciones por 90') no sirve al cambiar "
-        f"de posición o de temporada. Los empates comparten el promedio de sus lugares. El corte es una decisión de "
-        f"quien mira: con otro, cambia quién queda en el centro. Los grupos no son naturales; la gente en estos datos "
-        f"se reparte en un continuo, y el diagrama la separa por un umbral.\n\n"
-        "**Qué se mide.** *Recupera*: entradas ganadas + intercepciones por 90' (FBref). *Aporta en ataque*: xG + xA por 90' "
-        "(Understat). *Construye*: xG de construcción por 90', el xG de las jugadas en que participa sin tirar ni asistir "
-        "(Understat). En el delantero: *Remata* es el xG sin penales por 90', *Asiste* el xA por 90' y *Presiona* las mismas "
-        "entradas ganadas + intercepciones.")
+        "**Población.** Jugadores de campo de las cinco ligas con el corte de minutos de las vistas por 90' (900 en una "
+        "temporada cerrada; menos en la que va en curso) y cruzados con FBref. Cada diagrama compara solo a los de una "
+        "posición.\n\n"
+        f"**Cómo se corta.** El corte es un percentil dentro de la posición y la temporada elegidas («el {CORTE_INI}% de "
+        f"arriba de los medios»), no un valor fijo, y es una decisión de quien mira: con otro, cambia quién queda en el "
+        f"centro. Los grupos no son naturales; la gente en estos datos se reparte en un continuo y el diagrama la separa "
+        f"por un umbral.\n\n"
+        "**Qué se mide.** *Recupera*: entradas ganadas + intercepciones por 90' (FBref). *Aporta en ataque*: xG + xA por "
+        "90' (Understat). *Construye*: xG de construcción por 90' (Understat). En el delantero: *Remata* es el xG sin "
+        "penales por 90', *Asiste* el xA y *Presiona* las mismas entradas ganadas + intercepciones.")
     return que_mirar, por_que
 
 

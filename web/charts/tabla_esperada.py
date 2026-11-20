@@ -394,80 +394,55 @@ def textos(r):
     mp = v["partidos"]
     juegos = r["juegos"]
     sin_tiros = juegos.attrs["sin_tiros"]
-    con_poisson = juegos.attrs["con_poisson"]
     n_tot = len(juegos) + len(sin_tiros)
     ts = r["cerradas"]
     en_curso = r["en_curso"]
     pj = r["tabla"].groupby("temporada")["pj"].agg(["min", "max"])
-    mejor = ("Los tiros se alejan menos de los puntos y dejan una diferencia que se repite menos: queda menos fuerza real del "
-             "equipo sin captar."
-             if et["mae"] < ep["mae"] and abs(pt["r"]) < abs(pp["r"]) else
-             "Los dos métodos quedan parecidos.")
     que_mirar = (
-        "El punto relleno son los **puntos reales** y el anillo los **puntos esperados** (xPts): los que valían las "
-        "ocasiones de ese equipo en cada partido. La línea que los une es la diferencia. Va en azul si el equipo "
-        "sumó más de lo esperado y en rojo si sumó menos; el signo y el orden de los dos marcadores dicen lo mismo, "
-        "así que no hace falta distinguir los colores.\n\n"
+        "El punto relleno son los **puntos reales** y el anillo los **puntos esperados** (xPts), los que valían las "
+        "ocasiones de ese equipo en cada partido. La línea que los une va en azul si el equipo sumó más de lo esperado y "
+        "en rojo si sumó menos.\n\n"
         "A la derecha, el lugar que ocuparía por xPts y cuántos lugares está por encima (+) o por debajo (−) de ese "
         "lugar. Pasa el cursor o toca un equipo para leer sus números.")
     ausentes = ""
     if sin_tiros:
-        ausentes = (f" Hay {_n(len(sin_tiros))} partido{'s' if len(sin_tiros) != 1 else ''} de {_n(n_tot)} sin un solo tiro en "
-                    f"Understat ({', '.join(_partido(x) for x in sin_tiros)}) y no entra{'n' if len(sin_tiros) != 1 else ''} en ningún "
-                    f"total: los dos equipos figuran con un partido menos que el resto de su liga.")
-    if con_poisson:
-        ausentes += (f" En {_n(len(con_poisson))} partido{'s' if len(con_poisson) != 1 else ''} los goles de los tiros no son los del "
-                     f"marcador ({', '.join(_partido(x) for x in con_poisson)}) y se calculan con Poisson sobre el xG del partido.")
+        ausentes = (f" Hay {_n(len(sin_tiros))} partido{'s' if len(sin_tiros) != 1 else ''} de {_n(n_tot)} sin un solo tiro "
+                    f"en Understat ({', '.join(_partido(x) for x in sin_tiros)}) y no entra{'n' if len(sin_tiros) != 1 else ''} "
+                    f"en ningún total.")
     d = r.get("discrepancias_fbref")
+    fbref = ""
     if d and d[0]:
-        ausentes += (f" Los puntos de los marcadores coinciden con los de FBref en todos los equipos y temporadas cerradas salvo "
-                     f"en {_n(d[0])} de {_n(d[2])} (por {_n(d[1])} punto{'s' if d[1] != 1 else ''} como máximo), señal de algún "
-                     f"marcador mal capturado en una de las dos fuentes.")
+        fbref = (f" Los puntos coinciden con los de FBref salvo en {_n(d[0])} de {_n(d[2])} equipos-temporada (por "
+                 f"{_n(d[1])} punto{'s' if d[1] != 1 else ''} como máximo).")
     cola_curso = ""
     if en_curso:
         txt = ", ".join(f"{t} (de {int(pj.loc[t, 'min'])} a {int(pj.loc[t, 'max'])} partidos por equipo)" for t in en_curso)
-        cola_curso = (f"\n\n**La temporada en curso.** {txt}: con tan pocos partidos la diferencia entre puntos y xPts es "
-                      f"sobre todo azar, y la muestra es mínima. Se dibuja en gris y los textos no concluyen nada de ella. Las cifras de validación de "
-                      f"este texto son solo de las {len(ts)} temporadas cerradas ({ts[0]} a {ts[-1]}).")
+        cola_curso = (f"\n\n**La temporada en curso.** {txt}: la diferencia es sobre todo azar y la muestra es mínima. Se "
+                      f"dibuja en gris y los textos no concluyen nada de ella.")
     por_que = (
-        "**Qué son los xPts.** Para cada partido se toma el xG de cada tiro como la probabilidad de que sea gol y se "
-        "supone que los tiros son independientes: los goles de cada equipo son la suma de lanzar una moneda cargada "
-        "por tiro, que cae gol con la probabilidad de su xG. De ahí sale la probabilidad de cada marcador y, sumando, la de ganar, empatar y "
-        "perder. Los xPts del partido son 3 por la probabilidad de ganar más 1 por la de empatar; los del equipo, la suma "
-        "de sus partidos. No son los puntos que «merecía»: son los que sumaría, en promedio, si ese mismo partido se "
-        "repitiera muchas veces con esas ocasiones.\n\n"
-        f"**Penales y autogoles.** Los penales entran como un tiro más con su xG: los puntos reales también los llevan y "
-        f"dejarlos fuera le quitaría puntos esperados a los equipos que más cobran. Esto es distinto de las demás vistas de "
-        f"Equipos, que miran el xG sin penales. Los autogoles no tienen xG ni salen de ninguna ocasión: no suman a los "
-        f"esperados, pero sí a los puntos reales (son ~{_f(r['autogoles_por_equipo'], 1)} por equipo y temporada) y entran en "
-        f"la diferencia.\n\n"
-        f"**Por qué tiros y no Poisson.** La alternativa común es tomar el xG total del partido como la media de una Poisson. "
-        f"Por partido casi no se distinguen (error del pronóstico, RPS: {_f(mp['tiros']['rps'], 4)} con tiros y "
-        f"{_f(mp['poisson']['rps'], 4)} con Poisson, en {_n(mp['n'])} partidos). Por equipo y temporada, con los tiros los "
-        f"puntos reales se alejan {_f(et['mae'], 1)} puntos en promedio de los xPts y con Poisson {_f(ep['mae'], 1)}; y la "
-        f"correlación de la diferencia entre un año y el siguiente es {_f(pt['r'])} con tiros y {_f(pp['r'])} con Poisson. "
-        f"{mejor} Se usa la de tiros.\n\n"
-        f"**Qué tan bien coinciden.** En las {_n(et['n_ligas_temporadas'])} ligas y temporadas cerradas, la correlación entre puntos "
-        f"reales y xPts va de {_f(et['corr_min'])} a {_f(et['corr_max'])} (mediana {_f(et['corr_mediana'])}) y el error "
-        f"absoluto medio de un equipo es de {_f(et['mae'], 1)} puntos.\n\n"
-        f"**Cuánto suman los xPts contra los puntos.** En un partido decidido se reparten 3 puntos y en un empate 2, así que los "
-        f"puntos de una liga dependen de cuántos empates hay. Con el xG, el empate sale con una probabilidad media de "
-        f"{_pct(mp['tiros']['empate'])} y en la realidad fue de {_pct(mp['real']['empate'])}; además, el xG de Understat suma "
-        f"{'más' if r['goles_entre_xg'] < 1 else 'menos'} de lo que entra (los goles son el {_pct(r['goles_entre_xg'], 0)} del xG de "
-        f"las temporadas cerradas). Resultado: los xPts de una liga y temporada suman entre {_f(et['razon_min'], 3)} y "
-        f"{_f(et['razon_max'], 3)} veces sus puntos reales (promedio {_f(et['razon_media'], 3)}), y el equipo típico queda "
-        f"{_f(abs(et['media_dif']), 1)} puntos {'por debajo' if et['media_dif'] < 0 else 'por encima'} de sus xPts. Por eso el "
-        f"cero de la diferencia no es el promedio de la liga.\n\n"
-        f"**Cuánto de la diferencia se repite.** Entre temporadas cerradas consecutivas del mismo club ({_n(pt['n'])} pares), la "
-        f"correlación de (puntos − xPts) por partido es {_f(pt['r'])} (intervalo aproximado de {_f(pt['lo'])} a {_f(pt['hi'])}): "
-        f"se repite {_cuanto(pt['r'])}. Para comparar: los puntos por partido de un año correlacionan {_f(pt['r_pts_pts'])} con los "
-        f"del siguiente y los xPts por partido, {_f(pt['r_xp_pts'])}.\n\n"
-        f"**Qué no ve.** Un partido no es una muestra: el xG de un partido tiene mucha varianza y 34 o 38 partidos tampoco "
-        f"quitan el azar. El xG no sabe del balón parado bien lanzado ni de la defensa que bloquea, ni del portero o los "
-        f"delanteros muy buenos o muy malos. Las expulsiones y el marcador cambian cómo se juega el resto del partido y el "
-        f"modelo supone que no. Los puntos son los que salen de los marcadores, sin sanciones de la liga, y la posición real "
-        f"desempata por diferencia de goles y luego goles a favor, que no es el criterio de todas las ligas, así que puede no "
-        f"coincidir con la tabla oficial.{ausentes}{cola_curso}")
+        "**Qué son los xPts.** Para cada partido, cada tiro es una moneda cargada que cae gol con la probabilidad de su xG. "
+        "De ahí sale la probabilidad de cada marcador y, sumando, la de ganar, empatar y perder. Los xPts del partido son 3 "
+        "por la probabilidad de ganar más 1 por la de empatar; los del equipo, la suma de sus partidos. No son los puntos "
+        "que «merecía»: son los que sumaría, en promedio, si ese partido se repitiera muchas veces con esas ocasiones.\n\n"
+        "**Penales y autogoles.** Los penales entran como un tiro más con su xG, porque los puntos reales también los "
+        "llevan (las demás vistas de Equipos los miran sin penales). Los autogoles no tienen xG: no suman a los esperados, "
+        "pero sí a los puntos reales.\n\n"
+        f"**Por qué tiros y no Poisson.** La alternativa común es tomar el xG total del partido como la media de una "
+        f"Poisson. Por partido casi no se distinguen (RPS {_f(mp['tiros']['rps'], 4)} con tiros y "
+        f"{_f(mp['poisson']['rps'], 4)} con Poisson, en {_n(mp['n'])} partidos), pero por temporada los puntos reales se "
+        f"alejan {_f(et['mae'], 1)} puntos de los xPts con tiros y {_f(ep['mae'], 1)} con Poisson. Se usa la de tiros.\n\n"
+        f"**Qué tan bien coinciden.** En las {_n(et['n_ligas_temporadas'])} ligas y temporadas cerradas, puntos reales y "
+        f"xPts correlacionan entre {_f(et['corr_min'])} y {_f(et['corr_max'])} (mediana {_f(et['corr_mediana'])}). Los xPts "
+        f"suman entre {_f(et['razon_min'], 3)} y {_f(et['razon_max'], 3)} veces los puntos reales, porque el xG de "
+        f"Understat suma {'más' if r['goles_entre_xg'] < 1 else 'menos'} de lo que entra y hay más empates reales que en el "
+        f"modelo: el cero de la diferencia no es el promedio de la liga.\n\n"
+        f"**Cuánto se repite.** Entre temporadas cerradas consecutivas del mismo club ({_n(pt['n'])} pares), la diferencia "
+        f"(puntos − xPts) por partido correlaciona {_f(pt['r'])}: se repite {_cuanto(pt['r'])}. Los puntos por partido "
+        f"correlacionan {_f(pt['r_pts_pts'])} con los del año siguiente y los xPts, {_f(pt['r_xp_pts'])}.\n\n"
+        f"**Qué no ve.** Un partido no es una muestra, y 34 o 38 tampoco quitan el azar. El xG no sabe de las expulsiones "
+        f"ni del marcador, ni distingue al portero o al delantero muy bueno o muy malo. Los puntos salen de los marcadores, "
+        f"sin sanciones, y la posición desempata por diferencia de goles, así que puede no coincidir con la tabla "
+        f"oficial.{ausentes}{fbref}{cola_curso}")
     return que_mirar, por_que
 
 

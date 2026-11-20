@@ -35,15 +35,13 @@ import ZoomOut from "@mui/icons-material/ZoomOut";
 import ZoomOutMap from "@mui/icons-material/ZoomOutMap";
 import CenterFocusStrong from "@mui/icons-material/CenterFocusStrong";
 import ExpandMore from "@mui/icons-material/ExpandMore";
-import TableChart from "@mui/icons-material/TableChart";
 import FilterList from "@mui/icons-material/FilterList";
 import Close from "@mui/icons-material/Close";
 import { useSitioTema } from "./theme.jsx";
 import { useTabla } from "./datos.js";
 import { Grafica, FilaCtx } from "./Grafica.jsx";
 import { Ranking } from "./Ranking.jsx";
-import { Cuadrito, Posiciones } from "./Posiciones.jsx";
-import { Tabla } from "./Tabla.jsx";
+import { Posiciones } from "./Posiciones.jsx";
 import { Aviso, Cargando, Encabezado, Md, Parrafos, Rotulo, sinAcentos } from "./ui.jsx";
 import { acercar, ajustarA, centrarEn, esBase, vistaDeZona, zonaDe } from "./zoom.js";
 import { TOPE_DIF, colorRendimiento, conAlfa, divergente } from "./colores.js";
@@ -138,7 +136,6 @@ function Vista({ cfg, T, modo, tk }) {
   const [metrica, setMetrica] = useState(() => entre(P.get("top"), metricas.map((m) => m.id), "y"));
   const [hoverFila, setHoverFila] = useState(null);                // fila de la lista bajo el mouse
   const [pista, setPista] = useState(false);
-  const [tablaAbierta, setTablaAbierta] = useState(false);
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
 
   // --- población: las filas con dato en lo que la vista necesita --------------------------------------
@@ -371,13 +368,6 @@ function Vista({ cfg, T, modo, tk }) {
   };
   const quitarPin = (j) => setFijados((p) => p.filter((x) => x !== j));
   const alternarFila = (r) => (fijados.includes(T.f.j[r]) ? quitarPin(T.f.j[r]) : agregarPin(T.f.j[r]));
-  // Desde la tabla llega el conjunto completo de filas marcadas: se aplica solo la diferencia
-  // con lo que ya está fijado (los fijados sin fila en esta vista no se tocan).
-  const fijarDesdeTabla = (ids) => {
-    const quitar = new Set(filasFijadas.filter((r) => !ids.has(r)).map((r) => T.f.j[r]));
-    const agregar = [...ids].filter((r) => !pines.has(r)).map((r) => T.f.j[r]);
-    setFijados((p) => [...p.filter((j) => !quitar.has(j)), ...agregar.filter((j) => !p.includes(j))].slice(-MAX_PINES));
-  };
   const onClicPunto = useCallback((_e, { seriesId, dataIndex }) => {
     const r = idsPorSerie[seriesId] ? idsPorSerie[seriesId][dataIndex] : null;
     if (r != null) setFijados((p) => (p.includes(T.f.j[r]) ? p.filter((x) => x !== T.f.j[r]) : [...p, T.f.j[r]].slice(-MAX_PINES)));
@@ -442,28 +432,6 @@ function Vista({ cfg, T, modo, tk }) {
     ],
   }), [T, esJugadores, colores, exp, X, Y, xs, ys, diag, difEt, decDif]);
   const ctx = useMemo(() => ({ info }), [info]);
-
-  // --- tabla -------------------------------------------------------------------------------------
-  const filasTabla = useMemo(() => (tablaAbierta ? visibles.map((r) => ({
-    id: r, nombre: T.nombre(r), equipo: T.equipo(r), liga: T.liga(r), posicion: T.posicion(r),
-    min: T.c.min ? T.c.min[r] : null, x: sgX * xs[r], y: sgY * ys[r], dif: sgY * ys[r] - sgX * xs[r],
-  })) : []), [tablaAbierta, visibles, T, xs, ys]);
-  const columnas = useMemo(() => [
-    { field: "nombre", headerName: esJugadores ? "Jugador" : "Equipo", flex: 1.4, minWidth: 130 },
-    ...(esJugadores ? [{ field: "equipo", headerName: "Equipo", flex: 1, minWidth: 100 }] : []),
-    { field: "liga", headerName: "Liga", width: 118 },
-    ...(esJugadores && T.posiciones ? [{ field: "posicion", headerName: "Posición", width: 108,
-      renderCell: ({ value }) => (value ? (
-        <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}><Cuadrito color={T.coloresPos[value]} />{value}</Box>
-      ) : <Box sx={{ color: "text.secondary" }}>—</Box>) }] : []),
-    ...(esJugadores && T.c.min ? [{ field: "min", headerName: "Minutos", type: "number", width: 92 }] : []),
-    { field: "x", headerName: exp ? X.label : X.corto, type: "number", width: exp ? 140 : 100,
-      valueFormatter: (v) => Number(v).toFixed(X.dec) },
-    { field: "y", headerName: exp ? Y.label : Y.corto, type: "number", width: exp ? 140 : 100,
-      valueFormatter: (v) => Number(v).toFixed(Y.dec) },
-    ...(diag ? [{ field: "dif", headerName: difEt, type: "number", width: 124,
-      valueFormatter: (v) => signo(Number(v), 2) }] : []),
-  ], [esJugadores, T, exp, X, Y, diag, difEt]);
 
   // --- buscador: varios jugadores a la vez ----------------------------------------------------
   // Las opciones son JUGADORES (no filas): así un fijado sigue en la lista de chips aunque en esta
@@ -675,8 +643,6 @@ function Vista({ cfg, T, modo, tk }) {
                 <Button variant="outlined" size="small" startIcon={<FilterList />} onClick={() => setFiltrosAbiertos(true)}
                   sx={{ textTransform: "none", fontWeight: 600, minHeight: 40 }}>{exp ? "Ejes y filtros" : "Filtros"}</Button>
               </Badge>
-              <Button variant="outlined" size="small" startIcon={<TableChart />} onClick={() => setTablaAbierta(true)}
-                sx={{ textTransform: "none", fontWeight: 600, minHeight: 40 }}>Ver tabla</Button>
             </Box>
           )}
 
@@ -703,7 +669,7 @@ function Vista({ cfg, T, modo, tk }) {
                 );
               })}
             </Box>
-            <Box role="toolbar" aria-label="Zoom y tabla" sx={{ display: "flex", alignItems: "center", gap: 0.25 }}>
+            <Box role="toolbar" aria-label="Zoom" sx={{ display: "flex", alignItems: "center", gap: 0.25 }}>
               <Tooltip title="Acercar"><span><IconButton size="small" aria-label="Acercar"
                 onClick={() => mover(acercar(viewRef.current, base, 0.6))}><ZoomIn fontSize="small" /></IconButton></span></Tooltip>
               <Tooltip title="Alejar"><span><IconButton size="small" aria-label="Alejar" disabled={!fueraDeBase}
@@ -712,10 +678,6 @@ function Vista({ cfg, T, modo, tk }) {
                 onClick={() => mover(ajuste)}><CenterFocusStrong fontSize="small" /></IconButton></span></Tooltip>
               <Tooltip title="Ver todo"><span><IconButton size="small" aria-label="Ver todo" disabled={!fueraDeBase}
                 onClick={() => mover(base)}><ZoomOutMap fontSize="small" /></IconButton></span></Tooltip>
-              {!movil && (
-                <Button size="small" startIcon={<TableChart fontSize="small" />} onClick={() => setTablaAbierta(true)}
-                  sx={{ ml: 0.75, textTransform: "none", fontWeight: 600 }}>Ver tabla</Button>
-              )}
             </Box>
           </Box>
 
@@ -820,12 +782,6 @@ function Vista({ cfg, T, modo, tk }) {
         </SwipeableDrawer>
       )}
 
-      {/* ---------------- tabla ---------------- */}
-      {tablaAbierta && (
-        <Tabla abierta={tablaAbierta} onCerrar={() => setTablaAbierta(false)} filas={filasTabla} columnas={columnas}
-          ordenInicial={{ field: "y", sort: "desc" }} fijadas={pines} onAlternar={alternarFila} onFijar={fijarDesdeTabla}
-          titulo={tLabel} entidad={plural} archivo={`${cfg.id}-${tLabel}`} />
-      )}
     </FilaCtx.Provider>
   );
 }
