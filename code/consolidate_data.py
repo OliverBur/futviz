@@ -29,6 +29,7 @@ import html
 import re
 import unicodedata
 from collections import Counter
+from difflib import SequenceMatcher
 from pathlib import Path
 
 import pandas as pd
@@ -437,6 +438,59 @@ def norm_name(name):
     return re.sub(r"[^a-z ]", " ", plano.replace("'", "").replace("’", "")).split()
 
 
+# Cómo escribe fbref a quien Understat escribe distinto y ni el nombre, ni el subconjunto, ni los minutos (ver `_por_minutos`)
+# alcanzan a cruzar: apodos ('Pepelu' es José Luis García Vayá en fbref), nombres de pila distintos ('Santos Borré' contra
+# 'Rafael Borré') o cambios de grafía ('Tsygankov' contra 'Tsyhankov'). Se aplica ANTES de las demás pasadas, por liga (el mismo
+# nombre en otra liga es otra persona). Se agrega a mano: cuando `consolidate_data.py` lista un titular sin edad, se busca su
+# nombre en `fbref-players.csv` y se anota acá. Quedan fuera los que fbref escribe igual pero dos personas comparten ('Luis
+# Suárez', 'David López'): ahí el problema no es el nombre sino que hay dos.
+ALIAS_FBREF = {
+    ("La Liga", "Bono"): "Yassine Bounou",
+    ("La Liga", "Pepelu"): "José Luis García Vayá",
+    ("La Liga", "Anssumane Fati"): "Ansu Fati",
+    ("Ligue 1", "Anssumane Fati"): "Ansu Fati",
+    ("La Liga", "Nicolás Melamed"): "Nico Ribaudo",
+    ("La Liga", "Marcos de Sousa"): "Marcos André",
+    ("Premier League", "Juan Camilo Hernández"): "Cucho",
+    ("La Liga", "Juan Camilo Hernández"): "Cucho",
+    ("La Liga", "Viktor Tsygankov"): "Viktor Tsyhankov",
+    ("La Liga", "Fran Pérez"): "Francisco Perez",
+    ("Premier League", "Zanka"): "Mathias Jørgensen",
+    ("Premier League", "Valentino Livramento"): "Tino Livramento",
+    ("Bundesliga", "Joshua Vagnoman"): "Josha Vagnoman",
+    ("Bundesliga", "Santos Borré"): "Rafael Borré",
+    ("Bundesliga", "Munas Dabbur"): "Moanes Dabbur",
+    ("Ligue 1", "Billal Brahimi"): "Bilal Brahimi",
+    ("Bundesliga", "Vasilios Lampropoulos"): "Vassilis Lambropoulos",
+    ("Serie A", "Michaël Cuisance"): "Mickaël Cuisance",
+    ("Serie A", "Simy"): "Simeon Nwankwo",
+    ("Serie A", "Eljif Elmas"): "Elif Elmas",
+    ("Serie A", "Franck Zambo"): "Frank Anguissa",
+    ("Serie A", "Georgios Kyriakopoulos"): "Giorgos Kyriakopoulos",
+    ("La Liga", "Manu Fuster"): "Manuel Fuster",
+    ("La Liga", "Antonio Martínez"): "Toni Martínez",
+    ("La Liga", "Chuki"): "Chuky san jose",
+    ("La Liga", "Manuel Sánchez"): "Manu Sánchez",
+    ("La Liga", "Mat Ryan"): "Mathew Ryan",
+    ("La Liga", "Javier López"): "Javi López",
+    ("La Liga", "Javier Rueda"): "Javi Rueda",
+    ("La Liga", "Oso"): "Joaquín Martínez Gauna",
+    ("La Liga", "Roger Brugué"): "Brugui",
+    ("La Liga", "Santiago Cazorla"): "Santi Cazorla",
+    ("Ligue 1", "Ali Youssif"): "Ali Yousuf",
+    ("La Liga", "Rubén Sánchez"): "Rubén",
+    ("Serie A", "Konstantinos Tsimikas"): "Kostas Tsimikas",
+    ("La Liga", "Rodrigo Sánchez"): "Rodri",
+    ("Bundesliga", "Silas Wamangituka"): "Silas Katompa",
+    ("La Liga", "Tasos Douvikas"): "Anastasios Douvikas",
+    ("La Liga", "Abdessamad Ezzalzouli"): "Abde Ezzalzouli",
+    ("La Liga", "Abderrahmane Rebbach"): "Abde Rebbach",
+    ("La Liga", "Jesús Santiago"): "Yellu Santiago",
+    ("Premier League", "Yehor Yarmolyuk"): "Yehor Yarmoliuk",
+    ("La Liga", "Rafita"): "Rafael Garrido",
+}
+
+
 def _key(liga, name):
     """El cruce es por liga + nombre, no por equipo: Understat y fbref escriben
     los clubes distinto ('Wolverhampton Wanderers' vs 'Wolves') y además
@@ -540,6 +594,87 @@ def _por_subconjunto(players, fb):
     return clave
 
 
+# Tercera pasada del cruce (`_por_minutos`): para quien ni el nombre exacto ni el subconjunto resolvieron.
+MIN_CRUCE = 200            # por debajo, los minutos no distinguen a nadie
+TOLERANCIA_MIN = 0.03      # las dos fuentes cuentan los minutos casi igual: 2748 contra 2751, no más de un 3% de diferencia
+TOLERANCIA_MIN_PISO = 25   # ...con este piso en minutos para los que juegan poco
+SIMILITUD_MIN = 0.45       # parecido mínimo entre los dos nombres (difflib), además de compartir una parte
+VENTAJA_MIN = 0.15         # con varios candidatos, el mejor debe ganarle al segundo por esto
+CRUCES_POR_MINUTOS = []    # lo que resolvió esta pasada, para revisarlo a mano (`main` lo escribe)
+
+
+def _puestos_fbref(pos):
+    return {FBREF_A_POSICION[t] for t in str(pos).replace(" ", "").split(",") if t in FBREF_A_POSICION}
+
+
+def _puestos_understat(position):
+    return {UNDERSTAT_A_POSICION[t] for t in str(position).split() if t in UNDERSTAT_A_POSICION}
+
+
+def _se_parecen(a, b):
+    """¿Comparten una parte del nombre ('Ryan', 'N'Dicka') o el comienzo de una ('Mat' y 'Mathew')?"""
+    return bool(set(a) & set(b)) or any(len(x) >= 3 and len(y) >= 3 and (x.startswith(y) or y.startswith(x))
+                                        for x in a for y in b)
+
+
+def _por_minutos(players, fb, clave, fb_min, season):
+    """Tercera pasada, para quien el nombre no resolvió: 'Gabriel' (Understat) contra 'Gabriel Magalhães' (fbref), 'Mat
+    Ryan' contra 'Mathew Ryan', 'Nico Paz' contra 'Nicolás Paz'.
+
+    Las dos fuentes cuentan casi igual los minutos de un jugador, y eso, dentro de una liga y entre quienes quedaron SIN
+    pareja en los dos lados, casi identifica a cada uno. Un candidato de fbref vale si cumple las cuatro:
+
+    1. es de la misma liga y no lo reclamó ya otro jugador;
+    2. sus minutos están a menos del `TOLERANCIA_MIN` de los del jugador (con un piso de `TOLERANCIA_MIN_PISO`);
+    3. el nombre se parece: comparte una parte (o el comienzo de una) y su similitud pasa de `SIMILITUD_MIN`;
+    4. el puesto es compatible (un portero no cruza con un delantero).
+
+    Con varios candidatos se toma el mejor solo si le gana al segundo por `VENTAJA_MIN` de similitud; y, como en la pasada
+    del subconjunto, si dos jugadores reclaman la misma fila de fbref se descartan los dos. Todo lo que resuelve queda en
+    `CRUCES_POR_MINUTOS` y `main` lo escribe a `data/processed/cruce_por_minutos.csv`, para revisarlo a ojo."""
+    clave = clave.copy()
+    faltan = [i for i in players.index[clave.isna()] if players.at[i, "min"] >= MIN_CRUCE]
+    if not faltan:
+        return clave
+    usadas = set(clave.dropna())
+    libres = fb[~fb["key"].isin(usadas)]
+    por_liga = {}
+    for f in libres.itertuples(index=False):
+        por_liga.setdefault(f.liga, []).append(f)
+
+    propuestas = {}
+    for i in faltan:
+        nombre = players.at[i, "player"]
+        toks = norm_name(nombre)
+        minutos = players.at[i, "min"]
+        puestos = _puestos_understat(players.at[i, "position"])
+        candidatos = []
+        for f in por_liga.get(players.at[i, "liga"], []):
+            m = fb_min.get(f.key)
+            if m is None or pd.isna(m) or abs(m - minutos) > max(TOLERANCIA_MIN_PISO, TOLERANCIA_MIN * minutos):
+                continue
+            sim = SequenceMatcher(None, " ".join(toks), " ".join(f.tokens)).ratio()
+            if not (_se_parecen(toks, f.tokens) and sim >= SIMILITUD_MIN):
+                continue
+            pf = _puestos_fbref(f.pos)
+            if puestos and pf and not (puestos & pf):
+                continue
+            candidatos.append((sim, f))
+        candidatos.sort(key=lambda c: -c[0])
+        if len(candidatos) == 1 or (len(candidatos) > 1 and candidatos[0][0] - candidatos[1][0] >= VENTAJA_MIN):
+            propuestas[i] = candidatos[0]
+
+    veces = Counter(f.key for _, f in propuestas.values())
+    for i, (sim, f) in propuestas.items():
+        if veces[f.key] == 1:
+            clave.at[i] = f.key
+            CRUCES_POR_MINUTOS.append({
+                "temporada": season, "liga": players.at[i, "liga"], "club": players.at[i, "team"],
+                "understat": players.at[i, "player"], "min_understat": int(players.at[i, "min"]),
+                "fbref": f.player, "min_fbref": int(fb_min[f.key]), "similitud": round(sim, 2)})
+    return clave
+
+
 def edad_en_temporada(born, season):
     """Edad cumplida al arrancar la temporada, a partir del AÑO de nacimiento.
 
@@ -608,12 +743,13 @@ def attach_fbref(players, season_dir, season):
     fb = fb.sort_values("min", ascending=False).drop_duplicates("key").copy()
     fb["tokens"] = [norm_name(n) for n in fb["player"]]
 
-    players["key"] = [_key(l, n) for l, n in zip(players["liga"], players["player"])]
+    players["key"] = [_key(l, ALIAS_FBREF.get((l, n), n)) for l, n in zip(players["liga"], players["player"])]
     # Primera pasada: el nombre normalizado coincide exacto. La segunda
     # (`_por_subconjunto`) rellena lo que quede, y las dos devuelven lo mismo:
     # la clave de la fila de fbref, de la que después cuelga todo.
     players["fb_key"] = players["key"].where(players["key"].isin(set(fb["key"])))
     players["fb_key"] = _por_subconjunto(players, fb)
+    players["fb_key"] = _por_minutos(players, fb, players["fb_key"], sumas["fb_min"], season)
 
     por_clave = fb.set_index("key")
     players["born"] = por_clave["born"].reindex(players["fb_key"]).to_numpy()
@@ -765,6 +901,13 @@ def main():
 
     if faltantes:
         print(f"\nSin descargar todavía: {', '.join(faltantes)}")
+
+    if CRUCES_POR_MINUTOS:
+        OUT_DIR.mkdir(parents=True, exist_ok=True)
+        ruta = OUT_DIR / "cruce_por_minutos.csv"
+        pd.DataFrame(CRUCES_POR_MINUTOS).to_csv(ruta, index=False, encoding="utf-8-sig")
+        print(f"\nCruce por minutos (tercera pasada): {len(CRUCES_POR_MINUTOS)} jugadores nuevos con fbref -> "
+              f"{ruta.relative_to(DATA_DIR.parent)} (revisar a ojo)")
 
     print("\nEscrito:")
     if teams:

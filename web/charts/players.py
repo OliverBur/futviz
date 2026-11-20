@@ -467,6 +467,7 @@ PESTANAS = [
     ("pases-clave-vs-asistencias", "Pases clave vs. asistencias", "Creación"),
     ("construir-vs-producir", "Construcción vs. producción", "Creación"),
     ("corte-vs-cobertura", "Corte vs. Cobertura", "Defensa"),
+    ("jugador-completo", "Jugador completo", "_explorar"),
     ("edad", "Edad", "_explorar"),
     ("crea-tu-grafico-jugadores", "Crea tu gráfico", "_explorar"),   # "_": grupo aparte, sin rótulo
 ]
@@ -536,5 +537,7 @@ def build(assets_dir) -> list:
         paginas.append(chart_cover_stopper(df))
     else:
         print("  (sin columnas defensivas de fbref — se omite Cover vs. Stopper)")
+    import venn   # igual que `edad`: lee el DataFrame que se le pasa y no depende de este módulo al importarse
     import edad   # aquí y no arriba: `edad` lee las mismas tablas y no debe depender de este módulo al importarse
-    return _ordenar_pestanas(paginas + [chart_shot_map(), edad.chart_age(), chart_explorer(df)])
+    return _ordenar_pestanas(paginas + [chart_shot_map(), venn.chart_venn(df, MIN_MINUTES_90_POR_TEMPORADA),
+                                        edad.chart_age(), chart_explorer(df)])

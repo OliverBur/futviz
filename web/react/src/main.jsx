@@ -8,8 +8,9 @@ import CajasVista from "./CajasVista.jsx";
 import MapaTiros from "./MapaTiros.jsx";
 import ArticuloVista from "./Articulo.jsx";
 import EdadVista from "./EdadVista.jsx";
+import VennVista from "./VennVista.jsx";
 
-const VISTAS = { scatter: ScatterVista, cajas: CajasVista, tiros: MapaTiros, articulo: ArticuloVista, edad: EdadVista };
+const VISTAS = { scatter: ScatterVista, cajas: CajasVista, tiros: MapaTiros, articulo: ArticuloVista, edad: EdadVista, venn: VennVista };
 
 function montar() {
   document.querySelectorAll("[data-rx]:not([data-rx-listo])").forEach((el) => {
