@@ -11,6 +11,7 @@ está en `xg_equipos.py` y `load_data` lo pega a la tabla de FBref.
 
 import pandas as pd
 
+import forma
 import insights as ins
 import react_views
 import tabla_esperada
@@ -314,6 +315,7 @@ PESTANAS = [
     ("puntos-vs-xg", "Puntos vs. xG", ""),
     ("tabla-esperada", "Tabla real vs. esperada", "Temporada"),
     ("nivel-por-liga-equipos", "Distribución por liga", ""),
+    ("forma", "Forma", "Temporada"),
     ("crea-tu-grafico-equipos", "Crea tu gráfico", "_explorar"),   # "_": grupo aparte, sin rótulo
 ]
 
@@ -344,6 +346,7 @@ def build(assets_dir) -> list:
         chart_league_level(df),
         chart_explorer(df),
         tabla_esperada.chart_tabla_esperada(),
+        forma.chart_forma(),
     )}
     salida = []
     for slug, tab, grupo in PESTANAS:
