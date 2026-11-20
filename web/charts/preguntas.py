@@ -13,6 +13,7 @@ PREGUNTAS = {
     "pases-clave-vs-asistencias": "¿Quién crea ocasiones que sus compañeros desperdician?",
     "construir-vs-producir": "¿Quién construye, quién termina y quién lo hace todo?",
     "corte-vs-cobertura": "¿Quién va al choque y quién lee el juego?",
+    "jugador-completo": "¿Quién destaca a la vez en tres cosas de su puesto?",
     "edad": "¿Cuánto juegan los jóvenes y a qué edad se juega más?",
     "crea-tu-grafico-jugadores": "¿Cómo se relacionan dos variables que tú elijas?",
     # Equipos

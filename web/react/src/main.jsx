@@ -12,9 +12,10 @@ import TablaEsperadaVista from "./TablaEsperadaVista.jsx";
 import FormaVista from "./FormaVista.jsx";
 import OrigenXgVista from "./OrigenXgVista.jsx";
 import TrayectoriaEloVista from "./TrayectoriaEloVista.jsx";
+import VennVista from "./VennVista.jsx";
 
 const VISTAS = {
-  scatter: ScatterVista, cajas: CajasVista, tiros: MapaTiros, articulo: ArticuloVista, edad: EdadVista,
+  scatter: ScatterVista, cajas: CajasVista, tiros: MapaTiros, articulo: ArticuloVista, edad: EdadVista, venn: VennVista,
   tabla_esperada: TablaEsperadaVista, forma: FormaVista, origen_xg: OrigenXgVista,
   trayectoria_elo: TrayectoriaEloVista,
 };

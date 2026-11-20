@@ -529,6 +529,11 @@ class ArticlePage:
 # Ícono por tipo de gráfico, para que las cards de `equipos.html`/`jugadores.html`
 # se puedan distinguir de un vistazo sin abrirlas (antes eran solo texto).
 CHART_ICONS = {
+    "venn": (
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+        'stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/>'
+        '<circle cx="8" cy="15" r="5"/><circle cx="16" cy="15" r="5"/></svg>'
+    ),
     "scatter": (
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
         'stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="16" r="2"/>'
