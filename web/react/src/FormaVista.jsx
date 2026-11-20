@@ -143,72 +143,79 @@ function Vista({ cfg, D, modo, tk }) {
 
   return (
     <>
-      <Encabezado pregunta={cfg.pregunta} titulo={cfg.titulo} bajada={cfg.bajada} />
+      <Box sx={{ display: "grid", gap: 3, gridTemplateColumns: { xs: "minmax(0,1fr)", md: "minmax(0,1fr) 270px" }, alignItems: "start" }}>
+        <Box sx={{ minWidth: 0 }}>
+          <Encabezado pregunta={cfg.pregunta} titulo={cfg.titulo} bajada={cfg.bajada} />
 
-      <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "minmax(0,1fr)", md: "minmax(0,1fr) minmax(0,1fr)" }, alignItems: "start", mb: 2, maxWidth: 760 }}>
-        <Box sx={{ gridColumn: "1 / -1" }}>
-          <Rotulo>Temporada</Rotulo>
-          <ToggleButtonGroup exclusive size="small" value={temp} aria-label="Temporada" sx={{ flexWrap: "wrap" }}
-            onChange={(_e, v) => { if (v) setTemp(v); }}>
-            {D.temporadas.map((t) => (
-              <ToggleButton key={t} value={t} sx={{ flex: "1 1 auto" }}>{t}{D.enCurso[t] ? " · en curso" : ""}</ToggleButton>
-            ))}
-          </ToggleButtonGroup>
-        </Box>
-        {buscador(equipo, (v) => setQuiero(v), { etiqueta: "Equipo", placeholder: "Busca un equipo" })}
-        {buscador(equipoB, (v) => setCmp(v), { etiqueta: "Comparar con (opcional)", placeholder: "Sin comparar", limpiable: true, excluir: equipo })}
-      </Box>
-      {quiero !== equipo && (
-        <Typography sx={{ fontSize: 12, color: "text.secondary", mb: 1.5 }}>
-          {quiero} no está en {temp} en las 5 ligas; se muestra {equipo}.
-        </Typography>
-      )}
-      {enCurso && (
-        <Typography sx={{ fontSize: 12.5, color: "text.secondary", mb: 1.5, maxWidth: 760 }}>
-          {temp} va en curso ({enCurso} partidos por equipo como máximo): hay pocos puntos en la línea y nada de esto es una conclusión sobre su forma.
-        </Typography>
-      )}
+          {quiero !== equipo && (
+            <Typography sx={{ fontSize: 12, color: "text.secondary", mb: 1.5 }}>
+              {quiero} no está en {temp} en las 5 ligas; se muestra {equipo}.
+            </Typography>
+          )}
+          {enCurso && (
+            <Typography sx={{ fontSize: 12.5, color: "text.secondary", mb: 1.5, maxWidth: 760 }}>
+              {temp} va en curso ({enCurso} partidos por equipo como máximo): hay pocos puntos en la línea y nada de esto es una conclusión sobre su forma.
+            </Typography>
+          )}
 
-      <Box sx={{ maxWidth: 1000, width: "100%" }}>
-        <Typography component="h3" sx={{ fontSize: 13.5, fontWeight: 700, mb: 0.25 }}>
-          {equipos.map((e, k) => (
-            <span key={e.nombre}>{k > 0 && " y "}{e.nombre}</span>
-          ))}
-          <Box component="span" sx={{ fontWeight: 500, color: "text.secondary" }}> · {temp} · {gB && gA.l !== gB.l ? `${gA.l} y ${gB.l}` : gA.l}</Box>
-        </Typography>
-        <Box sx={{ display: "flex", flexWrap: "wrap", flexDirection: equipos.length > 1 ? { xs: "column", sm: "row" } : "row", columnGap: 2.5, rowGap: 0.5, fontSize: 12, color: "text.secondary", mb: 0.5 }}>
-          {equipos.map((e) => (
-            <Box key={e.nombre} component="span" sx={{ display: "inline-flex", flexWrap: "wrap", alignItems: "center", columnGap: 0.75, rowGap: 0.25 }}>
-              <MuestraLinea color={e.color} punteada={e.punteada} />
-              <span>{equipos.length > 1 && <strong style={{ color: "inherit" }}>{e.nombre}: </strong>}diferencia de xG por partido</span>
-              <MuestraLinea color={e.color} punteada={e.punteada} opacidad={OPACIDAD_GOLES} ancho={1.8} />
-              <span>diferencia de goles</span>
+          <Box sx={{ maxWidth: 1000, width: "100%" }}>
+            <Typography component="h3" sx={{ fontSize: 13.5, fontWeight: 700, mb: 0.25 }}>
+              {equipos.map((e, k) => (
+                <span key={e.nombre}>{k > 0 && " y "}{e.nombre}</span>
+              ))}
+              <Box component="span" sx={{ fontWeight: 500, color: "text.secondary" }}> · {temp} · {gB && gA.l !== gB.l ? `${gA.l} y ${gB.l}` : gA.l}</Box>
+            </Typography>
+            <Box sx={{ display: "flex", flexWrap: "wrap", flexDirection: equipos.length > 1 ? { xs: "column", sm: "row" } : "row", columnGap: 2.5, rowGap: 0.5, fontSize: 12, color: "text.secondary", mb: 0.5 }}>
+              {equipos.map((e) => (
+                <Box key={e.nombre} component="span" sx={{ display: "inline-flex", flexWrap: "wrap", alignItems: "center", columnGap: 0.75, rowGap: 0.25 }}>
+                  <MuestraLinea color={e.color} punteada={e.punteada} />
+                  <span>{equipos.length > 1 && <strong style={{ color: "inherit" }}>{e.nombre}: </strong>}diferencia de xG por partido</span>
+                  <MuestraLinea color={e.color} punteada={e.punteada} opacidad={OPACIDAD_GOLES} ancho={1.8} />
+                  <span>diferencia de goles</span>
+                </Box>
+              ))}
             </Box>
-          ))}
-        </Box>
-        <LineasSvg
-          tk={tk} ariaLabel={aria} series={series} alto={250}
-          x={{ dominio: [1, Math.max(nMax, 2)], formato: (v) => String(v) }}
-          y={{ formato: (v) => (v > 0 ? `+${v}` : String(v)) }}
-          referencias={[{ y: 0, ancho: 1.4 }]}
-          marcas={marcas} filasMarcas={equipos.map((e) => ({ color: e.color }))}
-          tooltip={tooltip} />
-        <Box sx={{ display: "flex", flexWrap: "wrap", columnGap: 2, rowGap: 0.25, fontSize: 11.5, color: "text.secondary", mt: 0.5 }}>
-          {leyendaMarca("circulo", "De local")}
-          {leyendaMarca("cuadrado", "De visita")}
-          {leyendaRes(cfg.resultado.G, false, "Ganó")}
-          {leyendaRes(tk.muted, true, "Empató")}
-          {leyendaRes(cfg.resultado.P, false, "Perdió")}
-        </Box>
-        <Typography sx={{ fontSize: 11.5, color: "text.secondary", mt: 0.5 }}>
-          Eje: número de partido en el orden en que se jugó. Cada punto de la línea promedia los {V} partidos que terminan ahí, así que empieza en el {V}.
-          {gB && " Con dos equipos, el partido 12 de uno y el del otro no son del mismo día."}
-          {" "}Arriba del cero, el equipo crea más de lo que concede.
-        </Typography>
-      </Box>
+            <LineasSvg
+              tk={tk} ariaLabel={aria} series={series} alto={250}
+              x={{ dominio: [1, Math.max(nMax, 2)], formato: (v) => String(v) }}
+              y={{ formato: (v) => (v > 0 ? `+${v}` : String(v)) }}
+              referencias={[{ y: 0, ancho: 1.4 }]}
+              marcas={marcas} filasMarcas={equipos.map((e) => ({ color: e.color }))}
+              tooltip={tooltip} />
+            <Box sx={{ display: "flex", flexWrap: "wrap", columnGap: 2, rowGap: 0.25, fontSize: 11.5, color: "text.secondary", mt: 0.5 }}>
+              {leyendaMarca("circulo", "De local")}
+              {leyendaMarca("cuadrado", "De visita")}
+              {leyendaRes(cfg.resultado.G, false, "Ganó")}
+              {leyendaRes(tk.muted, true, "Empató")}
+              {leyendaRes(cfg.resultado.P, false, "Perdió")}
+            </Box>
+            <Typography sx={{ fontSize: 11.5, color: "text.secondary", mt: 0.5 }}>
+              Eje: número de partido en el orden en que se jugó. Cada punto de la línea promedia los {V} partidos que terminan ahí, así que empieza en el {V}.
+              {gB && " Con dos equipos, el partido 12 de uno y el del otro no son del mismo día."}
+              {" "}Arriba del cero, el equipo crea más de lo que concede.
+            </Typography>
+          </Box>
 
-      <Box sx={{ mt: 1, display: "flex", justifyContent: "flex-end", maxWidth: 1000 }}>
-        <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
+          <Box sx={{ mt: 1, display: "flex", justifyContent: "flex-end", maxWidth: 1000 }}>
+            <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
+          </Box>
+
+        </Box>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2.25, order: { xs: -1, md: 0 } }}>
+          <Box sx={{ display: "grid", gap: 2.25, gridTemplateColumns: "minmax(0,1fr)" }}>
+            <Box sx={{ gridColumn: "1 / -1" }}>
+              <Rotulo>Temporada</Rotulo>
+              <ToggleButtonGroup exclusive size="small" value={temp} aria-label="Temporada" sx={{ flexWrap: "wrap" }}
+                onChange={(_e, v) => { if (v) setTemp(v); }}>
+                {D.temporadas.map((t) => (
+                  <ToggleButton key={t} value={t} sx={{ flex: "1 1 auto" }}>{t}{D.enCurso[t] ? " · en curso" : ""}</ToggleButton>
+                ))}
+              </ToggleButtonGroup>
+            </Box>
+            {buscador(equipo, (v) => setQuiero(v), { etiqueta: "Equipo", placeholder: "Busca un equipo" })}
+            {buscador(equipoB, (v) => setCmp(v), { etiqueta: "Comparar con (opcional)", placeholder: "Sin comparar", limpiable: true, excluir: equipo })}
+          </Box>
+        </Box>
       </Box>
 
       <Box sx={{ mt: 2, maxWidth: 1040 }}>

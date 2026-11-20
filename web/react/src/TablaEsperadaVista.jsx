@@ -154,88 +154,95 @@ function Vista({ cfg, D, modo, tk }) {
 
   return (
     <>
-      <Encabezado pregunta={cfg.pregunta} titulo={cfg.titulo} bajada={cfg.bajada} />
+      <Box sx={{ display: "grid", gap: 3, gridTemplateColumns: { xs: "minmax(0,1fr)", md: "minmax(0,1fr) 270px" }, alignItems: "start" }}>
+        <Box sx={{ minWidth: 0 }}>
+          <Encabezado pregunta={cfg.pregunta} titulo={cfg.titulo} bajada={cfg.bajada} />
 
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2, maxWidth: 1000 }}>
-        <Box sx={{ flex: "1 1 360px", minWidth: 0 }}>
-          <Rotulo>Liga</Rotulo>
-          <ToggleButtonGroup exclusive size="small" value={liga} aria-label="Liga" sx={{ flexWrap: "wrap" }} onChange={elegir(setLiga)}>
-            {D.ligas.map((l) => <ToggleButton key={l} value={l} sx={{ flex: "1 1 auto" }}>{l}</ToggleButton>)}
-          </ToggleButtonGroup>
-        </Box>
-        <Box sx={{ flex: "1 1 360px", minWidth: 0 }}>
-          <Rotulo>Temporada</Rotulo>
-          <ToggleButtonGroup exclusive size="small" value={temporada} aria-label="Temporada" sx={{ flexWrap: "wrap" }} onChange={elegir(setTemporada)}>
-            {D.temporadas.map((t) => (
-              <ToggleButton key={t} value={t} sx={{ flex: "1 1 auto" }}>{t}{D.enCurso[t] != null ? " (en curso)" : ""}</ToggleButton>
-            ))}
-          </ToggleButtonGroup>
-        </Box>
-      </Box>
-
-      <Box ref={caja} sx={{ maxWidth: 1000, width: "100%", position: "relative" }}>
-        <Typography component="h3" sx={{ fontSize: 13.5, fontWeight: 700, mb: 0.25 }}>
-          {liga} · {temporada}{enCurso ? " (en curso)" : ""}{" "}
-          <Box component="span" sx={{ fontWeight: 500, color: "text.secondary" }}>· en el orden de la tabla real</Box>
-        </Typography>
-        {enCurso && (
-          <Typography sx={{ fontSize: 12.5, mb: 1, pl: 1.25, borderLeft: 3, borderColor: "warning.main" }}>
-            Esta temporada va en curso: los equipos llevan de {Math.min(...filas.map((r) => r.pj))} a {Math.max(...filas.map((r) => r.pj))} partidos.
-            Se dibuja en gris porque con tan pocos partidos la diferencia es casi toda azar.
-          </Typography>
-        )}
-        <Leyenda tk={tk} div={div} enCurso={enCurso} />
-        {w > 0 && filas.length > 0 && (
-          <svg role="img" aria-label={resumen} width={w} height={alto} {...manejadores}>
-            {/* encabezados de las columnas */}
-            <g fontSize={10.5} fill={tk.muted} fontWeight={600}>
-              <text x={POS_W} y={HEAD - 9} textAnchor="end">Real</text>
-              <text x={w - DER_W} y={HEAD - 9}>{compacto ? "Esp. (±)" : "Esperado (± lugares)"}</text>
-            </g>
-            {/* rejilla vertical y eje de puntos */}
-            <g fontSize={11} fill={tk.muted}>
-              {ticks.map((v) => (
-                <g key={v}>
-                  <line x1={x(v)} x2={x(v)} y1={HEAD} y2={HEAD + RH * filas.length} stroke={tk.border} strokeOpacity={0.8} />
-                  <text x={x(v)} y={HEAD + RH * filas.length + 16} textAnchor="middle">{v}</text>
+          <Box ref={caja} sx={{ maxWidth: 1000, width: "100%", position: "relative" }}>
+            <Typography component="h3" sx={{ fontSize: 13.5, fontWeight: 700, mb: 0.25 }}>
+              {liga} · {temporada}{enCurso ? " (en curso)" : ""}{" "}
+              <Box component="span" sx={{ fontWeight: 500, color: "text.secondary" }}>· en el orden de la tabla real</Box>
+            </Typography>
+            {enCurso && (
+              <Typography sx={{ fontSize: 12.5, mb: 1, pl: 1.25, borderLeft: 3, borderColor: "warning.main" }}>
+                Esta temporada va en curso: los equipos llevan de {Math.min(...filas.map((r) => r.pj))} a {Math.max(...filas.map((r) => r.pj))} partidos.
+                Se dibuja en gris porque con tan pocos partidos la diferencia es casi toda azar.
+              </Typography>
+            )}
+            <Leyenda tk={tk} div={div} enCurso={enCurso} />
+            {w > 0 && filas.length > 0 && (
+              <svg role="img" aria-label={resumen} width={w} height={alto} {...manejadores}>
+                {/* encabezados de las columnas */}
+                <g fontSize={10.5} fill={tk.muted} fontWeight={600}>
+                  <text x={POS_W} y={HEAD - 9} textAnchor="end">Real</text>
+                  <text x={w - DER_W} y={HEAD - 9}>{compacto ? "Esp. (±)" : "Esperado (± lugares)"}</text>
                 </g>
-              ))}
-              <text x={pl + pw / 2} y={alto - 2} textAnchor="middle" fontSize={10.5}>Puntos</text>
-            </g>
-            {hover && <rect x={0} y={HEAD + RH * hover.i} width={w} height={RH} fill={conAlfa(tk.primary, 0.08)} pointerEvents="none" />}
-            {filas.map((r, i) => {
-              const c = enCurso ? neutro : colorDe(r.dif, div);
-              const y = cy(i);
-              const dl = r.lugares;
-              return (
-                <g key={r.nombre}>
-                  {i > 0 && <line x1={0} x2={w} y1={HEAD + RH * i} y2={HEAD + RH * i} stroke={tk.border} strokeOpacity={0.35} />}
-                  <text x={POS_W} y={y + 4} textAnchor="end" fontSize={11.5} fontWeight={700} fill={tk["text-body"]}>{r.pr}</text>
-                  <text x={POS_W + 6} y={y + 4} fontSize={compacto ? 11.5 : 12.5} fill={tk["text-body"]}>
-                    {recorta(r.nombre, Math.floor(NOM_W / (compacto ? 6 : 6.6)))}
-                  </text>
-                  <line x1={x(r.xp)} x2={x(r.pts)} y1={y} y2={y} stroke={c} strokeWidth={4} strokeLinecap="round" strokeOpacity={enCurso ? 0.5 : 0.9} />
-                  <circle cx={x(r.xp)} cy={y} r={R_MARCA} fill={tk.surface} stroke={tk.muted} strokeWidth={2} />
-                  <circle cx={x(r.pts)} cy={y} r={hover && hover.i === i ? R_MARCA + 1.5 : R_MARCA} fill={c} stroke={tk.surface} strokeWidth={1.5} />
-                  <text x={w - DER_W} y={y + 4} fontSize={compacto ? 11.5 : 12.5} fill={tk["text-body"]}>
-                    {r.pe}
-                    <tspan dx={6} fill={tk.muted} fontWeight={dl === 0 ? 400 : 700}>
-                      {dl === 0 ? "=" : menos(`${dl > 0 ? "+" : "-"}${Math.abs(dl)}`)}
-                    </tspan>
-                  </text>
+                {/* rejilla vertical y eje de puntos */}
+                <g fontSize={11} fill={tk.muted}>
+                  {ticks.map((v) => (
+                    <g key={v}>
+                      <line x1={x(v)} x2={x(v)} y1={HEAD} y2={HEAD + RH * filas.length} stroke={tk.border} strokeOpacity={0.8} />
+                      <text x={x(v)} y={HEAD + RH * filas.length + 16} textAnchor="middle">{v}</text>
+                    </g>
+                  ))}
+                  <text x={pl + pw / 2} y={alto - 2} textAnchor="middle" fontSize={10.5}>Puntos</text>
                 </g>
-              );
-            })}
-          </svg>
-        )}
-        {tip}
-        <Typography sx={{ fontSize: 11.5, color: "text.secondary", mt: 0.5 }}>
-          «+2» es estar dos lugares por encima del que le tocaría por xPts; «−2», dos por debajo.
-        </Typography>
-      </Box>
+                {hover && <rect x={0} y={HEAD + RH * hover.i} width={w} height={RH} fill={conAlfa(tk.primary, 0.08)} pointerEvents="none" />}
+                {filas.map((r, i) => {
+                  const c = enCurso ? neutro : colorDe(r.dif, div);
+                  const y = cy(i);
+                  const dl = r.lugares;
+                  return (
+                    <g key={r.nombre}>
+                      {i > 0 && <line x1={0} x2={w} y1={HEAD + RH * i} y2={HEAD + RH * i} stroke={tk.border} strokeOpacity={0.35} />}
+                      <text x={POS_W} y={y + 4} textAnchor="end" fontSize={11.5} fontWeight={700} fill={tk["text-body"]}>{r.pr}</text>
+                      <text x={POS_W + 6} y={y + 4} fontSize={compacto ? 11.5 : 12.5} fill={tk["text-body"]}>
+                        {recorta(r.nombre, Math.floor(NOM_W / (compacto ? 6 : 6.6)))}
+                      </text>
+                      <line x1={x(r.xp)} x2={x(r.pts)} y1={y} y2={y} stroke={c} strokeWidth={4} strokeLinecap="round" strokeOpacity={enCurso ? 0.5 : 0.9} />
+                      <circle cx={x(r.xp)} cy={y} r={R_MARCA} fill={tk.surface} stroke={tk.muted} strokeWidth={2} />
+                      <circle cx={x(r.pts)} cy={y} r={hover && hover.i === i ? R_MARCA + 1.5 : R_MARCA} fill={c} stroke={tk.surface} strokeWidth={1.5} />
+                      <text x={w - DER_W} y={y + 4} fontSize={compacto ? 11.5 : 12.5} fill={tk["text-body"]}>
+                        {r.pe}
+                        <tspan dx={6} fill={tk.muted} fontWeight={dl === 0 ? 400 : 700}>
+                          {dl === 0 ? "=" : menos(`${dl > 0 ? "+" : "-"}${Math.abs(dl)}`)}
+                        </tspan>
+                      </text>
+                    </g>
+                  );
+                })}
+              </svg>
+            )}
+            {tip}
+            <Typography sx={{ fontSize: 11.5, color: "text.secondary", mt: 0.5 }}>
+              «+2» es estar dos lugares por encima del que le tocaría por xPts; «−2», dos por debajo.
+            </Typography>
+          </Box>
 
-      <Box sx={{ mt: 1, display: "flex", justifyContent: "flex-end", maxWidth: 1000 }}>
-        <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
+          <Box sx={{ mt: 1, display: "flex", justifyContent: "flex-end", maxWidth: 1000 }}>
+            <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
+          </Box>
+
+        </Box>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2.25, order: { xs: -1, md: 0 } }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2.25 }}>
+            <Box sx={{ flex: "none", minWidth: 0 }}>
+              <Rotulo>Liga</Rotulo>
+              <ToggleButtonGroup exclusive size="small" value={liga} aria-label="Liga" sx={{ flexWrap: "wrap" }} onChange={elegir(setLiga)}>
+                {D.ligas.map((l) => <ToggleButton key={l} value={l} sx={{ flex: "1 1 auto" }}>{l}</ToggleButton>)}
+              </ToggleButtonGroup>
+            </Box>
+            <Box sx={{ flex: "none", minWidth: 0 }}>
+              <Rotulo>Temporada</Rotulo>
+              <ToggleButtonGroup exclusive size="small" value={temporada} aria-label="Temporada" sx={{ flexWrap: "wrap" }} onChange={elegir(setTemporada)}>
+                {D.temporadas.map((t) => (
+                  <ToggleButton key={t} value={t} sx={{ flex: "1 1 auto" }}>{t}{D.enCurso[t] != null ? " (en curso)" : ""}</ToggleButton>
+                ))}
+              </ToggleButtonGroup>
+            </Box>
+          </Box>
+
+        </Box>
       </Box>
 
       <Box sx={{ mt: 2, maxWidth: 1040 }}>

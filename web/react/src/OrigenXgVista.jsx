@@ -203,191 +203,198 @@ function Vista({ cfg, D, modo: tema, tk }) {
 
   return (
     <>
-      <Encabezado pregunta={cfg.pregunta} titulo={cfg.titulo} bajada={cfg.bajada} muestra={muestra} />
+      <Box sx={{ display: "grid", gap: 3, gridTemplateColumns: { xs: "minmax(0,1fr)", md: "minmax(0,1fr) 270px" }, alignItems: "start" }}>
+        <Box sx={{ minWidth: 0 }}>
+          <Encabezado pregunta={cfg.pregunta} titulo={cfg.titulo} bajada={cfg.bajada} muestra={muestra} />
 
-      {/* --- controles --- */}
-      <Box sx={{ display: "grid", gap: 1.5, mb: 1.5, maxWidth: 1000 }}>
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5, alignItems: "flex-end", justifyContent: "space-between" }}>
-          <Box role="group" aria-label="Filtrar por liga" sx={{ display: "flex", flexWrap: "wrap", gap: 0.75 }}>
-            {[TODAS, ...ligas.map((_, l) => l)].map((l) => {
-              const on = liga === l;
-              const color = l === TODAS ? tk.primary : colorLiga(l);
-              return (
-                <Chip key={l} size="small" clickable variant={on ? "filled" : "outlined"} aria-pressed={on}
-                  onClick={() => { setLiga(l); setHover(null); }}
-                  label={l === TODAS ? `Las 5 ligas · ${deTemporada.length}` : `${ligas[l]} · ${cuentaLiga(l)}`}
-                  avatar={l === TODAS ? undefined : <Box component="span" sx={{ width: "10px !important", height: "10px !important",
-                    borderRadius: "50%", bgcolor: color, ml: "8px !important" }} />}
-                  sx={{ bgcolor: on ? conAlfa(color, 0.16) : "transparent", color: on ? "text.primary" : "text.secondary",
-                    borderColor: on ? color : "divider" }} />
-              );
-            })}
-          </Box>
-          {movil ? (
-            <TextField select size="small" label="Temporada" value={t} onChange={(e) => { setT(Number(e.target.value)); setHover(null); }}
-              slotProps={{ select: { native: true }, htmlInput: { "aria-label": "Temporada" } }} sx={{ minWidth: 150 }}>
-              {D.temporadas.map((s, i) => <option key={s} value={i}>{s}{enCurso[s] ? " (en curso)" : ""}</option>)}
-            </TextField>
-          ) : (
-            <Box>
-              <Rotulo>Temporada</Rotulo>
-              <ToggleButtonGroup exclusive size="small" value={t} aria-label="Temporada"
-                onChange={(_e, v) => { if (v != null) { setT(v); setHover(null); } }}>
-                {D.temporadas.map((s, i) => (
-                  <ToggleButton key={s} value={i} aria-label={`${s}${enCurso[s] ? " (en curso)" : ""}`} sx={{ px: 1 }}>
-                    {s.slice(2)}{enCurso[s] ? "*" : ""}
-                  </ToggleButton>
-                ))}
-              </ToggleButtonGroup>
-            </Box>
+          {fijado >= 0 && filaFijada < 0 && (
+            <Typography sx={{ fontSize: 12.5, color: "text.secondary", mb: 1 }}>
+              {D.nombres[fijado]} no tiene barra en {ambito} · {tLabel}.
+            </Typography>
           )}
-        </Box>
 
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5, alignItems: "flex-end" }}>
-          <Box>
-            <Rotulo>Tiros</Rotulo>
-            <ToggleButtonGroup exclusive size="small" value={lado} aria-label="A favor o en contra"
-              onChange={(_e, v) => v && setLado(v)}>
-              <ToggleButton value="f">A favor</ToggleButton>
-              <ToggleButton value="c">En contra</ToggleButton>
-            </ToggleButtonGroup>
-          </Box>
-          <Box>
-            <Rotulo>Mostrar</Rotulo>
-            <ToggleButtonGroup exclusive size="small" value={medida} aria-label="Porcentaje o xG por partido"
-              onChange={(_e, v) => v && setMedida(v)}>
-              <ToggleButton value="pct">% del xG</ToggleButton>
-              <ToggleButton value="xg">xG por partido</ToggleButton>
-            </ToggleButtonGroup>
-          </Box>
-          <Box sx={{ minWidth: 190 }}>
-            <Rotulo>Ordenar por</Rotulo>
-            <TextField select size="small" fullWidth value={orden} onChange={(e) => setOrden(e.target.value)}
-              slotProps={{ htmlInput: { "aria-label": "Ordenar por" } }}>
-              <MenuItem value="bp" sx={{ fontSize: 13 }}>Balón parado (los tres)</MenuItem>
-              {APILADO.map((id) => <MenuItem key={id} value={id} sx={{ fontSize: 13 }}>{etiquetaSeg[id]}</MenuItem>)}
-            </TextField>
-          </Box>
-          <Box sx={{ minWidth: 200, flex: "1 1 200px", maxWidth: 300 }}>
-            <Rotulo>Resaltar un equipo</Rotulo>
-            <Autocomplete size="small" options={equiposBuscador} value={fijado >= 0 && equiposBuscador.includes(fijado) ? fijado : null}
-              onChange={(_e, v) => elegir(v == null ? -1 : v)}
-              getOptionLabel={(j) => D.nombres[j]} isOptionEqualToValue={(a, b) => a === b}
-              filterOptions={(opciones, { inputValue }) => {
-                const q = sinAcentos(inputValue.trim());
-                return opciones.filter((j) => sinAcentos(D.nombres[j]).includes(q));
-              }}
-              noOptionsText="Ningún equipo con ese nombre"
-              renderInput={(p) => <TextField {...p} placeholder="Busca un equipo" slotProps={{ ...p.slotProps, htmlInput: { ...(p.slotProps && p.slotProps.htmlInput), "aria-label": "Resaltar un equipo" } }} />} />
-          </Box>
-        </Box>
-
-        {/* leyenda: también es el control de orden */}
-        <Box role="group" aria-label="Segmentos: clic para ordenar por uno" sx={{ display: "flex", flexWrap: "wrap", gap: 0.75, alignItems: "center" }}>
-          {APILADO.map((id) => {
-            const on = orden === id;
-            return (
-              <Chip key={id} size="small" clickable aria-pressed={on} variant={on ? "filled" : "outlined"}
-                onClick={() => ordenarPorLeyenda(id)}
-                title={on ? "Ordenado por este segmento. Clic para volver a balón parado" : `Ordenar por ${etiquetaSeg[id].toLowerCase()}`}
-                label={etiquetaSeg[id]}
-                avatar={<Box component="span" sx={{ width: "11px !important", height: "11px !important", borderRadius: "3px",
-                  bgcolor: colorSeg(id), ml: "8px !important" }} />}
-                sx={{ bgcolor: on ? conAlfa(tk.primary, 0.12) : "transparent", color: "text.primary", borderColor: on ? tk.primary : "divider" }} />
-            );
-          })}
-          <Typography sx={{ fontSize: 11.5, color: "text.secondary", ml: 0.5 }}>Ordenado por {ordenTxt}</Typography>
-        </Box>
-      </Box>
-
-      {fijado >= 0 && filaFijada < 0 && (
-        <Typography sx={{ fontSize: 12.5, color: "text.secondary", mb: 1 }}>
-          {D.nombres[fijado]} no tiene barra en {ambito} · {tLabel}.
-        </Typography>
-      )}
-
-      {/* --- las barras --- */}
-      <Box ref={caja} sx={{ maxWidth: 1000, width: "100%", position: "relative" }}>
-        {w > 0 && (
-          <svg ref={svgRef} role="img" aria-label={resumen} width={w} height={alto}
-            onPointerMove={(e) => mover(e)} onPointerDown={(e) => mover(e)} onPointerLeave={salir}
-            style={{ display: "block", touchAction: "pan-y" }}>
-            {/* rejilla y eje (arriba, y abajo si son muchas filas) */}
-            <g fontSize={11} fill={tk.muted}>
-              {marcas.map((v) => (
-                <g key={v}>
-                  <line x1={x(v)} x2={x(v)} y1={MG_SUP - 6} y2={MG_SUP + ordenadas.length * hFila} stroke={tk.border} strokeOpacity={0.9} />
-                  <text x={x(v)} y={MG_SUP - 10} textAnchor={v === tope ? "end" : v === 0 ? "start" : "middle"}>{fmtMarca(v)}</text>
-                  {alta && <text x={x(v)} y={MG_SUP + ordenadas.length * hFila + 16} textAnchor={v === tope ? "end" : v === 0 ? "start" : "middle"}>{fmtMarca(v)}</text>}
+          {/* --- las barras --- */}
+          <Box ref={caja} sx={{ maxWidth: 1000, width: "100%", position: "relative" }}>
+            {w > 0 && (
+              <svg ref={svgRef} role="img" aria-label={resumen} width={w} height={alto}
+                onPointerMove={(e) => mover(e)} onPointerDown={(e) => mover(e)} onPointerLeave={salir}
+                style={{ display: "block", touchAction: "pan-y" }}>
+                {/* rejilla y eje (arriba, y abajo si son muchas filas) */}
+                <g fontSize={11} fill={tk.muted}>
+                  {marcas.map((v) => (
+                    <g key={v}>
+                      <line x1={x(v)} x2={x(v)} y1={MG_SUP - 6} y2={MG_SUP + ordenadas.length * hFila} stroke={tk.border} strokeOpacity={0.9} />
+                      <text x={x(v)} y={MG_SUP - 10} textAnchor={v === tope ? "end" : v === 0 ? "start" : "middle"}>{fmtMarca(v)}</text>
+                      {alta && <text x={x(v)} y={MG_SUP + ordenadas.length * hFila + 16} textAnchor={v === tope ? "end" : v === 0 ? "start" : "middle"}>{fmtMarca(v)}</text>}
+                    </g>
+                  ))}
+                  <text x={w} y={11} textAnchor="end" fontWeight={700}>{encabezadoOrden}</text>
                 </g>
-              ))}
-              <text x={w} y={11} textAnchor="end" fontWeight={700}>{encabezadoOrden}</text>
-            </g>
-            {ordenadas.map((i, k) => {
-              const y = MG_SUP + k * hFila;
-              const pinta = fijado >= 0 && D.f.j[i] === fijado;
-              const apagada = fijado >= 0 && !pinta;
-              const enHover = hover && hover.i === i;
-              let acum = 0;
-              return (
-                <g key={i} opacity={apagada && !enHover ? 0.38 : 1}>
-                  {(pinta || enHover) && <rect x={0} y={y} width={w} height={hFila} fill={conAlfa(tk.primary, pinta ? 0.13 : 0.07)} rx={3} />}
-                  {liga === TODAS && <circle cx={6} cy={y + hFila / 2} r={3.5} fill={colorLiga(D.f.l[i])} />}
-                  <text x={liga === TODAS ? 15 : 2} y={y + hFila / 2 + fuente * 0.35} fontSize={fuente} fill={tk["text-body"]}
-                    fontWeight={pinta ? 700 : 500}>{corto(nombreFila(i))}</text>
-                  {APILADO.map((id) => {
-                    const v = valorSeg(D, i, lado, id, medida);
-                    const x1 = x(acum);
-                    acum += v;
-                    return <rect key={id} x={x1} y={y + (alta ? 2 : 3)} width={Math.max(0, x(acum) - x1)} height={hFila - (alta ? 4 : 6)}
-                      fill={colorSeg(id)} stroke={tk.surface} strokeWidth={1} />;
-                  })}
-                  <text x={w} y={y + hFila / 2 + 4} fontSize={fuente} textAnchor="end" fill={tk["text-body"]} fontWeight={pinta ? 700 : 500}>
-                    {medida === "pct" ? `${fmt(valorOrden(D, i, lado, orden, medida), 0)}%` : fmt(valorOrden(D, i, lado, orden, medida), 2)}
-                  </text>
-                </g>
-              );
-            })}
-          </svg>
-        )}
-        {tip}
-      </Box>
+                {ordenadas.map((i, k) => {
+                  const y = MG_SUP + k * hFila;
+                  const pinta = fijado >= 0 && D.f.j[i] === fijado;
+                  const apagada = fijado >= 0 && !pinta;
+                  const enHover = hover && hover.i === i;
+                  let acum = 0;
+                  return (
+                    <g key={i} opacity={apagada && !enHover ? 0.38 : 1}>
+                      {(pinta || enHover) && <rect x={0} y={y} width={w} height={hFila} fill={conAlfa(tk.primary, pinta ? 0.13 : 0.07)} rx={3} />}
+                      {liga === TODAS && <circle cx={6} cy={y + hFila / 2} r={3.5} fill={colorLiga(D.f.l[i])} />}
+                      <text x={liga === TODAS ? 15 : 2} y={y + hFila / 2 + fuente * 0.35} fontSize={fuente} fill={tk["text-body"]}
+                        fontWeight={pinta ? 700 : 500}>{corto(nombreFila(i))}</text>
+                      {APILADO.map((id) => {
+                        const v = valorSeg(D, i, lado, id, medida);
+                        const x1 = x(acum);
+                        acum += v;
+                        return <rect key={id} x={x1} y={y + (alta ? 2 : 3)} width={Math.max(0, x(acum) - x1)} height={hFila - (alta ? 4 : 6)}
+                          fill={colorSeg(id)} stroke={tk.surface} strokeWidth={1} />;
+                      })}
+                      <text x={w} y={y + hFila / 2 + 4} fontSize={fuente} textAnchor="end" fill={tk["text-body"]} fontWeight={pinta ? 700 : 500}>
+                        {medida === "pct" ? `${fmt(valorOrden(D, i, lado, orden, medida), 0)}%` : fmt(valorOrden(D, i, lado, orden, medida), 2)}
+                      </text>
+                    </g>
+                  );
+                })}
+              </svg>
+            )}
+            {tip}
+          </Box>
 
-      <Box sx={{ mt: 1, display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 1, maxWidth: 1000 }}>
-        <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
-          Cada barra mide el xG sin penales de un equipo en una temporada{Object.keys(enCurso).length ? ". * Temporada en curso" : ""}.
-        </Typography>
-        <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
-      </Box>
+          <Box sx={{ mt: 1, display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 1, maxWidth: 1000 }}>
+            <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
+              Cada barra mide el xG sin penales de un equipo en una temporada{Object.keys(enCurso).length ? ". * Temporada en curso" : ""}.
+            </Typography>
+            <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
+          </Box>
 
-      <details style={{ marginTop: 12, maxWidth: 1000 }}>
-        <summary style={{ cursor: "pointer", font: "600 12.5px Inter, system-ui", color: "var(--color-muted)", padding: "4px 0" }}>
-          Ver los números en tabla
-        </summary>
-        <Box sx={{ overflowX: "auto", mt: 0.5 }}>
-          <table style={{ borderCollapse: "collapse", fontSize: 12.5, minWidth: 460, width: "100%" }}>
-            <caption style={{ textAlign: "left", fontSize: 12, color: "var(--color-muted)", padding: "4px 0" }}>
-              {ladoTxt} · {medida === "pct" ? "% del xG" : "xG por partido"} · {ambito} · {tLabel}
-            </caption>
-            <thead>
-              <tr>{["Equipo", ...BALON_PARADO.map((id) => etiquetaSeg[id]), etiquetaSeg.abierta, "xG por partido"].map((h, c) => (
-                <th key={h} scope="col" style={{ textAlign: c ? "right" : "left", padding: "4px 8px", borderBottom: "1px solid var(--color-border)" }}>{h}</th>))}</tr>
-            </thead>
-            <tbody>
-              {ordenadas.map((i) => (
-                <tr key={i}>
-                  <th scope="row" style={{ textAlign: "left", fontWeight: 600, padding: "3px 8px" }}>{nombreFila(i)}</th>
-                  {[...BALON_PARADO, "abierta"].map((id) => (
-                    <td key={id} style={{ textAlign: "right", padding: "3px 8px" }}>
-                      {medida === "pct" ? `${fmt(valorSeg(D, i, lado, id, "pct"), 1)}%` : fmt(valorSeg(D, i, lado, id, "xg"), 2)}
-                    </td>))}
-                  <td style={{ textAlign: "right", padding: "3px 8px" }}>{fmt(xgTotal(D, i, lado) / D.c.pj[i], 2)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <details style={{ marginTop: 12, maxWidth: 1000 }}>
+            <summary style={{ cursor: "pointer", font: "600 12.5px Inter, system-ui", color: "var(--color-muted)", padding: "4px 0" }}>
+              Ver los números en tabla
+            </summary>
+            <Box sx={{ overflowX: "auto", mt: 0.5 }}>
+              <table style={{ borderCollapse: "collapse", fontSize: 12.5, minWidth: 460, width: "100%" }}>
+                <caption style={{ textAlign: "left", fontSize: 12, color: "var(--color-muted)", padding: "4px 0" }}>
+                  {ladoTxt} · {medida === "pct" ? "% del xG" : "xG por partido"} · {ambito} · {tLabel}
+                </caption>
+                <thead>
+                  <tr>{["Equipo", ...BALON_PARADO.map((id) => etiquetaSeg[id]), etiquetaSeg.abierta, "xG por partido"].map((h, c) => (
+                    <th key={h} scope="col" style={{ textAlign: c ? "right" : "left", padding: "4px 8px", borderBottom: "1px solid var(--color-border)" }}>{h}</th>))}</tr>
+                </thead>
+                <tbody>
+                  {ordenadas.map((i) => (
+                    <tr key={i}>
+                      <th scope="row" style={{ textAlign: "left", fontWeight: 600, padding: "3px 8px" }}>{nombreFila(i)}</th>
+                      {[...BALON_PARADO, "abierta"].map((id) => (
+                        <td key={id} style={{ textAlign: "right", padding: "3px 8px" }}>
+                          {medida === "pct" ? `${fmt(valorSeg(D, i, lado, id, "pct"), 1)}%` : fmt(valorSeg(D, i, lado, id, "xg"), 2)}
+                        </td>))}
+                      <td style={{ textAlign: "right", padding: "3px 8px" }}>{fmt(xgTotal(D, i, lado) / D.c.pj[i], 2)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </Box>
+          </details>
+
         </Box>
-      </details>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2.25, order: { xs: -1, md: 0 } }}>
+          {/* --- controles --- */}
+          <Box sx={{ display: "grid", gap: 2.25 }}>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5, alignItems: "flex-end", justifyContent: "space-between" }}>
+              <Box role="group" aria-label="Filtrar por liga" sx={{ display: "flex", flexWrap: "wrap", gap: 0.75 }}>
+                {[TODAS, ...ligas.map((_, l) => l)].map((l) => {
+                  const on = liga === l;
+                  const color = l === TODAS ? tk.primary : colorLiga(l);
+                  return (
+                    <Chip key={l} size="small" clickable variant={on ? "filled" : "outlined"} aria-pressed={on}
+                      onClick={() => { setLiga(l); setHover(null); }}
+                      label={l === TODAS ? `Las 5 ligas · ${deTemporada.length}` : `${ligas[l]} · ${cuentaLiga(l)}`}
+                      avatar={l === TODAS ? undefined : <Box component="span" sx={{ width: "10px !important", height: "10px !important",
+                        borderRadius: "50%", bgcolor: color, ml: "8px !important" }} />}
+                      sx={{ bgcolor: on ? conAlfa(color, 0.16) : "transparent", color: on ? "text.primary" : "text.secondary",
+                        borderColor: on ? color : "divider" }} />
+                  );
+                })}
+              </Box>
+              {movil ? (
+                <TextField select size="small" label="Temporada" value={t} onChange={(e) => { setT(Number(e.target.value)); setHover(null); }}
+                  slotProps={{ select: { native: true }, htmlInput: { "aria-label": "Temporada" } }} sx={{ minWidth: 150 }}>
+                  {D.temporadas.map((s, i) => <option key={s} value={i}>{s}{enCurso[s] ? " (en curso)" : ""}</option>)}
+                </TextField>
+              ) : (
+                <Box>
+                  <Rotulo>Temporada</Rotulo>
+                  <ToggleButtonGroup exclusive size="small" value={t} aria-label="Temporada" sx={{ flexWrap: "wrap" }}
+                    onChange={(_e, v) => { if (v != null) { setT(v); setHover(null); } }}>
+                    {D.temporadas.map((s, i) => (
+                      <ToggleButton key={s} value={i} aria-label={`${s}${enCurso[s] ? " (en curso)" : ""}`} sx={{ px: 1, flex: "1 0 30%", whiteSpace: "nowrap" }}>
+                        {s.slice(2)}{enCurso[s] ? "*" : ""}
+                      </ToggleButton>
+                    ))}
+                  </ToggleButtonGroup>
+                </Box>
+              )}
+            </Box>
+
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5, alignItems: "flex-end" }}>
+              <Box>
+                <Rotulo>Tiros</Rotulo>
+                <ToggleButtonGroup exclusive size="small" value={lado} aria-label="A favor o en contra"
+                  onChange={(_e, v) => v && setLado(v)}>
+                  <ToggleButton value="f">A favor</ToggleButton>
+                  <ToggleButton value="c">En contra</ToggleButton>
+                </ToggleButtonGroup>
+              </Box>
+              <Box>
+                <Rotulo>Mostrar</Rotulo>
+                <ToggleButtonGroup exclusive size="small" value={medida} aria-label="Porcentaje o xG por partido"
+                  onChange={(_e, v) => v && setMedida(v)}>
+                  <ToggleButton value="pct">% del xG</ToggleButton>
+                  <ToggleButton value="xg">xG por partido</ToggleButton>
+                </ToggleButtonGroup>
+              </Box>
+              <Box sx={{ minWidth: 190 }}>
+                <Rotulo>Ordenar por</Rotulo>
+                <TextField select size="small" fullWidth value={orden} onChange={(e) => setOrden(e.target.value)}
+                  slotProps={{ htmlInput: { "aria-label": "Ordenar por" } }}>
+                  <MenuItem value="bp" sx={{ fontSize: 13 }}>Balón parado (los tres)</MenuItem>
+                  {APILADO.map((id) => <MenuItem key={id} value={id} sx={{ fontSize: 13 }}>{etiquetaSeg[id]}</MenuItem>)}
+                </TextField>
+              </Box>
+              <Box sx={{ minWidth: 200, flex: "1 1 200px", maxWidth: 300 }}>
+                <Rotulo>Resaltar un equipo</Rotulo>
+                <Autocomplete size="small" options={equiposBuscador} value={fijado >= 0 && equiposBuscador.includes(fijado) ? fijado : null}
+                  onChange={(_e, v) => elegir(v == null ? -1 : v)}
+                  getOptionLabel={(j) => D.nombres[j]} isOptionEqualToValue={(a, b) => a === b}
+                  filterOptions={(opciones, { inputValue }) => {
+                    const q = sinAcentos(inputValue.trim());
+                    return opciones.filter((j) => sinAcentos(D.nombres[j]).includes(q));
+                  }}
+                  noOptionsText="Ningún equipo con ese nombre"
+                  renderInput={(p) => <TextField {...p} placeholder="Busca un equipo" slotProps={{ ...p.slotProps, htmlInput: { ...(p.slotProps && p.slotProps.htmlInput), "aria-label": "Resaltar un equipo" } }} />} />
+              </Box>
+            </Box>
+
+            {/* leyenda: también es el control de orden */}
+            <Box role="group" aria-label="Segmentos: clic para ordenar por uno" sx={{ display: "flex", flexWrap: "wrap", gap: 0.75, alignItems: "center" }}>
+              {APILADO.map((id) => {
+                const on = orden === id;
+                return (
+                  <Chip key={id} size="small" clickable aria-pressed={on} variant={on ? "filled" : "outlined"}
+                    onClick={() => ordenarPorLeyenda(id)}
+                    title={on ? "Ordenado por este segmento. Clic para volver a balón parado" : `Ordenar por ${etiquetaSeg[id].toLowerCase()}`}
+                    label={etiquetaSeg[id]}
+                    avatar={<Box component="span" sx={{ width: "11px !important", height: "11px !important", borderRadius: "3px",
+                      bgcolor: colorSeg(id), ml: "8px !important" }} />}
+                    sx={{ bgcolor: on ? conAlfa(tk.primary, 0.12) : "transparent", color: "text.primary", borderColor: on ? tk.primary : "divider" }} />
+                );
+              })}
+              <Typography sx={{ fontSize: 11.5, color: "text.secondary", ml: 0.5 }}>Ordenado por {ordenTxt}</Typography>
+            </Box>
+          </Box>
+
+        </Box>
+      </Box>
 
       <Box sx={{ mt: 2, maxWidth: 1040 }}>
         <Rotulo>Qué más mirar</Rotulo>
