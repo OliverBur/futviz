@@ -433,7 +433,9 @@ __BRAND_ROOT__
   h1 { font-size: clamp(36px, 7vw, 64px); line-height: 1.05; letter-spacing: -0.03em; font-weight: 800;
     color: var(--color-primary); margin: 0; text-align: left; }   /* el ancho es el del texto: así el bloque ícono + título queda centrado */
   /* Ícono grande + título como un solo bloque centrado, del alto de los dos renglones del título. */
-  .titular { display: flex; align-items: center; justify-content: center; gap: clamp(20px, 2.5vw, 32px); margin: 0 auto 36px; }
+  .titular { display: flex; align-items: center; justify-content: center; gap: clamp(20px, 2.5vw, 32px); margin: 0 auto 20px; }
+  /* Una frase de qué es el sitio, entre el título y el buscador: el buscador sigue siendo lo más llamativo. */
+  .lema { max-width: 34em; margin: 0 auto 32px; font-size: clamp(16px, 2.2vw, 18px); line-height: 1.5; color: var(--color-muted); text-wrap: balance; }
   .titular img { height: 2.1em; width: auto; font-size: clamp(36px, 7vw, 64px); flex: none; }
   /* Las dos secciones del sitio, con una frase de para qué sirve cada una (antes: "¿Prefieres leer?"). */
   .puertas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 32px; max-width: 760px;
@@ -532,6 +534,7 @@ __BRAND_ROOT__
       <img class="logo-theme-dark" src="assets/logo-icono-dark.png" alt="" width="353" height="240">
       <h1 id="titulo">Pregúntale a los<br> datos del fútbol</h1>
     </div>
+    <p class="lema">Proyecto que junta la ciencia de datos con el fútbol: gráficas interactivas y modelos de las 5 grandes ligas.</p>
     __BUSCADOR__
     <div class="puertas">
       <a class="puerta" href="__EDA_URL__">
