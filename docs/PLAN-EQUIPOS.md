@@ -29,12 +29,12 @@ No tenemos presión (PPDA), pases ni posiciones de jugadores en el campo. No pro
 | # | Slug | Título | Pregunta | Qué dibuja | Datos |
 |---|---|---|---|---|---|
 | 1 | `tabla-esperada` | Tabla real vs. esperada | ¿Quién está en el lugar que merece? | Por liga y temporada, una fila por equipo: puntos reales y puntos esperados (xPts) unidos por una línea (mancuernas), ordenados por la tabla real, con la posición real y la esperada | `shots.csv` o `partidos.csv` |
-| 2 | `forma` | Forma durante la temporada | ¿Viene mejorando o cayendo? | Selector de equipo y temporada: diferencia de xG por partido en ventana móvil de 6 partidos, con los resultados (G/E/P, local o visita) como marcas | `partidos.csv` |
+| 2 | ~~`forma`~~ | ~~Forma durante la temporada~~ (**quitada por el usuario el 2026-11-20**) | ¿Viene mejorando o cayendo? | Selector de equipo y temporada: diferencia de xG por partido en ventana móvil de 6 partidos, con los resultados (G/E/P, local o visita) como marcas | `partidos.csv` |
 | 3 | `origen-xg` | De dónde sale el xG | ¿Vive de los córners o construye jugando? | Barras apiladas por equipo: jugada abierta, córner, tiro libre directo, otro balón parado. A favor o en contra; en % o por partido; filtro de liga y temporada | `shots.csv` |
 | 4 | `cantidad-calidad` | Cantidad vs. calidad de los tiros | ¿Dispara mucho o espera la ocasión clara? | Dispersión: tiros por partido contra xG por tiro | `shots.csv` |
 | 5 | `local-visitante` | Local vs. visitante | ¿Quién depende de su estadio? | Dispersión con diagonal: diferencia de xG por partido en casa contra fuera | `partidos.csv` |
 | 6 | ~~`dependencia`~~ | ~~Dependencia de la plantilla~~ | | **Descartada por el usuario el 2026-11-20** | |
-| 7 | `trayectoria-elo` | Trayectoria del club en ELO | ¿Cómo ha cambiado la fuerza de este club? | Líneas con el ELO por temporada, con selector de clubes (reutiliza el componente de líneas de la vista 2) | `teams_all_seasons.csv` (sin 2026-27) |
+| 7 | ~~`trayectoria-elo`~~ | ~~Trayectoria del club en ELO~~ (**quitada por el usuario el 2026-11-20**) | ¿Cómo ha cambiado la fuerza de este club? | Líneas con el ELO por temporada, con selector de clubes (reutiliza el componente de líneas de la vista 2) | `teams_all_seasons.csv` (sin 2026-27) |
 
 **Método de la 1 (xPts):** puntos esperados de cada partido a partir de las probabilidades de ganar, empatar y perder que dan los xG de los tiros de ese partido (los goles de cada equipo como suma de Bernoullis con la probabilidad `xg` de cada tiro, independientes entre equipos). Hay que documentar qué se hace con penales y autogoles, comparar contra la alternativa de Poisson sobre el xG total del partido, y reportar: correlación entre puntos reales y esperados por liga-temporada, y cuánto de la diferencia (real − esperada) se repite de una temporada a la siguiente. Si casi no se repite, la vista lo dice.
 
@@ -48,10 +48,10 @@ Las vistas 4 y 5 son dispersiones normales (`ScatterVista`, con `referencias`, l
 
 ## Menú final propuesto de Equipos
 
-- **Temporada:** Tabla real vs. esperada · Forma
+- **Temporada:** Tabla real vs. esperada
 - **Ocasiones:** Goles vs. xG del equipo · Ocasiones a favor y en contra · De dónde sale el xG · Cantidad vs. calidad de los tiros
 - **Defensa:** Goles recibidos vs. xG en contra
-- **Contexto:** Puntos vs. xG · Local vs. visitante · Trayectoria ELO · Distribución por liga
+- **Contexto:** Puntos vs. xG · Local vs. visitante · Distribución por liga
 - **Crea tu gráfico**
 
 ## Reglas de integración

@@ -90,7 +90,13 @@ function Vista({ cfg, T, modo, tk }) {
   const infoVar = useMemo(() => (exp ? Object.fromEntries(exp.variables.map((v) => [v.col, v])) : null), [exp]);
   const X = exp ? { col: colX, label: infoVar[colX].label, corto: infoVar[colX].label, dec: infoVar[colX].dec } : cfg.x;
   const Y = exp ? { col: colY, label: infoVar[colY].label, corto: infoVar[colY].label, dec: infoVar[colY].dec } : cfg.y;
-  const xs = T.c[X.col], ys = T.c[Y.col];
+  const xs = T.c[X.col];
+  // Un eje que se dibuja al revés (`invertir`, p. ej. el xG en contra: lo más bajo, arriba) se trabaja con los valores negados
+  // —así el zoom, las líneas de percentil, los cuadrantes y el Top 5 no cambian— y solo se escribe con su signo al mostrarlo
+  // (marcas del eje, lista, tooltip y tabla).
+  const sgY = Y.invertir ? -1 : 1;
+  const yCrudo = T.c[Y.col];
+  const ys = useMemo(() => (sgY === 1 ? yCrudo : yCrudo.map((v) => (v == null ? null : -v))), [yCrudo, sgY]);
   const decL = (a) => (a.decLista != null ? a.decLista : a.dec);   // decimales en la lista y en las etiquetas
   const ref = cfg.referencia || null;
   const diag = !!ref && ref.tipo === "diagonal";
@@ -310,7 +316,7 @@ function Vista({ cfg, T, modo, tk }) {
       .slice(0, 5);
   }, [visibles, vistaDiferida, valorDe, xs, ys, menosEsMejor]);
   // Lo que se lee de cada fila, en la lista y en la etiqueta: el valor de la métrica elegida.
-  const valX = (r) => xs[r].toFixed(decL(X)), valY = (r) => ys[r].toFixed(decL(Y));
+  const valX = (r) => xs[r].toFixed(decL(X)), valY = (r) => (sgY * ys[r]).toFixed(decL(Y));
   const textoValor = useCallback((r) => {
     return metrica === "x" ? valX(r) : valY(r);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -429,7 +435,7 @@ function Vista({ cfg, T, modo, tk }) {
     colorLiga: colores[T.liga(r)],
     filas: [
       [exp ? X.label : X.corto, xs[r].toFixed(X.dec)],
-      [exp ? Y.label : Y.corto, ys[r].toFixed(Y.dec)],
+      [exp ? Y.label : Y.corto, (sgY * ys[r]).toFixed(Y.dec)],
       ...(diag ? [[difEt, signo(ys[r] - xs[r], decDif)]] : []),
     ],
   }), [T, esJugadores, colores, exp, X, Y, xs, ys, diag, difEt, decDif]);
@@ -438,7 +444,7 @@ function Vista({ cfg, T, modo, tk }) {
   // --- tabla -------------------------------------------------------------------------------------
   const filasTabla = useMemo(() => (tablaAbierta ? visibles.map((r) => ({
     id: r, nombre: T.nombre(r), equipo: T.equipo(r), liga: T.liga(r), posicion: T.posicion(r),
-    min: T.c.min ? T.c.min[r] : null, x: xs[r], y: ys[r], dif: ys[r] - xs[r],
+    min: T.c.min ? T.c.min[r] : null, x: xs[r], y: sgY * ys[r], dif: ys[r] - xs[r],
   })) : []), [tablaAbierta, visibles, T, xs, ys]);
   const columnas = useMemo(() => [
     { field: "nombre", headerName: esJugadores ? "Jugador" : "Equipo", flex: 1.4, minWidth: 130 },
@@ -719,7 +725,7 @@ function Vista({ cfg, T, modo, tk }) {
             ejeX={movil && !exp ? X.corto : X.label} ejeY={movil && !exp ? Y.corto : Y.label}
             claveDatos={claveDatos} pines={pines} idsPorSerie={idsPorSerie}
             referencia={ref} medias={medias} corte={corteElite} lineas={lineas} onZona={alZona} vacio={vacio}
-            soloPositivoX={rx.lo >= 0} soloPositivoY={ry.lo >= 0} />
+            soloPositivoX={rx.lo >= 0} soloPositivoY={sgY === -1 || ry.lo >= 0} invertirY={sgY === -1} />
 
           <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: 1, mt: 0.75 }}>
             <Typography sx={{ fontSize: 12, color: "text.secondary" }}>

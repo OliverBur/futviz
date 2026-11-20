@@ -12,12 +12,10 @@ está en `xg_equipos.py` y `load_data` lo pega a la tabla de FBref.
 import pandas as pd
 
 import equipos_tiros
-import forma
 import insights as ins
 import origen_xg
 import react_views
 import tabla_esperada
-import trayectoria_elo
 import xg_equipos
 from consolidate_data import ELO_TOP, NIVELES
 from nombres import aplicar_a_equipos
@@ -159,9 +157,13 @@ def seasons_of(df):
 
 # --- configuración de las vistas ---------------------------------------------------------------
 
-def _eje(col, label, corto, dec):
-    """Un eje: `dec` son los decimales del tooltip, la tabla y la lista Top 5."""
-    return {"col": col, "label": label, "corto": corto, "dec": dec}
+def _eje(col, label, corto, dec, invertir=False):
+    """Un eje: `dec` son los decimales del tooltip, la tabla y la lista Top 5. Con `invertir` se dibuja al revés (lo más
+    bajo, arriba): para que arriba a la derecha estén los mejores cuando menos es mejor."""
+    eje = {"col": col, "label": label, "corto": corto, "dec": dec}
+    if invertir:
+        eje["invertir"] = True
+    return eje
 
 
 def _pagina(slug, titulo, descripcion, config, tipo="scatter", kind="scatter"):
@@ -185,12 +187,12 @@ def _diagonal(dif, sobre, bajo, invertir=False):
     return ref
 
 
-def _promedios(cuadrantes, cuantil=None, fijo=None, etiqueta=None, guia_diagonal=False):
+def _promedios(cuadrantes, cuantil=None, fijo=None, etiqueta=None):
     """Líneas punteadas y un rótulo por cuadrante. Por omisión van en el promedio de cada eje (el de las temporadas
     juntas, para que "por encima del promedio" signifique lo mismo al cambiar de temporada). Con `cuantil`, en ese
     percentil de lo que se ve en cada eje (como `players._promedios`: arriba a la derecha quedan solo los más
     destacados). Con `fijo` (`{"x": 0, "y": 0}`), en esos valores, y `etiqueta` es lo que dice el pie de la gráfica
-    de esas líneas. `guia_diagonal` dibuja además la diagonal y = x, solo como guía."""
+    de esas líneas."""
     ref = {"tipo": "promedios", "cuadrantes": cuadrantes}
     if cuantil:
         ref["cuantil"] = cuantil
@@ -198,8 +200,6 @@ def _promedios(cuadrantes, cuantil=None, fijo=None, etiqueta=None, guia_diagonal
         ref["fijo"] = fijo
     if etiqueta:
         ref["etiqueta"] = etiqueta
-    if guia_diagonal:
-        ref["guiaDiagonal"] = True
     return ref
 
 
@@ -211,8 +211,10 @@ def _metricas(x, y, referencia, menos_es_mejor=None):
 
     def metrica(id_, e):
         if id_ in menos_es_mejor:
-            return {"id": id_, "etiqueta": e["corto"], "menosEsMejor": True,
-                    "ayuda": f"Ordenados por {e['label']}: primero {menos_es_mejor[id_]}"}
+            m = {"id": id_, "etiqueta": e["corto"], "ayuda": f"Ordenados por {e['label']}: primero {menos_es_mejor[id_]}"}
+            if not e.get("invertir"):    # un eje dibujado al revés ya ordena así: lo más bajo es lo más alto de la gráfica
+                m["menosEsMejor"] = True
+            return m
         return {"id": id_, "etiqueta": e["corto"], "ayuda": f"Ordenados por {e['label']}"}
 
     return [metrica("x", x), metrica("y", y)]
@@ -249,16 +251,16 @@ def chart_def_efficiency(df):
 
 
 def chart_creation(df):
-    """Ocasiones a favor contra ocasiones en contra. El eje vertical no se invierte: el cuadrante bueno
-    es el de abajo a la derecha y va rotulado."""
+    """Ocasiones a favor contra ocasiones en contra. El eje vertical va al revés (el xG en contra más bajo, arriba) para
+    que el cuadrante de arriba a la derecha sea el de los mejores."""
     x = _eje("xg_fav", "xG a favor por partido (sin penales)", "xG a favor", 2)
-    y = _eje("xg_con", "xG en contra por partido (sin penales)", "xG en contra", 2)
+    y = _eje("xg_con", "xG en contra por partido (sin penales); menos, arriba", "xG en contra", 2, invertir=True)
     return _scatter(
         df, "creacion", "Ocasiones a favor y en contra",
-        "A la derecha, más xG a favor por partido; arriba, más xG en contra. Abajo a la derecha están los que dominan las ocasiones.",
+        "A la derecha, más xG a favor; arriba, menos xG en contra. Arriba a la derecha dominan las ocasiones.",
         x=x, y=y,
-        referencia=_promedios({"tr": "partidos abiertos", "tl": "rivales dominan",
-                               "br": "dominan las ocasiones", "bl": "partidos cerrados"}),
+        referencia=_promedios({"tr": "Dominan las ocasiones", "tl": "Partidos cerrados",
+                               "br": "Partidos abiertos", "bl": "Los rivales dominan"}),
         subtitulo="Equipos de las 5 ligas · {temporada} · por partido, sin penales",
         textos=(ins.creacion_que_mirar, ins.creacion_por_que), insight="creacion",
         menos_es_mejor={"y": "los que menos ocasiones conceden"})
@@ -314,9 +316,8 @@ def chart_shots_quantity_quality(df):
 
 
 def chart_home_away(df):
-    """Diferencia de xG por partido de local contra de visitante. Las líneas punteadas están en cero (domina o sufre las
-    ocasiones) y la diagonal, solo como guía, es «igual en los dos lados»: casi todos quedan debajo de ella porque jugar en
-    casa ayuda a casi todos."""
+    """Diferencia de xG por partido de local contra de visitante. Las líneas punteadas están en cero: domina o sufre las
+    ocasiones de cada lado."""
     x = _eje("xg_dif_local", "Diferencia de xG por partido, de local", "De local", 2)
     y = _eje("xg_dif_visita", "Diferencia de xG por partido, de visitante", "De visitante", 2)
     return _scatter(
@@ -325,8 +326,7 @@ def chart_home_away(df):
         x=x, y=y,
         referencia=_promedios({"tr": "Dominan en casa y fuera", "tl": "Solo dominan fuera",
                                "br": "Solo dominan en casa", "bl": "Sufren en los dos"},
-                              fijo={"x": 0, "y": 0}, guia_diagonal=True,
-                              etiqueta="Líneas punteadas en cero y diagonal «igual de local que de visitante»"),
+                              fijo={"x": 0, "y": 0}, etiqueta="Líneas punteadas en cero"),
         subtitulo="Equipos de las 5 ligas · {temporada} · diferencia de xG por partido, sin penales",
         textos=(ins.local_visitante_que_mirar, ins.local_visitante_por_que), insight="local_visitante")
 
@@ -368,7 +368,6 @@ def chart_explorer(df):
 # liga (paridad, edad, disciplina); siguen en `code/eda_teams.ipynb`.
 PESTANAS = [
     ("tabla-esperada", "Tabla real vs. esperada", "Temporada"),    # la primera: es la que abre la sección
-    ("forma", "Forma", "Temporada"),
     ("eficiencia-definicion", "Goles vs. xG", "Ocasiones"),
     ("creacion", "Ocasiones a favor y en contra", "Ocasiones"),
     ("origen-xg", "De dónde sale el xG", "Ocasiones"),
@@ -376,7 +375,6 @@ PESTANAS = [
     ("defensa", "Goles recibidos vs. xG", "Defensa"),
     ("puntos-vs-xg", "Puntos vs. xG", "Contexto"),
     ("local-visitante", "Local vs. visitante", "Contexto"),
-    ("trayectoria-elo", "Trayectoria ELO", "Contexto"),
     ("nivel-por-liga-equipos", "Distribución por liga", "Contexto"),
     ("crea-tu-grafico-equipos", "Crea tu gráfico", "_explorar"),   # "_": grupo aparte, sin rótulo
 ]
@@ -411,8 +409,6 @@ def build(assets_dir) -> list:
         chart_league_level(df),
         chart_explorer(df),
         tabla_esperada.chart_tabla_esperada(),
-        forma.chart_forma(),
-        trayectoria_elo.chart_trayectoria_elo(),
     )}
     salida = []
     for slug, tab, grupo in PESTANAS:

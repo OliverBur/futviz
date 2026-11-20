@@ -26,7 +26,5 @@ PREGUNTAS = {
     "cantidad-calidad": "¿Dispara mucho o espera la ocasión clara?",
     "local-visitante": "¿Quién depende de su estadio?",
     "nivel-por-liga-equipos": "¿Qué tan parejos son los equipos de cada liga?",
-    "forma": "¿Viene mejorando o cayendo?",
-    "trayectoria-elo": "¿Cómo ha cambiado la fuerza de este club?",
     "crea-tu-grafico-equipos":"¿Cómo se relacionan dos variables que tú elijas?",
 }

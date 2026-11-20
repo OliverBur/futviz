@@ -264,7 +264,7 @@ export function EstilosGrafica() {
 export function Grafica({
   series, view, viewRef, base, onView, rotulos, destacado, onDestacar, onClicPunto,
   tk, pos, neg, hayZoom, pista, onPista, ejeX, ejeY, claveDatos, pines, idsPorSerie,
-  referencia, medias, corte, lineas, onZona, vacio, soloPositivoX, soloPositivoY,
+  referencia, medias, corte, lineas, onZona, vacio, soloPositivoX, soloPositivoY, invertirY,
 }) {
   const pinCtx = useMemo(() => ({ pines, ids: idsPorSerie }), [pines, idsPorSerie]);
   const idFondo = "rx-clip-fondo-" + useId().replace(/:/g, "");   // único por instancia: hay varias vistas montadas a la vez
@@ -346,11 +346,6 @@ export function Grafica({
     if (prom) {
       const vx = px(medias.x), hy = py(medias.y);
       ref.promedios = { vx, hy };
-      // Solo como guía (`guiaDiagonal`): la diagonal y = x además de las líneas punteadas, sin sombreado ni rótulos.
-      if (referencia.guiaDiagonal) {
-        const T = Math.max(base.x1, base.y1) * 3;
-        ref.diagonal = { x1: px(-T), y1: py(-T), x2: px(T), y2: py(T) };
-      }
       const q = referencia.cuadrantes;
       if (q) {
         // Un rótulo por cuadrante, pegado a las líneas de promedio por arriba y por abajo del recuadro.
@@ -415,10 +410,10 @@ export function Grafica({
   const ejes = useMemo(() => ({
     x: [{ id: "x", scaleType: "linear", min: view.x0, max: view.x1, label: ejeX, height: 46, valueFormatter: rotulo(soloPositivoX),
       tickNumber: Math.max(4, Math.round(area.width / 75)) }],
-    y: [{ id: "y", scaleType: "linear", min: view.y0, max: view.y1, label: ejeY, width: anchoEjeY, valueFormatter: rotulo(soloPositivoY),
+    y: [{ id: "y", scaleType: "linear", min: view.y0, max: view.y1, label: ejeY, width: anchoEjeY, valueFormatter: (v) => rotulo(soloPositivoY)(invertirY ? -v : v),
       tickNumber: marcasY }],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }), [view, ejeX, ejeY, soloPositivoX, soloPositivoY, area.width, anchoEjeY, marcasY]);
+  }), [view, ejeX, ejeY, soloPositivoX, soloPositivoY, invertirY, area.width, anchoEjeY, marcasY]);
 
   const clipFondo = idFondo;
   const T = Math.max(base.x1, base.y1) * 3;

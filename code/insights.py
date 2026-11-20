@@ -1701,9 +1701,10 @@ def definicion(df, season, liga=None):
 # --- Ocasiones a favor y en contra (creacion) -----------------------------------------------
 
 def creacion_que_mirar():
-    return ("Abajo a la derecha están los que crean más de lo que conceden. Arriba a la derecha, los "
-            "equipos de partidos abiertos, con mucho xG de los dos lados; abajo a la izquierda, los de "
-            "partidos cerrados, con poco de los dos. Arriba a la izquierda, los rivales dominan.")
+    return ("El eje vertical va **al revés**: arriba está el equipo que menos xG concede, para que arriba a la derecha "
+            "queden los mejores. **Arriba a la derecha**: dominan las ocasiones, crean mucho y conceden poco. **Abajo a "
+            "la derecha**: partidos abiertos, con mucho xG de los dos lados. **Arriba a la izquierda**: partidos cerrados, "
+            "con poco de los dos. **Abajo a la izquierda**: los rivales dominan.")
 
 
 def creacion_por_que(df):
@@ -1934,8 +1935,8 @@ def cantidad_calidad_por_que(df):
 
 
 def local_visitante_que_mirar():
-    return ("Casi todos los equipos quedan debajo de la diagonal: jugar en casa ayuda a casi todos, así que lo que cuenta "
-            "es qué tan lejos están de ella y no que estén debajo. **Arriba a la derecha**: dominan las ocasiones en casa y "
+    return ("Casi todos los equipos tienen mejor diferencia de local que de visitante: jugar en casa ayuda a casi todos, "
+            "así que lo que cuenta es cuánto más y no que sea más. **Arriba a la derecha**: dominan las ocasiones en casa y "
             "fuera. **Abajo a la derecha**: solo las dominan en casa. **Abajo a la izquierda**: las sufren en los dos "
             "lados. **Arriba a la izquierda**: solo dominan fuera, un cuadrante casi vacío.\n\n"
             "Que un equipo «dependa de su estadio» solo vale si se repite de una temporada a la siguiente; si eso pasa o "
@@ -1962,7 +1963,7 @@ def local_visitante_por_que(df):
                   "Con esa cifra, una parte de la dependencia del estadio es del equipo y otra de la temporada." if hi < 0.6
                   else "Con esa cifra, la dependencia del estadio es en buena medida un rasgo del equipo.")
         p3 = (f"\n\nLo que importa para «depende de su estadio» es la diferencia entre jugar en casa y fuera (local menos "
-              f"visitante), la distancia a la diagonal. Entre una temporada cerrada y la siguiente, esa diferencia de un "
+              f"visitante). Entre una temporada cerrada y la siguiente, esa diferencia de un "
               f"mismo equipo correlaciona {_entre(p)}. {_se_repite(p)} {cierre}")
     pl = c[[PARTIDOS_LOCAL, PARTIDOS_VISITA]]
     muestra = (f"{int(pl.min().min())}" if pl.min().min() == pl.max().max()
