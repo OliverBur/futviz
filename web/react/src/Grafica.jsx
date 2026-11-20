@@ -34,7 +34,7 @@ const signo = (d, dec = 1) => (d >= 0 ? "+" : "−") + Math.abs(d).toFixed(dec);
 // al cambiar de temporada; una capa entera se repinta de una vez. Solo corre en la ventana
 // que abre el montaje de los datos (`.rx-anim`, ver `Grafica`): al hacer zoom o pan, animar
 // los puntos que entran al área visible sería ruido.
-const ANIM_MS = 520;
+const ANIM_MS = 360;
 
 // Los jugadores FIJADOS (varios a la vez) llegan por contexto y no por el highlight de MUI, que
 // solo resalta un punto: con varios fijados, MUI se queda con el resaltado del mouse (un punto) y
@@ -107,6 +107,9 @@ function partirRotulo(t) {
   for (let i = 0; i < t.length; i++) if (t[i] === " " && (mejor < 0 || Math.abs(i - m) < Math.abs(mejor - m))) mejor = i;
   return mejor < 0 ? [t] : [t.slice(0, mejor), t.slice(mejor + 1)];
 }
+
+// Más allá de cualquier zoom, en el espacio de la gráfica (con un eje al revés los valores van negados: se toma el valor absoluto).
+const alcance = (b) => Math.max(Math.abs(b.x0), Math.abs(b.x1), Math.abs(b.y0), Math.abs(b.y1)) * 3;
 
 // --- capas dentro del <svg> -----------------------------------------------------
 function CapaSuperior({ area, referencia, etiquetas, rotulosCuadrante, tk }) {
@@ -234,18 +237,18 @@ export function EstilosGrafica() {
       // 17 a 50 ms) y al pasar el mouse por un chip. Solo cambia de tamaño un punto a la vez.
       ".rx-punto": { transition: "r .12s ease" },
       // Entrada: cada capa de serie (una por liga) se despliega desde la esquina del origen.
-      "@keyframes rx-despliega": { from: { opacity: 0, transform: "scale(0.3)" }, to: { opacity: 1, transform: "scale(1)" } },
+      "@keyframes rx-despliega": { from: { opacity: 0, transform: "scale(0.985)" }, to: { opacity: 1, transform: "scale(1)" } },
       ".rx-anim [data-series]": {
         transformOrigin: "var(--rx-ox, 0px) var(--rx-oy, 0px)",
-        animation: `rx-despliega ${ANIM_MS}ms cubic-bezier(.2,.8,.25,1) both`,
+        animation: `rx-despliega ${ANIM_MS}ms ease-out both`,
       },
-      ".rx-anim [data-series]:nth-of-type(2)": { animationDelay: "50ms" },
-      ".rx-anim [data-series]:nth-of-type(3)": { animationDelay: "100ms" },
-      ".rx-anim [data-series]:nth-of-type(4)": { animationDelay: "150ms" },
-      ".rx-anim [data-series]:nth-of-type(5)": { animationDelay: "200ms" },
+      ".rx-anim [data-series]:nth-of-type(2)": { animationDelay: "20ms" },
+      ".rx-anim [data-series]:nth-of-type(3)": { animationDelay: "40ms" },
+      ".rx-anim [data-series]:nth-of-type(4)": { animationDelay: "60ms" },
+      ".rx-anim [data-series]:nth-of-type(5)": { animationDelay: "80ms" },
       // Las etiquetas aparecen cuando la nube ya casi llegó (retraso ≈ duración + último desfase).
       "@keyframes rx-aparece": { from: { opacity: 0 }, to: { opacity: 1 } },
-      ".rx-anim .rx-etiquetas": { animation: "rx-aparece 260ms ease-out 450ms both" },
+      ".rx-anim .rx-etiquetas": { animation: "rx-aparece 220ms ease-out 260ms both" },
       "@media (prefers-reduced-motion: reduce)": {
         ".rx-punto": { transition: "none" },
         ".rx-anim [data-series]": { animation: "none" },
@@ -264,7 +267,7 @@ export function EstilosGrafica() {
 export function Grafica({
   series, view, viewRef, base, onView, rotulos, destacado, onDestacar, onClicPunto,
   tk, pos, neg, hayZoom, pista, onPista, ejeX, ejeY, claveDatos, pines, idsPorSerie,
-  referencia, medias, corte, lineas, onZona, vacio, soloPositivoX, soloPositivoY, invertirY,
+  referencia, medias, corte, lineas, onZona, vacio, soloPositivoX, soloPositivoY, invertirX, invertirY,
 }) {
   const pinCtx = useMemo(() => ({ pines, ids: idsPorSerie }), [pines, idsPorSerie]);
   const idFondo = "rx-clip-fondo-" + useId().replace(/:/g, "");   // único por instancia: hay varias vistas montadas a la vez
@@ -323,7 +326,7 @@ export function Grafica({
   const obstaculos = [];
   if (area.width > 0) {
     if (diag) {
-      const T = Math.max(base.x1, base.y1) * 3;           // más allá de cualquier zoom
+      const T = alcance(base);           // más allá de cualquier zoom
       ref.diagonal = { x1: px(-T), y1: py(-T), x2: px(T), y2: py(T) };
       // Los rótulos de esquina solo valen mientras esa esquina siga a su lado de la diagonal: con
       // zoom profundo la de arriba a la izquierda puede quedar en zona roja.
@@ -408,15 +411,15 @@ export function Grafica({
   const anchoEjeY = 28 + 8 * Math.max(2, largoY) + 8;
   // Una marca cada ~75 px en X y ~55 en Y; MUI por defecto pone casi el doble y al acercar se llena de números.
   const ejes = useMemo(() => ({
-    x: [{ id: "x", scaleType: "linear", min: view.x0, max: view.x1, label: ejeX, height: 46, valueFormatter: rotulo(soloPositivoX),
+    x: [{ id: "x", scaleType: "linear", min: view.x0, max: view.x1, label: ejeX, height: 46, valueFormatter: (v) => rotulo(soloPositivoX)(invertirX ? -v : v),
       tickNumber: Math.max(4, Math.round(area.width / 75)) }],
     y: [{ id: "y", scaleType: "linear", min: view.y0, max: view.y1, label: ejeY, width: anchoEjeY, valueFormatter: (v) => rotulo(soloPositivoY)(invertirY ? -v : v),
       tickNumber: marcasY }],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }), [view, ejeX, ejeY, soloPositivoX, soloPositivoY, invertirY, area.width, anchoEjeY, marcasY]);
+  }), [view, ejeX, ejeY, soloPositivoX, soloPositivoY, invertirX, invertirY, area.width, anchoEjeY, marcasY]);
 
   const clipFondo = idFondo;
-  const T = Math.max(base.x1, base.y1) * 3;
+  const T = alcance(base);
   const lienzo = `M ${px(-T)},${py(-T)} L ${px(T)},${py(T)}`;
   return (
     <Box ref={caja} className={`rx-chart${animando ? " rx-anim" : ""}`} data-zoom={hayZoom ? 1 : 0}
@@ -493,7 +496,7 @@ export function Grafica({
 
       {/* 1b. El cuadrante bajo el cursor, apenas sombreado (detrás de los puntos). */}
       {zonaSobre && lineas && area.width > 0 && (() => {
-        const pts = poligonoZona(lineas, zonaSobre, Math.max(base.x1, base.y1) * 3);
+        const pts = poligonoZona(lineas, zonaSobre, alcance(base));
         return (
           <svg width="100%" height={alto} aria-hidden="true" style={{ position: "absolute", left: 0, top: 0, pointerEvents: "none" }}>
             <clipPath id={idFondoZona}><rect x={area.left} y={area.top} width={area.width} height={area.height} /></clipPath>

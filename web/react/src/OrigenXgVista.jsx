@@ -58,16 +58,16 @@ function Vista({ cfg, D, modo: tema, tk }) {
   const ultimaCerrada = cerradas.length ? cerradas[cerradas.length - 1] : D.temporadas.length - 1;
   const ligaIni = Math.max(0, ligas.indexOf("Premier League"));
 
-  const [t, setT] = useState(() => { const i = D.temporadas.indexOf(P.get("t")); return i >= 0 ? i : ultimaCerrada; });
+  const [t, setT] = useState(() => { const i = D.temporadas.indexOf(P.get("t")); return i >= 0 ? i : D.temporadas.length - 1; });   // abre en la temporada actual
   const [liga, setLiga] = useState(() => {
     if (P.get("liga") === "todas") return TODAS;
     const i = ligas.indexOf(P.get("liga"));
     return i >= 0 ? i : ligaIni;
   });
   const [lado, setLado] = useState(() => entre(P.get("lado"), ["f", "c"], "f"));
-  const [medida, setMedida] = useState(() => entre(P.get("medida"), ["pct", "xg"], "pct"));
+  const [medida, setMedida] = useState(() => entre(P.get("medida"), ["pct", "xg"], "xg"));
   const ordenes = ["bp", ...APILADO];
-  const [orden, setOrden] = useState(() => entre(P.get("orden"), ordenes, "bp"));
+  const [orden, setOrden] = useState(() => entre(P.get("orden"), ordenes, "abierta"));
   const [fijado, setFijado] = useState(() => { const j = D.nombres.indexOf(P.get("equipo")); return j >= 0 ? j : -1; });
   const [hover, setHover] = useState(null);       // {i, px, py}
   const caja = useRef(null);

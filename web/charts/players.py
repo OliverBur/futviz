@@ -467,8 +467,8 @@ PESTANAS = [
     ("pases-clave-vs-asistencias", "Pases clave vs. asistencias", "Creación"),
     ("construir-vs-producir", "Construcción vs. producción", "Creación"),
     ("corte-vs-cobertura", "Corte vs. Cobertura", "Defensa"),
-    ("jugador-completo", "Jugador completo", "_explorar"),
-    ("edad", "Edad", "_explorar"),
+    ("jugador-completo", "Jugador completo", "Contexto"),
+    ("edad", "Edad", "Contexto"),
     ("crea-tu-grafico-jugadores", "Crea tu gráfico", "_explorar"),   # "_": grupo aparte, sin rótulo
 ]
 

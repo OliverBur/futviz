@@ -1752,7 +1752,9 @@ def creacion(df, season, liga=None):
 # --- Goles recibidos vs. xG en contra (defensa) ---------------------------------------------
 
 def defensa_que_mirar():
-    return ("Cuanto más a la izquierda, menos ocasiones concede el equipo. La distancia a la diagonal "
+    return ("Los dos ejes van **al revés**: a la derecha, menos xG en contra; arriba, menos goles recibidos, así que "
+            "arriba a la derecha están los mejores. Sobre la diagonal, al equipo le entró menos de lo que valían las "
+            "ocasiones; debajo, más. La distancia a la diagonal "
             "junta tres cosas que estos datos no separan: el portero, los bloqueos de la defensa y la "
             "suerte. El xG en contra no ve a dónde va el tiro, así que esta gráfica no sirve para decir "
             "quién tiene al mejor portero.")

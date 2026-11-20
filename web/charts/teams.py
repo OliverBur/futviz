@@ -267,16 +267,17 @@ def chart_creation(df):
 
 
 def chart_defense(df):
-    """xG en contra contra goles recibidos. El xG en contra no ve a dónde va el tiro: la distancia a la
-    diagonal junta al portero, a la defensa que bloquea y a la suerte, y no se llama "mejor portero"."""
-    x = _eje("xg_con", "xG en contra por partido (sin penales)", "xG en contra", 2)
-    y = _eje("gol_con", "Goles recibidos por partido (sin penales)", "Goles recibidos", 2)
+    """xG en contra contra goles recibidos, con los dos ejes al revés (menos, a la derecha y arriba) para que los mejores
+    queden arriba a la derecha. El xG en contra no ve a dónde va el tiro: la distancia a la diagonal junta al portero, a la
+    defensa que bloquea y a la suerte, y no se llama "mejor portero"."""
+    x = _eje("xg_con", "xG en contra por partido (sin penales); menos, a la derecha", "xG en contra", 2, invertir=True)
+    y = _eje("gol_con", "Goles recibidos por partido (sin penales); menos, arriba", "Goles recibidos", 2, invertir=True)
     return _scatter(
         df, "defensa", "Goles recibidos vs. xG en contra",
-        "A la derecha, más xG en contra por partido; arriba, más goles recibidos. Debajo de la diagonal le entró menos de lo que valían las ocasiones.",
+        "A la derecha, menos xG en contra; arriba, menos goles recibidos. Arriba a la derecha, los mejores.",
         x=x, y=y,
-        referencia=_diagonal("goles recibidos − xG en contra", "Recibe más de lo esperado",
-                             "Recibe menos de lo esperado", invertir=True),
+        referencia=_diagonal("goles recibidos − xG en contra", "Recibe menos de lo esperado",
+                             "Recibe más de lo esperado"),
         subtitulo="Equipos de las 5 ligas · {temporada} · por partido, sin penales",
         textos=(ins.defensa_que_mirar, ins.defensa_por_que), insight="defensa",
         menos_es_mejor={"x": "los que menos ocasiones conceden", "y": "los que menos goles reciben"})
@@ -308,8 +309,8 @@ def chart_shots_quantity_quality(df):
         df, "cantidad-calidad", "Cantidad vs. calidad de los tiros",
         "A la derecha, más tiros por partido; arriba, más xG por tiro. Las líneas dejan al 20% con más de cada uno.",
         x=x, y=y,
-        referencia=_promedios({"tr": "Muchos tiros y de buena calidad", "tl": "Tiran menos, pero eligen bien",
-                               "br": "Tiran mucho, sin tanta calidad", "bl": "Ni muchos tiros ni tan buenos"},
+        referencia=_promedios({"tr": "Muchos tiros y de buena calidad", "tl": "Pocos tiros pero de buena calidad",
+                               "br": "Tiran mucho pero no son de calidad", "bl": "Pocos tiros y no tan buenos"},
                               cuantil=ins.LINEA_PCT),
         subtitulo="Equipos de las 5 ligas · {temporada} · por partido, sin penales",
         textos=(ins.cantidad_calidad_que_mirar, ins.cantidad_calidad_por_que), insight="cantidad_calidad")

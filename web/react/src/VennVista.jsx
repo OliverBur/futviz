@@ -193,16 +193,47 @@ function Vista({ cfg, D, modo, tk }) {
 
   return (
     <>
-      <Encabezado pregunta={cfg.pregunta} titulo={cfg.titulo} bajada={cfg.bajada} />
-
       <Box sx={{
-        display: "grid", gap: { xs: 2, lg: 4 }, alignItems: "start",
+        display: "grid", gap: { xs: 2, lg: "0 32px" }, alignItems: "start",
         gridTemplateColumns: { xs: "minmax(0,1fr)", lg: "minmax(0,1fr) 340px" },
-        gridTemplateAreas: { xs: '"controles" "venn" "info"', lg: '"venn controles" "venn info"' },
+        gridTemplateAreas: { xs: '"enc" "controles" "venn" "info"', lg: '"enc lado" "venn lado"' },
         gridTemplateRows: { lg: "auto 1fr" },
       }}>
+        {/* ---- encabezado: arriba a la izquierda, como en las demás vistas; los filtros arrancan a su altura ---- */}
+        <Box sx={{ gridArea: "enc", minWidth: 0 }}>
+          <Encabezado pregunta={cfg.pregunta} titulo={cfg.titulo} bajada={cfg.bajada} />
+        </Box>
+
+        {/* ---- el diagrama ---- */}
+        <Box sx={{ gridArea: "venn", minWidth: 0 }}>
+          <Typography component="h3" sx={{ fontSize: 17, fontWeight: 700, lineHeight: 1.25 }}>{venn.titulo}</Typography>
+          <Typography sx={{ fontSize: 12.5, color: "text.secondary", mb: 1 }}>{sub}</Typography>
+          <Typography sx={{ fontSize: 14, lineHeight: 1.5 }}><Md texto={L.centro} /></Typography>
+          <Typography sx={{ fontSize: 12, color: "text.secondary", mb: 1 }}>{L.corr}</Typography>
+          <Box ref={caja} sx={{ width: "100%", position: "relative" }}>
+            {w > 0 && (
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox={compacto ? VIEWBOX_COMPACTO : VIEWBOX} width="100%" role="img"
+                style={{ display: "block", height: "auto", maxHeight: compacto ? undefined : "max(440px, calc(100vh - 250px))", touchAction: "pan-y" }}
+                aria-label={`Diagrama de Venn de ${venn.plural}: ${venn.sets.map((s) => s.nombre).join(", ")}. ${L.centro.replace(/\*\*/g, "")}`}
+                onPointerMove={mover} onPointerDown={mover} onPointerLeave={salir}
+                dangerouslySetInnerHTML={{ __html: svg }} />
+            )}
+            {tip}
+          </Box>
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: "4px 14px", fontSize: 12, color: "text.secondary", mt: 1 }}>
+            {D.ligas.map((l, i) => (
+              <Box key={l} sx={{ display: "inline-flex", alignItems: "center", gap: 0.6 }}>
+                <Box sx={{ width: 11, height: 11, borderRadius: "50%", bgcolor: ligas[i] }} />{l}
+              </Box>
+            ))}
+          </Box>
+          <Typography sx={{ fontSize: 12, color: "text.secondary", mt: 1 }}>Datos: {cfg.fuente}</Typography>
+        </Box>
+
+        {/* columna derecha: en pantalla ancha filtros y explicación van juntos; en móvil cada uno ocupa su lugar */}
+        <Box sx={{ gridArea: "lado", display: { xs: "contents", lg: "block" }, minWidth: 0 }}>
         {/* ---- filtros ---- */}
-        <Box sx={{ gridArea: "controles" }}>
+        <Box sx={{ gridArea: "controles", mb: 3 }}>
           <Rotulo>Diagrama</Rotulo>
           <ToggleButtonGroup exclusive size="small" value={vid} aria-label="Diagrama" sx={{ flexWrap: "wrap", mb: 1.5 }}
             onChange={(_e, v) => { if (v) { setVid(v); setHover(null); } }}>
@@ -237,32 +268,6 @@ function Vista({ cfg, D, modo, tk }) {
           {estado && <Typography sx={{ fontSize: 13, color: "text.secondary", mt: 1 }}>{estado}</Typography>}
         </Box>
 
-        {/* ---- el diagrama ---- */}
-        <Box sx={{ gridArea: "venn", minWidth: 0 }}>
-          <Typography component="h3" sx={{ fontSize: 17, fontWeight: 700, lineHeight: 1.25 }}>{venn.titulo}</Typography>
-          <Typography sx={{ fontSize: 12.5, color: "text.secondary", mb: 1 }}>{sub}</Typography>
-          <Typography sx={{ fontSize: 14, lineHeight: 1.5 }}><Md texto={L.centro} /></Typography>
-          <Typography sx={{ fontSize: 12, color: "text.secondary", mb: 1 }}>{L.corr}</Typography>
-          <Box ref={caja} sx={{ width: "100%", position: "relative" }}>
-            {w > 0 && (
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox={compacto ? VIEWBOX_COMPACTO : VIEWBOX} width="100%" role="img"
-                style={{ display: "block", height: "auto", maxHeight: compacto ? undefined : "max(440px, calc(100vh - 250px))", touchAction: "pan-y" }}
-                aria-label={`Diagrama de Venn de ${venn.plural}: ${venn.sets.map((s) => s.nombre).join(", ")}. ${L.centro.replace(/\*\*/g, "")}`}
-                onPointerMove={mover} onPointerDown={mover} onPointerLeave={salir}
-                dangerouslySetInnerHTML={{ __html: svg }} />
-            )}
-            {tip}
-          </Box>
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: "4px 14px", fontSize: 12, color: "text.secondary", mt: 1 }}>
-            {D.ligas.map((l, i) => (
-              <Box key={l} sx={{ display: "inline-flex", alignItems: "center", gap: 0.6 }}>
-                <Box sx={{ width: 11, height: 11, borderRadius: "50%", bgcolor: ligas[i] }} />{l}
-              </Box>
-            ))}
-          </Box>
-          <Typography sx={{ fontSize: 12, color: "text.secondary", mt: 1 }}>Datos: {cfg.fuente}</Typography>
-        </Box>
-
         {/* ---- explicación ---- */}
         <Box sx={{ gridArea: "info", minWidth: 0 }}>
           <Rotulo>Qué mide cada círculo</Rotulo>
@@ -286,6 +291,7 @@ function Vista({ cfg, D, modo, tk }) {
           <Typography sx={{ fontSize: 13, lineHeight: 1.5, color: "text.secondary", mb: 2 }}>
             Solo en un círculo: {solos.map((m) => `${venn.sets[Math.log2(m)].nombre} ${V.reg[m].length}`).join(" · ")}.
           </Typography>
+        </Box>
         </Box>
       </Box>
 

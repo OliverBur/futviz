@@ -90,7 +90,9 @@ function Vista({ cfg, T, modo, tk }) {
   const infoVar = useMemo(() => (exp ? Object.fromEntries(exp.variables.map((v) => [v.col, v])) : null), [exp]);
   const X = exp ? { col: colX, label: infoVar[colX].label, corto: infoVar[colX].label, dec: infoVar[colX].dec } : cfg.x;
   const Y = exp ? { col: colY, label: infoVar[colY].label, corto: infoVar[colY].label, dec: infoVar[colY].dec } : cfg.y;
-  const xs = T.c[X.col];
+  const sgX = X.invertir ? -1 : 1;
+  const xCrudo = T.c[X.col];
+  const xs = useMemo(() => (sgX === 1 ? xCrudo : xCrudo.map((v) => (v == null ? null : -v))), [xCrudo, sgX]);
   // Un eje que se dibuja al revés (`invertir`, p. ej. el xG en contra: lo más bajo, arriba) se trabaja con los valores negados
   // —así el zoom, las líneas de percentil, los cuadrantes y el Top 5 no cambian— y solo se escribe con su signo al mostrarlo
   // (marcas del eje, lista, tooltip y tabla).
@@ -316,7 +318,7 @@ function Vista({ cfg, T, modo, tk }) {
       .slice(0, 5);
   }, [visibles, vistaDiferida, valorDe, xs, ys, menosEsMejor]);
   // Lo que se lee de cada fila, en la lista y en la etiqueta: el valor de la métrica elegida.
-  const valX = (r) => xs[r].toFixed(decL(X)), valY = (r) => (sgY * ys[r]).toFixed(decL(Y));
+  const valX = (r) => (sgX * xs[r]).toFixed(decL(X)), valY = (r) => (sgY * ys[r]).toFixed(decL(Y));
   const textoValor = useCallback((r) => {
     return metrica === "x" ? valX(r) : valY(r);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -327,7 +329,7 @@ function Vista({ cfg, T, modo, tk }) {
     // invisibles. Se rotula solo a los fijados (con su diferencia, o sus dos valores si no hay diagonal).
     if (filasFijadas.length) {
       return filasFijadas.map((r) => ({ r, x: xs[r], y: ys[r], fijado: true,
-        texto: `${nombre(r)} ${diag ? signo(ys[r] - xs[r], decDif) : `${valX(r)} · ${valY(r)}`}` }));
+        texto: `${nombre(r)} ${diag ? signo(sgY * ys[r] - sgX * xs[r], decDif) : `${valX(r)} · ${valY(r)}`}` }));
     }
     return ranking.map((r, i) => ({ r, x: xs[r], y: ys[r], rango: i + 1, texto: `${nombre(r)} ${textoValor(r)}` }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -434,9 +436,9 @@ function Vista({ cfg, T, modo, tk }) {
     sub: esJugadores ? `${T.equipo(r)} · ${T.liga(r)}` : T.liga(r),
     colorLiga: colores[T.liga(r)],
     filas: [
-      [exp ? X.label : X.corto, xs[r].toFixed(X.dec)],
+      [exp ? X.label : X.corto, (sgX * xs[r]).toFixed(X.dec)],
       [exp ? Y.label : Y.corto, (sgY * ys[r]).toFixed(Y.dec)],
-      ...(diag ? [[difEt, signo(ys[r] - xs[r], decDif)]] : []),
+      ...(diag ? [[difEt, signo(sgY * ys[r] - sgX * xs[r], decDif)]] : []),
     ],
   }), [T, esJugadores, colores, exp, X, Y, xs, ys, diag, difEt, decDif]);
   const ctx = useMemo(() => ({ info }), [info]);
@@ -444,7 +446,7 @@ function Vista({ cfg, T, modo, tk }) {
   // --- tabla -------------------------------------------------------------------------------------
   const filasTabla = useMemo(() => (tablaAbierta ? visibles.map((r) => ({
     id: r, nombre: T.nombre(r), equipo: T.equipo(r), liga: T.liga(r), posicion: T.posicion(r),
-    min: T.c.min ? T.c.min[r] : null, x: xs[r], y: sgY * ys[r], dif: ys[r] - xs[r],
+    min: T.c.min ? T.c.min[r] : null, x: sgX * xs[r], y: sgY * ys[r], dif: sgY * ys[r] - sgX * xs[r],
   })) : []), [tablaAbierta, visibles, T, xs, ys]);
   const columnas = useMemo(() => [
     { field: "nombre", headerName: esJugadores ? "Jugador" : "Equipo", flex: 1.4, minWidth: 130 },
@@ -725,7 +727,7 @@ function Vista({ cfg, T, modo, tk }) {
             ejeX={movil && !exp ? X.corto : X.label} ejeY={movil && !exp ? Y.corto : Y.label}
             claveDatos={claveDatos} pines={pines} idsPorSerie={idsPorSerie}
             referencia={ref} medias={medias} corte={corteElite} lineas={lineas} onZona={alZona} vacio={vacio}
-            soloPositivoX={rx.lo >= 0} soloPositivoY={sgY === -1 || ry.lo >= 0} invertirY={sgY === -1} />
+            soloPositivoX={sgX === -1 || rx.lo >= 0} soloPositivoY={sgY === -1 || ry.lo >= 0} invertirX={sgX === -1} invertirY={sgY === -1} />
 
           <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: 1, mt: 0.75 }}>
             <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
