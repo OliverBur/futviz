@@ -41,8 +41,8 @@ PREGUNTAS = [(entidad, PREGUNTA_DE[slug], slug) for entidad, slug in (
     ("Jugadores", "mapa-tiros"),
     ("Jugadores", "pases-clave-vs-asistencias"),
     ("Equipos", "defensa"),
-    ("Equipos", "eficiencia-definicion"),
-    ("Equipos", "nivel-por-liga-equipos"),
+    ("Equipos", "tabla-esperada"),
+    ("Equipos", "origen-xg"),
 )]
 
 # A qué gráficas manda el buscador a un jugador según su posición, en orden de relevancia. Solo entran las
@@ -53,8 +53,9 @@ PRIORIDAD_JUGADOR = {
     "Medio": ["perfil-ofensivo", "pases-clave-vs-asistencias", "construir-vs-producir"],
     "Defensa": ["corte-vs-cobertura"],
 }
-PRIORIDAD_EQUIPO = ["eficiencia-definicion", "creacion", "defensa"]
+PRIORIDAD_EQUIPO = ["eficiencia-definicion", "creacion", "defensa", "puntos-vs-xg", "cantidad-calidad", "local-visitante"]
 VISTAS_POR_RESULTADO = 3   # la principal + "Ver a {nombre} en…" con dos más
+VISTAS_POR_EQUIPO = len(PRIORIDAD_EQUIPO)   # los equipos tienen seis dispersiones propias y se ofrecen todas
 EJEMPLO_BUSCADOR = "Ødegaard"   # lo que se sugiere teclear en el campo; tiene que estar en el índice (ver `escribir_landing`)
 SUGERIDOS_JUGADORES = 3    # con el campo vacío: los máximos goleadores de la temporada más reciente
 SUGERIDAS_VISTAS = 2       # ...las primeras gráficas de "Preguntas para empezar"
@@ -138,10 +139,10 @@ def construir_indice(paginas_eda, articulos):
     orden_j = [s for s, tabla, _ in scatter if tabla == "jugadores"]
     orden_e = [s for s, tabla, _ in scatter if tabla == "equipos"]
 
-    def ordenar(destinos, prioridad):
+    def ordenar(destinos, prioridad, tope=VISTAS_POR_RESULTADO):
         preferidas = [s for s in prioridad if s in destinos]
         resto = [s for s in (orden_j + orden_e) if s in destinos and s not in preferidas]
-        return [[v_idx[s], destinos[s]] for s in (preferidas + resto)[:VISTAS_POR_RESULTADO]]
+        return [[v_idx[s], destinos[s]] for s in (preferidas + resto)[:tope]]
 
     # jugadores
     dj = _destinos(jug, [(s, req) for s, tabla, req in scatter if tabla == "jugadores"], temporadas)
@@ -162,7 +163,7 @@ def construir_indice(paginas_eda, articulos):
     # equipos
     de = _destinos(equ, [(s, req) for s, tabla, req in scatter if tabla == "equipos"], temporadas)
     ultima = _ultima_fila(equ)
-    equipos = [[nombre, equ["f"]["l"][ultima[j]], ordenar(de[nombre], PRIORIDAD_EQUIPO)]
+    equipos = [[nombre, equ["f"]["l"][ultima[j]], ordenar(de[nombre], PRIORIDAD_EQUIPO, VISTAS_POR_EQUIPO)]
                for j, nombre in enumerate(equ["nombres"]) if nombre in de]
 
     vistas = [[p.slug, p.tab or p.title, p.group, p.section] for p in paginas_eda]
