@@ -72,3 +72,48 @@ export function ajustarA(puntos, base, margen = 0.08, acercamientoMax = ZOOM_MAX
     y0: (y0 + y1) / 2 - h / 2, y1: (y0 + y1) / 2 + h / 2,
   }, base);
 }
+
+// Como `ajustarA`, pero cada eje por su cuenta: para las vistas cuyos ejes tienen unidades distintas (pases clave contra
+// asistencias), donde no hay diagonal que deformar y conservar la proporción de la base dejaba casi sin acercar un cuadrante
+// ancho. `encuadrar` lo mantiene dentro de la base.
+export function ajustarEjes(puntos, base, margen = 0.08) {
+  if (!puntos.length) return base;
+  let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+  for (const p of puntos) {
+    if (p.x < x0) x0 = p.x; if (p.x > x1) x1 = p.x;
+    if (p.y < y0) y0 = p.y; if (p.y > y1) y1 = p.y;
+  }
+  const w = Math.max((x1 - x0) * (1 + margen * 2), anchoDe(base) / ZOOM_MAX);
+  const h = Math.max((y1 - y0) * (1 + margen * 2), altoDe(base) / ZOOM_MAX);
+  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+  return encuadrar({ x0: cx - w / 2, x1: cx + w / 2, y0: cy - h / 2, y1: cy + h / 2 }, base);
+}
+
+// El cuadrante de un punto respecto de las líneas de una vista: "tr", "tl", "br" o "bl" (arriba o abajo, derecha o izquierda).
+// `lineas`: `{ tipo: "rect", cx, cy }` (dos líneas, una vertical en `cx` y otra horizontal en `cy`) o `{ tipo: "diag", cx }`
+// (la vertical en `cx` y la diagonal y = x, para las gráficas de "marcó lo esperado").
+export function zonaDe(lineas, x, y) {
+  const derecha = x >= lineas.cx;
+  const arriba = lineas.tipo === "diag" ? y >= x : y >= lineas.cy;
+  return (arriba ? "t" : "b") + (derecha ? "r" : "l");
+}
+
+// El cuadrante como polígono en coordenadas de datos (`T`: más allá de cualquier zoom), para sombrearlo.
+export function poligonoZona(lineas, id, T) {
+  const { cx } = lineas;
+  if (lineas.tipo === "diag") {
+    return {
+      tr: [[cx, cx], [T, T], [cx, T]],
+      br: [[cx, -T], [T, -T], [T, T], [cx, cx]],
+      tl: [[-T, -T], [cx, cx], [cx, T], [-T, T]],
+      bl: [[-T, -T], [cx, cx], [cx, -T]],
+    }[id];
+  }
+  const { cy } = lineas;
+  return {
+    tr: [[cx, cy], [T, cy], [T, T], [cx, T]],
+    br: [[cx, -T], [T, -T], [T, cy], [cx, cy]],
+    tl: [[-T, cy], [cx, cy], [cx, T], [-T, T]],
+    bl: [[-T, -T], [cx, -T], [cx, cy], [-T, cy]],
+  }[id];
+}

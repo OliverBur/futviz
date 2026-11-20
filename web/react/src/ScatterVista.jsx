@@ -45,7 +45,7 @@ import { Ranking } from "./Ranking.jsx";
 import { Cuadrito, Posiciones } from "./Posiciones.jsx";
 import { Tabla } from "./Tabla.jsx";
 import { Aviso, Cargando, Encabezado, Md, Parrafos, Rotulo, sinAcentos } from "./ui.jsx";
-import { acercar, ajustarA, centrarEn, esBase } from "./zoom.js";
+import { acercar, ajustarA, ajustarEjes, centrarEn, esBase, zonaDe } from "./zoom.js";
 import { TOPE_DIF, colorRendimiento, conAlfa, divergente } from "./colores.js";
 import { cuantil, media } from "./stats.js";
 import { GENERADORES, lecturaExplorador } from "./insights.js";
@@ -220,9 +220,24 @@ function Vista({ cfg, T, modo, tk }) {
   // La línea de la élite (`referencia.zonas`): el valor de X que deja arriba al `1 − pct` de lo que se ve.
   const corteElite = useMemo(() => (ref && ref.zonas && visibles.length >= 5
     ? cuantil(visibles.map((r) => xs[r]), ref.zonas.pct) : null), [ref, visibles, xs]);
-  // Las líneas de promedio: el de las temporadas juntas, o un valor fijo de la vista (`fijo`: el percentil 50).
-  const medias = useMemo(() => (ref && ref.tipo === "promedios" && pobl.length
-    ? (ref.fijo || { x: media(pobl.map((r) => xs[r])), y: media(pobl.map((r) => ys[r])) }) : null), [ref, pobl, xs, ys]);
+  // Las líneas punteadas de las vistas con cuadrantes: un valor fijo de la vista (`fijo`, p. ej. el percentil 70 de una escala
+  // de percentiles); el percentil `cuantil` de lo que se ve en cada eje (así el cuadrante bueno deja solo a los más
+  // destacados); o el promedio de las temporadas juntas.
+  const medias = useMemo(() => {
+    if (!ref || ref.tipo !== "promedios" || !pobl.length) return null;
+    if (ref.fijo) return ref.fijo;
+    if (ref.cuantil) {
+      return visibles.length >= 5
+        ? { x: cuantil(visibles.map((r) => xs[r]), ref.cuantil), y: cuantil(visibles.map((r) => ys[r]), ref.cuantil) } : null;
+    }
+    return { x: media(pobl.map((r) => xs[r])), y: media(pobl.map((r) => ys[r])) };
+  }, [ref, pobl, visibles, xs, ys]);
+  // Las líneas que parten la gráfica en cuadrantes que se pueden señalar con el cursor y acercar con un clic.
+  const lineas = useMemo(() => {
+    if (ref && ref.zonas && corteElite != null) return { tipo: "diag", cx: corteElite };
+    if (ref && ref.tipo === "promedios" && ref.cuadrantes && medias) return { tipo: "rect", cx: medias.x, cy: medias.y };
+    return null;
+  }, [ref, corteElite, medias]);
 
   // Memoizados: si cambiaran de identidad en cada render, `series` se recalcularía y MUI
   // volvería a pintar los ~2.000 marcadores en cada movimiento del mouse.
@@ -359,6 +374,17 @@ function Vista({ cfg, T, modo, tk }) {
     const r = idsPorSerie[seriesId] ? idsPorSerie[seriesId][dataIndex] : null;
     if (r != null) setFijados((p) => (p.includes(T.f.j[r]) ? p.filter((x) => x !== T.f.j[r]) : [...p, T.f.j[r]].slice(-MAX_PINES)));
   }, [idsPorSerie, T]);
+
+  // Un clic en un cuadrante: la vista se ajusta a los jugadores que caen en él (el clic en el mismo cuadrante ya acercado no cambia nada).
+  const alZona = (id) => {
+    if (!lineas) return;
+    const pts = visibles.filter((r) => zonaDe(lineas, xs[r], ys[r]) === id).map((r) => ({ x: xs[r], y: ys[r] }));
+    if (!pts.length) return;
+    // La esquina donde se cruzan las líneas también entra en la vista, para que se vea desde dónde empieza el cuadrante. Con la
+    // diagonal se acerca por igual en los dos ejes (la diagonal no se deforma); en las demás, cada eje por su cuenta.
+    if (lineas.tipo === "rect") mover(ajustarEjes([...pts, { x: lineas.cx, y: lineas.cy }], base, 0.08));
+    else mover(ajustarA([...pts, { x: lineas.cx, y: lineas.cx }], base, 0.12));
+  };
 
   const alternarLiga = (li) => setLigasOn((on) => {
     const todas = on.size === T.ligas.length;
@@ -695,15 +721,19 @@ function Vista({ cfg, T, modo, tk }) {
             // En móvil, el título corto del eje ("Precisión") en vez de la frase entera, que no cabe.
             ejeX={movil && !exp ? X.corto : X.label} ejeY={movil && !exp ? Y.corto : Y.label}
             claveDatos={claveDatos} pines={pines} idsPorSerie={idsPorSerie}
-            referencia={ref} medias={medias} corte={corteElite} vacio={vacio}
+            referencia={ref} medias={medias} corte={corteElite} lineas={lineas} onZona={alZona} vacio={vacio}
             soloPositivoX={rx.lo >= 0} soloPositivoY={ry.lo >= 0} />
 
           <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: 1, mt: 0.75 }}>
             <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
-              {ref && ref.tipo === "promedios" ? (ref.fijo ? "Líneas punteadas: percentil 50 · " : "Líneas punteadas: promedio de cada eje · ") : ""}
+              {ref && ref.tipo === "promedios"
+                ? (ref.fijo ? `Líneas punteadas: percentil ${ref.fijo.x} · `
+                  : ref.cuantil ? `Líneas punteadas: percentil ${Math.round(ref.cuantil * 100)} de lo que ves · `
+                    : "Líneas punteadas: promedio de cada eje · ") : ""}
               {cfg.nota ? `${cfg.nota} · ` : ""}
               {ref && ref.banda ? "Franja gris: hasta donde llega el azar · " : ""}
-              {ref && ref.zonas ? "Línea vertical: el 20% con más xG por 90' de los que ves · " : ""}
+              {ref && ref.zonas ? `Línea vertical: el ${Math.round((1 - ref.zonas.pct) * 100)}% con más xG por 90' de los que ves · ` : ""}
+              {lineas ? "Clic en un cuadrante para acercarte a esos jugadores · " : ""}
               {movil
                 ? "Arrastra para mover · usa los botones para hacer zoom · toca un punto para resaltarlo"
                 : "Arrastra para mover · Ctrl + rueda o los botones para hacer zoom · clic en un punto para resaltarlo"}

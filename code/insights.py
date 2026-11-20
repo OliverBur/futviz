@@ -716,6 +716,7 @@ def asist_xa(df, season, liga=None):
 def perfil_que_mirar():
     return ("Abajo a la derecha, rematadores puros; arriba a la izquierda, creadores "
             "puros; arriba a la derecha, los que hacen las dos cosas.\n\n"
+            + _linea_txt() + "\n\n"
             "Ojo con leer la nube entera de un vistazo: **buena parte de la distancia "
             "entre dos puntos es el puesto en el que juegan**, no lo bueno que es cada "
             "uno. Un central y un extremo caen lejísimos sin que eso diga nada de ninguno "
@@ -1277,7 +1278,7 @@ def construir_que_mirar():
             "Abajo a la derecha están los constructores puros: centrales, pivotes y "
             "laterales que mueven al equipo pero casi nunca acaban la jugada. Arriba a la "
             "izquierda, los finalizadores que reciben el balón ya listo. Arriba a la "
-            "derecha, los pocos que construyen y también terminan.")
+            "derecha, los pocos que construyen y también terminan.\n\n" + _linea_txt())
 
 
 def construir_por_que(df):
@@ -1320,8 +1321,25 @@ def construir(df, season, liga=None):
 
 # "Élite": el 20% con más xG por 90' de los que se ven. Tiene que valer lo mismo en `insights.js` (`ELITE_PCT`) y en
 # la línea que dibuja la gráfica (`referencia.zonas.pct`, que sale de aquí).
-ELITE_PCT = 0.8
+ELITE_PCT = 0.7
+# Las líneas punteadas de las demás vistas de dos ejes ("élite" en cada eje, p. ej. el 30% con más pases clave): tiene que
+# valer lo mismo en `insights.js` (`LINEA_PCT`) y en `players._promedios`. Las de Cover vs. Stopper van en el percentil
+# 70 de una escala que ya es de percentiles (`LINEA_PERCENTIL`).
+LINEA_PCT = 0.7
+LINEA_PERCENTIL = 70
 MIN_MINUTOS_90 = 900
+
+
+def _pct_elite():
+    """«30%»: lo que queda a la derecha de la línea de la élite (el 30% con más xG)."""
+    return f"{round((1 - ELITE_PCT) * 100)}%"
+
+
+def _linea_txt():
+    """Una frase para las vistas con líneas en el percentil `LINEA_PCT`."""
+    return (f"Las líneas punteadas están en el percentil {round(LINEA_PCT * 100)} de lo que ves en cada eje, así que "
+            f"arriba a la derecha quedan solo los más destacados de los dos. Haz clic en un cuadrante para acercarte a "
+            f"esos jugadores.")
 
 
 def _corte90():
@@ -1331,13 +1349,13 @@ def _corte90():
 def xg_goles_90_que_mirar():
     return ("A la derecha, los que generan más ocasiones por 90' (xG sin penales); arriba, los que más goles "
             "marcan. La diagonal es \"marcó lo que valían sus ocasiones\".\n\n"
-            "La línea vertical separa a la **élite en ocasiones**: el 20% con más xG por 90' de los que ves. A su "
-            "derecha y arriba de la diagonal están los que son élite generando **y** finalizando; a su derecha y "
-            "debajo, los que generan como élite pero marcan menos de lo que generan: su producción de goles "
-            "podría mejorar. A su izquierda y debajo de la diagonal, los que ni generan como élite ni convierten lo "
-            "que generan.\n\n"
-            "Compara dentro de una misma posición: un central y un delantero caen lejísimos sin que eso diga nada de "
-            "ninguno de los dos.")
+            f"La línea vertical deja a su derecha al {_pct_elite()} con más xG por 90' de los que ves, y la diagonal "
+            "parte cada lado en dos. **Arriba a la derecha**: grandes ocasiones y finalizadores de élite. **Abajo a "
+            "la derecha**: grandes ocasiones con peor finalización, o sea que su producción de goles podría mejorar. "
+            "**Abajo a la izquierda**: sin ocasiones y peor finalizador. **Arriba a la izquierda**: pocas chances y "
+            "gran finalizador.\n\n"
+            "Haz clic en un cuadrante para acercarte a esos jugadores. Compara dentro de una misma posición: un "
+            "central y un delantero caen lejísimos sin que eso diga nada de ninguno de los dos.")
 
 
 def xg_goles_90_por_que(df):
@@ -1372,8 +1390,8 @@ def xg_goles_90(df, season, liga=None):
     elite = d[d["npxg90"] >= corte]
     mas = elite[elite["npg90"] >= elite["npxg90"]]
     menos = elite[elite["npg90"] < elite["npxg90"]]
-    salta = (f"El 20% con más xG por 90' son {len(elite)} jugadores (desde {_fmt(corte)}): {len(mas)} marcan al "
-             f"menos lo que generan y {len(menos)} marcan menos.")
+    salta = (f"El {_pct_elite()} con más xG por 90' son {len(elite)} jugadores (desde {_fmt(corte)}): {len(mas)} "
+             f"marcan al menos lo que generan y {len(menos)} marcan menos.")
     if len(menos):
         p = menos.loc[(menos["npg90"] - menos["npxg90"]).idxmin()]
         salta += (f" El que más se queda corto es **{p['player']}**: {_fmt(p['npg90'])} goles contra "
@@ -1420,6 +1438,7 @@ def pases_asist_que_mirar():
     return ("A la derecha, los que dan más pases clave por 90' (pases que acaban en tiro); arriba, los que más "
             "asistencias dan. **Abajo a la derecha** están los que crean mucho pero a quienes sus compañeros no les "
             "terminan las jugadas; arriba a la izquierda, los que dan pocos pases clave y muy bien aprovechados.\n\n"
+            + _linea_txt() + "\n\n"
             "Ojo: dar pases clave y que los conviertan no son lo mismo y la segunda parte no depende de quien pasa. "
             "La posición pesa mucho: compara entre iguales.")
 
@@ -1468,7 +1487,8 @@ def cover_stopper_que_mirar():
             "Abajo a la derecha, los **covers**: leen el pase y se anticipan, y entran y faltan poco. Arriba a la "
             "derecha, los que hacen las dos cosas; abajo a la izquierda, los que casi no aparecen en estas acciones.\n\n"
             "Cada eje es un **percentil de 0 a 100** entre los defensas de esa temporada: 90 quiere decir \"más que "
-            "el 90% de los defensas\". Las líneas parten en el 50.\n\n"
+            f"el 90% de los defensas\". Las líneas están en el {LINEA_PERCENTIL}, así que arriba a la derecha quedan "
+            "solo los más destacados de los dos. Haz clic en un cuadrante para acercarte a esos jugadores.\n\n"
             "Dos avisos. **El equipo manda**: quien juega en un club que no tiene la pelota defiende más, sin que "
             "eso diga nada de él. Y aquí van juntos centrales y laterales, porque los datos no los separan: el "
             "filtro de nivel del club ayuda a comparar entre iguales.")
@@ -1500,11 +1520,11 @@ def cover_stopper(df, season, liga=None):
         "más Stopper", "más Cover")
     if len(d) < 5:
         return fija, None
-    stop, cov = d["pct_stopper"] > 50, d["pct_cover"] > 50
+    stop, cov = d["pct_stopper"] > LINEA_PERCENTIL, d["pct_cover"] > LINEA_PERCENTIL
     a, b, c = int((stop & ~cov).sum()), int((cov & ~stop).sum()), int((stop & cov).sum())
     e = d.loc[(d["pct_stopper"] + d["pct_cover"]).idxmax()]
     salta = (f"De {len(d)} defensas, {a} se inclinan al Stopper, {b} al Cover, {c} a los dos y {len(d) - a - b - c} a "
-             f"ninguno (las líneas parten en el percentil 50). El más completo es **{e['player']}** ({e['team']}): "
+             f"ninguno (las líneas están en el percentil {LINEA_PERCENTIL}). El más completo es **{e['player']}** ({e['team']}): "
              f"{_fmt(e['pct_stopper'], 0)} de Stopper y {_fmt(e['pct_cover'], 0)} de Cover.")
     return fija, salta
 

@@ -15,6 +15,7 @@ import { ScatterChart } from "@mui/x-charts/ScatterChart";
 import { ChartsTooltipContainer, useItemTooltip } from "@mui/x-charts/ChartsTooltip";
 import { ZoomLayer } from "./ZoomLayer.jsx";
 import { conAlfa } from "./colores.js";
+import { poligonoZona, zonaDe } from "./zoom.js";
 
 // El tooltip y los rótulos necesitan datos de la fila que el chart no conoce: llegan por contexto.
 export const FilaCtx = createContext(null);
@@ -215,6 +216,7 @@ export function EstilosGrafica() {
       "html.rx-arrastrando .rx-tooltip": { display: "none" },
       "html.rx-arrastrando .rx-chart svg": { cursor: "grabbing" },
       '.rx-chart[data-zoom="1"] svg': { cursor: "grab" },
+      '.rx-chart[data-zona="1"] svg': { cursor: "zoom-in" },
       // Solo el tamaño transiciona (crece al resaltarse). NO el color ni el atenuado: una transición
       // por punto con 1.900 puntos multiplicaba los fotogramas lentos al cambiar "Color por" (p95 de
       // 17 a 50 ms) y al pasar el mouse por un chip. Solo cambia de tamaño un punto a la vez.
@@ -250,7 +252,7 @@ export function EstilosGrafica() {
 export function Grafica({
   series, view, viewRef, base, onView, rotulos, destacado, onDestacar, onClicPunto,
   tk, pos, neg, hayZoom, pista, onPista, ejeX, ejeY, claveDatos, pines, idsPorSerie,
-  referencia, medias, corte, vacio, soloPositivoX, soloPositivoY,
+  referencia, medias, corte, lineas, onZona, vacio, soloPositivoX, soloPositivoY,
 }) {
   const pinCtx = useMemo(() => ({ pines, ids: idsPorSerie }), [pines, idsPorSerie]);
   const idFondo = "rx-clip-fondo-" + useId().replace(/:/g, "");   // único por instancia: hay varias vistas montadas a la vez
@@ -286,7 +288,22 @@ export function Grafica({
   const zonas = diag && referencia.zonas ? referencia.zonas : null;
   const vCorte = zonas && corte != null && area.width > 0 ? px(corte) : null;
   const hayZonas = vCorte != null && vCorte > area.left + 24 && vCorte < area.left + area.width - 24;
-  const estrecho = area.width < 560;   // en pantalla angosta el rótulo de abajo a la izquierda sube un renglón
+  const estrecho = area.width < 560;   // en pantalla angosta los rótulos de la izquierda bajan un renglón
+  const idFondoZona = "rx-clip-zona-" + useId().replace(/:/g, "");
+
+  // --- los cuadrantes: se sombrea el que está bajo el cursor (muy leve) y un clic en un hueco, sin punto cerca, acerca a
+  // sus jugadores. Un clic que arrastra (mover el gráfico) o que cae sobre un punto (fijarlo) no cuenta.
+  const [zonaSobre, setZonaSobre] = useState(null);
+  const abajoEn = useRef(null);
+  const zonaEn = (e) => {
+    if (!lineas || !area.width || !caja.current) return null;
+    const r = caja.current.getBoundingClientRect();
+    const x = e.clientX - r.left, y = e.clientY - r.top;
+    if (x < area.left || x > area.left + area.width || y < area.top || y > area.top + area.height) return null;
+    const dx = view.x0 + ((x - area.left) / area.width) * (view.x1 - view.x0);
+    const dy = view.y1 - ((y - area.top) / area.height) * (view.y1 - view.y0);
+    return zonaDe(lineas, dx, dy);
+  };
 
   // --- la referencia, en píxeles (y las cajas que ocupan sus rótulos, para que las etiquetas las esquiven)
   const ref = { diagonal: null, promedios: null };
@@ -304,9 +321,10 @@ export function Grafica({
           obstaculos.push(derecha ? { x0: area.left + area.width - w, x1: area.left + area.width, y0: y - 14, y1: y + 4 }
             : { x0: area.left, x1: area.left + w, y0: y - 14, y1: y + 4 });
         };
-        caja(zonas.elite, true, area.top + 16);
-        caja(zonas.mejorable, true, area.top + area.height - 8);
-        caja(zonas.debajo, false, area.top + area.height - (estrecho ? 24 : 8));
+        caja(zonas.tr, true, area.top + 16);
+        caja(zonas.tl, false, area.top + (estrecho ? 32 : 16));
+        caja(zonas.br, true, area.top + area.height - 8);
+        caja(zonas.bl, false, area.top + area.height - (estrecho ? 24 : 8));
       } else {
         if (view.y1 > view.x0) obstaculos.push({ x0: area.left, x1: area.left + 140, y0: area.top, y1: area.top + 22 });
         if (view.y0 < view.x1) obstaculos.push({ x0: area.left + area.width - 128, x1: area.left + area.width,
@@ -386,6 +404,17 @@ export function Grafica({
   const lienzo = `M ${px(-T)},${py(-T)} L ${px(T)},${py(T)}`;
   return (
     <Box ref={caja} className={`rx-chart${animando ? " rx-anim" : ""}`} data-zoom={hayZoom ? 1 : 0}
+      data-zona={zonaSobre && !destacado ? 1 : 0}
+      onPointerMove={(e) => { if (lineas && e.pointerType !== "touch") setZonaSobre(zonaEn(e)); }}
+      onPointerLeave={() => setZonaSobre(null)}
+      onPointerDown={(e) => { abajoEn.current = { x: e.clientX, y: e.clientY }; }}
+      onPointerUp={(e) => {
+        const a = abajoEn.current;
+        abajoEn.current = null;
+        if (!a || !onZona || !lineas || destacado || Math.hypot(e.clientX - a.x, e.clientY - a.y) > 5) return;
+        const z = zonaEn(e);
+        if (z) onZona(z);
+      }}
       // La esquina de abajo a la izquierda del área de dibujo: de ahí se despliega la nube.
       style={{ "--rx-ox": `${area.left}px`, "--rx-oy": `${area.top + area.height}px` }}
       sx={{
@@ -427,9 +456,10 @@ export function Grafica({
               diagonal: con zoom profundo la de arriba a la izquierda puede quedar en zona roja. */}
           {hayZonas ? (
             <g fontSize={11.5} fontWeight={600} paintOrder="stroke" stroke={tk.surface} strokeWidth={3} strokeLinejoin="round">
-              <text x={area.left + area.width - 8} y={area.top + 16} fill={pos} textAnchor="end">↑ {zonas.elite}</text>
-              <text x={area.left + area.width - 8} y={area.top + area.height - 8} fill={neg} textAnchor="end">↓ {zonas.mejorable}</text>
-              <text x={area.left + 8} y={area.top + area.height - (estrecho ? 24 : 8)} fill={tk.muted}>{zonas.debajo}</text>
+              <text x={area.left + area.width - 8} y={area.top + 16} fill={pos} textAnchor="end">{zonas.tr}</text>
+              <text x={area.left + 8} y={area.top + (estrecho ? 32 : 16)} fill={tk.muted}>{zonas.tl}</text>
+              <text x={area.left + area.width - 8} y={area.top + area.height - 8} fill={neg} textAnchor="end">{zonas.br}</text>
+              <text x={area.left + 8} y={area.top + area.height - (estrecho ? 24 : 8)} fill={tk.muted}>{zonas.bl}</text>
             </g>
           ) : (
             <>
@@ -444,6 +474,18 @@ export function Grafica({
           )}
         </svg>
       )}
+
+      {/* 1b. El cuadrante bajo el cursor, apenas sombreado (detrás de los puntos). */}
+      {zonaSobre && lineas && area.width > 0 && (() => {
+        const pts = poligonoZona(lineas, zonaSobre, Math.max(base.x1, base.y1) * 3);
+        return (
+          <svg width="100%" height={alto} aria-hidden="true" style={{ position: "absolute", left: 0, top: 0, pointerEvents: "none" }}>
+            <clipPath id={idFondoZona}><rect x={area.left} y={area.top} width={area.width} height={area.height} /></clipPath>
+            <polygon clipPath={`url(#${idFondoZona})`} points={pts.map(([x, y]) => `${px(x)},${py(y)}`).join(" ")}
+              fill={conAlfa(tk.primary, 0.07)} />
+          </svg>
+        );
+      })()}
 
       {/* 2. El chart. Hasta que se mide el contenedor no hay con qué dibujar. */}
       {ancho > 0 && (

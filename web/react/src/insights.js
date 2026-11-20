@@ -162,7 +162,8 @@ export function construir(T, filas, ambito) {
 
 // Las tres vistas "por 90'" de goles y asistencias. Mismo texto que `xg_goles_90`, `xa_asist_90` y `pases_asist`
 // de `code/insights.py`. `ELITE_PCT` tiene que valer lo mismo que allá (y que `referencia.zonas.pct` de la gráfica).
-export const ELITE_PCT = 0.8;
+export const ELITE_PCT = 0.7;
+const LINEA_PERCENTIL = 70;   // Cover vs. Stopper: ver `LINEA_PERCENTIL` de insights.py
 
 export function xgGoles90(T, filas, ambito) {
   const fija = `En ${ambito}: ` + lideres(T, filas, "npxg90", "npg90", fmt, fmt,
@@ -172,7 +173,7 @@ export function xgGoles90(T, filas, ambito) {
   const elite = filas.filter((r) => T.c.npxg90[r] >= corte);
   const mas = elite.filter((r) => T.c.npg90[r] >= T.c.npxg90[r]);
   const menos = elite.filter((r) => T.c.npg90[r] < T.c.npxg90[r]);
-  let salta = `El 20% con más xG por 90' son ${elite.length} jugadores (desde ${fmt(corte)}): ${mas.length} marcan al menos lo que generan y ${menos.length} marcan menos.`;
+  let salta = `El ${Math.round((1 - ELITE_PCT) * 100)}% con más xG por 90' son ${elite.length} jugadores (desde ${fmt(corte)}): ${mas.length} marcan al menos lo que generan y ${menos.length} marcan menos.`;
   if (menos.length) {
     const p = menos[idxmin(menos.map((r) => T.c.npg90[r] - T.c.npxg90[r]))];
     salta += ` El que más se queda corto es **${quien(T, p)}**: ${fmt(T.c.npg90[p])} goles contra ${fmt(T.c.npxg90[p])} de xG por 90'.`;
@@ -208,11 +209,11 @@ export function coverStopper(T, filas, ambito) {
   if (filas.length < 5) return { fija, salta: null };
   let a = 0, b = 0, c = 0;
   for (const r of filas) {
-    const stop = T.c.pct_stopper[r] > 50, cov = T.c.pct_cover[r] > 50;
+    const stop = T.c.pct_stopper[r] > LINEA_PERCENTIL, cov = T.c.pct_cover[r] > LINEA_PERCENTIL;
     if (stop && !cov) a++; else if (cov && !stop) b++; else if (stop && cov) c++;
   }
   const e = filas[idxmax(filas.map((r) => T.c.pct_stopper[r] + T.c.pct_cover[r]))];
-  const salta = `De ${filas.length} defensas, ${a} se inclinan al Stopper, ${b} al Cover, ${c} a los dos y ${filas.length - a - b - c} a ninguno (las líneas parten en el percentil 50). El más completo es **${quien(T, e)}** (${T.equipo(e)}): ${f0(T.c.pct_stopper[e])} de Stopper y ${f0(T.c.pct_cover[e])} de Cover.`;
+  const salta = `De ${filas.length} defensas, ${a} se inclinan al Stopper, ${b} al Cover, ${c} a los dos y ${filas.length - a - b - c} a ninguno (las líneas están en el percentil ${LINEA_PERCENTIL}). El más completo es **${quien(T, e)}** (${T.equipo(e)}): ${f0(T.c.pct_stopper[e])} de Stopper y ${f0(T.c.pct_cover[e])} de Cover.`;
   return { fija, salta };
 }
 
