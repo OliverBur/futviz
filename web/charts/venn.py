@@ -108,7 +108,9 @@ def textos():
         "Cada círculo es algo que un jugador hace muy bien comparado con los de su puesto. Quien cae en el centro lo hace "
         "bien en las tres cosas a la vez.\n\n"
         "Con el deslizador decides qué tan exigente es «muy bien»: con 5% solo entran los mejores de cada cosa y casi nadie "
-        "llega al centro; con 30% entra casi cualquiera.\n\n"
+        "llega al centro; con 30%, dos de cada tres jugadores caen en algún círculo, pero al centro llegan menos de 4 de cada 100. "
+        "Los tres criterios no son independientes: entre los medios, recuperar y aportar en ataque casi no "
+        "coinciden, y el centro queda casi vacío.\n\n"
         "Pasa el cursor o toca una ficha para ver sus cifras. Si una región tiene más jugadores de los que caben, se muestran "
         "los que más destacan y un «+N» cuenta el resto. Arriba del diagrama dice cuántos caen en el centro y cuántos "
         "caerían si las tres cosas no tuvieran relación.")

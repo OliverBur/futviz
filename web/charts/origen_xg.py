@@ -233,8 +233,8 @@ def textos(r):
         f"«A favor» son los tiros que hace el equipo y «En contra», los que le hacen. Los dos lados son los mismos "
         f"tiros vistos desde equipos distintos: un córner o una falta se gana cuando alguien del otro bando despeja "
         f"o comete la falta, así que el balón parado a favor de un equipo es también lo que le conceden sus rivales. "
-        f"Por eso el balón parado de un equipo no es solo estilo propio: depende de contra quién juega y de cómo "
-        f"defienden esos rivales.\n\n"
+        f"Dentro de una liga todos enfrentan a casi los mismos rivales, así que el calendario no explica las "
+        f"diferencias entre equipos.\n\n"
         f"Haz clic en un color de la leyenda para ordenar por él, o busca un equipo para resaltarlo. Pasa el cursor "
         f"o toca una barra para leer los números.")
     por_que = (
@@ -259,12 +259,12 @@ def textos(r):
         f"Por eso el reparto del xG no es el reparto de los goles: el balón parado es {_p(h['bp_xg_pct'], 1)} del xG "
         f"y {_p(h['bp_gol_pct'], 1)} de los goles.\n\n"
         f"Una temporada de balón parado es **poca muestra**: un equipo típico hace {_n(round(h['bp_tiros_mediana']))} "
-        f"tiros de balón parado por temporada y suma {h['bp_xg_mediana']:.1f} de xG por esa vía. Y se repite poco de "
+        f"tiros de balón parado por temporada y suma {h['bp_xg_mediana']:.1f} de xG por esa vía. Y cambia bastante de "
         f"un año al siguiente: entre dos temporadas cerradas seguidas, la parte del xG a favor que un mismo equipo "
         f"saca del balón parado correlaciona {_entre(rep['bp_f'])}. {_se_repite(rep['bp_f'])} "
         f"En contra, entre {rep['bp_c']['min']:.2f} y {rep['bp_c']['max']:.2f}. Para comparar, el xG total a favor "
         f"por partido correlaciona entre {rep['xg_f']['min']:.2f} y {rep['xg_f']['max']:.2f}. Una barra de una sola temporada dice cómo fue "
-        f"ese año; no dice cómo es el equipo.")
+        f"ese año y solo en parte cómo es el equipo.")
     return que_mirar, por_que
 
 

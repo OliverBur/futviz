@@ -86,7 +86,7 @@ def jugador_temporadas(players, partidos, temporadas):
 
 def de_la_posicion(jt, clave):
     """"campo" son los jugadores de campo: Defensa, Medio y Delantero, más los pocos de posición ambigua. Los
-    porteros quedan aparte: casi todos juegan el 100% o el 0% y mezclarlos movería la mediana de cualquier edad
+    porteros quedan aparte: sus minutos no se parecen a los de campo y mezclarlos movería la mediana de cualquier edad
     sin decir nada del resto."""
     if clave == CAMPO:
         return jt[jt["posicion"] != "Portero"]
@@ -170,9 +170,9 @@ def textos(r):
         f"**Qué población es.** Hay {_n(len(jt))} jugador-temporadas con edad. Solo aparece quien jugó al menos un minuto, "
         f"así que quien nunca pisó la cancha no está, y la mediana de los más jóvenes es la de los que sí llegaron a jugar. "
         f"Se dejan fuera {_n(sin_nac)} sin año de nacimiento (no cruzaron con FBref) y no se dibuja una edad con menos de "
-        f"{MIN_JUGADORES} jugador-temporadas. «{ETIQUETA_CAMPO}» son Defensa, Medio y Delantero (con {_n(ambiguos)} de posición "
-        f"ambigua que no cuentan en ninguna posición suelta); los porteros van aparte porque casi todos juegan el 100% o "
-        f"casi nada, y mezclarlos movería la mediana de cualquier edad. La edad es el año en que arranca la temporada menos "
+        f"{MIN_JUGADORES} jugador-temporadas. «{ETIQUETA_CAMPO}» son Defensa, Medio y Delantero; los porteros van aparte porque sus "
+        f"minutos no se parecen a los de campo (la mitad juega el 80% o más de los minutos de su club, contra menos de la "
+        f"quinta parte en campo) y mezclarlos movería la mediana de cualquier edad. La edad es el año en que arranca la temporada menos "
         f"el año de nacimiento, como en los demás filtros del sitio: FBref solo publica el año, así que puede pasarse por uno.\n\n"
         f"**Qué no dice.** Los minutos dependen del equipo y de lo que el entrenador decide, no solo del jugador: un "
         f"joven que juega poco puede ser suplente de un titular indiscutido o estar lesionado.")

@@ -427,12 +427,12 @@ def textos(r):
     if en_curso:
         txt = ", ".join(f"{t} (de {int(pj.loc[t, 'min'])} a {int(pj.loc[t, 'max'])} partidos por equipo)" for t in en_curso)
         cola_curso = (f"\n\n**La temporada en curso.** {txt}: con tan pocos partidos la diferencia entre puntos y xPts es "
-                      f"casi toda azar. Se dibuja en gris y los textos no concluyen nada de ella. Las cifras de validación de "
+                      f"sobre todo azar, y la muestra es mínima. Se dibuja en gris y los textos no concluyen nada de ella. Las cifras de validación de "
                       f"este texto son solo de las {len(ts)} temporadas cerradas ({ts[0]} a {ts[-1]}).")
     por_que = (
         "**Qué son los xPts.** Para cada partido se toma el xG de cada tiro como la probabilidad de que sea gol y se "
-        "supone que los tiros son independientes: los goles de cada equipo son la suma de esas probabilidades (una "
-        "moneda cargada por tiro). De ahí sale la probabilidad de cada marcador y, sumando, la de ganar, empatar y "
+        "supone que los tiros son independientes: los goles de cada equipo son la suma de lanzar una moneda cargada "
+        "por tiro, que cae gol con la probabilidad de su xG. De ahí sale la probabilidad de cada marcador y, sumando, la de ganar, empatar y "
         "perder. Los xPts del partido son 3 por la probabilidad de ganar más 1 por la de empatar; los del equipo, la suma "
         "de sus partidos. No son los puntos que «merecía»: son los que sumaría, en promedio, si ese mismo partido se "
         "repitiera muchas veces con esas ocasiones.\n\n"

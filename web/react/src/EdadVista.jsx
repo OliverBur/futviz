@@ -152,7 +152,7 @@ function Vista({ cfg, D, modo, tk }) {
         </ToggleButtonGroup>
         {pos === "campo" && (
           <Typography sx={{ fontSize: 11.5, color: "text.secondary", mt: 0.5 }}>
-            Defensa, Medio y Delantero. Los porteros se miran aparte: casi todos juegan el 100% de los minutos o casi nada.
+            Defensa, Medio y Delantero. Los porteros se miran aparte: la mitad juega el 80% o más de los minutos de su club, y eso movería la mediana.
           </Typography>
         )}
       </Box>
