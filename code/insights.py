@@ -1865,6 +1865,119 @@ def puntos(df, season, liga=None):
     return fija, salta
 
 
+# --- Cantidad vs. calidad de los tiros y Local vs. visitante ---------------------------------
+# Los textos fijos de estas dos vistas (`web/charts/equipos_tiros.py` calcula las columnas). El texto «Con estos filtros»
+# de las dos NO tiene gemelo aquí: vive solo en `insights.js` (`cantidadCalidad` y `localVisitante`) y está fuera de la
+# prueba de paridad, como `lecturaEntidad` de `tiros.js`.
+
+TIROS_PP, XG_TIRO = "tiros_pp", "xg_tiro"
+DIF_LOCAL, DIF_VISITA = "xg_dif_local", "xg_dif_visita"
+PARTIDOS_LOCAL, PARTIDOS_VISITA = "partidos_local", "partidos_visita"
+
+
+def _frase_calibra(df):
+    """Una frase con lo que de verdad pasó con el xG de Understat en las temporadas cerradas: cuánto de lo que sumaba
+    metieron los equipos (sin penales)."""
+    c = _cerradas_eq(df)
+    goles, xg = (c[GOL_FAV] * c[PARTIDOS_XG]).sum(), (c[XG_FAV] * c[PARTIDOS_XG]).sum()
+    return (f"El xG de Understat suma {'más' if goles < xg else 'menos'} de lo que entra: en las temporadas cerradas "
+            f"los equipos metieron el {goles / xg * 100:.0f}% de lo que sumaba su xG sin penales.")
+
+
+def _frase_en_curso(df, extra=""):
+    """Qué pasa con la temporada que va en curso (6 a 9 partidos por equipo): vacía si no hay ninguna."""
+    resto = df.drop(_cerradas_eq(df).index)
+    if resto.empty:
+        return ""
+    mp = resto[PARTIDOS_FBREF]
+    cuantos = f"{int(mp.min())}" if mp.min() == mp.max() else f"de {int(mp.min())} a {int(mp.max())}"
+    return (f" En la temporada que va en curso cada equipo lleva {cuantos} partidos{extra}: se dibuja, pero no se "
+            f"concluye nada de ella.")
+
+
+def cantidad_calidad_que_mirar():
+    return (f"Arriba a la derecha están los que disparan mucho y con ocasiones de calidad; las líneas punteadas "
+            f"dejan en ese cuadrante al {round((1 - LINEA_PCT) * 100)}% con más tiros y al {round((1 - LINEA_PCT) * 100)}% "
+            f"con más xG por tiro de los que ves. **Arriba a la izquierda**: tiran menos, pero eligen bien. **Abajo a la "
+            f"derecha**: tiran mucho, sin tanta calidad, o sea muchos tiros de baja probabilidad de gol. **Abajo a la "
+            f"izquierda**: ni muchos tiros ni tan buenos.\n\n"
+            f"Los dos ejes multiplicados dan el xG a favor por partido de «Ocasiones a favor y en contra»: un mismo xG "
+            f"se puede llegar disparando mucho de baja calidad o poco de alta. Esta vista abre esa cifra en sus dos "
+            f"factores. Haz clic en un cuadrante para acercarte a esos equipos.")
+
+
+def cantidad_calidad_por_que(df):
+    c = _cerradas_eq(df)
+    r = c[TIROS_PP].corr(c[XG_TIRO])
+    p_n, p_q = _persistencia_equipos(df, df[TIROS_PP]), _persistencia_equipos(df, df[XG_TIRO])
+    p2 = (f"Los dos ejes correlacionan {_fmt(r)} sobre {miles(len(c))} equipos-temporada cerrados: {_cuanto(r)}.")
+    if r >= 0.3:
+        p2 += " Los que más tiran tienden a tirar mejor, pero con mucho margen: hay equipos que tiran mucho sin calidad."
+    p3 = ""
+    if p_n and p_q:
+        mas = ("más" if (p_n[0] + p_n[1]) > (p_q[0] + p_q[1]) else "menos")
+        p3 = (f"\n\nEntre una temporada cerrada y la siguiente, los tiros por partido de un mismo equipo correlacionan "
+              f"{_entre(p_n)}, y el xG por tiro, {_entre(p_q)}. El volumen se repite {mas} que la calidad. En las dos "
+              f"cuenta el nivel del equipo y no solo su estilo: un equipo que sube o baja de nivel mueve las dos.")
+    return (
+        f"Cada tiro trae su xG, la probabilidad de que sea gol según desde dónde y cómo se hizo. El eje horizontal "
+        f"cuenta los tiros por partido y el vertical es el xG por tiro: el xG sin penales del equipo entre sus tiros, "
+        f"o sea qué tan buenas son, en promedio, las ocasiones que se fabrica. Mide qué tipo de tiro elige, no qué tan "
+        f"bien lo remata.\n\n"
+        f"{p2}{p3}\n\n"
+        f"Los tiros son los de Understat, por partido y sin penales ni autogoles (un autogol no es un tiro). Cuentan "
+        f"todos los remates, también los que un defensa bloquea, que valen poco. {_frase_calibra(df)} Va por partido "
+        f"porque la Bundesliga juega 34 jornadas y las otras cuatro ligas 38. Una temporada es poca muestra: con unos "
+        f"{_fmt(c[PARTIDOS_XG].mean(), 0)} partidos, el xG por tiro de un equipo se mueve con unos pocos partidos atípicos."
+        f"{_frase_en_curso(df)}"
+    )
+
+
+def local_visitante_que_mirar():
+    return ("Casi todos los equipos quedan debajo de la diagonal: jugar en casa ayuda a casi todos, así que lo que cuenta "
+            "es qué tan lejos están de ella y no que estén debajo. **Arriba a la derecha**: dominan las ocasiones en casa y "
+            "fuera. **Abajo a la derecha**: solo las dominan en casa. **Abajo a la izquierda**: las sufren en los dos "
+            "lados. **Arriba a la izquierda**: solo dominan fuera, un cuadrante casi vacío.\n\n"
+            "Que un equipo «dependa de su estadio» solo vale si se repite de una temporada a la siguiente; si eso pasa o "
+            "no lo dice «Por qué estas variables». Haz clic en un cuadrante para acercarte a esos equipos.")
+
+
+def local_visitante_por_que(df):
+    c = _cerradas_eq(df)
+    dl, dv = c[DIF_LOCAL], c[DIF_VISITA]
+    r = dl.corr(dv)
+    efecto = df[DIF_LOCAL] - df[DIF_VISITA]
+    p = _persistencia_equipos(df, efecto)
+    mejor_casa = (dl > dv).mean() * 100
+    p2 = (f"En las temporadas cerradas el equipo promedio tiene {_sg(dl.mean())} de diferencia de xG por partido de "
+          f"local y {_sg(dv.mean())} de visitante: {_fmt(dl.mean() - dv.mean())} de xG por partido a favor de jugar en "
+          f"casa. El {mejor_casa:.0f}% de los {miles(len(c))} equipos-temporada cerrados tiene mejor diferencia de local "
+          f"que de visitante. Local y visitante correlacionan {_fmt(r)}: {_cuanto(r)}. Casi todo lo que separa a un buen "
+          f"equipo de uno malo se ve en los dos lados.")
+    p3 = ""
+    if p:
+        hi = max(abs(p[0]), abs(p[1]))
+        cierre = ("Con esa cifra, que un equipo dependa mucho de su estadio en una temporada casi no dice que lo vaya a "
+                  "hacer en la siguiente: es más un accidente de la temporada que un rasgo del equipo." if hi < 0.3 else
+                  "Con esa cifra, una parte de la dependencia del estadio es del equipo y otra de la temporada." if hi < 0.6
+                  else "Con esa cifra, la dependencia del estadio es en buena medida un rasgo del equipo.")
+        p3 = (f"\n\nLo que importa para «depende de su estadio» es la diferencia entre jugar en casa y fuera (local menos "
+              f"visitante), la distancia a la diagonal. Entre una temporada cerrada y la siguiente, esa diferencia de un "
+              f"mismo equipo correlaciona {_entre(p)}. {_se_repite(p)} {cierre}")
+    pl = c[[PARTIDOS_LOCAL, PARTIDOS_VISITA]]
+    muestra = (f"{int(pl.min().min())}" if pl.min().min() == pl.max().max()
+               else f"{int(pl.min().min())} a {int(pl.max().max())}")
+    return (
+        f"Cada eje es la diferencia de xG por partido (xG a favor menos xG en contra, de Understat y sin penales) en "
+        f"los partidos de una sede: la horizontal, de local; la vertical, de visitante. Cada equipo juega una vez en "
+        f"casa de cada rival y una vez fuera, así que las dos sedes enfrentan a los mismos rivales.\n\n"
+        f"{p2}{p3}\n\n"
+        f"Cada punto promedia {'de ' if 'a' in muestra else ''}{muestra} partidos por sede, y de un partido a otro el xG se mueve mucho: una temporada es "
+        f"poca muestra. {_frase_calibra(df)} Los partidos sin ningún tiro en Understat no cuentan de local ni de "
+        f"visitante.{_frase_en_curso(df, ' y solo unos pocos de cada sede')}"
+    )
+
+
 # --- Distribución por liga -------------------------------------------------------------------
 
 def nivel_liga_equipos_que_mirar():

@@ -346,6 +346,11 @@ export function Grafica({
     if (prom) {
       const vx = px(medias.x), hy = py(medias.y);
       ref.promedios = { vx, hy };
+      // Solo como guía (`guiaDiagonal`): la diagonal y = x además de las líneas punteadas, sin sombreado ni rótulos.
+      if (referencia.guiaDiagonal) {
+        const T = Math.max(base.x1, base.y1) * 3;
+        ref.diagonal = { x1: px(-T), y1: py(-T), x2: px(T), y2: py(T) };
+      }
       const q = referencia.cuadrantes;
       if (q) {
         // Un rótulo por cuadrante, pegado a las líneas de promedio por arriba y por abajo del recuadro.

@@ -296,10 +296,64 @@ export function puntos(T, filas, ambito) {
   return { fija, salta };
 }
 
+// «Cantidad vs. calidad de los tiros» y «Local vs. visitante». SIN gemelo en `code/insights.py` ni prueba de paridad
+// (como `lecturaEntidad` de `tiros.js`): el texto fijo de las dos vistas sí vive allá (`cantidad_calidad_por_que`,
+// `local_visitante_por_que`) y lleva las cifras de los datos. Las líneas de la primera, en el percentil `LINEA_PCT` de lo
+// que se ve en cada eje, son las mismas que dibuja `ScatterVista` (`referencia.cuantil`).
+const LINEA_PCT = 0.8;   // el mismo valor que `LINEA_PCT` de insights.py
+const TIROS_PP = "tiros_pp", XG_TIRO = "xg_tiro", DIF_LOCAL = "xg_dif_local", DIF_VISITA = "xg_dif_visita";
+
+// "A, B y C" (los primeros `n` de la lista).
+const lista = (v, n = 3) => {
+  const p = v.slice(0, n);
+  return p.length > 1 ? `${p.slice(0, -1).join(", ")} y ${p[p.length - 1]}` : p[0];
+};
+
+export function cantidadCalidad(T, filas, ambito) {
+  const tiros = col(T, TIROS_PP, filas), xgt = col(T, XG_TIRO, filas);
+  const a = filas[idxmax(tiros)], b = filas[idxmax(xgt)];
+  const fija = quien(T, a) === quien(T, b)
+    ? `En ${ambito}, **${quien(T, a)}** lidera los dos ejes: ${fmt1(T.c[TIROS_PP][a])} tiros por partido y ${fmt(T.c[XG_TIRO][a], 3)} de xG por tiro.`
+    : `En ${ambito}, **${quien(T, a)}** es el que más tira (${fmt1(T.c[TIROS_PP][a])} tiros por partido) y **${quien(T, b)}** el que tira con más calidad (${fmt(T.c[XG_TIRO][b], 3)} de xG por tiro).`;
+  if (filas.length < 5) return { fija, salta: null };
+  const cx = cuantil(tiros, LINEA_PCT), cy = cuantil(xgt, LINEA_PCT);
+  const muchos = filas.filter((r) => T.c[TIROS_PP][r] >= cx);
+  const buenos = muchos.filter((r) => T.c[XG_TIRO][r] >= cy);
+  const pct = Math.round((1 - LINEA_PCT) * 100);
+  const n = buenos.length;
+  const nombres = [...buenos].sort((p, q) => T.c[TIROS_PP][q] - T.c[TIROS_PP][p]).map((r) => `**${quien(T, r)}**`);
+  let salta = `Con las líneas en ${fmt1(cx)} tiros por partido y ${fmt(cy, 3)} de xG por tiro (el ${pct}% con más de cada uno), `
+    + (n === 0 ? "ningún equipo queda arriba a la derecha."
+      : n <= 3 ? `${n === 1 ? "queda 1 equipo" : `quedan ${n} equipos`} arriba a la derecha: ${lista(nombres)}.`
+        : `quedan ${n} equipos arriba a la derecha; los que más tiran son ${lista(nombres)}.`);
+  const p = muchos[idxmin(muchos.map((r) => T.c[XG_TIRO][r]))];
+  salta += ` Entre los que más tiran, el que menos calidad por tiro tiene es **${quien(T, p)}**: ${fmt1(T.c[TIROS_PP][p])} tiros por partido y ${fmt(T.c[XG_TIRO][p], 3)} de xG por tiro.`;
+  return { fija, salta };
+}
+
+export function localVisitante(T, filas, ambito) {
+  const dl = col(T, DIF_LOCAL, filas), dv = col(T, DIF_VISITA, filas);
+  const a = filas[idxmax(dl)], b = filas[idxmax(dv)];
+  const fija = quien(T, a) === quien(T, b)
+    ? `En ${ambito}, **${quien(T, a)}** lidera los dos ejes: ${sg(T.c[DIF_LOCAL][a])} de diferencia de xG por partido de local y ${sg(T.c[DIF_VISITA][a])} de visitante.`
+    : `En ${ambito}, **${quien(T, a)}** es el que mejor diferencia de xG tiene de local (${sg(T.c[DIF_LOCAL][a])} por partido) y **${quien(T, b)}** el de visitante (${sg(T.c[DIF_VISITA][b])}).`;
+  if (filas.length < 4) return { fija, salta: null };
+  let tr = 0, tl = 0, br = 0, bl = 0;
+  filas.forEach((r) => {
+    const l = T.c[DIF_LOCAL][r] > 0, v = T.c[DIF_VISITA][r] > 0;
+    if (l && v) tr++; else if (v) tl++; else if (l) br++; else bl++;
+  });
+  const dif = dl.map((l, i) => l - dv[i]);
+  const e = filas[idxmax(dif)];
+  const salta = `De ${filas.length} equipos, ${tr} dominan las ocasiones en casa y fuera, ${br} solo en casa, ${tl} solo fuera y ${bl} las sufren en los dos. El que más cambia de un estadio a otro es **${quien(T, e)}**: ${sg(T.c[DIF_LOCAL][e])} de local y ${sg(T.c[DIF_VISITA][e])} de visitante (${fmt(Math.max(...dif))} de diferencia por partido). Cuánto de eso es del equipo y cuánto de la temporada lo dice «Por qué estas variables».`;
+  return { fija, salta };
+}
+
 export const GENERADORES = {
   goles_xg: golesXg, asist_xa: asistXa, perfil, recuperar, disputar, dos_fases: dosFases,
   pases_clave: pasesClave, construir, centros, definicion, creacion, defensa, puntos,
   xg_goles_90: xgGoles90, xa_asist_90: xaAsist90, pases_asist: pasesAsist, cover_stopper: coverStopper,
+  cantidad_calidad: cantidadCalidad, local_visitante: localVisitante,
 };
 
 // ---- Mapa de calor de los tiros ---------------------------------------------------------------

@@ -11,6 +11,7 @@ está en `xg_equipos.py` y `load_data` lo pega a la tabla de FBref.
 
 import pandas as pd
 
+import equipos_tiros
 import forma
 import insights as ins
 import origen_xg
@@ -20,7 +21,7 @@ import xg_equipos
 from consolidate_data import ELO_TOP, NIVELES
 from nombres import aplicar_a_equipos
 from preguntas import PREGUNTAS
-from site_utils import PROCESSED_DIR, ChartPage, temporadas_en_curso
+from site_utils import DATA_DIR, PROCESSED_DIR, ChartPage, temporadas_en_curso
 from viz_theme import (
     DIVERGING, FUENTE_FBREF, FUENTE_UNDERSTAT, LEAGUE_COLORS, LEAGUE_COLORS_DARK, LEAGUE_ORDER,
 )
@@ -59,6 +60,10 @@ VARIABLES = [
     ("xg_dif", "Diferencia de xG por partido (a favor − en contra)", "Ocasiones y goles sin penales", 2),
     ("gol_fav", "Goles por partido (sin penales)", "Ocasiones y goles sin penales", 2),
     ("gol_con", "Goles recibidos por partido (sin penales)", "Ocasiones y goles sin penales", 2),
+    ("tiros_pp", "Tiros por partido (sin penales)", "Ocasiones y goles sin penales", 1),
+    ("xg_tiro", "xG por tiro (sin penales)", "Ocasiones y goles sin penales", 3),
+    ("xg_dif_local", "Diferencia de xG por partido de local", "Ocasiones y goles sin penales", 2),
+    ("xg_dif_visita", "Diferencia de xG por partido de visitante", "Ocasiones y goles sin penales", 2),
 
     ("p90_Fls", "Faltas cometidas por 90'", "Disciplina", 2),
     ("p90_Fld", "Faltas recibidas por 90'", "Disciplina", 2),
@@ -81,7 +86,7 @@ VARIABLES = [
 # Las columnas de xG y goles viajan con toda su precisión (ver `react_views.registrar_tabla`): los textos
 # restan una de otra y ajustan una recta, y un redondeo al viajar podría cambiar una cifra o un empate
 # respecto de la que da Python.
-EXACTAS = ["xg_fav", "xg_con", "xg_dif", "gol_fav", "gol_con"]
+EXACTAS = ["xg_fav", "xg_con", "xg_dif", "gol_fav", "gol_con", *equipos_tiros.COLUMNAS]
 
 # Lo que se agrega al final del texto del explorador (el aviso del r² es el mismo de las dos entidades).
 NOTA_EXPLORADOR = (
@@ -121,8 +126,12 @@ def load_data():
     consolidado: así `teams_all_seasons.csv` queda como lo dejó `consolidate_data.py`. El cruce de
     nombres entre Understat y FBref va ANTES de `aplicar_a_equipos`, con los nombres de origen."""
     crudo = pd.read_csv(PROCESSED_DIR / "teams_all_seasons.csv")
-    xg = xg_equipos.agregar(xg_equipos.cargar_tiros(PROCESSED_DIR / "shots_all_seasons.csv"), crudo)
-    df = aplicar_a_equipos(pd.concat([crudo, xg], axis=1))
+    tiros = xg_equipos.cargar_tiros(PROCESSED_DIR / "shots_all_seasons.csv")
+    xg = xg_equipos.agregar(tiros, crudo)
+    # Tiros por partido, xG por tiro y la diferencia de xG de local y de visitante (`equipos_tiros.py`).
+    partidos = equipos_tiros.cargar_partidos(DATA_DIR, sorted(crudo["temporada"].unique()))
+    tiros_sede = equipos_tiros.agregar(tiros, crudo, partidos)
+    df = aplicar_a_equipos(pd.concat([crudo, xg, tiros_sede], axis=1))
 
     # Las derivadas se arman de una sola vez (un `df[nueva] = ...` por columna sobre un frame de 171
     # columnas lo fragmenta y pandas avisa).
@@ -175,10 +184,22 @@ def _diagonal(dif, sobre, bajo, invertir=False):
     return ref
 
 
-def _promedios(cuadrantes):
-    """Líneas punteadas en el promedio de cada eje (el de las temporadas juntas, para que "por encima
-    del promedio" signifique lo mismo al cambiar de temporada) y un rótulo por cuadrante."""
-    return {"tipo": "promedios", "cuadrantes": cuadrantes}
+def _promedios(cuadrantes, cuantil=None, fijo=None, etiqueta=None, guia_diagonal=False):
+    """Líneas punteadas y un rótulo por cuadrante. Por omisión van en el promedio de cada eje (el de las temporadas
+    juntas, para que "por encima del promedio" signifique lo mismo al cambiar de temporada). Con `cuantil`, en ese
+    percentil de lo que se ve en cada eje (como `players._promedios`: arriba a la derecha quedan solo los más
+    destacados). Con `fijo` (`{"x": 0, "y": 0}`), en esos valores, y `etiqueta` es lo que dice el pie de la gráfica
+    de esas líneas. `guia_diagonal` dibuja además la diagonal y = x, solo como guía."""
+    ref = {"tipo": "promedios", "cuadrantes": cuadrantes}
+    if cuantil:
+        ref["cuantil"] = cuantil
+    if fijo:
+        ref["fijo"] = fijo
+    if etiqueta:
+        ref["etiqueta"] = etiqueta
+    if guia_diagonal:
+        ref["guiaDiagonal"] = True
+    return ref
 
 
 def _metricas(x, y, referencia, menos_es_mejor=None):
@@ -274,6 +295,41 @@ def chart_points_vs_xg(df):
         fuente=FUENTE_XG_PUNTOS)
 
 
+def chart_shots_quantity_quality(df):
+    """Tiros por partido contra xG por tiro: si el equipo dispara mucho o espera la ocasión clara. Las líneas están en el
+    percentil `ins.LINEA_PCT` de lo que se ve, como en las vistas de jugadores. Multiplicados, los dos ejes dan el xG a
+    favor por partido de «Ocasiones a favor y en contra»."""
+    x = _eje("tiros_pp", "Tiros por partido (sin penales)", "Tiros por partido", 1)
+    y = _eje("xg_tiro", "xG por tiro (sin penales)", "xG por tiro", 3)
+    return _scatter(
+        df, "cantidad-calidad", "Cantidad vs. calidad de los tiros",
+        "A la derecha, más tiros por partido; arriba, más xG por tiro. Las líneas dejan al 20% con más de cada uno.",
+        x=x, y=y,
+        referencia=_promedios({"tr": "Muchos tiros y de buena calidad", "tl": "Tiran menos, pero eligen bien",
+                               "br": "Tiran mucho, sin tanta calidad", "bl": "Ni muchos tiros ni tan buenos"},
+                              cuantil=ins.LINEA_PCT),
+        subtitulo="Equipos de las 5 ligas · {temporada} · por partido, sin penales",
+        textos=(ins.cantidad_calidad_que_mirar, ins.cantidad_calidad_por_que), insight="cantidad_calidad")
+
+
+def chart_home_away(df):
+    """Diferencia de xG por partido de local contra de visitante. Las líneas punteadas están en cero (domina o sufre las
+    ocasiones) y la diagonal, solo como guía, es «igual en los dos lados»: casi todos quedan debajo de ella porque jugar en
+    casa ayuda a casi todos."""
+    x = _eje("xg_dif_local", "Diferencia de xG por partido, de local", "De local", 2)
+    y = _eje("xg_dif_visita", "Diferencia de xG por partido, de visitante", "De visitante", 2)
+    return _scatter(
+        df, "local-visitante", "Local vs. visitante",
+        "A la derecha, mejor diferencia de xG de local; arriba, de visitante. Las líneas están en cero.",
+        x=x, y=y,
+        referencia=_promedios({"tr": "Dominan en casa y fuera", "tl": "Solo dominan fuera",
+                               "br": "Solo dominan en casa", "bl": "Sufren en los dos"},
+                              fijo={"x": 0, "y": 0}, guia_diagonal=True,
+                              etiqueta="Líneas punteadas en cero y diagonal «igual de local que de visitante»"),
+        subtitulo="Equipos de las 5 ligas · {temporada} · diferencia de xG por partido, sin penales",
+        textos=(ins.local_visitante_que_mirar, ins.local_visitante_por_que), insight="local_visitante")
+
+
 def chart_league_level(df):
     """Nivel por liga a nivel de equipo: una caja por liga para la variable que se elija. Es la
     comparación que hacían los radares de liga (quitados), pero sobre UNA variable a la vez y viendo
@@ -315,8 +371,10 @@ PESTANAS = [
     ("eficiencia-definicion", "Goles vs. xG", "Ocasiones"),
     ("creacion", "Ocasiones a favor y en contra", "Ocasiones"),
     ("origen-xg", "De dónde sale el xG", "Ocasiones"),
+    ("cantidad-calidad", "Cantidad vs. calidad de los tiros", "Ocasiones"),
     ("defensa", "Goles recibidos vs. xG", "Defensa"),
     ("puntos-vs-xg", "Puntos vs. xG", "Contexto"),
+    ("local-visitante", "Local vs. visitante", "Contexto"),
     ("nivel-por-liga-equipos", "Distribución por liga", "Contexto"),
     ("crea-tu-grafico-equipos", "Crea tu gráfico", "_explorar"),   # "_": grupo aparte, sin rótulo
 ]
@@ -345,6 +403,8 @@ def build(assets_dir) -> list:
         chart_creation(df),
         chart_defense(df),
         chart_points_vs_xg(df),
+        chart_shots_quantity_quality(df),
+        chart_home_away(df),
         origen_xg.chart_origen_xg(),
         chart_league_level(df),
         chart_explorer(df),
