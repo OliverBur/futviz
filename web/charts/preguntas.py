@@ -19,6 +19,7 @@ PREGUNTAS = {
     "eficiencia-definicion": "¿Qué equipo aprovecha mejor sus ocasiones?",
     "creacion": "¿Qué equipo domina las ocasiones?",
     "defensa": "¿Quién defiende mejor y cómo?",
+    "tabla-esperada": "¿Quién está en el lugar que merece?",
     "puntos-vs-xg": "¿Los puntos reflejan el juego o la suerte?",
     "nivel-por-liga-equipos": "¿Qué tan parejos son los equipos de cada liga?",
     "crea-tu-grafico-equipos": "¿Cómo se relacionan dos variables que tú elijas?",
