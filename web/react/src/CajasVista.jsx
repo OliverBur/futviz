@@ -23,6 +23,8 @@ import { useDrawingArea } from "@mui/x-charts/hooks";
 import { useSitioTema } from "./theme.jsx";
 import { useTabla } from "./datos.js";
 import { EstilosGrafica } from "./Grafica.jsx";
+import { BotonDescarga } from "./BotonDescarga.jsx";
+import { capturar, descargarPng, limpiarDispersion, nombreArchivo } from "./descargarImagen.js";
 import { Aviso, Cargando, Encabezado, Parrafos, Rotulo } from "./ui.jsx";
 import { cuantil, mediana } from "./stats.js";
 
@@ -183,6 +185,11 @@ function Vista({ cfg, T, modo, tk }) {
     return estrecho ? `${T.ligas[i].replace(" ", "\n")}\n${porLiga[i].length}` : `${T.ligas[i]} · ${porLiga[i].length}`;
   };
   const claveDatos = `${colVar}|${tEf}|${nivel}`;
+  const descargar = () => descargarPng({
+    ...capturar(caja, { limpiar: limpiarDispersion(tk) }),
+    titulo: v.label, subtitulo: [T.enCurso && T.enCurso[tLabel] ? `${tLabel} (en curso)` : tLabel, nivel !== "todos" ? nivel : null].filter(Boolean).join(" · "),
+    fuente: `Datos: ${cfg.fuente}`, tk, modo, archivo: nombreArchivo(cfg.id, v.label, tLabel),
+  });
 
   return (
     <FilaCtx.Provider value={ctx}>
@@ -228,7 +235,10 @@ function Vista({ cfg, T, modo, tk }) {
             <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
               La línea gruesa es la mediana · la caja, la mitad central de los equipos · cada punto, un equipo
             </Typography>
-            <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+              <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
+              <BotonDescarga alDescargar={descargar} />
+            </Box>
           </Box>
         </Box>
 

@@ -138,6 +138,26 @@ def registrar_tabla(nombre, df, *, nombre_col, columnas, ligas, temporadas, equi
     return payload
 
 
+def registrar_marca(dist_dir: Path):
+    """El logo de FutViz (claro y oscuro) como data URI, en `datos-marca.js`, para las imágenes que se descargan de las gráficas
+    (`web/react/src/descargarImagen.js`). Va con los datos y no se pide con fetch: una página abierta desde el disco no puede.
+    `build_logo` los deja en `dist/assets/` antes de armar los gráficos; sin ellos (clon sin `img/futviz.png`) no se registra
+    nada y la imagen sale con el texto «FutViz»."""
+    import base64
+    import struct
+    carpeta = dist_dir / "assets"
+    payload = {}
+    for clave, nombre in (("claro", "logo.png"), ("oscuro", "logo-dark.png")):
+        ruta = carpeta / nombre
+        if ruta.exists():
+            datos = ruta.read_bytes()
+            ancho, alto = struct.unpack(">II", datos[16:24])
+            payload[clave] = "data:image/png;base64," + base64.b64encode(datos).decode("ascii")
+            payload["proporcion"] = round(ancho / alto, 4)
+    if payload:
+        registrar_payload("marca", payload)
+
+
 def registrar_payload(nombre, payload):
     """Registra una tabla ya armada (la del mapa de tiros, que no sale de un DataFrame de entidades)."""
     _TABLAS[nombre] = payload

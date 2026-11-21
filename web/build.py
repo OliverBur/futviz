@@ -213,6 +213,7 @@ def main():
 
     build_logo()
     build_favicon()
+    react_views.registrar_marca(DIST_DIR)
 
     apply_theme()
     apply_plotly_theme()

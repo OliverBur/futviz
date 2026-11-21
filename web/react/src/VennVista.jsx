@@ -8,21 +8,21 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Slider from "@mui/material/Slider";
 import TextField from "@mui/material/TextField";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Typography from "@mui/material/Typography";
-import Download from "@mui/icons-material/Download";
 import { entre, leerParams, usePublicarParams } from "./urlEstado.js";
 import { useSitioTema } from "./theme.jsx";
 import { cargarDatos } from "./datos.js";
 import { Aviso, Cargando, Encabezado, Md, Parrafos, Rotulo, sinAcentos } from "./ui.jsx";
 import { miles } from "./milesComa.js";
 import { acomodar, calcular, cuantos, pastillas, regionTxt } from "./vennCalculo.js";
-import { VIEWBOX, VIEWBOX_COMPACTO, construirSvg, esc } from "./vennSvg.js";
+import { BotonDescarga } from "./BotonDescarga.jsx";
+import { descargarPng, nombreArchivo } from "./descargarImagen.js";
+import { VIEWBOX, VIEWBOX_COMPACTO, construirSvg } from "./vennSvg.js";
 
 const ANCHO_COMPACTO = 540;   // por debajo, las fichas van sin nombre (a esa escala no se leerían)
 const MAX_NOMBRES = 14;       // los que se listan por cruce antes de mandar a la tabla
@@ -148,41 +148,17 @@ function Vista({ cfg, D, modo, tk }) {
   const cruces = [7, 3, 5, 6].filter((m) => V.reg[m].length).sort((a, b) => cuantos(b) - cuantos(a));
   const solos = [1, 2, 4];
 
-  // El logo va dentro del SVG como imagen incrustada: un SVG que se dibuja en un canvas no puede cargar archivos externos.
-  // Viene en los datos (un data URI): pedirlo con fetch fallaba en una página abierta desde el disco.
-  const cargarLogo = async () => (D.logos && D.logos[paleta]) || null;
-
-  const descargar = async () => {
+  const descargar = () => {
     const pn = pastillas(venn, V.cut, corte, 1);
     const full = acomodar(V.reg, pn.map((p) => p.bloq), false);
-    const marca = construirSvg({ ...contexto, fichas: full, pills: pn, hover: null });
-    const logo = await cargarLogo();
-    const TW = 1200, TH = 1340, LH = 56, LW = LH * ((D.logos && D.logos.proporcion) || 4);
-    const doc = `<svg xmlns="http://www.w3.org/2000/svg" width="${TW}" height="${TH}" viewBox="0 0 ${TW} ${TH}" font-family="Inter, 'Segoe UI', Arial, sans-serif">`
-      + `<rect width="${TW}" height="${TH}" fill="${tk.surface}"/>`
-      + `<text x="60" y="96" font-size="52" font-weight="800" fill="${tk.primary}">${esc(venn.titulo)}</text>`
-      + `<text x="60" y="140" font-size="23" fill="${tk.muted}">${esc(sub)}</text>`
-      + `<text x="60" y="180" font-size="23" font-weight="600" fill="${tk["text-body"]}">${esc(L.centro.replace(/\*\*/g, "").split(" (")[0] + (V.reg[7].length ? "." : ""))}</text>`
-      + `<svg x="60" y="200" width="1080" height="1066" viewBox="${VIEWBOX}">${marca}</svg>`
-      + (logo ? `<image href="${logo}" x="60" y="${TH - 28 - LH}" width="${LW}" height="${LH}"/>`
-        : `<text x="60" y="1312" font-size="30" font-weight="800" fill="${tk.primary}">FutViz</text>`)
-      + `<text x="${TW - 60}" y="1308" text-anchor="end" font-size="10.5" fill="${tk.muted}">Datos: ${esc(cfg.fuente)} · corte: el ${corte}% de arriba de su posición</text></svg>`;
-    const url = URL.createObjectURL(new Blob([doc], { type: "image/svg+xml;charset=utf-8" }));
-    const img = new Image();
-    img.onload = () => {
-      const c = document.createElement("canvas");
-      c.width = TW * 2; c.height = TH * 2;
-      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
-      URL.revokeObjectURL(url);
-      c.toBlob((b) => {
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(b);
-        a.download = `futviz-${venn.id}-${temp}-top${corte}.png`;
-        a.click();
-        setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-      }, "image/png");
-    };
-    img.src = url;
+    const [vx, vy, vw, vh] = VIEWBOX.split(" ").map(Number);
+    return descargarPng({
+      interior: construirSvg({ ...contexto, fichas: full, pills: pn, hover: null }), viewBox: [vx, vy, vw, vh],
+      titulo: venn.titulo, subtitulo: `${temp}${enCurso ? " (en curso)" : ""} · el ${corte}% de arriba de sus ${venn.plural}`,
+      linea: `${V.reg[7].length} de ${miles(N)} cumplen las tres`,
+      leyenda: D.ligas.map((l, i) => ({ color: ligas[i], texto: l })),
+      fuente: `Datos: ${cfg.fuente}`, tk, modo, archivo: nombreArchivo(venn.id, temp, `top${corte}`),
+    });
   };
 
   const resumenDetalle = { cursor: "pointer", font: "700 10.5px Inter, system-ui", letterSpacing: ".07em", textTransform: "uppercase", color: "var(--color-muted)", padding: "6px 0" };
@@ -223,7 +199,10 @@ function Vista({ cfg, D, modo, tk }) {
               </Box>
             ))}
           </Box>
-          <Typography sx={{ fontSize: 12, color: "text.secondary", mt: 1 }}>Datos: {cfg.fuente}</Typography>
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mt: 0.5 }}>
+            <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
+            <BotonDescarga alDescargar={descargar} />
+          </Box>
         </Box>
 
         {/* columna derecha: en pantalla ancha filtros y explicación van juntos; en móvil cada uno ocupa su lugar */}
@@ -259,7 +238,6 @@ function Vista({ cfg, D, modo, tk }) {
               }}
               noOptionsText="Sin resultados: solo están quienes tienen minutos suficientes en esta posición y temporada"
               renderInput={(p) => <TextField {...p} label="Buscar jugador" />} />
-            <Button size="small" variant="outlined" startIcon={<Download />} onClick={descargar}>Descargar imagen</Button>
           </Box>
           {estado && <Typography sx={{ fontSize: 13, color: "text.secondary", mt: 1 }}>{estado}</Typography>}
         </Box>

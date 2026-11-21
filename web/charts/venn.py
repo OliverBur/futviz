@@ -16,10 +16,6 @@ La regla, que el navegador repite al pie de la letra:
 * Quien no cruzó con FBref (sin entradas ni intercepciones) queda fuera.
 """
 
-import base64
-import struct
-from pathlib import Path
-
 import numpy as np
 import pandas as pd
 
@@ -125,22 +121,6 @@ def textos():
     return que_mirar, por_que
 
 
-def logos():
-    """Los dos logos (`build_logo` los deja en `dist/assets/` antes de armar los gráficos) como data URI, más su proporción.
-    Viajan con los datos y no se piden al descargar: una página abierta desde el disco (`file://`) no puede leer archivos
-    con `fetch`, y la imagen salía sin logo. Sin los archivos (clon sin `img/futviz.png`), la imagen sale sin logo."""
-    carpeta = Path(__file__).resolve().parents[1] / "dist" / "assets"
-    salida = {}
-    for clave, nombre in (("claro", "logo.png"), ("oscuro", "logo-dark.png")):
-        ruta = carpeta / nombre
-        if ruta.exists():
-            datos = ruta.read_bytes()
-            ancho, alto = struct.unpack(">II", datos[16:24])
-            salida[clave] = "data:image/png;base64," + base64.b64encode(datos).decode("ascii")
-            salida["proporcion"] = round(ancho / alto, 4)
-    return salida
-
-
 def payload(df, minimos, en_curso):
     return {
         "entidad": SLUG,
@@ -151,7 +131,6 @@ def payload(df, minimos, en_curso):
         "colores": {"claro": [LEAGUE_COLORS[l] for l in LEAGUE_ORDER], "oscuro": [LEAGUE_COLORS_DARK[l] for l in LEAGUE_ORDER]},
         "coloresCirculo": COLORES_CIRCULO,
         "corte": {"min": CORTE_MIN, "max": CORTE_MAX, "ini": CORTE_INI},
-        "logos": logos(),
     }
 
 

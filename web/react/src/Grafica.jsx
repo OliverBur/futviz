@@ -40,11 +40,12 @@ const ANIM_MS = 360;
 // solo resalta un punto: con varios fijados, MUI se queda con el resaltado del mouse (un punto) y
 // aquí se pinta lo demás — los fijados grandes y con borde, el resto atenuado. `ids` traduce
 // (serie, índice) a la fila de datos.
-export const PinCtx = createContext({ pines: new Set(), ids: {} });
+export const PinCtx = createContext({ pines: new Set(), ids: {}, rotulados: new Set() });
 
 function PuntoMarker({ x, y, color, size, isHighlighted, isFaded,
   seriesId, dataIndex, ...resto }) {
-  const { pines, ids } = useContext(PinCtx);
+  const { pines, ids, rotulados } = useContext(PinCtx);
+  const rotulado = rotulados.has(ids[seriesId]?.[dataIndex]);   // lo marca para la imagen que se descarga (ver `descargarImagen.js`)
   const fijado = pines.size > 0 && pines.has(ids[seriesId]?.[dataIndex]);
   const apagado = pines.size > 0 && !fijado;
   const grande = isHighlighted || fijado;
@@ -53,6 +54,7 @@ function PuntoMarker({ x, y, color, size, isHighlighted, isFaded,
       {...resto}
       className={`${resto.className || ""} rx-punto`}
       transform={`translate(${x},${y})`}
+      data-rotulado={rotulado ? 1 : undefined}
       r={grande ? size * 1.9 : size}
       fill={color}
       fillOpacity={apagado && !isHighlighted ? 0.14 : fijado ? 1 : 0.85}
@@ -133,7 +135,7 @@ function CapaSuperior({ area, referencia, etiquetas, rotulosCuadrante, tk }) {
         </g>
       )}
       {rotulosCuadrante.map((q) => (
-        <text key={q.clave} x={q.x} y={q.y} textAnchor={q.ancla} {...ROTULO} fill={tk.muted} stroke={tk.surface}>
+        <text key={q.clave} data-cuadrante={q.clave} x={q.x} y={q.y} textAnchor={q.ancla} {...ROTULO} fill={tk.muted} stroke={tk.surface}>
           {q.lineas.map((l, i) => <tspan key={i} x={q.x} dy={i ? 12 : 0}>{l}</tspan>)}
         </text>
       ))}
@@ -272,7 +274,7 @@ export function Grafica({
   tk, pos, neg, hayZoom, pista, onPista, ejeX, ejeY, claveDatos, pines, idsPorSerie,
   referencia, medias, corte, lineas, onZona, vacio, soloPositivoX, soloPositivoY, invertirX, invertirY,
 }) {
-  const pinCtx = useMemo(() => ({ pines, ids: idsPorSerie }), [pines, idsPorSerie]);
+  const pinCtx = useMemo(() => ({ pines, ids: idsPorSerie, rotulados: new Set(rotulos.map((f) => f.r)) }), [pines, idsPorSerie, rotulos]);
   const idFondo = "rx-clip-fondo-" + useId().replace(/:/g, "");   // único por instancia: hay varias vistas montadas a la vez
   const caja = useRef(null);
   const [ancho, setAncho] = useState(0);
@@ -475,7 +477,7 @@ export function Grafica({
               return <path d={`M ${arriba.join(" L ")} L ${abajo.join(" L ")} Z`} fill={conAlfa(tk.muted, 0.16)} />;
             })()}
             {hayZonas && (
-              <line x1={vCorte} x2={vCorte} y1={area.top} y2={area.top + area.height} stroke={tk.muted} strokeWidth={1.3}
+              <line data-img="corte" x1={vCorte} x2={vCorte} y1={area.top} y2={area.top + area.height} stroke={tk.muted} strokeWidth={1.3}
                 strokeDasharray="5 4" />
             )}
           </g>
@@ -483,18 +485,18 @@ export function Grafica({
               diagonal: con zoom profundo la de arriba a la izquierda puede quedar en zona roja. */}
           {hayZonas ? (
             <g {...ROTULO} fill={tk.muted} stroke={tk.surface}>
-              <text x={area.left + area.width - 8} y={area.top + 16} textAnchor="end">{zonas.tr}</text>
-              <text x={area.left + 8} y={area.top + (estrecho ? 32 : 16)}>{zonas.tl}</text>
-              <text x={area.left + area.width - 8} y={area.top + area.height - 8} textAnchor="end">{zonas.br}</text>
-              <text x={area.left + 8} y={area.top + area.height - (estrecho ? 24 : 8)} fill={tk.muted}>{zonas.bl}</text>
+              <text data-cuadrante="tr" x={area.left + area.width - 8} y={area.top + 16} textAnchor="end">{zonas.tr}</text>
+              <text data-cuadrante="tl" x={area.left + 8} y={area.top + (estrecho ? 32 : 16)}>{zonas.tl}</text>
+              <text data-cuadrante="br" x={area.left + area.width - 8} y={area.top + area.height - 8} textAnchor="end">{zonas.br}</text>
+              <text data-cuadrante="bl" x={area.left + 8} y={area.top + area.height - (estrecho ? 24 : 8)} fill={tk.muted}>{zonas.bl}</text>
             </g>
           ) : (
             <>
               {view.y1 > view.x0 && (
-                <text x={area.left + 8} y={area.top + 16} {...ROTULO} fill={tk.muted} stroke={tk.surface}>{referencia.sobre}</text>
+                <text data-cuadrante="tl" x={area.left + 8} y={area.top + 16} {...ROTULO} fill={tk.muted} stroke={tk.surface}>{referencia.sobre}</text>
               )}
               {view.y0 < view.x1 && (
-                <text x={area.left + area.width - 8} y={area.top + area.height - 8} {...ROTULO} fill={tk.muted} stroke={tk.surface}
+                <text data-cuadrante="br" x={area.left + area.width - 8} y={area.top + area.height - 8} {...ROTULO} fill={tk.muted} stroke={tk.surface}
                   textAnchor="end">{referencia.bajo}</text>
               )}
             </>

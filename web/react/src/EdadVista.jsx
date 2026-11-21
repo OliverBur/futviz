@@ -13,6 +13,8 @@ import Typography from "@mui/material/Typography";
 import { entre, leerParams, usePublicarParams } from "./urlEstado.js";
 import { useSitioTema } from "./theme.jsx";
 import { cargarDatos } from "./datos.js";
+import { BotonDescarga } from "./BotonDescarga.jsx";
+import { capturar, descargarPng, nombreArchivo } from "./descargarImagen.js";
 import { Aviso, Cargando, Encabezado, Md, Parrafos, Rotulo } from "./ui.jsx";
 import { conAlfa } from "./colores.js";
 import { lecturaEdad } from "./edadLectura.js";
@@ -93,6 +95,12 @@ function Vista({ cfg, D, modo, tk }) {
   const M = D.minutos[pos];
   const lectura = useMemo(() => lecturaEdad(D, pos, etiqueta), [D, pos, etiqueta]);
 
+  const descargar = () => descargarPng({
+    ...capturar(caja.current),
+    titulo: "Minutos jugados por edad", subtitulo: etiqueta, nota: "Línea: mediana · franja: del percentil 25 al 75",
+    fuente: `Datos: ${cfg.fuente}`, tk, modo, archivo: nombreArchivo(cfg.id, etiqueta),
+  });
+
   const y1 = (v) => MG.t + ALTO1 * (1 - v / 100);
   const baseBarras = MG.t + ALTO1 + 12 + ALTO_BARRAS;
   const nmax = Math.max(1, ...M.n);
@@ -160,7 +168,7 @@ function Vista({ cfg, D, modo, tk }) {
       <Box ref={caja} sx={{ maxWidth: 1000, width: "100%", position: "relative" }}>
         {w > 0 && (
           <>
-            <Typography component="h3" sx={{ fontSize: 13.5, fontWeight: 700, mb: 0.25 }}>
+            <Typography component="h3" data-img-texto sx={{ fontSize: 13.5, fontWeight: 700, mb: 0.25 }}>
               Minutos jugados <Box component="span" sx={{ fontWeight: 500, color: "text.secondary" }}>· % de los minutos de su club</Box>
             </Typography>
             <svg role="img" aria-label={`${resumen1} Barras debajo: jugador-temporadas por edad.`} width={w} height={alto1} {...manejadores}>
@@ -201,7 +209,10 @@ function Vista({ cfg, D, modo, tk }) {
       </Box>
 
       <Box sx={{ mt: 1, display: "flex", justifyContent: "flex-end", maxWidth: 1000 }}>
-        <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+          <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
+          <BotonDescarga alDescargar={descargar} />
+        </Box>
       </Box>
 
       <Box sx={{ mt: 2, maxWidth: 1040 }}>

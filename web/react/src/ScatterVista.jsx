@@ -42,6 +42,8 @@ import { useTabla } from "./datos.js";
 import { Grafica, FilaCtx } from "./Grafica.jsx";
 import { Ranking } from "./Ranking.jsx";
 import { Posiciones } from "./Posiciones.jsx";
+import { BotonDescarga } from "./BotonDescarga.jsx";
+import { capturar, descargarPng, limpiarDispersion, nombreArchivo } from "./descargarImagen.js";
 import { Aviso, Cargando, Encabezado, Md, Parrafos, Rotulo, sinAcentos } from "./ui.jsx";
 import { acercar, ajustarA, centrarEn, esBase, vistaDeZona, zonaDe } from "./zoom.js";
 import { TOPE_DIF, colorRendimiento, conAlfa, divergente } from "./colores.js";
@@ -621,6 +623,20 @@ function Vista({ cfg, T, modo, tk }) {
   const subtitulo = exp
     ? `${Y.label} vs. ${X.label} · ${tTexto}`
     : cfg.subtitulo.replace("{min}", minimo != null ? String(minimo) : "").replace("{temporada}", tTexto);
+  // La imagen: la gráfica tal como está en pantalla (zoom, jugadores resaltados, colores y filtros) con una sola línea de contexto.
+  const lienzoRef = useRef(null);
+  const filtrosTxt = [
+    jornadas ? `${tLabel} (en curso)` : tLabel,
+    posiciones.length && !(posiciones.length === posIni.length && posiciones.every((p) => posIni.includes(p))) ? posiciones.join(", ") : null,
+    ligasOn.size < T.ligas.length ? T.ligas.filter((_, li) => ligasOn.has(li)).join(", ") : null,
+    nivel !== "todos" ? nivel : null, sub21 ? "sub-21" : null, club >= 0 ? (T.equipos || [])[club] : null,
+  ].filter(Boolean).join(" · ");
+  const descargar = () => descargarPng({
+    ...capturar(lienzoRef.current, { limpiar: limpiarDispersion(tk, { apagado: colorPor === "liga", oscuro: modo === "dark" }) }),
+    titulo: exp ? `${Y.label} vs. ${X.label}` : cfg.titulo, subtitulo: filtrosTxt,
+    leyenda: colorPor === "liga" ? T.ligas.filter((_, li) => ligasOn.has(li)).map((l) => ({ color: colores[l], texto: l })) : null,
+    fuente: `Datos: ${cfg.fuente}`, tk, modo, archivo: nombreArchivo(exp ? `${Y.label} vs ${X.label}` : cfg.id, tLabel),
+  });
   const vacio = visibles.length === 0 ? `Ningún ${esJugadores ? "jugador" : "equipo"} con estos filtros.` : null;
 
   return (
@@ -681,6 +697,7 @@ function Vista({ cfg, T, modo, tk }) {
             </Box>
           </Box>
 
+          <Box ref={lienzoRef}>
           <Grafica series={series} view={view} viewRef={viewRef} base={base} onView={onView}
             rotulos={rotulos} destacado={destacado}
             onDestacar={onDestacar} onClicPunto={onClicPunto} tk={tk}
@@ -690,6 +707,7 @@ function Vista({ cfg, T, modo, tk }) {
             claveDatos={claveDatos} pines={pines} idsPorSerie={idsPorSerie}
             referencia={ref} medias={medias} corte={corteElite} lineas={lineas} onZona={alZona} vacio={vacio}
             soloPositivoX={sgX === -1 || rx.lo >= 0} soloPositivoY={sgY === -1 || ry.lo >= 0} invertirX={sgX === -1} invertirY={sgY === -1} />
+          </Box>
 
           <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: 1, mt: 0.75 }}>
             <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
@@ -706,7 +724,10 @@ function Vista({ cfg, T, modo, tk }) {
                 ? "Arrastra para mover · usa los botones para hacer zoom · toca un punto para resaltarlo"
                 : "Arrastra para mover · Ctrl + rueda o los botones para hacer zoom · clic en un punto para resaltarlo"}
             </Typography>
-            <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+              <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
+              <BotonDescarga alDescargar={descargar} />
+            </Box>
           </Box>
 
           {colorPor === "rendimiento" && diag && (

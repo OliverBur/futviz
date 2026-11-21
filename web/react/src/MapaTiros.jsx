@@ -32,6 +32,8 @@ import { Aviso, Cargando, Encabezado, Md, Parrafos, Rotulo, sinAcentos } from ".
 import { tiros } from "./insights.js";
 import { agregar, filasDe, lecturaEntidad, sumar } from "./tiros.js";
 import { miles } from "./stats.js";
+import { BotonDescarga } from "./BotonDescarga.jsx";
+import { descargarPng, nombreArchivo } from "./descargarImagen.js";
 import { conAlfa } from "./colores.js";
 
 const TODOS = "todos";
@@ -186,6 +188,15 @@ function Vista({ cfg, T, modo, tk }) {
   };
   const cel = celdaSobre ? celdaSobre.cy * nx + celdaSobre.cx : -1;
 
+  const descargar = () => descargarPng({
+    interior: svgRef.current.innerHTML, viewBox: [vb.x, vb.y, vb.w, vb.h],
+    titulo: porEntidad && elegido ? elegido.nombre : cfg.titulo,
+    subtitulo: [temporada, tipoId !== TODOS ? tipo.etiqueta : null, ver === "equipo" && contra ? "en contra" : null].filter(Boolean).join(" · "),
+    nota: porEntidad ? "Lleno: gol · vacío: sin gol · tamaño: xG" : "Más oscuro: más tiros",
+    fuente: `Datos: ${cfg.fuente}`, tk, modo,
+    archivo: nombreArchivo("mapa-tiros", temporada, porEntidad && elegido ? elegido.nombre : null),
+  });
+
   return (
     <>
       <Box sx={{ display: "grid", gap: 3, gridTemplateColumns: { xs: "minmax(0,1fr)", md: "minmax(0,1fr) 270px" }, alignItems: "start" }}>
@@ -307,7 +318,10 @@ function Vista({ cfg, T, modo, tk }) {
               {porEntidad ? "Lleno: gol. Vacío: sin gol. El tamaño es el xG del tiro. Pasa el mouse o toca uno para ver el detalle."
                 : "Pasa el mouse o toca una celda para ver los números crudos."}
             </Typography>
-            <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+              <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
+              <BotonDescarga alDescargar={descargar} />
+          </Box>
           </Box>
         </Box>
 
