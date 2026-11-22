@@ -16,6 +16,8 @@ import { useSitioTema } from "./theme.jsx";
 import { cargarDatos } from "./datos.js";
 import { Aviso, ComoLeer, Cargando, Encabezado, Md, Parrafos, QueDice, Rotulo } from "./ui.jsx";
 import { TOPE_DIF, colorRendimiento, conAlfa, divergente } from "./colores.js";
+import { BotonDescarga } from "./BotonDescarga.jsx";
+import { capturar, descargarPng, nombreArchivo } from "./descargarImagen.js";
 import { conSigno, d1, extremos, filasDe, lecturaTabla } from "./tablaEsperadaLectura.js";
 
 const TOPE_PTS = 12;               // desde cuántos puntos de diferencia el color llega a su máximo
@@ -90,6 +92,7 @@ function Vista({ cfg, D, modo, tk }) {
   });
   const [hover, setHover] = useState(null);       // {i, px, py}
   const caja = useRef(null);
+  const lienzo = useRef(null);      // solo el dibujo: es lo que se captura para la imagen
   const w = useAncho(caja);
 
   const div = useMemo(() => divergente(modo, D.divergente), [modo, D]);
@@ -152,6 +155,15 @@ function Vista({ cfg, D, modo, tk }) {
 
   const neutro = tk.muted;
 
+  const descargar = () => descargarPng({
+    ...capturar(lienzo.current),
+    titulo: cfg.titulo, subtitulo: `${liga} · ${temporada}${enCurso ? " (en curso)" : ""}`,
+    nota: `Punto lleno: puntos reales · punto vacío: puntos esperados (xPts)${enCurso ? " · en gris: temporada en curso" : ""}`,
+    leyenda: enCurso ? null : [{ color: colorRendimiento(TOPE_DIF, div), texto: "Más puntos de los esperados" },
+      { color: colorRendimiento(-TOPE_DIF, div), texto: "Menos" }],
+    fuente: `Datos: ${cfg.fuente}`, tk, modo, archivo: nombreArchivo("tabla-real-vs-esperada", liga, temporada),
+  });
+
   return (
     <>
       <Box sx={{ display: "grid", gap: 3, gridTemplateColumns: { xs: "minmax(0,1fr)", md: "minmax(0,1fr) 270px" }, alignItems: "start" }}>
@@ -171,6 +183,7 @@ function Vista({ cfg, D, modo, tk }) {
             )}
             <Leyenda tk={tk} div={div} enCurso={enCurso} />
             {w > 0 && filas.length > 0 && (
+              <Box ref={lienzo}>
               <svg role="img" aria-label={resumen} width={w} height={alto} {...manejadores}>
                 {/* encabezados de las columnas */}
                 <g fontSize={10.5} fill={tk.muted} fontWeight={600}>
@@ -212,6 +225,7 @@ function Vista({ cfg, D, modo, tk }) {
                   );
                 })}
               </svg>
+              </Box>
             )}
             {tip}
             <Typography sx={{ fontSize: 11.5, color: "text.secondary", mt: 0.5 }}>
@@ -219,8 +233,9 @@ function Vista({ cfg, D, modo, tk }) {
             </Typography>
           </Box>
 
-          <Box sx={{ mt: 1, display: "flex", justifyContent: "flex-end", maxWidth: 1000 }}>
+          <Box sx={{ mt: 0.5, display: "flex", alignItems: "center", justifyContent: "space-between", maxWidth: 1000 }}>
             <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
+            <BotonDescarga alDescargar={descargar} />
           </Box>
 
         </Box>
