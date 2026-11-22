@@ -315,6 +315,7 @@ export function Grafica({
   // sus jugadores. Un clic que arrastra (mover el gráfico) o que cae sobre un punto (fijarlo) no cuenta.
   const [zonaSobre, setZonaSobre] = useState(null);
   const abajoEn = useRef(null);
+  const ultimaZona = useRef(0);        // un segundo clic pegado al primero (un doble clic) no acerca otra vez
   const zonaEn = (e) => {
     if (!lineas || !area.width || !caja.current) return null;
     const r = caja.current.getBoundingClientRect();
@@ -433,6 +434,7 @@ export function Grafica({
   const lienzo = `M ${px(-T)},${py(-T)} L ${px(T)},${py(T)}`;
   return (
     <Box ref={caja} className={`rx-chart${animando ? " rx-anim" : ""}`} data-zoom={hayZoom ? 1 : 0}
+      role="group" aria-label="Gráfica de dispersión. Con el teclado, usa las flechas para recorrer los puntos"
       data-zona={zonaSobre && !destacado ? 1 : 0}
       onPointerMove={(e) => { if (lineas && e.pointerType !== "touch") setZonaSobre(zonaEn(e)); }}
       onPointerLeave={() => setZonaSobre(null)}
@@ -441,8 +443,10 @@ export function Grafica({
         const a = abajoEn.current;
         abajoEn.current = null;
         if (!a || !onZona || !lineas || destacado || Math.hypot(e.clientX - a.x, e.clientY - a.y) > 5) return;
+        const ahora = performance.now();
+        if (ahora - ultimaZona.current < 450) return;
         const z = zonaEn(e);
-        if (z) onZona(z);
+        if (z) { ultimaZona.current = ahora; onZona(z); }
       }}
       // La esquina de abajo a la izquierda del área de dibujo: de ahí se despliega la nube.
       style={{ "--rx-ox": `${area.left}px`, "--rx-oy": `${area.top + area.height}px` }}
@@ -455,6 +459,8 @@ export function Grafica({
         "& .MuiChartsAxis-label": { fill: tk["text-body"], fontSize: 12.5, fontWeight: 600 },
         "& .MuiChartsAxis-line, & .MuiChartsAxis-tick": { stroke: tk.border },
         "& .MuiChartsGrid-line": { stroke: tk.border, strokeOpacity: 0.7, strokeDasharray: "0" },
+        // El contenedor que recibe el teclado (MUI le quita el contorno): un anillo visible para quien navega con Tab.
+        "& .rx-chart-svg [tabindex]:focus-visible, & .rx-chart-svg:focus-visible": { outline: `2px solid ${tk.primary} !important`, outlineOffset: "2px" },
       }}>
       <EstilosGrafica />
       {/* 1. Fondo: sombreado a cada lado de la diagonal (solo con referencia "diagonal") */}
@@ -465,8 +471,9 @@ export function Grafica({
             <rect x={area.left} y={area.top} width={area.width} height={area.height} />
           </clipPath>
           <g clipPath={`url(#${clipFondo})`}>
-            <path d={`${lienzo} L ${px(-T)},${py(T)} Z`} fill={conAlfa(pos, 0.08)} />
-            <path d={`${lienzo} L ${px(T)},${py(-T)} Z`} fill={conAlfa(neg, 0.08)} />
+            {/* Solo el lado de «más de lo esperado» lleva sombreado, y en tinta neutra: el azul y el rojo son de Serie A y
+                Bundesliga. El otro lado se queda limpio; la diagonal y los rótulos de las esquinas dicen cuál es cuál. */}
+            <path d={`${lienzo} L ${px(-T)},${py(T)} Z`} fill={conAlfa(tk.muted, 0.1)} />
             {/* La franja de azar: goles = xG ± k·√xG (una Poisson). Dentro de ella, la diferencia con el xG es lo que
                 se esperaría solo por suerte (k = 1.64 deja el 90% adentro). */}
             {referencia.banda && (() => {
@@ -542,7 +549,7 @@ export function Grafica({
             slots={{ marker: PuntoMarker, tooltip: PuntoTooltip }}
           >
             <CapaSuperior area={area} referencia={ref} etiquetas={etiquetas} rotulosCuadrante={rotulosCuadrante} tk={tk} />
-            <ZoomLayer viewRef={viewRef} base={base} onView={onView} onArea={setArea} onPista={onPista} />
+            <ZoomLayer viewRef={viewRef} base={base} onView={onView} onArea={setArea} onPista={onPista} sinDobleClic={!!lineas} />
           </ScatterChart>
         </PinCtx.Provider>
       )}

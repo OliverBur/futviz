@@ -251,7 +251,7 @@ function Vista({ cfg, D, modo, tk }) {
               <Rotulo>Temporada</Rotulo>
               <ToggleButtonGroup exclusive size="small" value={temporada} aria-label="Temporada" sx={{ flexWrap: "wrap" }} onChange={elegir(setTemporada)}>
                 {D.temporadas.map((t) => (
-                  <ToggleButton key={t} value={t} sx={{ flex: "1 1 auto" }}>{t}{D.enCurso[t] != null ? " (en curso)" : ""}</ToggleButton>
+                  <ToggleButton key={t} value={t} sx={{ flex: "1 1 auto" }}>{t}</ToggleButton>
                 ))}
               </ToggleButtonGroup>
             </Box>

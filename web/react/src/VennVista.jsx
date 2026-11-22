@@ -226,7 +226,7 @@ function Vista({ cfg, D, modo, tk }) {
           </ToggleButtonGroup>
           <Box sx={{ mt: 1.5 }}>
             <Rotulo>Corte: el {corte}% de arriba</Rotulo>
-            <Slider size="small" min={qMin} max={qMax} step={1} value={corte} aria-label={`Corte, porcentaje de arriba ${ambito}`}
+            <Slider min={qMin} max={qMax} step={1} value={corte} aria-label={`Corte, porcentaje de arriba ${ambito}`}
               valueLabelDisplay="auto" valueLabelFormat={(v) => `${v}%`} sx={{ mx: 1, width: "calc(100% - 28px)" }}
               marks={[qMin, 15, qMax].map((value) => ({ value, label: `${value}%` }))}
               onChange={(_e, v) => { setCorte(v); setHover(null); }} />

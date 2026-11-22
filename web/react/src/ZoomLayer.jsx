@@ -9,7 +9,7 @@
 //                      como Ctrl + rueda). La rueda sola NO hace zoom a propósito:
 //                      la gráfica ocupa media pantalla y secuestrar el scroll de la
 //                      página al pasar por encima es una trampa. Se avisa con una pista.
-//   doble clic ....... acercar al punto
+//   doble clic ....... acercar al punto (no en las gráficas con cuadrantes: ahí el clic acerca al cuadrante)
 //   pellizco (táctil)  acercar/alejar + mover
 import { useEffect, useRef } from "react";
 import { useDrawingArea } from "@mui/x-charts/hooks";
@@ -17,7 +17,7 @@ import { acercar, desplazar } from "./zoom.js";
 
 const UMBRAL_ARRASTRE = 4; // px antes de que un clic se considere arrastre
 
-export function ZoomLayer({ viewRef, base, onView, onArea, onPista }) {
+export function ZoomLayer({ viewRef, base, onView, onArea, onPista, sinDobleClic = false }) {
   const area = useDrawingArea();
   const g = useRef(null);
   const areaRef = useRef(area);
@@ -132,7 +132,7 @@ export function ZoomLayer({ viewRef, base, onView, onArea, onPista }) {
     svg.addEventListener("pointerup", onUp);
     svg.addEventListener("pointercancel", onUp);
     svg.addEventListener("click", onClic, true);
-    svg.addEventListener("dblclick", onDoble);
+    if (!sinDobleClic) svg.addEventListener("dblclick", onDoble);
     return () => {
       if (raf) cancelAnimationFrame(raf);
       svg.removeEventListener("wheel", onWheel);
@@ -143,7 +143,7 @@ export function ZoomLayer({ viewRef, base, onView, onArea, onPista }) {
       svg.removeEventListener("click", onClic, true);
       svg.removeEventListener("dblclick", onDoble);
     };
-  }, [base, onView, onPista, viewRef]);
+  }, [base, onView, onPista, viewRef, sinDobleClic]);
 
   return <g ref={g} />;
 }

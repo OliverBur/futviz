@@ -373,12 +373,18 @@ function Vista({ cfg, T, modo, tk }) {
   }, [idsPorSerie, T]);
 
   // Un clic en un cuadrante: la vista se recorta justo en las líneas punteadas y se ajusta a los jugadores que caen en él.
+  const [zonaAct, setZonaAct] = useState(null);       // el cuadrante al que se acercó el último clic, y la vista que dejó
   const alZona = (id) => {
     if (!lineas) return;
     const pts = visibles.filter((r) => zonaDe(lineas, xs[r], ys[r]) === id).map((r) => ({ x: xs[r], y: ys[r] }));
     if (!pts.length) return;
-    mover(vistaDeZona(pts, lineas, id, base));
+    const v = vistaDeZona(pts, lineas, id, base);
+    mover(v);
+    setZonaAct({ id, v });
   };
+  // El chip «zona» vive mientras la vista siga siendo la que dejó ese clic: al mover o acercar a mano desaparece solo.
+  const nombreZona = zonaAct && ref ? ((ref.zonas && ref.zonas[zonaAct.id]) || (ref.cuadrantes && ref.cuadrantes[zonaAct.id]) || null) : null;
+  const enZona = !!nombreZona && ["x0", "x1", "y0", "y1"].every((k) => Math.abs(view[k] - zonaAct.v[k]) < 1e-9);
 
   const alternarLiga = (li) => setLigasOn((on) => {
     const todas = on.size === T.ligas.length;
@@ -505,7 +511,7 @@ function Vista({ cfg, T, modo, tk }) {
         Jugadores sub-21
         {ayudas.sub21 && <Tooltip title={ayudas.sub21} arrow enterTouchDelay={0}>
           <Box component="span" aria-label="Más información" tabIndex={0}
-            sx={{ fontSize: 12, color: "text.secondary", cursor: "help", fontStyle: "italic", px: 0.5 }}>i</Box>
+            sx={{ fontSize: 12, color: "text.secondary", cursor: "help", fontStyle: "italic", minWidth: 24, minHeight: 24, display: "inline-flex", alignItems: "center", justifyContent: "center", m: "-4px 0" }}>i</Box>
         </Tooltip>}
       </Typography>}
       control={<Switch size="small" checked={sub21} onChange={(e) => setSub21(e.target.checked)} />} />
@@ -530,7 +536,7 @@ function Vista({ cfg, T, modo, tk }) {
       {filtros.posicion && posDisp.length > 0 && (
         <Box>
           <Rotulo>Posición</Rotulo>
-          <Posiciones opciones={posDisp} colores={T.coloresPos} valor={posiciones} modo={modo}
+          <Posiciones opciones={posDisp} valor={posiciones}
             onChange={(v) => setPosiciones(v)} />
         </Box>
       )}
@@ -672,11 +678,17 @@ function Vista({ cfg, T, modo, tk }) {
                       borderRadius: "50%", bgcolor: colorPor === "liga" ? color : tk.muted,
                       opacity: on ? 1 : 0.4, ml: "8px !important" }} />}
                     sx={{ bgcolor: on ? conAlfa(colorPor === "liga" ? color : "#888888", 0.14) : "transparent",
-                      color: on ? "text.primary" : "text.secondary", borderColor: "divider" }} />
+                      color: on ? "text.primary" : "text.secondary", borderColor: "divider",
+                      "@media (pointer: coarse)": { height: 34 } }} />
                 );
               })}
             </Box>
-            <Box role="toolbar" aria-label="Zoom" sx={{ display: "flex", alignItems: "center", gap: 0.25 }}>
+            <Box role="toolbar" aria-label="Zoom" sx={{ display: "flex", alignItems: "center", gap: 0.25, minWidth: 0,
+              "& .MuiIconButton-root": { "@media (pointer: coarse)": { p: "12px" } } }}>
+              {enZona && (
+                <Chip size="small" label={`Zona: ${nombreZona}`} title="Ver todo" onClick={() => mover(base)} onDelete={() => mover(base)}
+                  sx={{ maxWidth: { xs: 190, sm: 300 }, mr: 0.5, bgcolor: conAlfa(tk.muted, 0.14) }} />
+              )}
               <Tooltip title="Acercar"><span><IconButton size="small" aria-label="Acercar"
                 onClick={() => mover(acercar(viewRef.current, base, 0.6))}><ZoomIn fontSize="small" /></IconButton></span></Tooltip>
               <Tooltip title="Alejar"><span><IconButton size="small" aria-label="Alejar" disabled={!fueraDeBase}

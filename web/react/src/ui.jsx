@@ -49,13 +49,13 @@ export function QueDice({ texto }) {
 }
 
 export const Rotulo = ({ children, ayuda }) => (
-  <Typography sx={{ fontSize: 10.5, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase",
+  <Typography sx={{ fontSize: 11.5, fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase",
     color: "text.secondary", mb: 0.75, display: "flex", alignItems: "center", gap: 0.5 }}>
     {children}
     {ayuda && (
       <Tooltip title={ayuda} arrow enterTouchDelay={0}>
         <InfoOutlined aria-label="Más información" tabIndex={0}
-          sx={{ fontSize: 14, cursor: "help", textTransform: "none", outlineOffset: 2 }} />
+          sx={{ fontSize: 14, cursor: "help", textTransform: "none", outlineOffset: 2, p: "5px", m: "-5px", boxSizing: "content-box" }} />
       </Tooltip>
     )}
   </Typography>

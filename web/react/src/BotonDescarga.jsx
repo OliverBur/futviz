@@ -17,7 +17,7 @@ export function BotonDescarga({ alDescargar, sx }) {
   return (
     <Tooltip title="Descargar imagen">
       <span>
-        <IconButton size="small" aria-label="Descargar imagen" onClick={clic} disabled={ocupado} sx={{ color: "text.secondary", ...sx }}>
+        <IconButton size="small" aria-label="Descargar imagen" onClick={clic} disabled={ocupado} sx={{ color: "text.secondary", "@media (pointer: coarse)": { p: "12px" }, ...sx }}>
           <Download fontSize="small" />
         </IconButton>
       </span>
