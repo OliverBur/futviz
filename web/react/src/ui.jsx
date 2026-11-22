@@ -23,10 +23,10 @@ export function Parrafos({ texto, sx }) {
   ));
 }
 
-// «Cómo leer la gráfica»: un párrafo explicativo (cada línea del texto es un párrafo), sin negritas y con un ancho cómodo.
+// «Cómo leer la gráfica»: un párrafo explicativo (cada línea del texto es un párrafo), sin negritas y al ancho de los demás textos.
 export function ComoLeer({ texto }) {
   return texto.split("\n").map((l) => l.trim()).filter(Boolean).map((l, i) => (
-    <Typography key={i} sx={{ fontSize: 14, lineHeight: 1.65, mb: 1, color: "text.primary", maxWidth: "78ch" }}>{l}</Typography>
+    <Typography key={i} sx={{ fontSize: 14, lineHeight: 1.65, mb: 1, color: "text.primary" }}>{l}</Typography>
   ));
 }
 

@@ -52,9 +52,9 @@ const AJUSTE_MAX = 5;   // lo más que la vista de arranque se acerca a la base 
 const MAX_PINES = 6;   // fijados a la vez: con más, las etiquetas y los anillos dejan de leerse
 
 // El explorador explica solo el r² (no depende de los datos).
-const EXPLICA_R2 = "El r² es la parte de la variación de una variable que se explica con la otra. Cerca de 0% casi no se "
-  + "relacionan: saber una variable no dice casi nada de la otra. Cerca de 100% una casi predice a la otra y se mueven "
-  + "prácticamente juntas.";
+const EXPLICA_R2 = "El r² es la parte de la variación de una variable que se explica con la otra: cerca de 0% casi no se "
+  + "relacionan y saber una variable no dice casi nada de la otra, mientras que cerca de 100% una casi predice a la otra y se "
+  + "mueven prácticamente juntas.";
 
 // Rango de un eje: el de TODAS las temporadas, con margen (cambiar de temporada mueve los puntos, no la
 // escala; y en el explorador cambiar de variable y volver deja el gráfico exactamente como estaba).

@@ -227,8 +227,10 @@ def textos(r):
     que_mirar = (
         "Muestra cómo genera peligro cada equipo, según de dónde sale su xG. Cada barra reparte el xG según "
         "cómo nació la ocasión: jugada abierta en gris y, en colores, córner, tiro libre directo y otro balón "
-        "parado. Con «% del xG» ves de qué vía depende cada equipo y con «xG por partido», cuánto produce por "
-        "ella. «A favor» son los tiros que hace el equipo y «En contra», los que recibe.")
+        "parado.\n"
+        "Con «% del xG» ves de qué vía depende cada equipo y con «xG por partido», cuánto produce por ella. "
+        "«A favor» son los tiros que hace el equipo y «En contra», los que recibe.")
+
 
     por_que = (
         f"**Los segmentos.** Salen de la jugada con que Understat etiqueta cada tiro: **{seg['abierta']}** (juego en "

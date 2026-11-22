@@ -715,8 +715,9 @@ def perfil_que_mirar():
     return (
         "Ubica a cada jugador según lo que genera con sus tiros y con sus pases, por 90 minutos. El eje horizontal es "
         "el xG, el peligro de sus remates, y el vertical es el xA, el peligro de los pases con los que habilita a "
-        "otros. Las líneas marcan el 20% más alto de cada eje, así que pasar una de ellas indica que destaca en esa "
-        "faceta; arriba a la derecha están los que destacan en las dos.")
+        "otros.\n"
+        "Las líneas marcan el 20% más alto de cada eje, así que pasar una de ellas indica que el jugador destaca en "
+        "esa faceta, y arriba a la derecha están los que destacan en las dos.")
 
 
 def perfil_por_que(df):
@@ -1088,10 +1089,11 @@ def miles(n):
 
 def tiros_que_mirar():
     return (
-        "Muestra de dónde se tira en las 5 ligas. El mapa mira hacia la portería: la línea de fondo es el borde de "
-        "arriba y los rectángulos son las áreas grande y chica. El color reparte el 100% de los tiros que ves entre "
-        "celdas de 2×2 m, así que una celda oscura es una parte grande del total, no «muchos tiros». Con «Ver», cada "
-        "punto es un remate: lleno si fue gol y más grande cuanto más valía.")
+        "Muestra de dónde se tira en las 5 ligas con un mapa que mira hacia la portería: la línea de fondo es el "
+        "borde de arriba y los rectángulos son las áreas grande y chica.\n"
+        "El color reparte el 100% de los tiros que ves entre celdas de 2×2 m, así que una celda oscura es una parte "
+        "grande del total y no «muchos tiros». Con «Ver», cada punto es un remate de un jugador o equipo: lleno si "
+        "fue gol y más grande cuanto más valía.")
 
 
 def tiros_por_que(n_mapa, n_penales, n_fuera):
@@ -1250,9 +1252,9 @@ def pases_clave(df, season, liga=None):
 def construir_que_mirar():
     return (
         "Separa a quien arma las jugadas de tiro de quien las termina, por 90 minutos. La construcción, en el eje "
-        "horizontal, es el xG de las jugadas de tiro en las que participa sin tirar ni dar el último pase. La "
-        "producción, en el vertical, suma el xG de sus tiros y el xA de sus pases: lo que genera de forma directa. "
-        "Las líneas marcan el 20% más alto de cada eje.")
+        "horizontal, es el xG de las jugadas de tiro en las que el jugador participa sin tirar ni dar el último pase.\n"
+        "La producción, en el vertical, suma el xG de sus tiros y el xA de sus pases, o sea, lo que genera de forma "
+        "directa. Las líneas marcan el 20% más alto de cada eje.")
 
 
 def construir_por_que(df):
@@ -1313,10 +1315,10 @@ def _corte90():
 def xg_goles_90_que_mirar():
     return (
         "Compara los goles que marca cada jugador con los que valían sus ocasiones. En el eje horizontal está el xG, "
-        "que suma la probabilidad de gol de cada tiro según desde dónde y cómo se hizo; en el vertical, los goles "
-        "reales, ambos por 90 minutos y sin penales. La diagonal marca el punto en que marcó justo lo esperado: quien "
-        "está arriba rinde por encima de sus ocasiones y quien está abajo, por debajo. La línea vertical separa al "
-        "30% con más xG.")
+        "que suma la probabilidad de gol de cada tiro según desde dónde y cómo se hizo, y en el vertical, los goles "
+        "reales, ambos por 90 minutos y sin penales.\n"
+        "La diagonal marca el punto en que marcó justo lo esperado, de modo que quien está arriba rinde por encima de "
+        "sus ocasiones y quien está abajo, por debajo. La línea vertical separa al 30% de jugadores con más xG.")
 
 
 def xg_goles_90_por_que(df):
@@ -1361,9 +1363,10 @@ def xg_goles_90(df, season, liga=None):
 def xa_asist_90_que_mirar():
     return (
         "Compara las asistencias que da cada jugador con las que valían sus pases. El xA, en el eje horizontal, mide "
-        "el peligro de sus pases de gol: la probabilidad de que el tiro que habilitó termine en gol. En el vertical "
-        "están las asistencias reales, ambas por 90 minutos. Sobre la diagonal, sus compañeros convirtieron más de lo "
-        "esperado; debajo, menos. La línea vertical separa al 20% con más xA, los que más peligro crean.")
+        "el peligro de sus pases de gol, es decir, la probabilidad de que el tiro que habilitó termine en gol, y en "
+        "el vertical están las asistencias reales, ambas por 90 minutos.\n"
+        "Sobre la diagonal, sus compañeros convirtieron más de lo esperado y debajo, menos. La línea vertical separa "
+        "al 20% de jugadores con más xA, los que más peligro crean con sus pases.")
 
 
 def xa_asist_90_por_que(df):
@@ -1397,8 +1400,9 @@ def pases_asist_que_mirar():
     return (
         "Compara cuántos pases clave da cada jugador con cuántos terminan en asistencia, por 90 minutos. Un pase "
         "clave es el que acaba en tiro y una asistencia, el que acaba en gol, así que toda asistencia cuenta también "
-        "como pase clave. El eje horizontal mide cuánto crea el jugador y el vertical cuánto de eso acaba en gol; las "
-        "líneas marcan el 20% más alto de cada uno.")
+        "como pase clave.\n"
+        "El eje horizontal mide cuánto crea el jugador y el vertical cuánto de eso acaba en gol, y las líneas marcan "
+        "el 20% más alto de cada uno.")
 
 
 def pases_asist_por_que(df):
@@ -1442,8 +1446,9 @@ def cover_stopper_que_mirar():
     return (
         "Ubica a cada defensa frente a los de su misma temporada, en percentiles de 0 a 100. El corte, en el eje "
         "vertical, promedia dos percentiles, entradas ganadas y faltas por 90 minutos, y refleja qué tanto va al "
-        "choque. La cobertura, en el horizontal, es el percentil de intercepciones por 90 minutos: qué tanto lee el "
-        "pase y se anticipa. Las líneas están en el percentil 70.")
+        "choque.\n"
+        "La cobertura, en el horizontal, es el percentil de intercepciones por 90 minutos y refleja qué tanto lee el "
+        "pase y se anticipa. Las líneas están en el percentil 70, así que quien las supera destaca en esa faceta.")
 
 
 def cover_stopper_por_que(df):
@@ -1586,9 +1591,9 @@ def _se_repite(p):
 def definicion_que_mirar():
     return (
         "Compara los goles que marca cada equipo con los que valían sus ocasiones, por partido y sin penales. El eje "
-        "horizontal es el xG, las ocasiones que crea, y el vertical, los goles reales. La diagonal marca el punto en "
-        "que marca justo lo esperado: sobre ella, el equipo marca más de lo que valían sus ocasiones; debajo, menos. "
-        "Lo que cuenta es la distancia a esa diagonal.")
+        "horizontal es el xG, las ocasiones que crea, y el vertical, los goles reales.\n"
+        "La diagonal marca el punto en que el equipo marca justo lo esperado: sobre ella marca más de lo que valían "
+        "sus ocasiones y debajo, menos, así que lo que cuenta es la distancia a esa línea.")
 
 
 def definicion_por_que(df):
@@ -1643,9 +1648,10 @@ def definicion(df, season, liga=None):
 def creacion_que_mirar():
     return (
         "Compara lo que cada equipo crea con lo que concede, medido en xG por partido y sin penales. El eje "
-        "horizontal es el xG que genera su ataque y el vertical, el que permite a sus rivales. Este último va al "
-        "revés: cuanto más arriba, menos xG concede, así que arriba a la derecha están los equipos que dominan las "
-        "ocasiones. Las líneas están en el promedio de cada eje; el xG cuenta ocasiones, no goles.")
+        "horizontal es el xG que genera su ataque y el vertical, el que permite a sus rivales.\n"
+        "El eje vertical va al revés: cuanto más arriba está un equipo, menos xG concede, así que arriba a la derecha "
+        "quedan los que dominan las ocasiones. Las líneas están en el promedio de cada eje y el xG cuenta ocasiones, "
+        "no goles.")
 
 
 def creacion_por_que(df):
@@ -1693,9 +1699,9 @@ def creacion(df, season, liga=None):
 def defensa_que_mirar():
     return (
         "Compara los goles que recibe cada equipo con los que valían las ocasiones que concede, por partido y sin "
-        "penales. El eje horizontal es el xG en contra y el vertical, los goles recibidos; los dos van al revés, así "
-        "que cuanto más arriba y a la derecha, menos ocasiones concede y menos goles recibe. Sobre la diagonal, el "
-        "equipo recibe menos goles de los que valían esas ocasiones; debajo, más.")
+        "penales. El eje horizontal es el xG en contra y el vertical, los goles recibidos.\n"
+        "Los dos ejes van al revés, así que cuanto más arriba y a la derecha, menos ocasiones concede y menos goles "
+        "recibe. Sobre la diagonal el equipo recibe menos goles de los que valían esas ocasiones; debajo, más.")
 
 
 def defensa_por_que(df):
@@ -1745,9 +1751,9 @@ def defensa(df, season, liga=None):
 def puntos_que_mirar():
     return (
         "Cruza los puntos que suma cada equipo con cómo juega, medido por la diferencia de xG por partido: el xG que "
-        "crea menos el que concede. El eje horizontal es esa diferencia y el vertical, los puntos por partido. Los "
-        "equipos suelen seguir una nube que sube de izquierda a derecha, porque jugar mejor da más puntos; los que se "
-        "alejan de ella sumaron más puntos, o menos, de los que su juego explica.")
+        "crea menos el que concede. El eje horizontal es esa diferencia y el vertical, los puntos por partido.\n"
+        "Los equipos suelen seguir una nube que sube de izquierda a derecha, porque jugar mejor da más puntos. Los "
+        "que se alejan de ella sumaron más puntos, o menos, de los que su juego explica.")
 
 
 def puntos_por_que(df):
@@ -1828,9 +1834,11 @@ def _frase_en_curso(df, extra=""):
 def cantidad_calidad_que_mirar():
     return (
         "Muestra cuánto tira cada equipo y qué tan buenos son esos tiros, por partido y sin penales. El eje "
-        "horizontal son los tiros por partido y el vertical, el xG por tiro: la calidad promedio de sus remates. Si "
-        "multiplicas los dos ejes obtienes el xG a favor por partido de «Ocasiones a favor y en contra», la misma "
-        "producción de ocasiones vista como volumen por calidad. Las líneas marcan el 20% más alto de cada eje.")
+        "horizontal son los tiros por partido y el vertical, el xG por tiro, que es la calidad promedio de sus "
+        "remates.\n"
+        "Si multiplicas los dos ejes obtienes el xG a favor por partido de «Ocasiones a favor y en contra», es decir, "
+        "la misma producción de ocasiones vista como volumen por calidad. Las líneas marcan el 20% más alto de cada "
+        "eje.")
 
 
 def cantidad_calidad_por_que(df):
@@ -1859,8 +1867,9 @@ def local_visitante_que_mirar():
     return (
         "Compara cómo le va a cada equipo de local y de visitante, medido por la diferencia de xG por partido: el xG "
         "que crea menos el que concede, sin penales. El eje horizontal es esa diferencia jugando en casa y el "
-        "vertical, jugando fuera. Las líneas están en cero: a la derecha y arriba, el equipo crea más de lo que "
-        "concede en esa sede. Cada punto es un equipo de la temporada elegida.")
+        "vertical, jugando fuera.\n"
+        "Las líneas están en cero, así que a la derecha y arriba el equipo crea más de lo que concede en esa sede. "
+        "Cada punto es un equipo de la temporada elegida y su posición dice cómo le fue en cada una.")
 
 
 def local_visitante_por_que(df):
@@ -1903,6 +1912,6 @@ def local_visitante_por_que(df):
 def nivel_liga_equipos_que_mirar():
     return (
         "Muestra qué liga está más arriba y qué tan parejos son sus equipos en la variable que elijas. Cada punto es "
-        "un equipo, y un clic lo resalta; la escala vertical es la misma en todas las ligas y temporadas. La banda "
-        "contiene a la mitad central de los equipos de la liga y la raya marca su mediana: una banda más ancha "
-        "significa equipos menos parejos y una raya más alta, un nivel típico mayor.")
+        "un equipo (un clic lo resalta) y la escala vertical es la misma en todas las ligas y temporadas.\n"
+        "La banda contiene a la mitad central de los equipos de la liga y la raya marca su mediana: una banda más "
+        "ancha significa equipos menos parejos y una raya más alta, un nivel típico mayor.")
