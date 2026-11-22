@@ -28,7 +28,7 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Typography from "@mui/material/Typography";
 import { useSitioTema } from "./theme.jsx";
 import { cargarDatos, useTabla } from "./datos.js";
-import { Aviso, CajaLectura, Cargando, Encabezado, Md, Parrafos, Rotulo, sinAcentos } from "./ui.jsx";
+import { Aviso, ComoLeer, Cargando, Encabezado, Md, Parrafos, QueDice, Rotulo, sinAcentos } from "./ui.jsx";
 import { tiros } from "./insights.js";
 import { agregar, filasDe, lecturaEntidad, sumar } from "./tiros.js";
 import { miles } from "./stats.js";
@@ -410,9 +410,9 @@ function Vista({ cfg, T, modo, tk }) {
       </Box>
 
       <Box sx={{ mt: 3, maxWidth: 1040 }}>
-        <Rotulo>Qué más mirar</Rotulo>
-        <Parrafos texto={cfg.queMirar} sx={{ color: "text.primary" }} />
-        <CajaLectura texto={lectura.fija} />
+        <Rotulo>Cómo leer la gráfica</Rotulo>
+        <ComoLeer texto={cfg.queMirar} />
+        <QueDice texto={lectura.fija} />
       </Box>
     </>
   );

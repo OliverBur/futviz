@@ -225,15 +225,11 @@ def textos(r):
     cerradas = [t for t in ts if t not in r["en_curso"]]
     seg = ETIQUETAS
     que_mirar = (
-        f"Cada barra reparte el xG de un equipo según cómo nació la ocasión: **{seg['corner'].lower()}**, "
-        f"**{seg['libre'].lower()}** u **{seg['otro'].lower()}** (los tres arrancan del mismo punto, así que se comparan "
-        f"entre equipos) y, en gris, jugada abierta. Con «% del xG» ves cuánto depende un equipo de cada vía; con «xG por "
-        f"partido», cuánto produce por ella.\n\n"
-        f"«A favor» son los tiros que hace el equipo y «En contra», los que le hacen: los mismos tiros vistos desde "
-        f"equipos distintos. Dentro de una liga todos enfrentan a casi los mismos rivales, así que el calendario no explica "
-        f"las diferencias entre equipos.\n\n"
-        f"Una sola temporada dice cómo fue ese año y solo en parte cómo es el equipo. Haz clic en un color de la leyenda "
-        f"para ordenar por él, o busca un equipo para resaltarlo.")
+        "De dónde sale el xG de cada equipo.\n"
+        "- Cada barra reparte el xG según cómo nació la ocasión\n"
+        f"- Gris: jugada abierta; colores: {seg['corner'].lower()}, {seg['libre'].lower()} y {seg['otro'].lower()}\n"
+        "- «% del xG»: cuánto depende de cada vía; «xG por partido»: cuánto produce por ella\n"
+        "- «A favor»: tiros que hace el equipo; «En contra»: los que le hacen")
     por_que = (
         f"**Los segmentos.** Salen de la jugada con que Understat etiqueta cada tiro: **{seg['abierta']}** (juego en "
         f"movimiento), **{seg['corner']}** (saque de esquina), **{seg['libre']}** (remate directo de una falta) y "

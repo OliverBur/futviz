@@ -61,31 +61,16 @@ export function lecturaTabla(D, liga, temporada, filas) {
   if (!filas.length) return [`No hay datos de ${liga} en ${temporada}.`];
   if (enCurso) {
     const pj = filas.map((r) => r.pj);
-    return [
-      `**${temporada} va en curso.** Los equipos de ${liga} llevan de ${Math.min(...pj)} a ${Math.max(...pj)} partidos. ` +
-      `Con tan pocos partidos, la diferencia entre puntos y xPts es casi toda azar, así que aquí no se concluye nada de ella. ` +
-      `Para leer quién rinde de más o de menos, elige una temporada cerrada.`,
-    ];
+    return [`${temporada} va en curso: ${liga} lleva de ${Math.min(...pj)} a ${Math.max(...pj)} partidos, así que aquí no se concluye nada.`];
   }
   const R = resumen(filas), u = D.errorMedio, P = D.persistencia;
   const { mas, menos: abajo } = extremos(filas, u);
   const lista = (xs) => xs.map((r) => `${r.nombre} (${conSigno(r.dif)})`).join(", ");
-  const t = [];
-  t.push(mas.length
-    ? `**Sumaron más de lo que valían sus ocasiones:** ${lista(mas)}.`
-    : `**Sumaron más de lo que valían sus ocasiones:** ninguno por más de ${d1(u)} puntos.`);
-  t.push(abajo.length
-    ? `**Sumaron menos:** ${lista(abajo)}.`
-    : `**Sumaron menos:** ninguno por más de ${d1(u)} puntos.`);
-  t.push(`Se nombran, como máximo ${MAX_NOMBRADOS} por lado, los equipos cuya diferencia pasa de ${d1(u)} puntos, que es lo que se alejan en promedio ` +
-    `los puntos de los xPts en las temporadas cerradas: por debajo de eso, es lo normal.`);
-  t.push(`En ${liga} ${temporada}, la correlación entre puntos y xPts es ${d2(R.r)} y el error medio es de ${d1(R.mae)} puntos. ` +
-    `Los xPts suman ${miles(R.xp)} y los puntos reales ${miles(R.pts)}: en un empate se reparten 2 puntos y no 3, y el xG de ` +
-    `Understat suma más de lo que entra.`);
-  t.push(`**Cuánto se repite.** De una temporada cerrada a la siguiente, la correlación de (puntos − xPts) de un mismo club es ` +
-    `${d2(P.r)} (${miles(P.n)} pares; intervalo aproximado de ${d2(P.lo)} a ${d2(P.hi)}): se repite ${cuanto(P.r)}. ` +
-    (Math.abs(P.r) < CASI_NADA
-      ? `Un club que sumó de más o de menos un año no suele hacerlo el siguiente: esta diferencia es sobre todo suerte del año y no sirve para adivinar cómo le irá.`
-      : `Una parte de la diferencia se mantiene de un año a otro, pero la mayor parte cambia.`));
-  return t;
+  const partes = [];
+  if (mas.length) partes.push(`sumaron más de lo esperado: ${lista(mas.slice(0, 2))}`);
+  if (abajo.length) partes.push(`sumaron menos: ${lista(abajo.slice(0, 2))}`);
+  const linea = partes.length
+    ? partes.join("; ").replace(/^./, (c) => c.toUpperCase()) + "."
+    : `Ningún equipo se aleja de sus xPts por más de ${d1(u)} puntos.`;
+  return [linea];
 }

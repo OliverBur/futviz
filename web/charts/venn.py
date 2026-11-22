@@ -101,12 +101,11 @@ def tabla(df, minimos):
 
 def textos():
     que_mirar = (
-        "Cada círculo es algo que un jugador hace muy bien comparado con los de su puesto; quien cae en el centro lo hace "
-        "bien en las tres cosas.\n\n"
-        "Con el deslizador decides qué tan exigente es «muy bien»: con 5% casi nadie llega al centro; con 30%, dos de cada "
-        "tres jugadores caen en algún círculo, pero al centro llegan menos de 4 de cada 100. Los criterios no son "
-        "independientes (entre los medios, recuperar y aportar en ataque casi no coinciden). Pasa el cursor o toca una ficha "
-        "para ver sus cifras; si una región tiene más jugadores de los que caben, un «+N» cuenta el resto.")
+        "Quién está entre los mejores de su puesto en tres cosas a la vez.\n"
+        "- Cada círculo: algo que hace muy bien comparado con los de su posición\n"
+        "- Centro: las tres a la vez\n"
+        "- Deslizador: qué tan exigente es «muy bien» (el % de arriba de su posición)\n"
+        "- «+N»: jugadores que no caben en la región")
     por_que = (
         "**Población.** Jugadores de campo de las cinco ligas con el corte de minutos de las vistas por 90' (900 en una "
         "temporada cerrada; menos en la que va en curso) y cruzados con FBref. Cada diagrama compara solo a los de una "

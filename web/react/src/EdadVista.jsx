@@ -15,7 +15,7 @@ import { useSitioTema } from "./theme.jsx";
 import { cargarDatos } from "./datos.js";
 import { BotonDescarga } from "./BotonDescarga.jsx";
 import { capturar, descargarPng, nombreArchivo } from "./descargarImagen.js";
-import { Aviso, CajaLectura, Cargando, Encabezado, Md, Parrafos, Rotulo } from "./ui.jsx";
+import { Aviso, ComoLeer, Cargando, Encabezado, Md, Parrafos, QueDice, Rotulo } from "./ui.jsx";
 import { conAlfa } from "./colores.js";
 import { lecturaEdad } from "./edadLectura.js";
 import { miles } from "./stats.js";
@@ -216,9 +216,9 @@ function Vista({ cfg, D, modo, tk }) {
       </Box>
 
       <Box sx={{ mt: 2, maxWidth: 1040 }}>
-        <Rotulo>Qué más mirar</Rotulo>
-        <Parrafos texto={cfg.queMirar} sx={{ color: "text.primary" }} />
-        <CajaLectura texto={lectura[0]} />
+        <Rotulo>Cómo leer la gráfica</Rotulo>
+        <ComoLeer texto={cfg.queMirar} />
+        <QueDice texto={lectura[0]} />
       </Box>
     </>
   );

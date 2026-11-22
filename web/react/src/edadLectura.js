@@ -15,17 +15,11 @@ function edadesCerca(e, med) {
 export function lecturaMinutos(D, pos, etiqueta) {
   const m = D.minutos[pos];
   if (!m || !m.e.length) return `No hay edades con ${D.minJugadores} jugador-temporadas o más para ${etiqueta.toLowerCase()}.`;
-  const tramos = m.grupos.map((g) => `${g.de}-${g.a}: ${r0(g.med)}%`).join(", ");
-  const jov = m.grupos[0], mayor = m.grupos.find((g) => g.de === 25);
-  let t = `**Minutos.** Mediana del % de los minutos de su club por tramo de edad: ${tramos}.`;
-  if (jov && mayor) {
-    t += ` De ${jov.de} a ${jov.a} años, ${r0(jov.mas50)}% de los jugador-temporadas pasa de la mitad de los minutos (de ${mayor.de} a ${mayor.a}, ${r0(mayor.mas50)}%).`;
-  }
   const c = edadesCerca(m.e, m.med);
-  t += c.de === c.a
-    ? ` La mediana más alta es ${r0(c.max)}% a los ${c.edad} años.`
-    : ` La mediana más alta es ${r0(c.max)}% a los ${c.edad} años, y de los ${c.de} a los ${c.a} se queda a menos de ${TOL_MESETA} puntos de ese valor.`;
-  return t;
+  return c.de === c.a
+    ? `${etiqueta}: la mediana más alta es ${r0(c.max)}% de los minutos de su club, a los ${c.edad} años.`
+    : `${etiqueta}: la mediana más alta es ${r0(c.max)}% de los minutos de su club, a los ${c.edad} años; de los ${c.de} a los ` +
+      `${c.a} se queda a menos de ${TOL_MESETA} puntos.`;
 }
 
 // Devuelve los párrafos del texto, en orden.

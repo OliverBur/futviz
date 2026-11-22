@@ -11,9 +11,6 @@ import { entre, leerParams, usePublicarParams } from "./urlEstado.js";
 import { ThemeProvider, useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Autocomplete from "@mui/material/Autocomplete";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
 import Badge from "@mui/material/Badge";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -44,7 +41,7 @@ import { Ranking } from "./Ranking.jsx";
 import { Posiciones } from "./Posiciones.jsx";
 import { BotonDescarga } from "./BotonDescarga.jsx";
 import { capturar, descargarPng, limpiarDispersion, nombreArchivo } from "./descargarImagen.js";
-import { Aviso, CajaLectura, Cargando, Encabezado, Parrafos, Rotulo, sinAcentos } from "./ui.jsx";
+import { Aviso, Cargando, ComoLeer, Encabezado, QueDice, Rotulo, sinAcentos } from "./ui.jsx";
 import { acercar, ajustarA, centrarEn, esBase, vistaDeZona, zonaDe } from "./zoom.js";
 import { TOPE_DIF, colorRendimiento, conAlfa, divergente } from "./colores.js";
 import { cuantil, media } from "./stats.js";
@@ -54,10 +51,10 @@ const signo = (d, dec = 1) => (d >= 0 ? "+" : "−") + Math.abs(d).toFixed(dec);
 const AJUSTE_MAX = 5;   // lo más que la vista de arranque se acerca a la base (con pocos puntos, más sería ver ampliado el vacío)
 const MAX_PINES = 6;   // fijados a la vez: con más, las etiquetas y los anillos dejan de leerse
 
-// Lo que el explorador avisa sobre el r² (no depende de los datos).
-const OJO_R2 = "El r² mide **relación lineal, y nada más**. Dos variables pueden tener un r² bajo y estar bien relacionadas de otra forma (en U, por ejemplo), y un r² alto no dice cuál causa cuál: puede haber una tercera cosa moviendo a las dos.\n\n"
-  + "Ojo también con los pares que comparten aritmética. Un total y su tasa por 90' (goles y goles por 90'), o una parte y su todo (goles y goles + asistencias), van a dar un r² altísimo porque contienen literalmente el mismo dato — eso no es un hallazgo, es la definición.\n\n"
-  + "Y el r² depende de la población: con el filtro de liga puesto se calcula sobre veinte y pico de puntos, donde salta mucho de una temporada a otra.";
+// El explorador explica solo el r² (no depende de los datos).
+const EXPLICA_R2 = "r² es la parte de la variación de una variable que se explica con la otra.\n"
+  + "- Cerca de 0%: casi no se relacionan\n"
+  + "- Cerca de 100%: una casi predice la otra";
 
 // Rango de un eje: el de TODAS las temporadas, con margen (cambiar de temporada mueve los puntos, no la
 // escala; y en el explorador cambiar de variable y volver deja el gráfico exactamente como estaba).
@@ -748,24 +745,13 @@ function Vista({ cfg, T, modo, tk }) {
 
       {/* ---------------- caja de lectura ---------------- */}
       <Box sx={{ mt: 3, maxWidth: 1040 }}>
-        {cfg.queMirar && (
+        {(cfg.queMirar || exp) && (
           <>
-            <Rotulo>Qué más mirar</Rotulo>
-            <Parrafos texto={cfg.queMirar} sx={{ color: "text.primary" }} />
+            <Rotulo>Cómo leer la gráfica</Rotulo>
+            <ComoLeer texto={exp ? EXPLICA_R2 : cfg.queMirar} />
           </>
         )}
-        {lectura && <CajaLectura texto={exp ? lectura.fija : (lectura.salta || lectura.fija)} />}
-        {exp && (
-          <Accordion disableGutters elevation={0} square sx={{ mt: 2, bgcolor: "transparent", "&:before": { display: "none" },
-            borderTop: 1, borderColor: "divider" }}>
-            <AccordionSummary expandIcon={<ExpandMore />} sx={{ px: 0 }}>
-              <Rotulo>Qué no dice el r²</Rotulo>
-            </AccordionSummary>
-            <AccordionDetails sx={{ px: 0 }}>
-              <Parrafos texto={exp.nota ? OJO_R2 + "\n\n" + exp.nota : OJO_R2} sx={{ fontSize: 13.5 }} />
-            </AccordionDetails>
-          </Accordion>
-        )}
+        {lectura && <QueDice texto={exp ? lectura.fija : (lectura.salta || lectura.fija)} />}
       </Box>
 
       {/* ---------------- panel de filtros (móvil) ---------------- */}

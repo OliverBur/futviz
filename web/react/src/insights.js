@@ -319,13 +319,12 @@ export function cantidadCalidad(T, filas, ambito) {
   const cx = cuantil(tiros, LINEA_PCT), cy = cuantil(xgt, LINEA_PCT);
   const muchos = filas.filter((r) => T.c[TIROS_PP][r] >= cx);
   const buenos = muchos.filter((r) => T.c[XG_TIRO][r] >= cy);
-  const pct = Math.round((1 - LINEA_PCT) * 100);
   const n = buenos.length;
   const nombres = [...buenos].sort((p, q) => T.c[TIROS_PP][q] - T.c[TIROS_PP][p]).map((r) => `**${quien(T, r)}**`);
-  let salta = `Con las líneas en ${fmt1(cx)} tiros por partido y ${fmt(cy, 3)} de xG por tiro (el ${pct}% con más de cada uno), `
-    + (n === 0 ? "ningún equipo queda arriba a la derecha."
-      : n <= 3 ? `${n === 1 ? "queda 1 equipo" : `quedan ${n} equipos`} arriba a la derecha: ${lista(nombres)}.`
-        : `quedan ${n} equipos arriba a la derecha; los que más tiran son ${lista(nombres)}.`);
+  let salta = `Arriba a la derecha (más de ${fmt1(cx)} tiros y ${fmt(cy, 3)} de xG por tiro) `
+    + (n === 0 ? "no queda ningún equipo."
+      : n <= 3 ? `${n === 1 ? "queda 1 equipo" : `quedan ${n} equipos`}: ${lista(nombres)}.`
+        : `quedan ${n} equipos; los que más tiran son ${lista(nombres)}.`);
   const p = muchos[idxmin(muchos.map((r) => T.c[XG_TIRO][r]))];
   salta += ` Entre los que más tiran, el que menos calidad por tiro tiene es **${quien(T, p)}**: ${fmt1(T.c[TIROS_PP][p])} tiros por partido y ${fmt(T.c[XG_TIRO][p], 3)} de xG por tiro.`;
   return { fija, salta };

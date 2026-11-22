@@ -23,16 +23,42 @@ export function Parrafos({ texto, sx }) {
   ));
 }
 
-// «Con estos filtros»: una sola lectura, chica, de lo que muestra la gráfica con lo que hay elegido.
-export function CajaLectura({ texto }) {
+// «Cómo leer la gráfica»: una línea con la idea y viñetas cortas (las líneas que empiezan con «- »). Sin negritas.
+export function ComoLeer({ texto }) {
+  const lineas = texto.split("\n").map((l) => l.trim()).filter(Boolean);
+  const intro = lineas.filter((l) => !l.startsWith("- "));
+  const puntos = lineas.filter((l) => l.startsWith("- ")).map((l) => l.slice(2));
+  return (
+    <>
+      {intro.map((l, i) => (
+        <Typography key={i} sx={{ fontSize: 14, lineHeight: 1.55, mb: puntos.length ? 0.5 : 0, color: "text.primary" }}>{l}</Typography>
+      ))}
+      {puntos.length > 0 && (
+        <Box component="ul" sx={{ m: 0, pl: 2.5, color: "text.primary" }}>
+          {puntos.map((p, i) => (
+            <Typography key={i} component="li" sx={{ fontSize: 13.5, lineHeight: 1.6 }}>{p}</Typography>
+          ))}
+        </Box>
+      )}
+    </>
+  );
+}
+
+// La primera frase de un texto calculado (y sin la cola que va después de una raya larga).
+export function unaFrase(texto) {
+  const t = String(texto || "").replace(/\s+—\s+[\s\S]*$/, ".");
+  const m = t.match(/^[\s\S]*?[.!?](?=\s+[A-ZÁÉÍÓÚÑ¿¡0-9]|$)/);
+  return (m ? m[0] : t).trim();
+}
+
+// «Qué dice esta gráfica»: un solo renglón, con lo que muestra la gráfica con lo que hay elegido.
+export function QueDice({ texto }) {
   if (!texto) return null;
   return (
-    <Box sx={{ mt: 1.5, pl: 1.5, borderLeft: 2, borderColor: "success.main" }}>
-      <Typography sx={{ fontSize: 10, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase", color: "success.main", mb: 0.25 }}>
-        Con estos filtros
-      </Typography>
-      <Typography sx={{ fontSize: 13, lineHeight: 1.5, color: "text.secondary" }}><Md texto={texto} /></Typography>
-    </Box>
+    <Typography sx={{ mt: 1.5, fontSize: 13, lineHeight: 1.5, color: "text.secondary" }}>
+      <Box component="span" sx={{ fontWeight: 700 }}>Qué dice esta gráfica: </Box>
+      <Md texto={unaFrase(texto)} />
+    </Typography>
   );
 }
 

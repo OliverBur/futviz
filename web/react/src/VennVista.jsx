@@ -17,7 +17,7 @@ import Typography from "@mui/material/Typography";
 import { entre, leerParams, usePublicarParams } from "./urlEstado.js";
 import { useSitioTema } from "./theme.jsx";
 import { cargarDatos } from "./datos.js";
-import { Aviso, Cargando, Encabezado, Md, Parrafos, Rotulo, sinAcentos } from "./ui.jsx";
+import { Aviso, Cargando, Encabezado, Md, Parrafos, Rotulo, sinAcentos, ComoLeer } from "./ui.jsx";
 import { miles } from "./milesComa.js";
 import { acomodar, calcular, cuantos, pastillas, regionTxt } from "./vennCalculo.js";
 import { BotonDescarga } from "./BotonDescarga.jsx";
@@ -268,8 +268,8 @@ function Vista({ cfg, D, modo, tk }) {
       </Box>
 
       <Box sx={{ mt: 3, maxWidth: 1040 }}>
-        <Rotulo>Qué más mirar</Rotulo>
-        <Parrafos texto={cfg.queMirar} sx={{ color: "text.primary" }} />
+        <Rotulo>Cómo leer la gráfica</Rotulo>
+        <ComoLeer texto={cfg.queMirar} />
       </Box>
     </>
   );

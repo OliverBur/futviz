@@ -25,7 +25,7 @@ import { useTabla } from "./datos.js";
 import { EstilosGrafica } from "./Grafica.jsx";
 import { BotonDescarga } from "./BotonDescarga.jsx";
 import { capturar, descargarPng, limpiarDispersion, nombreArchivo } from "./descargarImagen.js";
-import { Aviso, Cargando, Encabezado, Parrafos, Rotulo } from "./ui.jsx";
+import { Aviso, Cargando, Encabezado, Parrafos, Rotulo, ComoLeer } from "./ui.jsx";
 import { cuantil, mediana } from "./stats.js";
 
 const FilaCtx = createContext(null);
@@ -278,8 +278,8 @@ function Vista({ cfg, T, modo, tk }) {
       </Box>
 
       <Box sx={{ mt: 3, maxWidth: 1040 }}>
-        <Rotulo>Qué más mirar</Rotulo>
-        <Parrafos texto={cfg.queMirar} sx={{ color: "text.primary" }} />
+        <Rotulo>Cómo leer la gráfica</Rotulo>
+        <ComoLeer texto={cfg.queMirar} />
       </Box>
     </FilaCtx.Provider>
   );
