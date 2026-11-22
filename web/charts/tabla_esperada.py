@@ -460,7 +460,7 @@ def chart_tabla_esperada() -> ChartPage:
         "id": SLUG, "titulo": TITULO, "bajada": BAJADA, "pregunta": PREGUNTAS[SLUG], "tabla": SLUG,
         "queMirar": que_mirar, "fuente": FUENTE_UNDERSTAT,
         "ligas": ligas, "ligaInicial": "Premier League" if "Premier League" in ligas else ligas[0],
-        "temporadaInicial": r["cerradas"][-1] if r["cerradas"] else r["temporadas"][-1],
+        "temporadaInicial": r["temporadas"][-1],      # abre en la temporada actual, aunque vaya en curso (la vista lo avisa)
     }
     return ChartPage(slug=SLUG, section=SECTION, title=TITULO, subtitle=BAJADA,
                      body_html=react_views.montar_html("tabla_esperada", SLUG, cfg, alto_min=640), kind="line")

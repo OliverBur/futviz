@@ -48,9 +48,9 @@ export function QueDice({ texto }) {
   );
 }
 
-export const Rotulo = ({ children, ayuda }) => (
+export const Rotulo = ({ children, ayuda, sx }) => (
   <Typography sx={{ fontSize: 11.5, fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase",
-    color: "text.secondary", mb: 0.75, display: "flex", alignItems: "center", gap: 0.5 }}>
+    color: "text.secondary", mb: 0.75, display: "flex", alignItems: "center", gap: 0.5, ...sx }}>
     {children}
     {ayuda && (
       <Tooltip title={ayuda} arrow enterTouchDelay={0}>

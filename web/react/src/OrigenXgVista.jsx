@@ -22,6 +22,7 @@ import { Aviso, ComoLeer, Cargando, Encabezado, Md, Parrafos, QueDice, Rotulo, s
 import { conAlfa } from "./colores.js";
 import { fmt, miles } from "./stats.js";
 import { BotonDescarga } from "./BotonDescarga.jsx";
+import { BarraFiltros, Campo, Segmentado, SelectUno } from "./Filtros.jsx";
 import { capturar, descargarPng, nombreArchivo } from "./descargarImagen.js";
 import {
   APILADO, BALON_PARADO, lecturaOrigen, pesoBP, tirosSeg, tirosTotal, valorOrden, valorSeg, xgTotal,
@@ -222,9 +223,36 @@ function Vista({ cfg, D, modo: tema, tk }) {
 
   return (
     <>
-      <Box sx={{ display: "grid", gap: 3, gridTemplateColumns: { xs: "minmax(0,1fr)", md: "minmax(0,1fr) 270px" }, alignItems: "start" }}>
+      <Encabezado pregunta={cfg.pregunta} titulo={cfg.titulo} bajada={cfg.bajada} muestra={muestra} />
+
+      <BarraFiltros>
+        <Campo ancho={160}>
+          <SelectUno etiqueta="Liga" valor={liga} onChange={(v) => { setLiga(v); setHover(null); }}
+            opciones={[{ valor: TODAS, texto: "Las 5 ligas" }, ...ligas.map((n, l) => ({ valor: l, texto: n }))]} />
+        </Campo>
+        <Campo ancho={120}>
+          <SelectUno etiqueta="Temporada" valor={t} onChange={(v) => { setT(Number(v)); setHover(null); }}
+            opciones={D.temporadas.map((s, i) => ({ valor: i, texto: s })).reverse()} />
+        </Campo>
+        <Segmentado etiqueta="Tiros" valor={lado} ancho={180} onChange={setLado}
+          opciones={[{ valor: "f", texto: "A favor" }, { valor: "c", texto: "En contra" }]} />
+        <Segmentado etiqueta="Mostrar" valor={medida} ancho={240} onChange={setMedida}
+          opciones={[{ valor: "pct", texto: "% del xG" }, { valor: "xg", texto: "xG por partido" }]} />
+        <Campo ancho={220}>
+          <Autocomplete size="small" options={equiposBuscador} value={fijado >= 0 && equiposBuscador.includes(fijado) ? fijado : null}
+            onChange={(_e, v) => elegir(v == null ? -1 : v)}
+            getOptionLabel={(j) => D.nombres[j]} isOptionEqualToValue={(a, b) => a === b}
+            filterOptions={(opciones, { inputValue }) => {
+              const q = sinAcentos(inputValue.trim());
+              return opciones.filter((j) => sinAcentos(D.nombres[j]).includes(q));
+            }}
+            noOptionsText="Ningún equipo con ese nombre"
+            renderInput={(p) => <TextField {...p} label="Resaltar un equipo" slotProps={{ ...p.slotProps, htmlInput: { ...(p.slotProps && p.slotProps.htmlInput), "aria-label": "Resaltar un equipo" } }} />} />
+        </Campo>
+      </BarraFiltros>
+
+      <Box>
         <Box sx={{ minWidth: 0 }}>
-          <Encabezado pregunta={cfg.pregunta} titulo={cfg.titulo} bajada={cfg.bajada} muestra={muestra} />
 
           {fijado >= 0 && filaFijada < 0 && (
             <Typography sx={{ fontSize: 12.5, color: "text.secondary", mb: 1 }}>
@@ -278,6 +306,22 @@ function Vista({ cfg, D, modo: tema, tk }) {
             {tip}
           </Box>
 
+          {/* leyenda: también es el control de orden */}
+          <Box role="group" aria-label="Segmentos: clic para ordenar por uno" sx={{ display: "flex", flexWrap: "wrap", gap: 0.75, alignItems: "center", mt: 1, maxWidth: 1000 }}>
+            {APILADO.map((id) => {
+              const on = orden === id;
+              return (
+                <Chip key={id} size="small" clickable aria-pressed={on} variant={on ? "filled" : "outlined"}
+                  onClick={() => ordenarPorLeyenda(id)}
+                  title={on ? "Ordenado por este segmento. Clic para volver a balón parado" : `Ordenar por ${etiquetaSeg[id].toLowerCase()}`}
+                  label={etiquetaSeg[id]}
+                  avatar={<Box component="span" sx={{ width: "11px !important", height: "11px !important", borderRadius: "3px",
+                    bgcolor: colorSeg(id), ml: "8px !important" }} />}
+                  sx={{ bgcolor: on ? conAlfa(tk.primary, 0.12) : "transparent", color: "text.primary", borderColor: on ? tk.primary : "divider" }} />
+              );
+            })}
+          </Box>
+
           <Box sx={{ mt: 1, display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 1, maxWidth: 1000 }}>
             <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
               Cada barra mide el xG sin penales de un equipo en una temporada{Object.keys(enCurso).length ? ". * Temporada en curso" : ""}.
@@ -285,102 +329,6 @@ function Vista({ cfg, D, modo: tema, tk }) {
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
               <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
               <BotonDescarga alDescargar={descargar} />
-            </Box>
-          </Box>
-
-        </Box>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2.25, order: { xs: -1, md: 0 } }}>
-          {/* --- controles --- */}
-          <Box sx={{ display: "grid", gap: 2.25 }}>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5, alignItems: "flex-end", justifyContent: "space-between" }}>
-              <Box role="group" aria-label="Filtrar por liga" sx={{ display: "flex", flexWrap: "wrap", gap: 0.75 }}>
-                {[TODAS, ...ligas.map((_, l) => l)].map((l) => {
-                  const on = liga === l;
-                  const color = l === TODAS ? tk.primary : colorLiga(l);
-                  return (
-                    <Chip key={l} size="small" clickable variant={on ? "filled" : "outlined"} aria-pressed={on}
-                      onClick={() => { setLiga(l); setHover(null); }}
-                      label={l === TODAS ? `Las 5 ligas · ${deTemporada.length}` : `${ligas[l]} · ${cuentaLiga(l)}`}
-                      avatar={l === TODAS ? undefined : <Box component="span" sx={{ width: "10px !important", height: "10px !important",
-                        borderRadius: "50%", bgcolor: color, ml: "8px !important" }} />}
-                      sx={{ bgcolor: on ? conAlfa(color, 0.16) : "transparent", color: on ? "text.primary" : "text.secondary",
-                        borderColor: on ? color : "divider" }} />
-                  );
-                })}
-              </Box>
-              {movil ? (
-                <TextField select size="small" label="Temporada" value={t} onChange={(e) => { setT(Number(e.target.value)); setHover(null); }}
-                  slotProps={{ select: { native: true }, htmlInput: { "aria-label": "Temporada" } }} sx={{ minWidth: 150 }}>
-                  {D.temporadas.map((s, i) => <option key={s} value={i}>{s}{enCurso[s] ? " (en curso)" : ""}</option>)}
-                </TextField>
-              ) : (
-                <Box>
-                  <Rotulo>Temporada</Rotulo>
-                  <ToggleButtonGroup exclusive size="small" value={t} aria-label="Temporada" sx={{ flexWrap: "wrap" }}
-                    onChange={(_e, v) => { if (v != null) { setT(v); setHover(null); } }}>
-                    {D.temporadas.map((s, i) => (
-                      <ToggleButton key={s} value={i} aria-label={`${s}${enCurso[s] ? " (en curso)" : ""}`} sx={{ px: 1, flex: "1 0 30%", whiteSpace: "nowrap" }}>
-                        {s.slice(2)}{enCurso[s] ? "*" : ""}
-                      </ToggleButton>
-                    ))}
-                  </ToggleButtonGroup>
-                </Box>
-              )}
-            </Box>
-
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5, alignItems: "flex-end" }}>
-              <Box>
-                <Rotulo>Tiros</Rotulo>
-                <ToggleButtonGroup exclusive size="small" value={lado} aria-label="A favor o en contra"
-                  onChange={(_e, v) => v && setLado(v)}>
-                  <ToggleButton value="f">A favor</ToggleButton>
-                  <ToggleButton value="c">En contra</ToggleButton>
-                </ToggleButtonGroup>
-              </Box>
-              <Box>
-                <Rotulo>Mostrar</Rotulo>
-                <ToggleButtonGroup exclusive size="small" value={medida} aria-label="Porcentaje o xG por partido"
-                  onChange={(_e, v) => v && setMedida(v)}>
-                  <ToggleButton value="pct">% del xG</ToggleButton>
-                  <ToggleButton value="xg">xG por partido</ToggleButton>
-                </ToggleButtonGroup>
-              </Box>
-              <Box sx={{ minWidth: 190 }}>
-                <Rotulo>Ordenar por</Rotulo>
-                <TextField select size="small" fullWidth value={orden} onChange={(e) => setOrden(e.target.value)}
-                  slotProps={{ htmlInput: { "aria-label": "Ordenar por" } }}>
-                  <MenuItem value="bp" sx={{ fontSize: 13 }}>Balón parado (los tres)</MenuItem>
-                  {APILADO.map((id) => <MenuItem key={id} value={id} sx={{ fontSize: 13 }}>{etiquetaSeg[id]}</MenuItem>)}
-                </TextField>
-              </Box>
-              <Box sx={{ minWidth: 200, flex: "1 1 200px", maxWidth: 300 }}>
-                <Rotulo>Resaltar un equipo</Rotulo>
-                <Autocomplete size="small" options={equiposBuscador} value={fijado >= 0 && equiposBuscador.includes(fijado) ? fijado : null}
-                  onChange={(_e, v) => elegir(v == null ? -1 : v)}
-                  getOptionLabel={(j) => D.nombres[j]} isOptionEqualToValue={(a, b) => a === b}
-                  filterOptions={(opciones, { inputValue }) => {
-                    const q = sinAcentos(inputValue.trim());
-                    return opciones.filter((j) => sinAcentos(D.nombres[j]).includes(q));
-                  }}
-                  noOptionsText="Ningún equipo con ese nombre"
-                  renderInput={(p) => <TextField {...p} placeholder="Busca un equipo" slotProps={{ ...p.slotProps, htmlInput: { ...(p.slotProps && p.slotProps.htmlInput), "aria-label": "Resaltar un equipo" } }} />} />
-              </Box>
-            </Box>
-
-            {/* leyenda: también es el control de orden */}
-            <Box role="group" aria-label="Segmentos: clic para ordenar por uno" sx={{ display: "flex", flexWrap: "wrap", gap: 0.75, alignItems: "center" }}>
-              {APILADO.map((id) => {
-                const on = orden === id;
-                return (
-                  <Chip key={id} size="small" clickable aria-pressed={on} variant={on ? "filled" : "outlined"}
-                    onClick={() => ordenarPorLeyenda(id)}
-                    title={on ? "Ordenado por este segmento. Clic para volver a balón parado" : `Ordenar por ${etiquetaSeg[id].toLowerCase()}`}
-                    label={etiquetaSeg[id]}
-                    avatar={<Box component="span" sx={{ width: "11px !important", height: "11px !important", borderRadius: "3px",
-                      bgcolor: colorSeg(id), ml: "8px !important" }} />}
-                    sx={{ bgcolor: on ? conAlfa(tk.primary, 0.12) : "transparent", color: "text.primary", borderColor: on ? tk.primary : "divider" }} />
-                );
-              })}
             </Box>
           </Box>
 

@@ -17,6 +17,7 @@ import { cargarDatos } from "./datos.js";
 import { Aviso, ComoLeer, Cargando, Encabezado, Md, Parrafos, QueDice, Rotulo } from "./ui.jsx";
 import { TOPE_DIF, colorRendimiento, conAlfa, divergente } from "./colores.js";
 import { BotonDescarga } from "./BotonDescarga.jsx";
+import { BarraFiltros, Campo, SelectTemporada, SelectUno } from "./Filtros.jsx";
 import { capturar, descargarPng, nombreArchivo } from "./descargarImagen.js";
 import { conSigno, d1, extremos, filasDe, lecturaTabla } from "./tablaEsperadaLectura.js";
 
@@ -166,9 +167,20 @@ function Vista({ cfg, D, modo, tk }) {
 
   return (
     <>
-      <Box sx={{ display: "grid", gap: 3, gridTemplateColumns: { xs: "minmax(0,1fr)", md: "minmax(0,1fr) 270px" }, alignItems: "start" }}>
+      <Encabezado pregunta={cfg.pregunta} titulo={cfg.titulo} bajada={cfg.bajada} />
+
+      <BarraFiltros>
+        <Campo ancho={200}>
+          <SelectUno etiqueta="Liga" valor={liga} opciones={D.ligas.map((l) => ({ valor: l, texto: l }))}
+            onChange={(v) => { setLiga(v); setHover(null); }} />
+        </Campo>
+        <Campo ancho={140}>
+          <SelectTemporada valor={temporada} temporadas={D.temporadas} onChange={(v) => { setTemporada(v); setHover(null); }} />
+        </Campo>
+      </BarraFiltros>
+
+      <Box>
         <Box sx={{ minWidth: 0 }}>
-          <Encabezado pregunta={cfg.pregunta} titulo={cfg.titulo} bajada={cfg.bajada} />
 
           <Box ref={caja} sx={{ maxWidth: 1000, width: "100%", position: "relative" }}>
             <Typography component="h3" sx={{ fontSize: 13.5, fontWeight: 700, mb: 0.25 }}>
@@ -236,25 +248,6 @@ function Vista({ cfg, D, modo, tk }) {
           <Box sx={{ mt: 0.5, display: "flex", alignItems: "center", justifyContent: "space-between", maxWidth: 1000 }}>
             <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
             <BotonDescarga alDescargar={descargar} />
-          </Box>
-
-        </Box>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2.25, order: { xs: -1, md: 0 } }}>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2.25 }}>
-            <Box sx={{ flex: "none", minWidth: 0 }}>
-              <Rotulo>Liga</Rotulo>
-              <ToggleButtonGroup exclusive size="small" value={liga} aria-label="Liga" sx={{ flexWrap: "wrap" }} onChange={elegir(setLiga)}>
-                {D.ligas.map((l) => <ToggleButton key={l} value={l} sx={{ flex: "1 1 auto" }}>{l}</ToggleButton>)}
-              </ToggleButtonGroup>
-            </Box>
-            <Box sx={{ flex: "none", minWidth: 0 }}>
-              <Rotulo>Temporada</Rotulo>
-              <ToggleButtonGroup exclusive size="small" value={temporada} aria-label="Temporada" sx={{ flexWrap: "wrap" }} onChange={elegir(setTemporada)}>
-                {D.temporadas.map((t) => (
-                  <ToggleButton key={t} value={t} sx={{ flex: "1 1 auto" }}>{t}</ToggleButton>
-                ))}
-              </ToggleButtonGroup>
-            </Box>
           </Box>
 
         </Box>

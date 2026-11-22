@@ -294,13 +294,13 @@ function Vista({ cfg, T, modo, tk }) {
         // El "color callback" de MUI X: un color por punto, calculado de su valor.
         colorGetter: ({ value }) => {
           const c = colorPor === "rendimiento" ? colorRendimiento(value.y - value.x, div)
-            : colorPor === "neutro" && !pines.has(value.id) ? tk.muted : color;
+            : colorPor === "neutro" && !pines.has(value.id) ? tk["brand-accent"] : color;
           return apagada ? conAlfa(c, 0.12) : c;
         },
       };
     });
     return { series, posEnSerie, idsPorSerie, cuentas: pts.map((p) => p.length) };
-  }, [T, cfg.entidad, xs, ys, visibles, colores, colorPor, div, hoverLiga, pines, tk.muted]);
+  }, [T, cfg.entidad, xs, ys, visibles, colores, colorPor, div, hoverLiga, pines, tk["brand-accent"]]);
 
   // --- Top 5 y etiquetas --------------------------------------------------------------
   // El Top 5 es de LO QUE SE VE: filtros y también el zoom (con la vista entera es el de siempre).
@@ -470,9 +470,9 @@ function Vista({ cfg, T, modo, tk }) {
   const hayClub = clubesDisp.length > 0;
   const opcionesColor = ["liga", "neutro", ...cfg.colorPor.filter((c) => c !== "liga")];
   const nMas = (nivel !== "todos" ? 1 : 0) + (sub21 ? 1 : 0) + (club >= 0 ? 1 : 0) + (colorPor !== "liga" ? 1 : 0);
-  const bloqueClub = !hayClub ? null : (
+  const bloqueClub = (enBarra) => !hayClub ? null : (
     <Box>
-      <Rotulo>Club</Rotulo>
+      {!enBarra && <Rotulo>Club</Rotulo>}
       <Autocomplete size="small" options={clubesDisp} value={club >= 0 && clubesDisp.includes(club) ? club : null}
         onChange={(_e, v) => setClub(v == null ? -1 : v)}
         getOptionLabel={(i) => T.equipos[i]} isOptionEqualToValue={(a, b) => a === b}
@@ -481,7 +481,7 @@ function Vista({ cfg, T, modo, tk }) {
           return opciones.filter((i) => sinAcentos(T.equipos[i]).includes(q));
         }}
         noOptionsText="Ningún club con ese nombre"
-        renderInput={(p) => <TextField {...p} placeholder="Todos los clubes" />} />
+        renderInput={(p) => <TextField {...p} label={enBarra ? "Club" : undefined} placeholder={enBarra ? undefined : "Todos los clubes"} />} />
     </Box>
   );
   const bloqueNivel = !hayNivel ? null : (
@@ -499,15 +499,10 @@ function Vista({ cfg, T, modo, tk }) {
     </Box>
   );
   const bloqueSub21 = !haySub ? null : (
-    <FormControlLabel sx={{ m: 0 }}
-      label={<Typography sx={{ fontSize: 13, display: "flex", alignItems: "center", gap: 0.5 }}>
-        Jugadores sub-21
-        {ayudas.sub21 && <Tooltip title={ayudas.sub21} arrow enterTouchDelay={0}>
-          <Box component="span" aria-label="Más información" tabIndex={0}
-            sx={{ fontSize: 12, color: "text.secondary", cursor: "help", fontStyle: "italic", minWidth: 24, minHeight: 24, display: "inline-flex", alignItems: "center", justifyContent: "center", m: "-4px 0" }}>i</Box>
-        </Tooltip>}
-      </Typography>}
-      control={<Switch size="small" checked={sub21} onChange={(e) => setSub21(e.target.checked)} />} />
+    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <Rotulo ayuda={ayudas.sub21} sx={{ mb: 0 }}>Jugadores sub-21</Rotulo>
+      <Switch size="small" checked={sub21} onChange={(e) => setSub21(e.target.checked)} slotProps={{ input: { "aria-label": "Jugadores sub-21" } }} />
+    </Box>
   );
   const ctlColor = (
     <Box>
@@ -524,7 +519,7 @@ function Vista({ cfg, T, modo, tk }) {
   );
   const ctlTemporada = (
     <TextField select size="small" fullWidth label="Temporada" value={tEf} onChange={(e) => setTemporada(Number(e.target.value))}>
-      {temporadasOk.map((i) => (
+      {[...temporadasOk].reverse().map((i) => (
         <MenuItem key={i} value={i} dense>{T.temporadas[i]}</MenuItem>
       ))}
     </TextField>
@@ -538,7 +533,7 @@ function Vista({ cfg, T, modo, tk }) {
         <MenuItem key={nombreLiga} value={li} dense>
           <Checkbox size="small" checked={ligasOn.has(li)} sx={{ py: 0.25 }} />
           {colorPor === "liga" && <Box component="span" aria-hidden="true" sx={{ width: 10, height: 10, borderRadius: "50%", bgcolor: colores[nombreLiga], mr: 1, flex: "none" }} />}
-          <ListItemText primary={nombreLiga} secondary={ligasOn.has(li) ? `${cuentas[li]} ${plural}` : undefined} />
+          <ListItemText primary={nombreLiga} />
         </MenuItem>
       ))}
     </TextField>
@@ -618,7 +613,7 @@ function Vista({ cfg, T, modo, tk }) {
       </ToggleButtonGroup>
     </Box>
   ) : null;
-  const masOpciones = <>{bloqueClub}{bloqueNivel}{bloqueSub21}{ctlTop}{ctlColor}</>;
+  const masOpciones = <>{bloqueNivel}{bloqueSub21}{ctlTop}{ctlColor}</>;
   // Celular: todo en el panel de filtros.
   const controles = (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2.25 }}>
@@ -627,6 +622,7 @@ function Vista({ cfg, T, modo, tk }) {
       {ctlLiga}
       {ctlPosicion}
       {resaltar(false)}
+      {bloqueClub(false)}
       {masOpciones}
     </Box>
   );
@@ -636,14 +632,13 @@ function Vista({ cfg, T, modo, tk }) {
       {exp && <Box sx={{ width: 230 }}>{selectorVariable("Eje horizontal", colX, setColX, true)}</Box>}
       {exp && <Box sx={{ width: 230 }}>{selectorVariable("Eje vertical", colY, setColY, true)}</Box>}
       <Box sx={{ width: 130 }}>{ctlTemporada}</Box>
-      <Box sx={{ width: 200 }}>{ctlLiga}</Box>
-      {ctlPosicion && <Box sx={{ width: 200 }}>{ctlPosicion}</Box>}
-      <Box sx={{ width: 250 }}>{resaltar(true)}</Box>
-      <Badge color="primary" badgeContent={nMas} invisible={!nMas}>
-        <Button variant="outlined" startIcon={<FilterList />} onClick={(e) => setAnclaMas(e.currentTarget)}
-          aria-haspopup="dialog" aria-expanded={!!anclaMas}
-          sx={{ textTransform: "none", fontWeight: 600, height: 40, borderColor: "divider", color: "text.primary" }}>Más</Button>
-      </Badge>
+      <Box sx={{ width: 180 }}>{ctlLiga}</Box>
+      {ctlPosicion && <Box sx={{ width: 160 }}>{ctlPosicion}</Box>}
+      {hayClub && <Box sx={{ width: 180 }}>{bloqueClub(true)}</Box>}
+      <Box sx={{ width: 230 }}>{resaltar(true)}</Box>
+      <Button variant="outlined" startIcon={<FilterList />} onClick={(e) => setAnclaMas(e.currentTarget)}
+        aria-haspopup="dialog" aria-expanded={!!anclaMas}
+        sx={{ textTransform: "none", fontWeight: 600, height: 40, borderColor: "divider", color: "text.primary" }}>Más</Button>
       <Popover open={!!anclaMas} anchorEl={anclaMas} onClose={() => setAnclaMas(null)}
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }} transformOrigin={{ vertical: "top", horizontal: "right" }}>
         <Box sx={{ p: 2, width: 300, display: "flex", flexDirection: "column", gap: 2.25 }}>{masOpciones}</Box>
@@ -694,12 +689,10 @@ function Vista({ cfg, T, modo, tk }) {
           <TextField select size="small" label="Temporada" value={tEf}
             onChange={(e) => setTemporada(Number(e.target.value))}
             slotProps={{ select: { native: true }, htmlInput: { "aria-label": "Temporada" } }} sx={{ minWidth: 112 }}>
-            {temporadasOk.map((i) => <option key={i} value={i}>{T.temporadas[i]}</option>)}
+            {[...temporadasOk].reverse().map((i) => <option key={i} value={i}>{T.temporadas[i]}</option>)}
           </TextField>
-          <Badge color="primary" badgeContent={nFiltros} invisible={!nFiltros}>
-            <Button variant="outlined" size="small" startIcon={<FilterList />} onClick={() => setFiltrosAbiertos(true)}
-              sx={{ textTransform: "none", fontWeight: 600, minHeight: 40 }}>{exp ? "Ejes y filtros" : "Filtros"}</Button>
-          </Badge>
+          <Button variant="outlined" size="small" startIcon={<FilterList />} onClick={() => setFiltrosAbiertos(true)}
+            sx={{ textTransform: "none", fontWeight: 600, minHeight: 40 }}>{exp ? "Ejes y filtros" : "Filtros"}</Button>
         </Box>
       ) : barra}
 

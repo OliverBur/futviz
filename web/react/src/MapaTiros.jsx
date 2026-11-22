@@ -33,6 +33,7 @@ import { tiros } from "./insights.js";
 import { agregar, filasDe, lecturaEntidad, sumar } from "./tiros.js";
 import { miles } from "./stats.js";
 import { BotonDescarga } from "./BotonDescarga.jsx";
+import { BarraFiltros, Campo, Segmentado, SelectUno, masRecientePrimero } from "./Filtros.jsx";
 import { descargarPng, nombreArchivo } from "./descargarImagen.js";
 import { conAlfa } from "./colores.js";
 
@@ -199,15 +200,82 @@ function Vista({ cfg, T, modo, tk }) {
 
   return (
     <>
-      <Box sx={{ display: "grid", gap: 3, gridTemplateColumns: { xs: "minmax(0,1fr)", md: "minmax(0,1fr) 270px" }, alignItems: "start" }}>
-        <Box sx={{ minWidth: 0 }}>
-          <Encabezado
+      <Encabezado
             pregunta={!porEntidad ? cfg.pregunta
               : ver === "jugador" ? "¿Desde dónde remata este jugador?"
                 : contra ? "¿Desde dónde le rematan a este equipo?" : "¿Desde dónde remata este equipo?"}
             titulo={porEntidad ? "Mapa de tiros" : cfg.titulo}
             bajada={porEntidad ? "Cada punto es un remate: lleno si fue gol, vacío si no. Entre más grande, más valía la ocasión (su xG)." : cfg.bajada}
             muestra={subtitulo} />
+
+      <BarraFiltros sx={{ mb: 1 }}>
+        <Segmentado etiqueta="Ver" valor={ver} onChange={cambiarVer} ancho={330}
+          opciones={[{ valor: TODOS, texto: "Todos" }, { valor: "equipo", texto: "Un equipo" }, { valor: "jugador", texto: "Un jugador" }]} />
+        {ver !== TODOS && (
+          <Campo ancho={240}>
+              <Autocomplete size="small" options={candidatos} value={elegido}
+                loading={!Dt && !errorD} loadingText="Cargando los tiros…"
+                onChange={(_e, o) => { setQuien(o ? o.etiqueta : ""); setTiroSobre(null); }}
+                getOptionLabel={(o) => o.nombre} isOptionEqualToValue={(a, b) => a.id === b.id}
+                filterOptions={(opciones, { inputValue }) => {
+                  const q = sinAcentos(inputValue.trim());
+                  return (q ? opciones.filter((o) => o.buscar.includes(q)) : opciones).slice(0, 60);
+                }}
+                renderOption={(props, o) => {
+                  const { key, ...resto } = props;
+                  return (
+                    <li key={key} {...resto}>
+                      <Box sx={{ minWidth: 0 }}>
+                        <Box sx={{ fontSize: 13.5 }}>{o.nombre}</Box>
+                        <Box sx={{ fontSize: 11.5, color: "text.secondary" }}>{o.sub}</Box>
+                      </Box>
+                    </li>
+                  );
+                }}
+                noOptionsText={`Ningún ${ver === "jugador" ? "jugador" : "equipo"} con ese nombre en ${temporada}`}
+                renderInput={(p) => <TextField {...p} label={ver === "jugador" ? "Jugador" : "Equipo"} />} />
+          </Campo>
+        )}
+        {ver === "equipo" && (
+          <Segmentado etiqueta="Tiros" valor={contra ? "contra" : "favor"} onChange={(v) => setContra(v === "contra")} ancho={190}
+            opciones={[{ valor: "favor", texto: "A favor" }, { valor: "contra", texto: "En contra" }]} />
+        )}
+        <Campo ancho={130}>
+          <SelectUno etiqueta="Temporada" valor={temporada} onChange={setTemporada}
+            opciones={masRecientePrimero(T.temporadas).map((t) => ({ valor: t, texto: t }))} />
+        </Campo>
+        <Campo ancho={220}>
+            <TextField select size="small" fullWidth label="Tipo de tiro" value={tipoId} onChange={(e) => setTipoId(e.target.value)}>
+              {[null, "Jugada", "Parte del cuerpo"].flatMap((g) => [
+                ...(g ? [<ListSubheader key={`g-${g}`}>{g}</ListSubheader>] : []),
+                ...T.tipos.filter((t) => (t.grupo || null) === g).map((t) => (
+                  <MenuItem key={t.id} value={t.id} sx={{ fontSize: 13 }}>{t.etiqueta}</MenuItem>)),
+              ])}
+            </TextField>
+        </Campo>
+      </BarraFiltros>
+      {(ver !== TODOS || tipoId === "Set Piece") && (
+        <Box sx={{ mb: 2 }}>
+          {ver !== TODOS && Dt && !elegido && candidatos.length > 0 && (
+            <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 0.5, mb: 0.5 }}>
+              <Typography sx={{ fontSize: 11.5, color: "text.secondary" }}>Prueba con</Typography>
+              {candidatos.slice(0, 3).map((o) => (
+                <Chip key={o.id} size="small" variant="outlined" label={o.nombre} onClick={() => setQuien(o.etiqueta)} />
+              ))}
+            </Box>
+          )}
+          {ver !== TODOS && (
+            <Typography sx={{ fontSize: 11.5, color: "text.secondary" }}>
+              {enCurso ? `${temporada} va en curso (${enCurso} jornadas): hay pocos tiros. ` : ""}
+              Un {ver} se ve de una temporada a la vez.
+            </Typography>
+          )}
+          {tipoId === "Set Piece" && <Typography sx={{ fontSize: 11.5, color: "text.secondary" }}>{T.hint}</Typography>}
+        </Box>
+      )}
+
+      <Box>
+        <Box sx={{ minWidth: 0 }}>
 
           <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2, alignItems: "stretch" }}>
             <Box sx={{ flex: 1, minWidth: 0, maxWidth: 1000, position: "relative" }}>
@@ -322,89 +390,6 @@ function Vista({ cfg, T, modo, tk }) {
               <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
               <BotonDescarga alDescargar={descargar} />
           </Box>
-          </Box>
-        </Box>
-
-        {/* Los controles: a la derecha en escritorio; ARRIBA del mapa en móvil (son pocos y se usan primero). */}
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2.25, order: { xs: -1, md: 0 } }}>
-          <Box>
-            <Rotulo>Ver</Rotulo>
-            <ToggleButtonGroup exclusive size="small" fullWidth value={ver} aria-label="Qué tiros ver"
-              onChange={(_e, v) => v && cambiarVer(v)}>
-              <ToggleButton value={TODOS}>Todos</ToggleButton>
-              <ToggleButton value="equipo">Un equipo</ToggleButton>
-              <ToggleButton value="jugador">Un jugador</ToggleButton>
-            </ToggleButtonGroup>
-          </Box>
-          {ver !== TODOS && (
-            <Box>
-              <Rotulo>{ver === "jugador" ? "Jugador" : "Equipo"}</Rotulo>
-              <Autocomplete size="small" options={candidatos} value={elegido}
-                loading={!Dt && !errorD} loadingText="Cargando los tiros…"
-                onChange={(_e, o) => { setQuien(o ? o.etiqueta : ""); setTiroSobre(null); }}
-                getOptionLabel={(o) => o.nombre} isOptionEqualToValue={(a, b) => a.id === b.id}
-                filterOptions={(opciones, { inputValue }) => {
-                  const q = sinAcentos(inputValue.trim());
-                  return (q ? opciones.filter((o) => o.buscar.includes(q)) : opciones).slice(0, 60);
-                }}
-                renderOption={(props, o) => {
-                  const { key, ...resto } = props;
-                  return (
-                    <li key={key} {...resto}>
-                      <Box sx={{ minWidth: 0 }}>
-                        <Box sx={{ fontSize: 13.5 }}>{o.nombre}</Box>
-                        <Box sx={{ fontSize: 11.5, color: "text.secondary" }}>{o.sub}</Box>
-                      </Box>
-                    </li>
-                  );
-                }}
-                noOptionsText={`Ningún ${ver === "jugador" ? "jugador" : "equipo"} con ese nombre en ${temporada}`}
-                renderInput={(p) => <TextField {...p} placeholder={ver === "jugador" ? "Escribe un jugador…" : "Escribe un equipo…"} />} />
-              {Dt && !elegido && candidatos.length > 0 && (
-                <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 0.5, mt: 0.75 }}>
-                  <Typography sx={{ fontSize: 11.5, color: "text.secondary" }}>Prueba con</Typography>
-                  {candidatos.slice(0, 3).map((o) => (
-                    <Chip key={o.id} size="small" variant="outlined" label={o.nombre} onClick={() => setQuien(o.etiqueta)} />
-                  ))}
-                </Box>
-              )}
-            </Box>
-          )}
-          {ver === "equipo" && (
-            <Box>
-              <Rotulo>Tiros</Rotulo>
-              <ToggleButtonGroup exclusive size="small" fullWidth value={contra ? "contra" : "favor"} aria-label="Tiros a favor o en contra"
-                onChange={(_e, v) => v && setContra(v === "contra")}>
-                <ToggleButton value="favor">A favor</ToggleButton>
-                <ToggleButton value="contra">En contra</ToggleButton>
-              </ToggleButtonGroup>
-            </Box>
-          )}
-          <Box>
-            <Rotulo>Temporada</Rotulo>
-            <ToggleButtonGroup exclusive size="small" fullWidth value={temporada} aria-label="Temporada"
-              onChange={(_e, v) => v && setTemporada(v)} sx={{ flexWrap: "wrap" }}>
-              {T.temporadas.map((t) => (
-                <ToggleButton key={t} value={t} aria-label={t} sx={{ px: 0.5, fontSize: "11.5px !important", flex: "1 0 16%" }}>{t.slice(2)}</ToggleButton>
-              ))}
-            </ToggleButtonGroup>
-            {ver !== TODOS && (
-              <Typography sx={{ fontSize: 11.5, color: "text.secondary", mt: 0.5 }}>
-                {enCurso ? `${temporada} va en curso (${enCurso} jornadas): hay pocos tiros. ` : ""}
-                Un {ver} se ve de una temporada a la vez.
-              </Typography>
-            )}
-          </Box>
-          <Box>
-            <Rotulo>Tipo de tiro</Rotulo>
-            <TextField select size="small" fullWidth value={tipoId} onChange={(e) => setTipoId(e.target.value)}>
-              {[null, "Jugada", "Parte del cuerpo"].flatMap((g) => [
-                ...(g ? [<ListSubheader key={`g-${g}`}>{g}</ListSubheader>] : []),
-                ...T.tipos.filter((t) => (t.grupo || null) === g).map((t) => (
-                  <MenuItem key={t.id} value={t.id} sx={{ fontSize: 13 }}>{t.etiqueta}</MenuItem>)),
-              ])}
-            </TextField>
-            {tipoId === "Set Piece" && <Typography sx={{ fontSize: 11.5, color: "text.secondary", mt: 0.5 }}>{T.hint}</Typography>}
           </Box>
         </Box>
       </Box>

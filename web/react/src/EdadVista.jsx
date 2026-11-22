@@ -14,6 +14,7 @@ import { entre, leerParams, usePublicarParams } from "./urlEstado.js";
 import { useSitioTema } from "./theme.jsx";
 import { cargarDatos } from "./datos.js";
 import { BotonDescarga } from "./BotonDescarga.jsx";
+import { BarraFiltros, Campo, SelectUno } from "./Filtros.jsx";
 import { capturar, descargarPng, nombreArchivo } from "./descargarImagen.js";
 import { Aviso, ComoLeer, Cargando, Encabezado, Md, Parrafos, QueDice, Rotulo } from "./ui.jsx";
 import { conAlfa } from "./colores.js";
@@ -150,20 +151,17 @@ function Vista({ cfg, D, modo, tk }) {
     <>
       <Encabezado pregunta={cfg.pregunta} titulo={cfg.titulo} bajada={cfg.bajada} />
 
-      <Box sx={{ mb: 2, maxWidth: 760 }}>
-        <Rotulo>Posición</Rotulo>
-        <ToggleButtonGroup exclusive size="small" value={pos} aria-label="Posición" sx={{ flexWrap: "wrap" }}
-          onChange={(_e, v) => { if (v) { setPos(v); setHover(null); } }}>
-          {cfg.posiciones.map((p) => (
-            <ToggleButton key={p.id} value={p.id} sx={{ flex: "1 1 auto" }}>{p.etiqueta}</ToggleButton>
-          ))}
-        </ToggleButtonGroup>
-        {pos === "campo" && (
-          <Typography sx={{ fontSize: 11.5, color: "text.secondary", mt: 0.5 }}>
-            Defensa, Medio y Delantero. Los porteros se miran aparte: la mitad juega el 80% o más de los minutos de su club, y eso movería la mediana.
-          </Typography>
-        )}
-      </Box>
+      <BarraFiltros sx={{ mb: pos === "campo" ? 0.5 : 2 }}>
+        <Campo ancho={220}>
+          <SelectUno etiqueta="Posición" valor={pos} onChange={(v) => { setPos(v); setHover(null); }}
+            opciones={cfg.posiciones.map((p) => ({ valor: p.id, texto: p.etiqueta }))} />
+        </Campo>
+      </BarraFiltros>
+      {pos === "campo" && (
+        <Typography sx={{ fontSize: 11.5, color: "text.secondary", mb: 2, maxWidth: 760 }}>
+          Defensa, Medio y Delantero. Los porteros se miran aparte: la mitad juega el 80% o más de los minutos de su club, y eso movería la mediana.
+        </Typography>
+      )}
 
       <Box ref={caja} sx={{ maxWidth: 1000, width: "100%", position: "relative" }}>
         {w > 0 && (

@@ -21,6 +21,7 @@ import { Aviso, Cargando, Encabezado, Md, Parrafos, Rotulo, sinAcentos, ComoLeer
 import { miles } from "./milesComa.js";
 import { acomodar, calcular, cuantos, pastillas, regionTxt } from "./vennCalculo.js";
 import { BotonDescarga } from "./BotonDescarga.jsx";
+import { BarraFiltros, Campo, Segmentado, SelectTemporada } from "./Filtros.jsx";
 import { descargarPng, nombreArchivo } from "./descargarImagen.js";
 import { VIEWBOX, VIEWBOX_COMPACTO, construirSvg } from "./vennSvg.js";
 
@@ -166,19 +167,40 @@ function Vista({ cfg, D, modo, tk }) {
 
   return (
     <>
-      <Box sx={{
-        display: "grid", gap: { xs: 2, lg: "0 32px" }, alignItems: "start",
-        gridTemplateColumns: { xs: "minmax(0,1fr)", lg: "minmax(0,1fr) 340px" },
-        gridTemplateAreas: { xs: '"enc" "controles" "venn" "info"', lg: '"enc lado" "venn lado"' },
-        gridTemplateRows: { lg: "auto 1fr" },
-      }}>
-        {/* ---- encabezado: arriba a la izquierda, como en las demás vistas; los filtros arrancan a su altura ---- */}
-        <Box sx={{ gridArea: "enc", minWidth: 0 }}>
-          <Encabezado pregunta={cfg.pregunta} titulo={cfg.titulo} bajada={cfg.bajada} />
-        </Box>
+      <Encabezado pregunta={cfg.pregunta} titulo={cfg.titulo} bajada={cfg.bajada} />
 
+      {/* ---- filtros: una fila sobre el diagrama ---- */}
+      <BarraFiltros sx={{ mb: estado ? 0.5 : 2 }}>
+        {cfg.venns.length > 1 && (
+          <Segmentado etiqueta="Diagrama" valor={vid} ancho={cfg.venns.length * 152}
+            opciones={cfg.venns.map((v) => ({ valor: v.id, texto: v.tab }))}
+            onChange={(v) => { setVid(v); setHover(null); }} />
+        )}
+        <Campo ancho={120}>
+          <SelectTemporada valor={temp} temporadas={temps} onChange={(v) => { setTemp(v); setHover(null); }} />
+        </Campo>
+        <Box sx={{ width: 200, height: 40, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+          <Typography sx={{ fontSize: 11.5, color: "text.secondary", lineHeight: 1.1 }}>Corte: el {corte}% de arriba</Typography>
+          <Slider min={qMin} max={qMax} step={1} value={corte} aria-label={`Corte, porcentaje de arriba ${ambito}`}
+            valueLabelDisplay="auto" valueLabelFormat={(v) => `${v}%`} sx={{ py: "8px", mx: 1, width: "calc(100% - 16px)" }}
+            onChange={(_e, v) => { setCorte(v); setHover(null); }} />
+        </Box>
+        <Campo ancho={210}>
+          <Autocomplete size="small" options={V.pop.map((r) => r[0])} value={enVista} autoHighlight
+            onChange={(_e, v) => setBuscado(v)}
+            filterOptions={(opciones, { inputValue }) => {
+              const q = sinAcentos(inputValue.trim());
+              return q ? opciones.filter((o) => sinAcentos(o).includes(q)).slice(0, 30) : [];
+            }}
+            noOptionsText={equipo ? "Sin resultados: busca un equipo de esta temporada" : "Sin resultados: solo están quienes tienen minutos suficientes en esta posición y temporada"}
+            renderInput={(p) => <TextField {...p} label={equipo ? "Buscar equipo" : "Buscar jugador"} />} />
+        </Campo>
+      </BarraFiltros>
+      {estado && <Typography sx={{ fontSize: 13, color: "text.secondary", mb: 2 }}>{estado}</Typography>}
+
+      <Box sx={{ display: "grid", gap: { xs: 2, lg: "0 32px" }, alignItems: "start", gridTemplateColumns: { xs: "minmax(0,1fr)", lg: "minmax(0,1fr) 340px" } }}>
         {/* ---- el diagrama ---- */}
-        <Box sx={{ gridArea: "venn", minWidth: 0 }}>
+        <Box sx={{ minWidth: 0 }}>
           <Typography component="h3" sx={{ fontSize: 17, fontWeight: 700, lineHeight: 1.25 }}>{venn.titulo}</Typography>
           <Typography sx={{ fontSize: 12.5, color: "text.secondary", mb: 1 }}>{sub}</Typography>
           <Typography sx={{ fontSize: 14, lineHeight: 1.5 }}><Md texto={L.centro} /></Typography>
@@ -206,46 +228,9 @@ function Vista({ cfg, D, modo, tk }) {
           </Box>
         </Box>
 
-        {/* columna derecha: en pantalla ancha filtros y explicación van juntos; en móvil cada uno ocupa su lugar */}
-        <Box sx={{ gridArea: "lado", display: { xs: "contents", lg: "block" }, minWidth: 0 }}>
-        {/* ---- filtros ---- */}
-        <Box sx={{ gridArea: "controles", mb: 3 }}>
-          {cfg.venns.length > 1 && (
-            <>
-              <Rotulo>Diagrama</Rotulo>
-              <ToggleButtonGroup exclusive size="small" value={vid} aria-label="Diagrama" sx={{ flexWrap: "wrap", mb: 1.5 }}
-                onChange={(_e, v) => { if (v) { setVid(v); setHover(null); } }}>
-                {cfg.venns.map((v) => <ToggleButton key={v.id} value={v.id} sx={{ flex: "1 1 auto" }}>{v.tab}</ToggleButton>)}
-              </ToggleButtonGroup>
-            </>
-          )}
-          <Rotulo>Temporada</Rotulo>
-          <ToggleButtonGroup exclusive size="small" value={temp} aria-label="Temporada" sx={{ flexWrap: "wrap", mb: 0.5 }}
-            onChange={(_e, v) => { if (v) { setTemp(v); setHover(null); } }}>
-            {temps.map((t) => <ToggleButton key={t} value={t}>{t}</ToggleButton>)}
-          </ToggleButtonGroup>
-          <Box sx={{ mt: 1.5 }}>
-            <Rotulo>Corte: el {corte}% de arriba</Rotulo>
-            <Slider min={qMin} max={qMax} step={1} value={corte} aria-label={`Corte, porcentaje de arriba ${ambito}`}
-              valueLabelDisplay="auto" valueLabelFormat={(v) => `${v}%`} sx={{ mx: 1, width: "calc(100% - 28px)" }}
-              marks={[qMin, 15, qMax].map((value) => ({ value, label: `${value}%` }))}
-              onChange={(_e, v) => { setCorte(v); setHover(null); }} />
-          </Box>
-          <Box sx={{ mt: 1.5, display: "flex", gap: 1, alignItems: "center", flexWrap: "wrap" }}>
-            <Autocomplete size="small" sx={{ flex: "1 1 180px" }} options={V.pop.map((r) => r[0])} value={enVista} autoHighlight
-              onChange={(_e, v) => setBuscado(v)}
-              filterOptions={(opciones, { inputValue }) => {
-                const q = sinAcentos(inputValue.trim());
-                return q ? opciones.filter((o) => sinAcentos(o).includes(q)).slice(0, 30) : [];
-              }}
-              noOptionsText={equipo ? "Sin resultados: busca un equipo de esta temporada" : "Sin resultados: solo están quienes tienen minutos suficientes en esta posición y temporada"}
-              renderInput={(p) => <TextField {...p} label={equipo ? "Buscar equipo" : "Buscar jugador"} />} />
-          </Box>
-          {estado && <Typography sx={{ fontSize: 13, color: "text.secondary", mt: 1 }}>{estado}</Typography>}
-        </Box>
 
         {/* ---- explicación ---- */}
-        <Box sx={{ gridArea: "info", minWidth: 0 }}>
+        <Box sx={{ minWidth: 0 }}>
           <Rotulo>Qué mide cada círculo</Rotulo>
           <Box sx={{ display: "grid", gap: 0.5, mb: 2 }}>
             {venn.sets.map((s, j) => (
@@ -267,7 +252,6 @@ function Vista({ cfg, D, modo, tk }) {
           <Typography sx={{ fontSize: 13, lineHeight: 1.5, color: "text.secondary", mb: 2 }}>
             Solo en un círculo: {solos.map((m) => `${venn.sets[Math.log2(m)].nombre} ${V.reg[m].length}`).join(" · ")}.
           </Typography>
-        </Box>
         </Box>
       </Box>
 

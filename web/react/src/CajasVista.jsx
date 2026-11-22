@@ -28,6 +28,7 @@ import { useSitioTema } from "./theme.jsx";
 import { useTabla } from "./datos.js";
 import { EstilosGrafica } from "./Grafica.jsx";
 import { BotonDescarga } from "./BotonDescarga.jsx";
+import { BarraFiltros, Campo, Segmentado, SelectUno } from "./Filtros.jsx";
 import { capturar, descargarPng, limpiarDispersion, nombreArchivo } from "./descargarImagen.js";
 import { Aviso, Cargando, ComoLeer, Encabezado, Parrafos, Rotulo, sinAcentos } from "./ui.jsx";
 import { cuantil, mediana } from "./stats.js";
@@ -251,11 +252,51 @@ function Vista({ cfg, T, modo, tk }) {
 
   return (
     <FilaCtx.Provider value={ctx}>
-      <Box sx={{ display: "grid", gap: 3, gridTemplateColumns: { xs: "minmax(0,1fr)", md: "minmax(0,1fr) 270px" }, alignItems: "start" }}>
-        <Box sx={{ minWidth: 0 }}>
-          <Encabezado pregunta={cfg.pregunta} titulo={cfg.titulo} bajada={cfg.bajada}
+      <Encabezado pregunta={cfg.pregunta} titulo={cfg.titulo} bajada={cfg.bajada}
             muestra={cfg.subtitulo.replace("{variable}", v.label).replace("{temporada}",
               T.enCurso && T.enCurso[tLabel] ? `${tLabel} (en curso, ${T.enCurso[tLabel]} jornadas)` : tLabel)} />
+
+      <BarraFiltros>
+        <Campo ancho={300}>
+          <SelectUno etiqueta="Variable" valor={colVar} onChange={setColVar}
+            opciones={cfg.variables.map((x) => ({ valor: x.col, texto: x.label }))} />
+        </Campo>
+        <Campo ancho={130}>
+          <SelectUno etiqueta="Temporada" valor={tEf} onChange={(v) => setTemporada(Number(v))}
+            opciones={[...temporadasOk].reverse().map((i) => ({ valor: i, texto: T.temporadas[i] }))} />
+        </Campo>
+        {T.niveles && T.niveles.length > 0 && (
+          <Segmentado etiqueta="Nivel del club" valor={nivel} onChange={setNivel} ancho={290} ayuda={(T.ayudas || {}).nivel}
+            opciones={[{ valor: "todos", texto: "Todos" }, ...T.niveles.map((n) => ({ valor: n, texto: n.replace("Clubes ", "").replace(/^./, (c) => c.toUpperCase()) }))]} />
+        )}
+        <Campo ancho={240}>
+          <Autocomplete multiple size="small" options={opciones} limitTags={1}
+              filterOptions={(ops, { inputValue }) => {
+                const q = sinAcentos(inputValue.trim());
+                return ops.filter((j) => sinAcentos(T.nombres[j]).includes(q)).slice(0, 40);
+              }}
+              value={fijados}
+              onChange={(_e, nuevo) => setFijados(nuevo.slice(-MAX_FIJOS))}
+              getOptionLabel={(j) => T.nombres[j]}
+              isOptionEqualToValue={(a, b) => a === b}
+              disableCloseOnSelect filterSelectedOptions
+              noOptionsText="Ningún equipo con esos filtros"
+              renderValue={(valor, getItemProps) => valor.map((j, i) => {
+                const { key, ...props } = getItemProps({ index: i });
+                const sinPunto = !filaDeJug.has(j);
+                return (
+                  <Chip key={key} size="small" label={T.nombres[j]} {...props}
+                    variant={sinPunto ? "outlined" : "filled"}
+                    title={sinPunto ? `${T.nombres[j]} — no tiene punto en esta temporada o con estos filtros` : T.nombres[j]}
+                    sx={{ fontSize: 11.5, opacity: sinPunto ? 0.6 : 1, borderStyle: sinPunto ? "dashed" : "solid" }} />
+                );
+              })}
+              renderInput={(p) => <TextField {...p} label="Resaltar equipos" placeholder={fijados.length ? "" : "Escribe un nombre…"} />} />
+        </Campo>
+      </BarraFiltros>
+
+      <Box>
+        <Box sx={{ minWidth: 0 }}>
           <Box ref={setCaja} className="rx-chart" sx={{
             position: "relative", width: "100%", userSelect: "none",
             "& .MuiChartsAxis-tickLabel": { fill: tk["text-body"], fontSize: 12, fontWeight: 600 },
@@ -300,65 +341,6 @@ function Vista({ cfg, T, modo, tk }) {
               <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
               <BotonDescarga alDescargar={descargar} />
             </Box>
-          </Box>
-        </Box>
-
-        {/* Los controles: a la derecha en escritorio; ARRIBA del gráfico en móvil (son pocos y se usan primero). */}
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2.25, order: { xs: -1, md: 0 } }}>
-          <Box>
-            <Rotulo>Variable</Rotulo>
-            <TextField select size="small" fullWidth value={colVar} onChange={(e) => setColVar(e.target.value)}
-              slotProps={{ select: { MenuProps: { slotProps: { paper: { sx: { maxHeight: 420 } } } } } }}>
-              {cfg.variables.map((x) => <MenuItem key={x.col} value={x.col} sx={{ fontSize: 13, whiteSpace: "normal" }}>{x.label}</MenuItem>)}
-            </TextField>
-          </Box>
-          <Box>
-            <Rotulo>Temporada</Rotulo>
-            <ToggleButtonGroup exclusive size="small" fullWidth value={tEf} aria-label="Temporada"
-              onChange={(_e, x) => x != null && setTemporada(x)}>
-              {temporadasOk.map((i) => (
-                <ToggleButton key={i} value={i} aria-label={T.temporadas[i]} sx={{ px: 0.5, fontSize: "11.5px !important" }}>{T.temporadas[i].slice(2)}</ToggleButton>
-              ))}
-            </ToggleButtonGroup>
-          </Box>
-          {T.niveles && T.niveles.length > 0 && (
-            <Box>
-              <Rotulo ayuda={(T.ayudas || {}).nivel}>Nivel del club</Rotulo>
-              <ToggleButtonGroup exclusive size="small" fullWidth value={nivel} aria-label="Nivel del club"
-                onChange={(_e, x) => x && setNivel(x)}>
-                <ToggleButton value="todos">Todos</ToggleButton>
-                {T.niveles.map((n) => (
-                  <ToggleButton key={n} value={n} sx={{ px: 0.5, fontSize: "11.5px !important" }}>
-                    {n.replace("Clubes ", "").replace(/^./, (c) => c.toUpperCase())}
-                  </ToggleButton>
-                ))}
-              </ToggleButtonGroup>
-            </Box>
-          )}
-          <Box>
-            <Rotulo>Resaltar equipos</Rotulo>
-            <Autocomplete multiple size="small" options={opciones}
-              filterOptions={(ops, { inputValue }) => {
-                const q = sinAcentos(inputValue.trim());
-                return ops.filter((j) => sinAcentos(T.nombres[j]).includes(q)).slice(0, 40);
-              }}
-              value={fijados}
-              onChange={(_e, nuevo) => setFijados(nuevo.slice(-MAX_FIJOS))}
-              getOptionLabel={(j) => T.nombres[j]}
-              isOptionEqualToValue={(a, b) => a === b}
-              disableCloseOnSelect filterSelectedOptions
-              noOptionsText="Ningún equipo con esos filtros"
-              renderValue={(valor, getItemProps) => valor.map((j, i) => {
-                const { key, ...props } = getItemProps({ index: i });
-                const sinPunto = !filaDeJug.has(j);
-                return (
-                  <Chip key={key} size="small" label={T.nombres[j]} {...props}
-                    variant={sinPunto ? "outlined" : "filled"}
-                    title={sinPunto ? `${T.nombres[j]} — no tiene punto en esta temporada o con estos filtros` : T.nombres[j]}
-                    sx={{ fontSize: 11.5, opacity: sinPunto ? 0.6 : 1, borderStyle: sinPunto ? "dashed" : "solid" }} />
-                );
-              })}
-              renderInput={(p) => <TextField {...p} placeholder={fijados.length ? "" : "Escribe un equipo…"} />} />
           </Box>
         </Box>
       </Box>
