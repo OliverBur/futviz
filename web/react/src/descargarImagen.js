@@ -105,11 +105,20 @@ export const limpiarDispersion = (tk, { apagado = false, oscuro = false } = {}) 
   return undefined;
 };
 
+// El logo se pide hasta tres veces (un fallo suelto de red no debe dejar la imagen con el nombre en texto) y `BotonDescarga` lo
+// precarga al montarse, para que al hacer clic ya esté.
+async function cargarMarca() {
+  for (let i = 0; i < 3; i++) {
+    try { return await cargarDatos("marca"); } catch { await new Promise((ok) => setTimeout(ok, 400 * (i + 1))); }
+  }
+  return null;
+}
+export const precargarMarca = () => { cargarMarca(); };
+
 // `viewBox` es [x, y, ancho, alto]; `interior` el contenido del <svg>. Todo lo demás es texto plano: `linea` (opcional, una
 // sola, la cifra clave), `nota` (opcional, para leer el color o el símbolo de la gráfica) y `fuente`.
 export async function descargarPng({ interior, viewBox, titulo, subtitulo, linea, nota, leyenda, fuente, tk, modo, archivo }) {
-  let marca = null;
-  try { marca = await cargarDatos("marca"); } catch { /* sin logo: se escribe el nombre */ }
+  const marca = await cargarMarca();      // sin logo: se escribe el nombre
   const logo = marca && marca[modo === "dark" ? "oscuro" : "claro"];
   const proporcion = (marca && marca.proporcion) || 4;
 

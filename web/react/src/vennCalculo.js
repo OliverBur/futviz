@@ -137,13 +137,14 @@ export function acomodar(reg, bloq, compacto) {
 }
 
 // ---- las pastillas con el nombre de cada círculo ----------------------------------------------------
-export function pastillas(venn, cut, corte, k = 1) {
+export function pastillas(venn, cut, corte, k = 1, soloNombre = false) {
   return venn.sets.map((s, j) => {
     const dec = s.dec ?? 2;
     const linea = `top ${corte}% · ${s.inv ? "≤" : "≥"} ${(Math.abs(cut[j]) === Infinity ? 0 : cut[j]).toFixed(dec)}`;
-    const w = (Math.max(s.nombre.length * 9, linea.length * 6.6) + 30) * k;
+    const w = (Math.max(s.nombre.length * (soloNombre ? 10.5 : 9), soloNombre ? 0 : linea.length * 6.6) + (soloNombre ? 34 : 30)) * k;
+    const medio = (soloNombre ? 22 : 31) * k;
     const [x, y] = [CEN[j][0], j === 0 ? CEN[0][1] - R : CEN[j][1] + R];
-    return { j, k, nombre: s.nombre, linea, w, x, y, bloq: { x0: x - w / 2 - 6, x1: x + w / 2 + 6, y0: y - 31 * k, y1: y + 31 * k } };
+    return { j, k, nombre: s.nombre, linea, solo: soloNombre, w, x, y, bloq: { x0: x - w / 2 - 6, x1: x + w / 2 + 6, y0: y - medio, y1: y + medio } };
   });
 }
 

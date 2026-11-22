@@ -152,7 +152,7 @@ function Vista({ cfg, D, modo, tk }) {
   const solos = [1, 2, 4];
 
   const descargar = () => {
-    const pn = pastillas(venn, V.cut, corte, 1);
+    const pn = pastillas(venn, V.cut, corte, 1, true);
     const full = acomodar(V.reg, pn.map((p) => p.bloq), false);
     const [vx, vy, vw, vh] = VIEWBOX.split(" ").map(Number);
     return descargarPng({

@@ -192,7 +192,7 @@ function Vista({ cfg, T, modo, tk }) {
     interior: svgRef.current.innerHTML, viewBox: [vb.x, vb.y, vb.w, vb.h],
     titulo: porEntidad && elegido ? elegido.nombre : cfg.titulo,
     subtitulo: [temporada, tipoId !== TODOS ? tipo.etiqueta : null, ver === "equipo" && contra ? "en contra" : null].filter(Boolean).join(" · "),
-    nota: porEntidad ? "Lleno: gol · vacío: sin gol · tamaño: xG" : "Más oscuro: más tiros",
+    nota: porEntidad ? "Lleno: gol · vacío: sin gol · tamaño: xG" : `Más ${modo === "dark" ? "claro" : "oscuro"}: más tiros`,
     fuente: `Datos: ${cfg.fuente}`, tk, modo,
     archivo: nombreArchivo("mapa-tiros", temporada, porEntidad && elegido ? elegido.nombre : null),
   });
