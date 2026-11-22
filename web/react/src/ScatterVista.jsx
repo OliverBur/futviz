@@ -705,18 +705,11 @@ function Vista({ cfg, T, modo, tk }) {
 
           <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: 1, mt: 0.75 }}>
             <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
-              {ref && ref.tipo === "promedios"
-                ? (ref.etiqueta ? `${ref.etiqueta} · `
-                  : ref.fijo ? `Líneas punteadas: percentil ${ref.fijo.x} · `
-                  : ref.cuantil ? `Líneas punteadas: percentil ${Math.round(ref.cuantil * 100)} de lo que ves · `
-                    : "Líneas punteadas: promedio de cada eje · ") : ""}
               {cfg.nota ? `${cfg.nota} · ` : ""}
               {ref && ref.banda ? "Franja gris: hasta donde llega el azar · " : ""}
-              {ref && ref.zonas ? `Línea vertical: el ${Math.round((1 - ref.zonas.pct) * 100)}% con más ${ref.zonas.variable || "xG por 90'"} de los que ves · ` : ""}
-              {lineas ? `Clic en un cuadrante para acercarte a esos ${esJugadores ? "jugadores" : "equipos"} · ` : ""}
               {movil
-                ? "Arrastra para mover · usa los botones para hacer zoom · toca un punto para resaltarlo"
-                : "Arrastra para mover · Ctrl + rueda o los botones para hacer zoom · clic en un punto para resaltarlo"}
+                ? `Arrastra para mover · botones para hacer zoom · toca un punto para resaltarlo${lineas ? " o un cuadrante para acercarte" : ""}`
+                : `Arrastra para mover · Ctrl + rueda para hacer zoom · clic en un punto para resaltarlo${lineas ? ", o en un cuadrante para acercarte" : ""}`}
             </Typography>
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
               <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>

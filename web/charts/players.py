@@ -363,7 +363,7 @@ def chart_cover_stopper(df):
         textos=(ins.cover_stopper_que_mirar, ins.cover_stopper_por_que), insight="cover_stopper",
         poblacion=df[df["pct_stopper"].notna()].reset_index(drop=True), fuente=FUENTE_FBREF,
         minimo_por90=True, posicion=False,
-        nota="Solo hay entradas ganadas, intercepciones y faltas: sin despejes, bloqueos ni duelos aéreos.")
+        nota="Sin despejes, bloqueos ni duelos aéreos en los datos.")
 
 
 def _chart_creacion(df, *, slug, titulo, x, y, subtitulo, descripcion, textos, insight, referencia=PROMEDIOS,

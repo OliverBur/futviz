@@ -89,9 +89,8 @@ EXACTAS = ["xg_fav", "xg_con", "xg_dif", "gol_fav", "gol_con", *equipos_tiros.CO
 
 # Lo que se agrega al final del texto del explorador (el aviso del r² es el mismo de las dos entidades).
 NOTA_EXPLORADOR = (
-    "El ELO medio y el ELO final de la temporada ya contienen los resultados de esa misma temporada. "
-    "Contra los puntos o la diferencia de goles darán un r² alto por construcción. El ELO al arrancar "
-    "la temporada no los contiene."
+    "El ELO medio y el final ya contienen los resultados de esa temporada: contra puntos o diferencia de goles dan un r² alto "
+    "por construcción; el de arranque no."
 )
 
 FUENTE_XG = FUENTE_UNDERSTAT
