@@ -1,0 +1,370 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-22T03:41:47+00:00",
+  "title": "Design System: FutViz",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Slate Tinta",
+        "canonical": "oklch(40% 0.040 215)",
+        "tonalRamp": [
+          "#1B2C30",
+          "#30454B",
+          "#466067",
+          "#5D7D85",
+          "#7999A2",
+          "#9AB6BE",
+          "#BBD4DB",
+          "#DEF3F8"
+        ]
+      },
+      "brand-green": {
+        "role": "primary",
+        "displayName": "Verde Cancha",
+        "canonical": "oklch(60% 0.187 139)",
+        "tonalRamp": [
+          "#003400",
+          "#0F5000",
+          "#226E00",
+          "#348D06",
+          "#53AB35",
+          "#7BC764",
+          "#A2E48F",
+          "#C9FFB9"
+        ]
+      },
+      "interactive-green": {
+        "role": "primary",
+        "displayName": "Verde Enlace",
+        "canonical": "oklch(51% 0.157 139)",
+        "tonalRamp": [
+          "#0B3300",
+          "#1D4E08",
+          "#306B19",
+          "#448A2B",
+          "#61A84A",
+          "#86C472",
+          "#ABE19A",
+          "#D0FEC2"
+        ]
+      },
+      "section-jugadores": {
+        "role": "secondary",
+        "displayName": "Salvia Jugadores",
+        "canonical": "oklch(52% 0.069 157)",
+        "tonalRamp": [
+          "#162F21",
+          "#2A4937",
+          "#3F654F",
+          "#558267",
+          "#71A083",
+          "#93BCA3",
+          "#B6D9C3",
+          "#D9F7E4"
+        ]
+      },
+      "section-equipos": {
+        "role": "secondary",
+        "displayName": "Índigo Equipos",
+        "canonical": "oklch(50% 0.117 283)",
+        "tonalRamp": [
+          "#252349",
+          "#3C3A6B",
+          "#54538F",
+          "#6E6DB5",
+          "#8A8AD4",
+          "#A8A9EC",
+          "#C7C9FF",
+          "#E7E9FF"
+        ]
+      },
+      "liga-bundesliga": {
+        "role": "tertiary",
+        "displayName": "Rojo Bundesliga",
+        "canonical": "oklch(62% 0.191 25)",
+        "tonalRamp": [
+          "#530108",
+          "#791418",
+          "#A1282A",
+          "#CB3C3C",
+          "#ED5C58",
+          "#FF857D",
+          "#FFABA2",
+          "#FFD1C9"
+        ]
+      },
+      "liga-serie-a": {
+        "role": "tertiary",
+        "displayName": "Azul Serie A",
+        "canonical": "oklch(58% 0.163 256)",
+        "tonalRamp": [
+          "#002756",
+          "#0C407C",
+          "#1D5AA4",
+          "#2F76CE",
+          "#4D94EE",
+          "#75B3FF",
+          "#9CD2FF",
+          "#C4F2FF"
+        ]
+      },
+      "liga-ligue-1": {
+        "role": "tertiary",
+        "displayName": "Verde Oscuro Ligue 1",
+        "canonical": "oklch(36% 0.027 170)",
+        "tonalRamp": [
+          "#212C28",
+          "#374540",
+          "#4F5F59",
+          "#687C74",
+          "#849891",
+          "#A3B5AE",
+          "#C4D3CD",
+          "#E5F2ED"
+        ]
+      },
+      "liga-la-liga": {
+        "role": "tertiary",
+        "displayName": "Ámbar La Liga",
+        "canonical": "oklch(76% 0.161 75)",
+        "tonalRamp": [
+          "#431F00",
+          "#633500",
+          "#854C00",
+          "#A96500",
+          "#C88300",
+          "#E1A343",
+          "#FBC577",
+          "#FFE6A7"
+        ]
+      },
+      "liga-premier-league": {
+        "role": "tertiary",
+        "displayName": "Rosa Premier League",
+        "canonical": "oklch(72% 0.141 357)",
+        "tonalRamp": [
+          "#471329",
+          "#692642",
+          "#8C3B5C",
+          "#B25177",
+          "#D26E94",
+          "#EC91B1",
+          "#FFB4CF",
+          "#FFD8EF"
+        ]
+      },
+      "neutral-bg": {
+        "role": "neutral",
+        "displayName": "Fondo Frío",
+        "canonical": "oklch(97% 0.005 229)",
+        "tonalRamp": [
+          "#27292A",
+          "#3F4243",
+          "#595C5D",
+          "#747779",
+          "#909495",
+          "#AEB1B3",
+          "#CDCFD1",
+          "#ECEFF0"
+        ]
+      },
+      "neutral-border": {
+        "role": "neutral",
+        "displayName": "Borde Hielo",
+        "canonical": "oklch(91% 0.012 232)",
+        "tonalRamp": [
+          "#262A2C",
+          "#3D4245",
+          "#565C60",
+          "#70787C",
+          "#8D9499",
+          "#ABB2B6",
+          "#CAD0D4",
+          "#EAEFF2"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Gris Azulado",
+        "canonical": "oklch(53% 0.033 224)",
+        "tonalRamp": [
+          "#1E2B30",
+          "#34444B",
+          "#4B5F67",
+          "#637B84",
+          "#7F98A2",
+          "#9FB5BE",
+          "#C0D3DB",
+          "#E1F2F8"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "El título de la página de gráficas, en Inter 800 apretada."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "El título de cada gráfica."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "La pregunta que abre cada gráfica (gris azulado) y los botones."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Bajadas y textos de lectura (65 a 75 caracteres)."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Rótulos de controles en mayúsculas."
+      }
+    },
+    "shadows": [
+      {
+        "name": "tooltip",
+        "value": "0 4px 14px rgba(26,46,51,0.16)",
+        "purpose": "Lo único que flota: el tooltip de un punto."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-estado",
+        "value": ".15s ease",
+        "purpose": "Cambio de fondo y color en controles."
+      },
+      {
+        "name": "entrada-de-vista",
+        "value": ".24s ease-out",
+        "purpose": "Una vista nueva aparece con un desplazamiento de 6px y un fundido."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "celular",
+        "value": "640px"
+      },
+      {
+        "name": "menu-fijo",
+        "value": "960px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Selector de sección",
+      "kind": "nav",
+      "refersTo": "entity-toggle",
+      "description": "Jugadores y Equipos; el seleccionado va relleno con el color apagado de su sección (salvia o índigo).",
+      "html": "<div class=\"ds-ent\"><button class=\"ds-ent-j on\"><svg viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"8\" r=\"4\"/><path d=\"M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7\"/></svg>Jugadores</button><button class=\"ds-ent-e\"><svg viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 3 4 6v6c0 4.5 3.2 7.8 8 9 4.8-1.2 8-4.5 8-9V6z\"/></svg>Equipos</button></div>",
+      "css": ".ds-ent{display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:3px;border-radius:11px;background:#fff;border:1px solid #DAE3E8;width:260px}.ds-ent button{display:flex;align-items:center;justify-content:center;gap:7px;font:700 13.5px Inter,system-ui,sans-serif;padding:9px 12px;border:0;border-radius:8px;background:transparent;cursor:pointer;transition:background-color .15s ease,color .15s ease}.ds-ent button{color:#57707A}.ds-ent-j.on{background:#46765A;color:#fff}.ds-ent button:hover:not(.on){background:rgba(87,112,122,.10)}.ds-ent button:focus-visible{outline:2px solid #46765A;outline-offset:-2px}"
+    },
+    {
+      "name": "Menú de vistas (seleccionada)",
+      "kind": "nav",
+      "refersTo": "view-item",
+      "description": "Fila de texto del menú lateral; la elegida lleva tinte, color y borde fino de su sección.",
+      "html": "<div class=\"ds-menu\"><div class=\"ds-menu-g\">Ataque</div><button class=\"ds-vista on\">xG vs. goles por 90</button><button class=\"ds-vista\">Rematar vs. crear</button></div>",
+      "css": ".ds-menu{width:230px;font-family:Inter,system-ui,sans-serif}.ds-menu-g{font-size:11px;font-weight:600;color:#57707A;margin:0 0 6px 12px}.ds-vista{display:block;width:100%;text-align:left;font:500 13.5px/1.35 Inter,system-ui,sans-serif;padding:8px 12px;border:0;border-radius:8px;background:transparent;color:#1A2E33;cursor:pointer;margin:2px 0}.ds-vista.on{background:rgba(70,118,90,.12);color:#46765A;font-weight:700;box-shadow:inset 0 0 0 1px rgba(70,118,90,.35)}.ds-vista:hover:not(.on){background:#fff}.ds-vista:focus-visible{outline:2px solid #46765A;outline-offset:-2px}"
+    },
+    {
+      "name": "Chip de liga",
+      "kind": "chip",
+      "refersTo": "header-chip",
+      "description": "Filtro por liga: punto del color de la liga y el conteo; activo con tinte suave.",
+      "html": "<div class=\"ds-chips\"><span class=\"ds-chip on\"><i style=\"background:#E34948\"></i>Bundesliga · 137</span><span class=\"ds-chip on\"><i style=\"background:#2A78D6\"></i>Serie A · 159</span><span class=\"ds-chip\"><i style=\"background:#2E413A\"></i>Ligue 1 · —</span></div>",
+      "css": ".ds-chips{display:flex;gap:6px;flex-wrap:wrap;font-family:Inter,system-ui,sans-serif}.ds-chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;padding:4px 10px;border-radius:99px;border:1px solid #DAE3E8;color:#57707A;cursor:pointer}.ds-chip i{width:10px;height:10px;border-radius:50%;display:inline-block;opacity:.4}.ds-chip.on{color:#1A2E33;background:rgba(87,112,122,.12)}.ds-chip.on i{opacity:1}"
+    },
+    {
+      "name": "Título de página",
+      "kind": "custom",
+      "refersTo": "typography.display",
+      "description": "El título grande de la página de gráficas: Inter 800, apretada, con una línea de apoyo.",
+      "html": "<div class=\"ds-intro\"><h1 class=\"ds-h1\">Explora los datos</h1><div class=\"ds-lead\">Elige una pregunta, toca un punto y mira quién es.</div></div>",
+      "css": ".ds-intro{font-family:Inter,system-ui,sans-serif}.ds-h1{font-weight:800;font-size:32px;line-height:1.1;letter-spacing:-.025em;margin:0 0 4px;color:#2C4C54}.ds-lead{font-size:14px;line-height:1.5;color:#57707A}"
+    },
+    {
+      "name": "Tarjeta de gráfica",
+      "kind": "card",
+      "refersTo": "chart-card",
+      "description": "La pregunta en gris azulado, el título y el lugar de la gráfica.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-q\">¿Quién genera más ocasiones y quién las convierte?</div><div class=\"ds-t\">xG vs. goles por 90' (sin penales)</div><div class=\"ds-g\"></div></div>",
+      "css": ".ds-card{background:#F2F6F8;border:1px solid #DAE3E8;border-radius:14px;padding:20px;width:360px;font-family:Inter,system-ui,sans-serif}.ds-q{font-size:13px;font-weight:600;color:#57707A}.ds-t{font-size:17px;font-weight:700;color:#2C4C54;margin:2px 0 10px}.ds-g{height:90px;border-radius:8px;border:1px dashed #DAE3E8}"
+    },
+    {
+      "name": "Botón de ícono",
+      "kind": "button",
+      "refersTo": "icon-button",
+      "description": "Descargar imagen: solo el ícono, gris azulado, junto a «Datos: …».",
+      "html": "<button class=\"ds-icono\" aria-label=\"Descargar imagen\"><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 3v12m0 0 4-4m-4 4-4-4M4 20h16\"/></svg></button>",
+      "css": ".ds-icono{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border:0;border-radius:99px;background:transparent;color:#57707A;cursor:pointer;transition:background-color .15s ease,color .15s ease}.ds-icono:hover{background:rgba(87,112,122,.12);color:#1A2E33}.ds-icono:focus-visible{outline:2px solid #2E7A06;outline-offset:2px}"
+    },
+    {
+      "name": "Tooltip de punto",
+      "kind": "custom",
+      "refersTo": "elevation",
+      "description": "Lo único con sombra: nombre, club y valor al pasar el cursor por un punto.",
+      "html": "<div class=\"ds-tip\"><div class=\"ds-tip-n\">Raphinha</div><div class=\"ds-tip-s\">Barcelona · La Liga · 2026-27</div><div class=\"ds-tip-v\"><span>Goles sin penales por 90'</span><b>1.37</b></div></div>",
+      "css": ".ds-tip{background:#fff;border:1px solid #DAE3E8;border-radius:8px;padding:10px 12px;min-width:200px;box-shadow:0 4px 14px rgba(26,46,51,.16);font-family:Inter,system-ui,sans-serif}.ds-tip-n{font-size:13.5px;font-weight:700;color:#1A2E33}.ds-tip-s{font-size:12px;color:#57707A;margin-bottom:6px}.ds-tip-v{display:flex;justify-content:space-between;gap:16px;font-size:12.5px;color:#57707A}.ds-tip-v b{color:#1A2E33}"
+    }
+  ],
+  "narrative": {
+    "northStar": "La cancha limpia",
+    "overview": "FutViz se ve como una cancha recién marcada: mucho espacio, líneas finas, y el dato que importa sobre un fondo tranquilo. Cada vista contesta una pregunta de aficionado y todo lo que no ayuda a leerla se quita. El color nunca decora: el de una liga es siempre el mismo, el de una sección (apagado) dice dónde estás, y el resto es gris azulado.",
+    "keyCharacteristics": [
+      "Fondo azul-gris frío, superficies blancas, tinta verde-azulada oscura.",
+      "Un color por liga y un color por sección (apagado); nada más lleva color propio.",
+      "Un solo resaltado a la vez: lo que el lector elige va a todo color, lo demás se apaga.",
+      "Plano por defecto: la profundidad se hace con borde y tinte, no con sombra.",
+      "Español de México, de tú, sin tecnicismos."
+    ],
+    "rules": [
+      {
+        "name": "The League Color Rule",
+        "body": "Un color de liga significa esa liga y nada más. Ninguna otra cosa del sitio usa rojo, azul, verde oscuro, ámbar o rosa de liga.",
+        "section": "colors"
+      },
+      {
+        "name": "The Section Color Rule",
+        "body": "Jugadores es salvia, Equipos es índigo. Ese color aparece solo en el botón elegido del selector de sección y en la vista elegida del menú; en ningún otro lugar.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Highlight Rule",
+        "body": "En una gráfica, solo lo que el lector eligió lleva color pleno; el resto del montón se apaga.",
+        "section": "colors"
+      },
+      {
+        "name": "The Sansita Rule",
+        "body": "Sansita es solo la letra del logo. Ni títulos, ni controles, ni ejes, ni texto de lectura.",
+        "section": "typography"
+      },
+      {
+        "name": "The Plain Numbers Rule",
+        "body": "Los números de ejes, tablas y tooltips van en Inter con cifras tabulares; nunca en Sansita.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat-By-Default Rule",
+        "body": "Un control o tarjeta en reposo no tiene sombra. Si necesita separarse, se le da borde o tinte.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do usar el mismo color para la misma liga en todas las gráficas, en claro y en oscuro.",
+      "Do dejar el montón de puntos apagado y resaltar solo lo que el lector elige (nada se resalta solo).",
+      "Do abrir cada vista con su pregunta y un título corto.",
+      "Do explicar una palabra técnica en una línea y marcar las limitaciones del dato en la propia vista.",
+      "Do validar cualquier color nuevo contra el fondo claro y el oscuro antes de usarlo."
+    ],
+    "donts": [
+      "Don't hacer que FutViz parezca una casa de apuestas: nada de neón, números gigantes, urgencia ni brillo.",
+      "Don't hacer que parezca un trabajo de la universidad: nada de tablas grises, títulos formales ni jerarquías planas.",
+      "Don't usar más colores de los necesarios ni reutilizar un color de liga para otra cosa.",
+      "Don't añadir adornos sin función: degradados, sombras en reposo, barras a un lado de una caja, texto con efecto.",
+      "Don't usar Sansita fuera del logo, ni llenar la pantalla de colores de sección: el color de la sección vive solo en el botón y en la vista elegida."
+    ]
+  }
+}
