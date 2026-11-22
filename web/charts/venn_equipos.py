@@ -20,7 +20,7 @@ from viz_theme import FUENTE_FBREF, FUENTE_UNDERSTAT, LEAGUE_COLORS, LEAGUE_COLO
 SECTION = "Equipos"
 SLUG = "equipo-completo"
 TITULO = "Equipo completo"
-CORTE_INI = 25                                   # el deslizador arranca en su máximo: con 96 equipos, 15% deja el centro casi vacío
+CORTE_INI = 15                                   # el deslizador arranca donde el de jugadores
 AMBITO = "de los equipos de las cinco ligas"
 POSICIONES = ["Equipo"]                          # la vista de jugadores filtra por posición; aquí hay una sola población
 
