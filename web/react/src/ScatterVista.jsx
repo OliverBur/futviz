@@ -122,8 +122,9 @@ function Vista({ cfg, T, modo, tk }) {
   const [nivel, setNivel] = useState(() => entre(P.get("nivel"), T.niveles || [], "todos"));
   const [sub21, setSub21] = useState(() => P.get("sub21") === "1");
   const [club, setClub] = useState(() => (T.f.e ? (T.equipos || []).indexOf(P.get("club")) : -1));   // -1: todos los clubes
-  // Los puntos abren en un solo tono (neutro): el color de liga y el de rendimiento son opciones. Lo que se elige (fijados) sí lleva color.
-  const [colorPor, setColorPor] = useState(() => entre(P.get("color"), ["liga", ...cfg.colorPor.filter((c) => c !== "liga")], "neutro"));
+  // Los puntos abren con el color de su liga pero tenues; lo que importa (el Top 5 y lo que se resalta) sale opaco. «Un tono» y
+  // «Rendimiento» son opciones.
+  const [colorPor, setColorPor] = useState(() => entre(P.get("color"), ["neutro", ...cfg.colorPor.filter((c) => c !== "liga")], "liga"));
   // Fijados: índices de JUGADOR (o equipo), no de fila, para que sobrevivan al cambio de temporada.
   // En la URL van por nombre: el índice cambia cuando se actualizan los datos.
   const [fijados, setFijados] = useState(() => P.getAll("fijar").map((n) => T.nombres.indexOf(n)).filter((j) => j >= 0).slice(-MAX_PINES));
@@ -420,7 +421,7 @@ function Vista({ cfg, T, modo, tk }) {
     nivel: nivel === "todos" ? null : nivel,
     sub21: sub21 ? "1" : null,
     club: club >= 0 ? T.equipos[club] : null,
-    color: colorPor === "neutro" ? null : colorPor,
+    color: colorPor === "liga" ? null : colorPor,
     fijar: fijados.map((j) => T.nombres[j]),
     top: metrica === "y" ? null : metrica,
     x: exp && colX !== exp.x ? colX : null,
@@ -467,8 +468,8 @@ function Vista({ cfg, T, modo, tk }) {
   const hayNivel = filtros.nivel && nivelesDisp.length > 0;
   const haySub = filtros.sub21 && haySub21;
   const hayClub = clubesDisp.length > 0;
-  const opcionesColor = ["neutro", "liga", ...cfg.colorPor.filter((c) => c !== "liga")];
-  const nMas = (nivel !== "todos" ? 1 : 0) + (sub21 ? 1 : 0) + (club >= 0 ? 1 : 0) + (colorPor !== "neutro" ? 1 : 0);
+  const opcionesColor = ["liga", "neutro", ...cfg.colorPor.filter((c) => c !== "liga")];
+  const nMas = (nivel !== "todos" ? 1 : 0) + (sub21 ? 1 : 0) + (club >= 0 ? 1 : 0) + (colorPor !== "liga" ? 1 : 0);
   const bloqueClub = !hayClub ? null : (
     <Box>
       <Rotulo>Club</Rotulo>
@@ -536,15 +537,16 @@ function Vista({ cfg, T, modo, tk }) {
       {T.ligas.map((nombreLiga, li) => (
         <MenuItem key={nombreLiga} value={li} dense>
           <Checkbox size="small" checked={ligasOn.has(li)} sx={{ py: 0.25 }} />
+          {colorPor === "liga" && <Box component="span" aria-hidden="true" sx={{ width: 10, height: 10, borderRadius: "50%", bgcolor: colores[nombreLiga], mr: 1, flex: "none" }} />}
           <ListItemText primary={nombreLiga} secondary={ligasOn.has(li) ? `${cuentas[li]} ${plural}` : undefined} />
         </MenuItem>
       ))}
     </TextField>
   );
-  const deCampo = posDisp.filter((p) => p !== "Portero");
-  const todasDeCampo = posiciones.length === deCampo.length && deCampo.every((p) => posiciones.includes(p));
-  const posTxt = (posiciones.length === 0 || todasDeCampo) && posDisp.includes("Portero") ? "Todas, sin porteros"
-    : posiciones.length ? posiciones.join(", ") : "Todas";
+  // En el campo van las siglas (DEF, MED, DEL, POR); sin ninguna marcada se ven las tres de campo, sin porteros.
+  const SIGLA = { Defensa: "DEF", Medio: "MED", Delantero: "DEL", Portero: "POR" };
+  const marcadas = posiciones.length ? posiciones : posDisp.filter((p) => p !== "Portero");
+  const posTxt = (marcadas.length ? marcadas : posDisp).map((p) => SIGLA[p] || p).join(", ");
   const ctlPosicion = !(filtros.posicion && posDisp.length > 0) ? null : (
     <TextField select size="small" fullWidth label="Posición" value={posiciones}
       onChange={(e) => setPosiciones(e.target.value)}
@@ -605,7 +607,18 @@ function Vista({ cfg, T, modo, tk }) {
           placeholder={fijados.length ? "" : enBarra ? "Escribe un nombre…" : `Escribe un ${palabra}…`} />} />
     </Box>
   );
-  const masOpciones = <>{bloqueClub}{bloqueNivel}{bloqueSub21}{ctlColor}</>;
+  const ctlTop = metricas.length > 1 ? (
+    <Box>
+      <Rotulo>Rotular los 5 con más</Rotulo>
+      <ToggleButtonGroup exclusive size="small" fullWidth value={metrica} aria-label="Rotular los 5 con más"
+        onChange={(_e, v) => v && setMetrica(v)}>
+        {metricas.map((m) => (
+          <ToggleButton key={m.id} value={m.id} title={m.ayuda} sx={{ px: 0.5, fontSize: "11.5px !important", lineHeight: 1.2 }}>{m.etiqueta}</ToggleButton>
+        ))}
+      </ToggleButtonGroup>
+    </Box>
+  ) : null;
+  const masOpciones = <>{bloqueClub}{bloqueNivel}{bloqueSub21}{ctlTop}{ctlColor}</>;
   // Celular: todo en el panel de filtros.
   const controles = (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2.25 }}>
@@ -625,7 +638,7 @@ function Vista({ cfg, T, modo, tk }) {
       <Box sx={{ width: 130 }}>{ctlTemporada}</Box>
       <Box sx={{ width: 200 }}>{ctlLiga}</Box>
       {ctlPosicion && <Box sx={{ width: 200 }}>{ctlPosicion}</Box>}
-      <Box sx={{ flex: "1 1 240px", minWidth: 200 }}>{resaltar(true)}</Box>
+      <Box sx={{ width: 250 }}>{resaltar(true)}</Box>
       <Badge color="primary" badgeContent={nMas} invisible={!nMas}>
         <Button variant="outlined" startIcon={<FilterList />} onClick={(e) => setAnclaMas(e.currentTarget)}
           aria-haspopup="dialog" aria-expanded={!!anclaMas}
@@ -690,7 +703,7 @@ function Vista({ cfg, T, modo, tk }) {
         </Box>
       ) : barra}
 
-      <Box sx={{ display: "grid", gap: 3, gridTemplateColumns: { xs: "minmax(0,1fr)", md: "minmax(0,1fr) 270px" }, alignItems: "start" }}>
+      <Box sx={{ display: "grid", gap: 3, gridTemplateColumns: "minmax(0,1fr)", alignItems: "start" }}>
 
         {/* ---------------- columna del gráfico ---------------- */}
         <Box sx={{ minWidth: 0 }}>
@@ -699,7 +712,7 @@ function Vista({ cfg, T, modo, tk }) {
           <Grafica series={series} view={view} viewRef={viewRef} base={base} onView={onView}
             rotulos={rotulos} destacado={destacado}
             onDestacar={onDestacar} onClicPunto={onClicPunto} tk={tk}
-            hayZoom={hayZoom} pista={pista} onPista={onPista} neutro={colorPor === "neutro"}
+            hayZoom={hayZoom} pista={pista} onPista={onPista} tenue={colorPor === "rendimiento" ? 0 : modo === "dark" ? 0.55 : 0.4}
             // En móvil, el título corto del eje ("Precisión") en vez de la frase entera, que no cabe.
             ejeX={movil && !exp ? X.corto : X.label} ejeY={movil && !exp ? Y.corto : Y.label}
             claveDatos={claveDatos} pines={pines} idsPorSerie={idsPorSerie}
@@ -707,6 +720,15 @@ function Vista({ cfg, T, modo, tk }) {
             soloPositivoX={sgX === -1 || rx.lo >= 0} soloPositivoY={sgY === -1 || ry.lo >= 0} invertirX={sgX === -1} invertirY={sgY === -1} />
           </Box>
 
+          {colorPor === "liga" && (
+            <Box role="group" aria-label="Colores de las ligas" sx={{ display: "flex", flexWrap: "wrap", gap: "2px 14px", mt: 0.75, fontSize: 12, color: "text.secondary" }}>
+              {T.ligas.map((l, li) => ligasOn.has(li) && (
+                <Box key={l} sx={{ display: "inline-flex", alignItems: "center", gap: 0.6 }}>
+                  <Box component="span" aria-hidden="true" sx={{ width: 10, height: 10, borderRadius: "50%", bgcolor: colores[l] }} />{l}
+                </Box>
+              ))}
+            </Box>
+          )}
           <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 1, mt: 0.75 }}>
             {enZona ? (
               <Chip size="small" label={`Zona: ${nombreZona}`} title="Volver a la vista de arranque" onClick={() => mover(ajuste)} onDelete={() => mover(ajuste)}
@@ -745,10 +767,6 @@ function Vista({ cfg, T, modo, tk }) {
           )}
         </Box>
 
-        {/* ---------------- columna lateral: controles (escritorio) y Top 5 ---------------- */}
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2.25 }}>
-          {ranking5}
-        </Box>
       </Box>
 
       {/* ---------------- caja de lectura ---------------- */}

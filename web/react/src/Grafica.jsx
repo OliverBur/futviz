@@ -44,7 +44,7 @@ export const PinCtx = createContext({ pines: new Set(), ids: {}, rotulados: new 
 
 function PuntoMarker({ x, y, color, size, isHighlighted, isFaded,
   seriesId, dataIndex, ...resto }) {
-  const { pines, ids, rotulados, neutro } = useContext(PinCtx);
+  const { pines, ids, rotulados, tenue } = useContext(PinCtx);
   const rotulado = rotulados.has(ids[seriesId]?.[dataIndex]);   // lo marca para la imagen que se descarga (ver `descargarImagen.js`)
   const fijado = pines.size > 0 && pines.has(ids[seriesId]?.[dataIndex]);
   const apagado = pines.size > 0 && !fijado;
@@ -55,13 +55,14 @@ function PuntoMarker({ x, y, color, size, isHighlighted, isFaded,
       className={`${resto.className || ""} rx-punto`}
       transform={`translate(${x},${y})`}
       data-rotulado={rotulado ? 1 : undefined}
-      r={grande ? size * 1.9 : neutro && rotulado ? size * 1.4 : size}
+      r={grande ? size * 1.9 : tenue && rotulado ? size * 1.4 : size}
       fill={color}
-      // Con los puntos en un solo tono (el arranque), la masa se ve por transparencia y los rotulados (el Top 5) salen opacos.
-      fillOpacity={apagado && !isHighlighted ? 0.14 : fijado ? 1 : neutro ? (rotulado ? 1 : 0.4) : 0.85}
+      // La masa de puntos se ve tenue (por transparencia, en su color de liga o en un solo tono) y los rotulados (el Top 5) y los
+      // resaltados salen opacos y a todo color.
+      fillOpacity={apagado && !isHighlighted ? 0.14 : fijado ? 1 : tenue ? (rotulado ? 1 : tenue) : 0.85}
       style={{
         stroke: grande ? "var(--color-primary)" : "var(--color-surface)",
-        strokeWidth: grande ? 2 : neutro ? 0 : 0.6,
+        strokeWidth: grande ? 2 : tenue ? 0 : 0.6,
         strokeOpacity: apagado && !isHighlighted ? 0.14 : 1,
         cursor: resto.onClick ? "pointer" : "inherit",
       }}
@@ -272,10 +273,10 @@ export function EstilosGrafica() {
 // referencia (el explorador) no se dibuja nada.
 export function Grafica({
   series, view, viewRef, base, onView, rotulos, destacado, onDestacar, onClicPunto,
-  tk, hayZoom, pista, onPista, ejeX, ejeY, claveDatos, pines, idsPorSerie, neutro = false,
+  tk, hayZoom, pista, onPista, ejeX, ejeY, claveDatos, pines, idsPorSerie, tenue = 0,
   referencia, medias, corte, lineas, onZona, vacio, soloPositivoX, soloPositivoY, invertirX, invertirY,
 }) {
-  const pinCtx = useMemo(() => ({ pines, ids: idsPorSerie, rotulados: new Set(rotulos.map((f) => f.r)), neutro }), [pines, idsPorSerie, rotulos, neutro]);
+  const pinCtx = useMemo(() => ({ pines, ids: idsPorSerie, rotulados: new Set(rotulos.map((f) => f.r)), tenue }), [pines, idsPorSerie, rotulos, tenue]);
   const idFondo = "rx-clip-fondo-" + useId().replace(/:/g, "");   // único por instancia: hay varias vistas montadas a la vez
   const caja = useRef(null);
   const [ancho, setAncho] = useState(0);
