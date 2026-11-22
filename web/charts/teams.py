@@ -332,14 +332,14 @@ def chart_home_away(df):
 
 
 def chart_league_level(df):
-    """Nivel por liga a nivel de equipo: una caja por liga para la variable que se elija. Es la
+    """Nivel por liga a nivel de equipo: una banda y una mediana por liga para la variable que se elija. Es la
     comparación que hacían los radares de liga (quitados), pero sobre UNA variable a la vez y viendo
     cada equipo: así se ve si una liga se distingue por su promedio o por sus extremos."""
     variables = [{"col": c, "label": e, "dec": d} for c, e, _, d in VARIABLES
                  if c in df.columns and c != "ms_Performance_CrdR"]
     return _pagina(
         "nivel-por-liga-equipos", "Distribución por liga",
-        "Cada caja resume una liga: la línea del medio es la mediana y la caja contiene a la mitad central de sus equipos.",
+        "Cada liga lleva una raya en la mediana y una banda con la mitad central de sus equipos; cada punto es un equipo.",
         {"tabla": "equipos", "entidad": "equipos", "variables": variables,
          # Abre en goles por 90': la diferencia de goles suma cero dentro de cada liga y todas las
          # medianas quedaban en 0 (ver `nivel_liga_equipos_que_mirar`).
