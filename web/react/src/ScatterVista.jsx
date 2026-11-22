@@ -49,7 +49,7 @@ import { GENERADORES, lecturaExplorador } from "./insights.js";
 
 const signo = (d, dec = 1) => (d >= 0 ? "+" : "−") + Math.abs(d).toFixed(dec);
 const AJUSTE_MAX = 5;   // lo más que la vista de arranque se acerca a la base (con pocos puntos, más sería ver ampliado el vacío)
-const MAX_PINES = 6;   // fijados a la vez: con más, las etiquetas y los anillos dejan de leerse
+const MAX_PINES = 10;   // fijados a la vez: con más, las etiquetas y los anillos dejan de leerse
 
 // El explorador explica solo el r² (no depende de los datos).
 const EXPLICA_R2 = "El r² es la parte de la variación de una variable que se explica con la otra: cerca de 0% casi no se "
@@ -578,9 +578,6 @@ function Vista({ cfg, T, modo, tk }) {
             );
           }}
           renderInput={(p) => <TextField {...p} placeholder={fijados.length ? "" : `Escribe un ${palabra}…`} />} />
-        <Typography sx={{ fontSize: 11.5, color: "text.secondary", mt: 0.5 }}>
-          Resalta hasta {MAX_PINES} para compararlos.
-        </Typography>
       </Box>
 
       {hayMas && (movil ? <>{bloqueClub}{bloqueNivel}{bloqueSub21}</> : (
