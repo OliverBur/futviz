@@ -2,8 +2,8 @@
 // banda en la mitad central.
 //
 // Mira dos cosas distintas: qué liga está más arriba (su nivel típico) y qué tan ancha es la banda (qué tan parejos son sus
-// equipos). El eje Y de cada variable se fija con el rango de TODAS las temporadas y niveles: si se reescalara al filtrar,
-// dos bandas del mismo alto significarían dispersiones distintas.
+// equipos). El eje Y se ajusta a los datos de la temporada que se ve (con todos los niveles de club): así los
+// puntos usan toda la altura, y las cinco ligas comparten escala.
 //
 // Se arma sobre el mismo `ScatterChart` de las demás vistas: la liga es una posición entera del eje X (1..5) y cada equipo un
 // punto. Los puntos NO llevan azar: cada uno se acomoda en el lugar libre más cercano al centro de su liga (un enjambre,
@@ -166,14 +166,22 @@ function Vista({ cfg, T, modo, tk }) {
   const tEf = temporadasOk.includes(temporada) ? temporada : temporadasOk[temporadasOk.length - 1];
   const colores = useMemo(() => T.ligas.map((l) => T.colores[modo === "dark" ? "oscuro" : "claro"][l]), [T, modo]);
 
-  // El rango de cada variable: de TODAS las temporadas y niveles, con margen (más arriba que abajo: ahí cabe el enjambre
-  // sin pegarse al borde).
+  // El rango del eje Y: el de la temporada que se ve, con TODOS los niveles de club (así Top y Underground comparten escala) y un
+  // margen chico. Antes era el de todas las temporadas, y un solo valor extremo de otra temporada estiraba el eje y dejaba los
+  // puntos apretados en el centro. Cambiar de temporada reescala el eje; dentro de una temporada las cinco ligas siempre
+  // comparten escala, que es lo que se compara.
   const dominioY = useMemo(() => {
     let lo = Infinity, hi = -Infinity;
-    for (const x of col) { if (x == null) continue; if (x < lo) lo = x; if (x > hi) hi = x; }
-    const pad = (hi - lo) * 0.10;
-    return [lo - pad * 0.5, hi + pad * 1.25];
-  }, [col]);
+    for (let r = 0; r < T.n; r++) {
+      const x = col[r];
+      if (x == null || T.f.t[r] !== tEf) continue;
+      if (x < lo) lo = x;
+      if (x > hi) hi = x;
+    }
+    if (lo === Infinity) { lo = 0; hi = 1; }
+    const rango = hi - lo || Math.abs(hi) * 0.1 || 1;
+    return [lo - rango * 0.08, hi + rango * 0.1];
+  }, [T, col, tEf]);
 
   const nivelIdx = nivel === "todos" ? -1 : T.niveles.indexOf(nivel);
   const filas = useMemo(() => {
