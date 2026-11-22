@@ -101,10 +101,11 @@ def tabla(df, minimos):
 
 def textos():
     que_mirar = (
-        "Quién está entre los mejores de su puesto en tres cosas a la vez.\n"
-        "- Cada círculo agrupa a los jugadores que están entre los mejores de su posición en una de tres cosas.\n"
-        "- Quien cae en el centro está entre los mejores en las tres a la vez; las regiones de en medio son combinaciones de dos.\n"
-        "- El deslizador define qué tan exigente es «entre los mejores»: el porcentaje de arriba de su posición.")
+        f"Muestra quién está entre los mejores de su posición en tres cosas a la vez. Cada círculo agrupa a "
+        f"los jugadores que destacan en una de ellas; quien cae en el centro destaca en las tres y las "
+        f"regiones de en medio son combinaciones de dos. El deslizador define qué tan exigente es «entre los "
+        f"mejores»: el porcentaje de arriba de su posición, de {CORTE_MIN}% a {CORTE_MAX}%.")
+
     por_que = (
         "**Población.** Jugadores de campo de las cinco ligas con el corte de minutos de las vistas por 90' (900 en una "
         "temporada cerrada; menos en la que va en curso) y cruzados con FBref. Cada diagrama compara solo a los de una "

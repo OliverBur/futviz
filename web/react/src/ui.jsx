@@ -23,25 +23,11 @@ export function Parrafos({ texto, sx }) {
   ));
 }
 
-// «Cómo leer la gráfica»: una línea con la idea y viñetas cortas (las líneas que empiezan con «- »). Sin negritas.
+// «Cómo leer la gráfica»: un párrafo explicativo (cada línea del texto es un párrafo), sin negritas y con un ancho cómodo.
 export function ComoLeer({ texto }) {
-  const lineas = texto.split("\n").map((l) => l.trim()).filter(Boolean);
-  const intro = lineas.filter((l) => !l.startsWith("- "));
-  const puntos = lineas.filter((l) => l.startsWith("- ")).map((l) => l.slice(2));
-  return (
-    <>
-      {intro.map((l, i) => (
-        <Typography key={i} sx={{ fontSize: 14, lineHeight: 1.55, mb: puntos.length ? 0.5 : 0, color: "text.primary" }}>{l}</Typography>
-      ))}
-      {puntos.length > 0 && (
-        <Box component="ul" sx={{ m: 0, pl: 2.5, color: "text.primary" }}>
-          {puntos.map((p, i) => (
-            <Typography key={i} component="li" sx={{ fontSize: 13.5, lineHeight: 1.6 }}>{p}</Typography>
-          ))}
-        </Box>
-      )}
-    </>
-  );
+  return texto.split("\n").map((l) => l.trim()).filter(Boolean).map((l, i) => (
+    <Typography key={i} sx={{ fontSize: 14, lineHeight: 1.65, mb: 1, color: "text.primary", maxWidth: "78ch" }}>{l}</Typography>
+  ));
 }
 
 // La primera frase de un texto calculado (y sin la cola que va después de una raya larga).

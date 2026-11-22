@@ -155,10 +155,11 @@ def textos(r):
     ts = r["temporadas"]
     sin_nac = jt.attrs["sin_nacimiento"]
     que_mirar = (
-        "Qué parte de los minutos de su club juega cada edad.\n"
-        "- Cada edad muestra qué parte de los minutos de su club juegan los jugadores de esa edad.\n"
-        "- La línea es la mediana y la franja el rango típico, del percentil 25 al 75: la mitad cae dentro.\n"
-        "- Las barras de abajo cuentan los jugador-temporadas de cada edad: donde son pocos, la línea es menos estable.")
+        "Muestra qué parte de los minutos de su club juegan los jugadores de cada edad. La línea es la "
+        "mediana y la franja, el rango típico, del percentil 25 al 75: la mitad de los jugadores de esa edad "
+        "cae dentro de ella. Las barras de abajo cuentan los jugador-temporadas de cada edad, así que donde "
+        "son pocas la línea es menos estable.")
+
     por_que = (
         f"**De dónde salen los minutos.** Cada jugador-temporada de las {len(ts)} temporadas cerradas ({ts[0]} a {ts[-1]}) "
         f"se mide contra los minutos que jugó su club ese año (partidos × 90, de FBref). No hay corte de minutos: quien "
