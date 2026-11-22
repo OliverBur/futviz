@@ -49,12 +49,11 @@ _ETIQUETA = {k: e for k, e, *_ in shot_map.TIPOS}
 ETIQUETAS = {s: _ETIQUETA[u] for s, u in SEGMENTOS}
 
 # Colores de los segmentos (claro, oscuro). La jugada abierta es el fondo neutro (la vista le pone el gris del
-# sitio); los tres de balón parado son tres pasos de claridad del slate del logo (un solo matiz, ninguno de liga): en un
-# gráfico donde el color de otras vistas es la liga, un azul, un magenta y un ocre se leían como Serie A, Premier y La Liga.
-# El orden de la leyenda es el de los segmentos, del más oscuro al más claro (al revés en el modo oscuro).
+# sitio); los tres de balón parado son morado, naranja y verde azulado: los tres de los círculos del Venn
+# (`venn.COLORES_CIRCULO`), ya validados contra el fondo claro y el oscuro y para daltónicos, y ninguno es de una liga.
 COLORES = {
-    "claro": {"corner": "#2c4c54", "libre": "#4f7e8b", "otro": "#85a9b4"},
-    "oscuro": {"corner": "#a5c4ce", "libre": "#6e9ba9", "otro": "#4a7684"},
+    "claro": {"corner": "#6d4ad6", "libre": "#dc6420", "otro": "#0f9d8a"},
+    "oscuro": {"corner": "#8a6fe6", "libre": "#d9702a", "otro": "#17a08c"},
 }
 
 MIN_PARES = 30     # un par de temporadas con menos equipos en común no entra en la repetición

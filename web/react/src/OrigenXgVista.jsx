@@ -213,7 +213,7 @@ function Vista({ cfg, D, modo: tema, tk }) {
       ...cap,
       titulo: cfg.titulo,
       subtitulo: `${ambito} · ${tLabel}${jornadas ? " (en curso)" : ""} · ${ladoTxt.toLowerCase()} · sin penales`,
-      nota: `${medida === "pct" ? "% del xG" : "xG por partido"} · ordenado por ${ordenTxt}${recorta ? ` · los ${FILAS_IMAGEN} primeros` : ""}`,
+      nota: `${medida === "pct" ? "% del xG" : "xG por partido"}${recorta ? ` · los ${FILAS_IMAGEN} primeros` : ""}`,
       leyenda: APILADO.map((id) => ({ color: colorSeg(id), texto: etiquetaSeg[id] })),
       fuente: `Datos: ${cfg.fuente}`, tk, modo: tema,
       archivo: nombreArchivo("generan-peligro", ambito, tLabel, lado === "f" ? "a-favor" : "en-contra"),
@@ -381,7 +381,6 @@ function Vista({ cfg, D, modo: tema, tk }) {
                     sx={{ bgcolor: on ? conAlfa(tk.primary, 0.12) : "transparent", color: "text.primary", borderColor: on ? tk.primary : "divider" }} />
                 );
               })}
-              <Typography sx={{ fontSize: 11.5, color: "text.secondary", ml: 0.5 }}>Ordenado por {ordenTxt}</Typography>
             </Box>
           </Box>
 

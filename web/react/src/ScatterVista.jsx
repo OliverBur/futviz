@@ -704,7 +704,7 @@ function Vista({ cfg, T, modo, tk }) {
           <Grafica series={series} view={view} viewRef={viewRef} base={base} onView={onView}
             rotulos={rotulos} destacado={destacado}
             onDestacar={onDestacar} onClicPunto={onClicPunto} tk={tk}
-            pos={ref && ref.invertir ? div.neg : div.pos} neg={ref && ref.invertir ? div.pos : div.neg} hayZoom={hayZoom} pista={pista} onPista={onPista}
+            hayZoom={hayZoom} pista={pista} onPista={onPista}
             // En móvil, el título corto del eje ("Precisión") en vez de la frase entera, que no cabe.
             ejeX={movil && !exp ? X.corto : X.label} ejeY={movil && !exp ? Y.corto : Y.label}
             claveDatos={claveDatos} pines={pines} idsPorSerie={idsPorSerie}

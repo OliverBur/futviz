@@ -271,7 +271,7 @@ export function EstilosGrafica() {
 // referencia (el explorador) no se dibuja nada.
 export function Grafica({
   series, view, viewRef, base, onView, rotulos, destacado, onDestacar, onClicPunto,
-  tk, pos, neg, hayZoom, pista, onPista, ejeX, ejeY, claveDatos, pines, idsPorSerie,
+  tk, hayZoom, pista, onPista, ejeX, ejeY, claveDatos, pines, idsPorSerie,
   referencia, medias, corte, lineas, onZona, vacio, soloPositivoX, soloPositivoY, invertirX, invertirY,
 }) {
   const pinCtx = useMemo(() => ({ pines, ids: idsPorSerie, rotulados: new Set(rotulos.map((f) => f.r)) }), [pines, idsPorSerie, rotulos]);
@@ -431,7 +431,6 @@ export function Grafica({
 
   const clipFondo = idFondo;
   const T = alcance(base);
-  const lienzo = `M ${px(-T)},${py(-T)} L ${px(T)},${py(T)}`;
   return (
     <Box ref={caja} className={`rx-chart${animando ? " rx-anim" : ""}`} data-zoom={hayZoom ? 1 : 0}
       role="group" aria-label="Gráfica de dispersión. Con el teclado, usa las flechas para recorrer los puntos"
@@ -471,9 +470,6 @@ export function Grafica({
             <rect x={area.left} y={area.top} width={area.width} height={area.height} />
           </clipPath>
           <g clipPath={`url(#${clipFondo})`}>
-            {/* Solo el lado de «más de lo esperado» lleva sombreado, y en tinta neutra: el azul y el rojo son de Serie A y
-                Bundesliga. El otro lado se queda limpio; la diagonal y los rótulos de las esquinas dicen cuál es cuál. */}
-            <path d={`${lienzo} L ${px(-T)},${py(T)} Z`} fill={conAlfa(tk.muted, 0.1)} />
             {/* La franja de azar: goles = xG ± k·√xG (una Poisson). Dentro de ella, la diferencia con el xG es lo que
                 se esperaría solo por suerte (k = 1.64 deja el 90% adentro). */}
             {referencia.banda && (() => {
