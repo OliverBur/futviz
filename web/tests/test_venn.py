@@ -49,7 +49,7 @@ def _df():
     filas = []
     for i in range(12):
         filas.append({"temporada": "2025-26", "player": f"J{i}", "team": "Club", "liga": "La Liga", "posicion": "Defensa" if i < 10 else "Portero",
-                      "min": 1000 if i != 3 else 100, "recoveries90": 2.0 + i, "xga90": 0.1 * i, "xgbuild90": 0.2, "npxg90": 0.05, "xA90": 0.04})
+                      "min": 1000 if i != 3 else 100, "recoveries90": 2.0 + i, "np_xg": 0.1 * i, "xA": 0.9, "xgchain90": 0.3, "xgbuild90": 0.2, "npxg90": 0.05})
     filas[5]["recoveries90"] = np.nan
     return pd.DataFrame(filas)
 
@@ -68,6 +68,13 @@ class Tabla(unittest.TestCase):
         fila = venn.tabla(_df(), {"2025-26": 900})["2025-26"]["jug"][0]
         self.assertEqual(len(fila), venn.PREFIJO + len(venn.MEDIDAS))
         self.assertEqual(fila[venn.PREFIJO], 2.0)    # rec = recoveries90
+
+    def test_xg_sin_penales_mas_xa_y_xa_se_arman_con_los_totales(self):
+        d = venn.preparar(_df(), {"2025-26": 900})
+        fila = d[d["player"] == "J4"].iloc[0]
+        noventas = 1000 / 90
+        self.assertAlmostEqual(fila["npxga90"], (0.4 + 0.9) / noventas)
+        self.assertAlmostEqual(fila["xa90_exacto"], 0.9 / noventas)
 
 
 class Config(unittest.TestCase):

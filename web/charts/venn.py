@@ -33,28 +33,30 @@ CORTE_MIN, CORTE_MAX, CORTE_INI = 5, 30, 15     # el deslizador, en % de arriba 
 
 # Columnas del payload, en orden: (clave corta, columna del DataFrame). Las filas viajan como listas en este orden,
 # después de [nombre, club, liga, posición, minutos].
-MEDIDAS = [("rec", "recoveries90"), ("xga", "xga90"), ("bld", "xgbuild90"), ("npx", "npxg90"), ("xa", "xA90")]
-DECIMALES = {"rec": 2, "xga": 3, "bld": 3, "npx": 3, "xa": 3}
+MEDIDAS = [("rec", "recoveries90"), ("npxga", "npxga90"), ("chain", "xgchain90"), ("bld", "xgbuild90"), ("npx", "npxg90"),
+           ("xa", "xa90_exacto")]
+DECIMALES = {"rec": 2, "npxga": 3, "chain": 3, "bld": 3, "npx": 3, "xa": 3}
 PREFIJO = 5                                      # nombre, club, liga, posición, minutos
 
 REC = "Entradas ganadas + intercepciones por 90'"
-XGA = "xG + xA por 90'"
+NPXGA = "xG sin penales + xA por 90'"
+CHAIN = "xG de todas las jugadas en que interviene, por 90' (xGChain)"
 BLD = "xG de construcción por 90' (jugadas en que participa sin tirar ni asistir)"
 
 # Cada diagrama: tres círculos; `col` es la clave de MEDIDAS. El primero va arriba, el segundo abajo a la izquierda y
 # el tercero abajo a la derecha.
 VENNS = [
     {"id": "defensa", "tab": "Defensa completo", "pos": "Defensa", "plural": "defensas", "titulo": "El defensa completo",
-     "sets": [{"nombre": "Recupera", "col": "rec", "def": REC}, {"nombre": "Aporta en ataque", "col": "xga", "def": XGA},
-              {"nombre": "Construye", "col": "bld", "def": BLD}]},
+     "sets": [{"nombre": "Defiende", "col": "rec", "def": REC}, {"nombre": "Crea peligro", "col": "npxga", "def": NPXGA},
+              {"nombre": "Participa", "col": "chain", "def": CHAIN}]},
     {"id": "medio", "tab": "Medio completo", "pos": "Medio", "plural": "mediocampistas", "titulo": "El mediocampista completo",
-     "sets": [{"nombre": "Recupera", "col": "rec", "def": REC}, {"nombre": "Aporta en ataque", "col": "xga", "def": XGA},
+     "sets": [{"nombre": "Defiende", "col": "rec", "def": REC}, {"nombre": "Crea peligro", "col": "npxga", "def": NPXGA},
               {"nombre": "Construye", "col": "bld", "def": BLD}]},
-    {"id": "delantero", "tab": "Delantero que presiona", "pos": "Delantero", "plural": "delanteros",
-     "titulo": "El delantero que también presiona",
+    {"id": "delantero", "tab": "Delantero completo", "pos": "Delantero", "plural": "delanteros",
+     "titulo": "El delantero completo",
      "sets": [{"nombre": "Remata", "col": "npx", "def": "xG sin penales por 90'"},
               {"nombre": "Asiste", "col": "xa", "def": "xA por 90'"},
-              {"nombre": "Presiona", "col": "rec", "def": REC}]},
+              {"nombre": "Se asocia", "col": "bld", "def": BLD}]},
 ]
 
 # Los tres colores de círculo (validados contra el fondo claro y el oscuro con el validador de paletas de dataviz).
@@ -80,14 +82,20 @@ def regiones(valores_por_set, corte):
 # --- los datos --------------------------------------------------------------------------------------
 
 def preparar(df, minimos):
-    """Los jugadores de campo que pasan el corte de minutos de su temporada y tienen las cinco medidas."""
-    d = df[df["posicion"].isin(POSICIONES)].dropna(subset=[c for _, c in MEDIDAS]).copy()
+    """Los jugadores de campo que pasan el corte de minutos de su temporada y tienen todas las medidas."""
+    d = df[df["posicion"].isin(POSICIONES)].copy()
+    # xG sin penales + xA y xA por 90' se arman con los totales: `xA90` de la fuente viene redondeado a dos decimales y
+    # llena la tabla de empates.
+    noventas = d["min"] / 90
+    d["npxga90"] = (d["np_xg"] + d["xA"]) / noventas
+    d["xa90_exacto"] = d["xA"] / noventas
+    d = d.dropna(subset=[c for _, c in MEDIDAS])
     corte = d["temporada"].map(minimos)
     return d[d["min"] >= corte].reset_index(drop=True)
 
 
 def tabla(df, minimos):
-    """{temporada: {"minimo", "jug": [[nombre, club, liga, posición, minutos, rec, xga, bld, npx, xa], ...]}}."""
+    """{temporada: {"minimo", "jug": [[nombre, club, liga, posición, minutos, rec, npxga, chain, bld, npx, xa], ...]}}."""
     d = preparar(df, minimos)
     salida = {}
     for t in sorted(d["temporada"].unique()):
@@ -117,9 +125,10 @@ def textos():
         f"arriba de los medios»), no un valor fijo, y es una decisión de quien mira: con otro, cambia quién queda en el "
         f"centro. Los grupos no son naturales; la gente en estos datos se reparte en un continuo y el diagrama la separa "
         f"por un umbral.\n\n"
-        "**Qué se mide.** *Recupera*: entradas ganadas + intercepciones por 90' (FBref). *Aporta en ataque*: xG + xA por "
-        "90' (Understat). *Construye*: xG de construcción por 90' (Understat). En el delantero: *Remata* es el xG sin "
-        "penales por 90', *Asiste* el xA y *Presiona* las mismas entradas ganadas + intercepciones.")
+        "**Qué se mide.** *Defiende*: entradas ganadas + intercepciones por 90' (FBref). *Crea peligro*: xG sin penales + xA "
+        "por 90' (Understat). *Participa*: xG de todas las jugadas en que interviene, con o sin tiro, por 90' (xGChain, "
+        "Understat). *Construye*: lo mismo sin contar tiros ni pases de gol (xGBuildup). En el delantero: *Remata* es el xG "
+        "sin penales por 90', *Asiste* el xA y *Se asocia* el xG de construcción.")
     return que_mirar, por_que
 
 
