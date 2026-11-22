@@ -542,7 +542,7 @@ __BRAND_ROOT__
     __BUSCADOR__
     <div class="puertas">
       <a class="puerta" href="__EDA_URL__">
-        <span class="puerta-nombre">Análisis exploratorio →</span>
+        <span class="puerta-nombre">Explora los datos →</span>
         <span class="puerta-desc">__N_VISTAS__ gráficas para comparar jugadores y equipos de las 5 grandes ligas.</span>
       </a>
       <a class="puerta" href="__ML_URL__">

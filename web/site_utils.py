@@ -604,10 +604,13 @@ SECTION_META = {
                        "con filtros y un explorador para cruzar cualquier par de variables.",
         # El encabezado de esta página es compacto (`page_header_html`): la bajada visible es esta, de un
         # renglón, y `description` se queda como <meta name="description">. Sin `lead`, la bajada es `description`.
-        "lead": "Compara jugadores y equipos de las 5 ligas. Toca un punto para ver quién es.",
+        "lead": "Elige una pregunta, toca un punto y mira quién es.",
+        # Cómo se llama la página (el título grande y la pestaña del navegador). La clave de este diccionario sigue siendo
+        # "Análisis exploratorio": es un identificador que usan los enlaces, el buscador y los tests, no un texto.
+        "titulo": "Explora los datos",
         # Cómo se llama en la barra de arriba (el título de la página sigue siendo el de la clave) y el nombre
         # completo, que va en el `aria-label` y el `title` del enlace.
-        "barra": {"texto": "Gráficas", "titulo": "Análisis exploratorio: gráficas de jugadores y equipos"},
+        "barra": {"texto": "Gráficas", "titulo": "Explora los datos: gráficas de jugadores y equipos"},
         "views": True,
         "entidades": ["Jugadores", "Equipos"],  # orden de la fila de arriba; la primera abre la página
     },
@@ -1004,13 +1007,15 @@ PAGE_HEADER_CSS = """
   }
   /* Variante compacta (la página de gráficas, ver `page_header_html`): el eje X de la gráfica tiene que caber en
      pantalla, y el título y la bajada de dos renglones se comían ~190 px. Título más chico, bajada de un renglón. */
-  .page-header--compacto .page-intro { padding: 0 24px 14px; }
-  .page-header--compacto h1.page-title { font-size: 22px; line-height: 1.25; margin: 0 0 2px; padding-left: 12px; }
-  .page-header--compacto h1.page-title::before { top: 2px; bottom: 2px; }
+  /* El título de la página de gráficas: Inter grueso y apretado, sin la barra verde de los demás títulos. */
+  .page-header--compacto .page-intro { padding: 0 24px 16px; }
+  .page-header--compacto h1.page-title { font-weight: 800; font-size: 32px; line-height: 1.1; letter-spacing: -0.025em;
+    margin: 0 0 4px; padding-left: 0; text-wrap: balance; }
+  .page-header--compacto h1.page-title::before { display: none; }
   .page-header--compacto .lead { font-size: 14px; line-height: 1.5; max-width: none; }
   @media (max-width: 640px) {
     .page-header--compacto .page-intro { padding: 4px 16px 12px; }
-    .page-header--compacto h1.page-title { font-size: 20px; }
+    .page-header--compacto h1.page-title { font-size: 26px; }
     .page-header--compacto .lead { font-size: 13.5px; }
   }
 
@@ -1026,13 +1031,15 @@ PAGE_HEADER_CSS = """
 # la bajada visible es ese texto corto; `description` queda solo en el <meta name="description"> de la página.
 # Las demás (Machine Learning) siguen con el encabezado de siempre y `description` como bajada.
 def page_header_html(nombre):
-    lead = SECTION_META[nombre].get("lead")
+    meta = SECTION_META[nombre]
+    lead = meta.get("lead")
     clase = "page-header page-header--compacto" if lead else "page-header"
     bajada = escapar_html(lead) if lead else "__DESCRIPTION__"
+    titulo = escapar_html(meta["titulo"]) if meta.get("titulo") else "__NAME__"
     return f"""<header class="{clase}">
   {site_bar(actual=nombre)}
   <div class="page-intro">
-    <h1 class="page-title">__NAME__</h1>
+    <h1 class="page-title">{titulo}</h1>
     <div class="lead">{bajada}</div>
   </div>
 </header>"""

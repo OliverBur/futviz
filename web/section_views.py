@@ -38,7 +38,7 @@ VIEWS_PAGE_TEMPLATE = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>__NAME__ · FutViz</title>
+<title>__TITULO__ · FutViz</title>
 <meta name="description" content="__DESCRIPTION__">
 __THEME_COLOR__
 __FAVICON__
@@ -62,32 +62,45 @@ __PAGE_HEADER_CSS__
   .content:focus { outline: none; }   /* destino del salto: se enfoca por código, no con el teclado */
   .rail { min-width: 0; padding: 18px 0 4px; }
 
+  /* Cada sección tiene su color, apagado a propósito (Jugadores verde salvia, Equipos índigo): solo lo llevan el botón elegido
+     de arriba y la vista elegida del menú, para saber de un vistazo en cuál de las dos se está sin llenar la pantalla de color.
+     Son distintos de los cinco de liga y pasan contraste sobre el fondo claro y el oscuro. `--ent-ink` es el color del texto
+     sobre un botón relleno. */
+  :root { --ent-j: #46765A; --ent-e: #5B58A3; --ent-ink: #FFFFFF; }
+  html[data-theme="dark"] { --ent-j: #86BFA0; --ent-e: #A5A1DE; --ent-ink: #12181A; }
+  .shell { --ac: var(--ent-j); }
+  .shell[data-ent="Equipos"] { --ac: var(--ent-e); }
+
   /* Entidad (jugadores o equipos): primer nivel de navegación. */
   .ent-nav { margin: 0 0 20px; }
-  .ent-nav .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; padding: 3px; border-radius: 11px;
+  .ent-nav .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 3px; border-radius: 11px;
     background: var(--color-surface); border: 1px solid var(--color-border); }
-  .ent-nav .seg button { font: 600 13.5px "Inter", system-ui, sans-serif; cursor: pointer; padding: 9px 12px;
+  .ent-nav .seg button { display: flex; align-items: center; justify-content: center; gap: 7px;
+    font: 700 13.5px "Inter", system-ui, sans-serif; cursor: pointer; padding: 9px 12px;
     border: 0; border-radius: 8px; background: transparent; color: var(--color-muted); touch-action: manipulation;
-    transition: background-color .15s ease, color .15s ease, box-shadow .15s ease; }
-  .ent-nav .seg button[aria-selected="true"] { background: var(--color-bg); color: var(--color-primary);
-    box-shadow: 0 0 0 1px var(--color-border); }
+    transition: background-color .15s ease, color .15s ease; }
+  .ent-nav .seg button[data-entity="Jugadores"] { --ec: var(--ent-j); }
+  .ent-nav .seg button[data-entity="Equipos"] { --ec: var(--ent-e); }
+  .ent-nav .seg button svg { width: 16px; height: 16px; flex: none; }
+  .ent-nav .seg button[aria-selected="true"] { background: var(--ec); color: var(--ent-ink); }
 
-  /* Vistas: filas de texto agrupadas por familia de preguntas (qué tan bien define, cómo defiende...),
-     sin colores de marca. La seleccionada: fondo neutro y una barra del color del texto. */
+  /* Vistas: filas de texto agrupadas por familia de preguntas (qué tan bien define, cómo defiende...). La seleccionada
+     lleva el color de su sección: fondo suave, letra del color y un borde fino. */
   .seg-nav { display: flex; flex-direction: column; gap: 18px; }
   .seg-nav[hidden] { display: none; }
   .seg-group { min-width: 0; }
   .seg-label { font-size: 11px; font-weight: 600; color: var(--color-muted); margin: 0 0 6px 12px; }
+
   .seg-group .seg { display: flex; flex-direction: column; gap: 2px; }
   .seg-group .seg button { font: 500 13.5px/1.35 "Inter", system-ui, sans-serif; text-align: left; width: 100%;
     cursor: pointer; padding: 8px 12px; border: 0; border-radius: 8px; background: transparent;
     color: var(--color-text-body); touch-action: manipulation;
     transition: background-color .15s ease, box-shadow .15s ease, color .15s ease; }
-  .seg-group .seg button[aria-selected="true"] { background: var(--color-surface); color: var(--color-primary);
-    font-weight: 600; box-shadow: inset 2px 0 0 var(--color-primary); }
-  .seg button:focus-visible { outline: 2px solid var(--color-interactive); outline-offset: -2px; }
+  .seg-group .seg button[aria-selected="true"] { background: color-mix(in srgb, var(--ac) 12%, transparent); color: var(--ac);
+    font-weight: 700; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ac) 35%, transparent); }
+  .seg button:focus-visible { outline: 2px solid var(--ac); outline-offset: -2px; }
   @media (hover: hover) {
-    .ent-nav .seg button:hover:not([aria-selected="true"]) { color: var(--color-primary); }
+    .ent-nav .seg button:hover:not([aria-selected="true"]) { background: color-mix(in srgb, var(--ec) 10%, transparent); }
     .seg-group .seg button:hover:not([aria-selected="true"]) { background: var(--color-surface); color: var(--color-primary); }
   }
 
@@ -126,7 +139,7 @@ __PAGE_HEADER_CSS__
     .seg-group .seg::-webkit-scrollbar { display: none; }
     .seg-group .seg button { width: auto; flex: none; white-space: nowrap; padding: 9px 14px;
       border: 1px solid var(--color-border); background: var(--color-surface); }
-    .seg-group .seg button[aria-selected="true"] { border-color: var(--color-primary); box-shadow: none; }
+    .seg-group .seg button[aria-selected="true"] { border-color: var(--ac); box-shadow: none; }
     .seg-label { margin-left: 2px; margin-bottom: 5px; }
     .seg-nav { gap: 10px; }
     .ent-nav { margin-bottom: 14px; }
@@ -255,6 +268,7 @@ __PAGE_HEADER__
     VIEWS.forEach(function(v) { panel(v.slug).hidden = v.slug !== slug; });
     var ent = vista(slug).entity;
     ultima[ent] = slug;
+    document.querySelector('.shell').setAttribute('data-ent', ent);   // el color de la sección (`--ac`)
     navs.forEach(function(n) { n.hidden = n.dataset.entity !== ent; });
     entTabs.forEach(function(t) {
       var on = t.dataset.entity === ent;
@@ -385,6 +399,15 @@ def _select_html(pages, entidad):
             f'{"".join(partes)}</select></div>')
 
 
+# Un ícono por entidad (trazo de 2, el mismo en los dos): una persona y un escudo. Son decorativos: el nombre va al lado.
+_SVG = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" '
+        'stroke-linejoin="round" aria-hidden="true">{}</svg>')
+ICONOS_ENTIDAD = {
+    "Jugadores": _SVG.format('<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>'),
+    "Equipos": _SVG.format('<path d="M12 3 4 6v6c0 4.5 3.2 7.8 8 9 4.8-1.2 8-4.5 8-9V6z"/>'),
+}
+
+
 def write_section_views(section, entities, dist_dir: Path):
     """Escribe `dist/{slug}.html` (el cascarón) y un fragmento por vista.
 
@@ -414,7 +437,7 @@ def write_section_views(section, entities, dist_dir: Path):
         selects.append(_select_html(pages, entidad))
         botones_ent.append(
             f'<button type="button" role="tab" data-entity="{entidad}" aria-selected="false" '
-            f'tabindex="-1">{entidad}</button>')
+            f'tabindex="-1">{ICONOS_ENTIDAD.get(entidad, "")}{entidad}</button>')
 
     ids = json.dumps(vistas, ensure_ascii=False).replace("</", "<\\/")
     html = (VIEWS_PAGE_TEMPLATE
@@ -422,6 +445,7 @@ def write_section_views(section, entities, dist_dir: Path):
             .replace("__FAVICON__", favicon_links())
             .replace("__PAGE_HEADER_CSS__", PAGE_HEADER_CSS)
             .replace("__PAGE_HEADER__", page_header_html(section))
+            .replace("__TITULO__", meta.get("titulo") or section)
             .replace("__NAME__", section)
             .replace("__DESCRIPTION__", meta["description"])
             .replace("__PRELOAD__", vistas[0]["src"])

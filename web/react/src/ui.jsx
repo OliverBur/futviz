@@ -67,7 +67,7 @@ export function Encabezado({ pregunta, titulo, bajada, muestra }) {
   return (
     <Box sx={{ mb: 1.5 }}>
       {pregunta && (
-        <Typography sx={{ fontSize: 13, fontWeight: 600, color: "success.main", mb: 0.25 }}>{pregunta}</Typography>
+        <Typography sx={{ fontSize: 13, fontWeight: 600, color: "text.secondary", mb: 0.25 }}>{pregunta}</Typography>
       )}
       <Typography component="h2" sx={{ fontSize: 17, fontWeight: 700, color: "primary.main" }}>{titulo}</Typography>
       {bajada && <Typography sx={{ fontSize: 14.5, lineHeight: 1.5, mt: 0.5 }}>{bajada}</Typography>}
