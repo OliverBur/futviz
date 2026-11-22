@@ -21,12 +21,15 @@ import { cargarDatos } from "./datos.js";
 import { Aviso, ComoLeer, Cargando, Encabezado, Md, Parrafos, QueDice, Rotulo, sinAcentos } from "./ui.jsx";
 import { conAlfa } from "./colores.js";
 import { fmt, miles } from "./stats.js";
+import { BotonDescarga } from "./BotonDescarga.jsx";
+import { capturar, descargarPng, nombreArchivo } from "./descargarImagen.js";
 import {
   APILADO, BALON_PARADO, lecturaOrigen, pesoBP, tirosSeg, tirosTotal, valorOrden, valorSeg, xgTotal,
 } from "./origenXgLectura.js";
 
 const TODAS = -1;                    // "Las 5 ligas"
 const MG_SUP = 36, MG_INF = 26;      // el eje de arriba y el de abajo (el de abajo solo con muchas filas)
+const FILAS_IMAGEN = 10;             // con las 5 ligas juntas, la imagen lleva solo las primeras filas (96 barras no se leen)
 const FILAS_ALTAS = 24;              // con más filas que estas, la barra es más baja y el eje se repite abajo
 
 function useAncho(ref) {
@@ -85,7 +88,7 @@ function Vista({ cfg, D, modo: tema, tk }) {
   const jornadas = enCurso[tLabel] || null;
   const etiquetaSeg = Object.fromEntries(cfg.segmentos.map((s) => [s.id, s.etiqueta]));
   const colorSeg = (id) => (id === "abierta"
-    ? conAlfa(tk.muted, tema === "dark" ? 0.5 : 0.42)
+    ? conAlfa(tk.muted, tema === "dark" ? 0.3 : 0.42)
     : cfg.colores[tema === "dark" ? "oscuro" : "claro"][id]);
   const colorLiga = (l) => cfg.ligasColores[tema === "dark" ? "oscuro" : "claro"][ligas[l]];
   const techo = useMemo(() => techoXg(D), [D]);
@@ -122,7 +125,7 @@ function Vista({ cfg, D, modo: tema, tk }) {
   const paso = medida === "pct" ? (movil ? 50 : 25) : (movil ? 1 : 0.5);
   const marcas = Array.from({ length: Math.floor(tope / paso + 1e-9) + 1 }, (_, k) => k * paso);
   const fmtMarca = (v) => (medida === "pct" ? `${v}%` : fmt(v, 1));
-  const maxChars = Math.floor((wEt - (liga === TODAS ? 18 : 6)) / (fuente * 0.54));
+  const maxChars = Math.floor((wEt - 6) / (fuente * 0.54));
   const corto = (s) => (s.length > maxChars ? `${s.slice(0, maxChars - 1)}…` : s);
 
   const ladoTxt = lado === "f" ? "A favor" : "En contra";
@@ -201,6 +204,22 @@ function Vista({ cfg, D, modo: tema, tk }) {
   const ordenarPorLeyenda = (id) => setOrden(orden === id ? "bp" : id);
   const muestra = `${ambito} · ${tLabel}${jornadas ? ` (en curso, ${jornadas} jornadas)` : ""} · ${ladoTxt.toLowerCase()} · sin penales`;
 
+  // La imagen: las barras tal como están en pantalla. Con las 5 ligas juntas son 96 filas, así que solo salen las primeras 10.
+  const recorta = liga === TODAS && ordenadas.length > FILAS_IMAGEN;
+  const descargar = () => {
+    const cap = capturar(caja.current, { limpiar: (el) => (recorta && Number(el.getAttribute("data-fila")) >= FILAS_IMAGEN ? "quitar" : undefined) });
+    if (recorta) cap.viewBox = [0, 0, cap.viewBox[2], MG_SUP + FILAS_IMAGEN * hFila + 8];
+    return descargarPng({
+      ...cap,
+      titulo: cfg.titulo,
+      subtitulo: `${ambito} · ${tLabel}${jornadas ? " (en curso)" : ""} · ${ladoTxt.toLowerCase()} · sin penales`,
+      nota: `${medida === "pct" ? "% del xG" : "xG por partido"} · ordenado por ${ordenTxt}${recorta ? ` · los ${FILAS_IMAGEN} primeros` : ""}`,
+      leyenda: APILADO.map((id) => ({ color: colorSeg(id), texto: etiquetaSeg[id] })),
+      fuente: `Datos: ${cfg.fuente}`, tk, modo: tema,
+      archivo: nombreArchivo("generan-peligro", ambito, tLabel, lado === "f" ? "a-favor" : "en-contra"),
+    });
+  };
+
   return (
     <>
       <Box sx={{ display: "grid", gap: 3, gridTemplateColumns: { xs: "minmax(0,1fr)", md: "minmax(0,1fr) 270px" }, alignItems: "start" }}>
@@ -237,10 +256,9 @@ function Vista({ cfg, D, modo: tema, tk }) {
                   const enHover = hover && hover.i === i;
                   let acum = 0;
                   return (
-                    <g key={i} opacity={apagada && !enHover ? 0.38 : 1}>
+                    <g key={i} data-fila={k} opacity={apagada && !enHover ? 0.38 : 1}>
                       {(pinta || enHover) && <rect x={0} y={y} width={w} height={hFila} fill={conAlfa(tk.primary, pinta ? 0.13 : 0.07)} rx={3} />}
-                      {liga === TODAS && <circle cx={6} cy={y + hFila / 2} r={3.5} fill={colorLiga(D.f.l[i])} />}
-                      <text x={liga === TODAS ? 15 : 2} y={y + hFila / 2 + fuente * 0.35} fontSize={fuente} fill={tk["text-body"]}
+                      <text x={2} y={y + hFila / 2 + fuente * 0.35} fontSize={fuente} fill={tk["text-body"]}
                         fontWeight={pinta ? 700 : 500}>{corto(nombreFila(i))}</text>
                       {APILADO.map((id) => {
                         const v = valorSeg(D, i, lado, id, medida);
@@ -264,7 +282,10 @@ function Vista({ cfg, D, modo: tema, tk }) {
             <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
               Cada barra mide el xG sin penales de un equipo en una temporada{Object.keys(enCurso).length ? ". * Temporada en curso" : ""}.
             </Typography>
-            <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+              <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
+              <BotonDescarga alDescargar={descargar} />
+            </Box>
           </Box>
 
         </Box>

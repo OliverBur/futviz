@@ -370,7 +370,7 @@ PESTANAS = [
     ("tabla-esperada", "Tabla real vs. esperada", "Temporada"),    # la primera: es la que abre la sección
     ("eficiencia-definicion", "Goles vs. xG", "Ocasiones"),
     ("creacion", "Ocasiones a favor y en contra", "Ocasiones"),
-    ("origen-xg", "De dónde sale el xG", "Ocasiones"),
+    ("origen-xg", "Cómo generan peligro", "Ocasiones"),
     ("cantidad-calidad", "Cantidad vs. calidad de los tiros", "Ocasiones"),
     ("defensa", "Goles recibidos vs. xG", "Defensa"),
     ("puntos-vs-xg", "Puntos vs. xG", "Contexto"),

@@ -34,7 +34,7 @@ from viz_theme import FUENTE_UNDERSTAT, LEAGUE_COLORS, LEAGUE_COLORS_DARK, LEAGU
 
 SECTION = "Equipos"
 SLUG = "origen-xg"
-TITULO = "De dónde sale el xG"
+TITULO = "¿Cómo generan peligro?"
 
 AUTOGOL = "Own Goal"
 
@@ -51,8 +51,8 @@ ETIQUETAS = {s: _ETIQUETA[u] for s, u in SEGMENTOS}
 # Colores de los segmentos (claro, oscuro). La jugada abierta es el fondo neutro (la vista le pone el gris del
 # sitio); los tres de balón parado son hues distintos entre sí y de los de las ligas.
 COLORES = {
-    "claro": {"corner": "#d95f02", "libre": "#7570b3", "otro": "#1b9e77"},
-    "oscuro": {"corner": "#f08a3c", "libre": "#a39fd6", "otro": "#3fc4a0"},
+    "claro": {"corner": "#4a78c4", "libre": "#c0568a", "otro": "#c39a2c"},
+    "oscuro": {"corner": "#5a84c4", "libre": "#b95b86", "otro": "#a98a35"},
 }
 
 MIN_PARES = 30     # un par de temporadas con menos equipos en común no entra en la repetición
