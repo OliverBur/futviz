@@ -138,12 +138,12 @@ def chart_venn(df, minimos) -> ChartPage:
     """`df` es la tabla de jugadores de `players.load_data()`; `minimos` el corte de minutos por 90' de cada temporada."""
     p = payload(df, minimos, temporadas_en_curso())
     react_views.registrar_payload(SLUG, p)
-    que_mirar, por_que = textos()
+    que_mirar, _ = textos()
     bajada = "El jugador que está en el top de su posición en tres cosas a la vez, y cuántos hay."
     assert len(bajada) <= 160, f"{SLUG}: la bajada mide {len(bajada)} caracteres"
     cfg = {
         "id": SLUG, "titulo": TITULO, "bajada": bajada, "pregunta": PREGUNTAS[SLUG], "tabla": SLUG,
-        "queMirar": que_mirar, "porQue": por_que,
+        "queMirar": que_mirar,
         "fuente": f"{FUENTE_UNDERSTAT} y {FUENTE_FBREF}",
         "venns": VENNS,
     }

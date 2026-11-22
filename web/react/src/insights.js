@@ -33,7 +33,7 @@ export function golesXg(T, filas, ambito) {
   const fija = `En ${ambito}, el máximo goleador sin penales es **${quien(T, top)}** (${T.equipo(top)}) con ${Math.trunc(T.c.np_goals[top])} goles sobre ${fmt1(T.c.np_xg[top])} de xG.`;
   if (filas.length < 5) return { fija, salta: null };
   const dif = goles.map((g, i) => g - xg[i]);
-  const salta = `El que más superó su xG es **${quien(T, filas[idxmax(dif)])}** (+${fmt1(Math.max(...dif))} goles) y el que más se quedó corto, **${quien(T, filas[idxmin(dif)])}** (${fmt1(Math.min(...dif))}). Antes de sacar conclusiones: una diferencia así se repite poco de una temporada a la siguiente (los números están en «Por qué estas variables»).`;
+  const salta = `El que más superó su xG es **${quien(T, filas[idxmax(dif)])}** (+${fmt1(Math.max(...dif))} goles) y el que más se quedó corto, **${quien(T, filas[idxmin(dif)])}** (${fmt1(Math.min(...dif))}). Antes de sacar conclusiones: una diferencia así se repite poco de una temporada a la siguiente.`;
   return { fija, salta };
 }
 
@@ -253,7 +253,7 @@ export function definicion(T, filas, ambito) {
   const menos = mn < 0
     ? `y el que más se quedó corto, **${quien(T, abajo)}** (${fmt(mn)}).`
     : `y todos lo superaron: el que menos, **${quien(T, abajo)}** (${sg(mn)}).`;
-  return { fija, salta: `${mas} ${menos} Una diferencia así se repite poco de una temporada a la siguiente (los números están en «Por qué estas variables»).` };
+  return { fija, salta: `${mas} ${menos} Una diferencia así se repite poco de una temporada a la siguiente.` };
 }
 
 export function creacion(T, filas, ambito) {
@@ -292,7 +292,7 @@ export function puntos(T, filas, ambito) {
   const i = idxmax(resto.map(Math.abs));
   const e = filas[i], delta = resto[i];
   const sentido = delta > 0 ? "más" : "menos";
-  const salta = `El que más se aleja de la tendencia es **${quien(T, e)}**: tiene ${sg(T.c[XG_DIF][e])} de diferencia de xG por partido y saca ${fmt(T.c[PPM][e])} puntos, ${fmt(Math.abs(delta))} ${sentido} de lo normal para ese juego. Eso se repite poco de una temporada a la siguiente (los números están en «Por qué estas variables»).`;
+  const salta = `El que más se aleja de la tendencia es **${quien(T, e)}**: tiene ${sg(T.c[XG_DIF][e])} de diferencia de xG por partido y saca ${fmt(T.c[PPM][e])} puntos, ${fmt(Math.abs(delta))} ${sentido} de lo normal para ese juego. Eso se repite poco de una temporada a la siguiente.`;
   return { fija, salta };
 }
 
@@ -345,7 +345,7 @@ export function localVisitante(T, filas, ambito) {
   });
   const dif = dl.map((l, i) => l - dv[i]);
   const e = filas[idxmax(dif)];
-  const salta = `De ${filas.length} equipos, ${tr} dominan las ocasiones de local y de visita, ${br} solo de local, ${tl} solo de visita y ${bl} las sufren en los dos lados. El que más cambia de un estadio a otro es **${quien(T, e)}**: ${sg(T.c[DIF_LOCAL][e])} de local y ${sg(T.c[DIF_VISITA][e])} de visitante (${fmt(Math.max(...dif))} de diferencia por partido). Cuánto de eso es del equipo y cuánto de la temporada lo dice «Por qué estas variables».`;
+  const salta = `De ${filas.length} equipos, ${tr} dominan las ocasiones de local y de visita, ${br} solo de local, ${tl} solo de visita y ${bl} las sufren en los dos lados. El que más cambia de un estadio a otro es **${quien(T, e)}**: ${sg(T.c[DIF_LOCAL][e])} de local y ${sg(T.c[DIF_VISITA][e])} de visitante (${fmt(Math.max(...dif))} de diferencia por partido). Esa diferencia casi no se repite de una temporada a la siguiente.`;
   return { fija, salta };
 }
 

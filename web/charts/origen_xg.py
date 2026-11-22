@@ -232,7 +232,8 @@ def textos(r):
         f"«A favor» son los tiros que hace el equipo y «En contra», los que le hacen: los mismos tiros vistos desde "
         f"equipos distintos. Dentro de una liga todos enfrentan a casi los mismos rivales, así que el calendario no explica "
         f"las diferencias entre equipos.\n\n"
-        f"Haz clic en un color de la leyenda para ordenar por él, o busca un equipo para resaltarlo.")
+        f"Una sola temporada dice cómo fue ese año y solo en parte cómo es el equipo. Haz clic en un color de la leyenda "
+        f"para ordenar por él, o busca un equipo para resaltarlo.")
     por_que = (
         f"**Los segmentos.** Salen de la jugada con que Understat etiqueta cada tiro: **{seg['abierta']}** (juego en "
         f"movimiento), **{seg['corner']}** (saque de esquina), **{seg['libre']}** (remate directo de una falta) y "
@@ -288,12 +289,12 @@ def chart_origen_xg() -> ChartPage:
     tiros, equipos = _cargar()
     r = calcular(tiros, equipos)
     react_views.registrar_payload(SLUG, payload(r))
-    que_mirar, por_que = textos(r)
+    que_mirar, _ = textos(r)
     bajada = "Cuánto del xG de cada equipo sale de jugada abierta, de córner y de otros balones parados."
     assert len(bajada) <= 108, f"{SLUG}: la bajada mide {len(bajada)} caracteres"
     cfg = {
         "id": SLUG, "titulo": TITULO, "bajada": bajada, "pregunta": PREGUNTAS[SLUG], "tabla": SLUG,
-        "queMirar": que_mirar, "porQue": por_que, "fuente": FUENTE_UNDERSTAT,
+        "queMirar": que_mirar, "fuente": FUENTE_UNDERSTAT,
         "segmentos": [{"id": s, "etiqueta": ETIQUETAS[s], "balonParado": s in BALON_PARADO} for s in IDS],
         "colores": {"claro": {**COLORES["claro"]}, "oscuro": {**COLORES["oscuro"]}},
         "ligasColores": {"claro": {l: LEAGUE_COLORS[l] for l in LEAGUE_ORDER},

@@ -655,7 +655,7 @@ def goles_xg(df, season, liga=None):
              f"(+{_fmt(dif.max(), 1)} goles) y el que más se quedó corto, "
              f"**{abajo['player']}** ({_fmt(dif.min(), 1)}). Antes de sacar "
              f"conclusiones: una diferencia así se repite poco de una temporada a la "
-             f"siguiente (los números están en «Por qué estas variables»).")
+             f"siguiente.")
     return fija, salta
 
 
@@ -1261,7 +1261,8 @@ def construir_que_mirar():
     return ("El eje horizontal mide quién participa más en jugadas de tiro **sin ser quien tira ni quien da el último "
             "pase** (el xG de construcción, que Understat llama xGBuildup). Abajo a la derecha, los que mueven al equipo y "
             "producen poco (centrales, laterales, contenciones); arriba a la izquierda, los finalizadores; arriba a la "
-            "derecha, los pocos que construyen y terminan. " + _linea_txt())
+            "derecha, los pocos que construyen y terminan. Ojo: la construcción depende del equipo (quien juega en uno que "
+            "genera mucho xG participa en más jugadas, juegue como juegue). " + _linea_txt())
 
 
 def construir_por_que(df):
@@ -1331,7 +1332,8 @@ def xg_goles_90_que_mirar():
             f"La línea vertical deja a su derecha al {_pct_elite()} con más xG de los que ves. **Arriba a la derecha**: "
             "muchas ocasiones y las meten. **Abajo a la derecha**: muchas ocasiones pero las fallan (aquí cae la mayoría de "
             "la élite, porque el xG de Understat suma más de lo que entra). **Abajo a la izquierda**: pocas ocasiones y las "
-            "fallan. **Arriba a la izquierda**: pocas ocasiones pero las meten. Compara dentro de una misma "
+            "fallan. **Arriba a la izquierda**: pocas ocasiones pero las meten. Casi no se repite de un año a otro: una temporada es poca muestra. Compara "
+            "dentro de una misma "
             "posición.")
 
 
@@ -1463,7 +1465,9 @@ def cover_stopper_que_mirar():
             "de dos percentiles, así que llegar a 90 es más difícil. "
             f"Las líneas están en el {LINEA_PERCENTIL}. Haz clic en un cuadrante para acercarte a esos jugadores.\n\n"
             "**El club pesa**, sobre todo en las intercepciones: los defensas de clubes con poca posesión interceptan algo "
-            "más, sin que eso diga nada de ellos. Aquí van juntos centrales y laterales, porque los datos no los separan.")
+            "más, sin que eso diga nada de ellos. Aquí van juntos centrales y laterales, porque los datos no los separan. Las "
+            "intercepciones no se comparan entre temporadas (lo más probable es que cambiara el criterio con que se "
+            "cuentan) y no hay despejes ni bloqueos en los datos.")
 
 
 def cover_stopper_por_que(df):
@@ -1652,8 +1656,7 @@ def definicion(df, season, liga=None):
                 f"({_fmt(mx)} goles por partido)")
     menos = (f"y el que más se quedó corto, **{abajo['Squad']}** ({_fmt(mn)})." if mn < 0
              else f"y todos lo superaron: el que menos, **{abajo['Squad']}** ({_sg(mn)}).")
-    salta = (f"{mas} {menos} Una diferencia así se repite poco de una temporada a la siguiente (los "
-             f"números están en «Por qué estas variables»).")
+    salta = (f"{mas} {menos} Una diferencia así se repite poco de una temporada a la siguiente.")
     return fija, salta
 
 
@@ -1711,7 +1714,8 @@ def defensa_que_mirar():
     return ("Los dos ejes van **al revés**: a la derecha, menos xG en contra; arriba, menos goles recibidos, así que arriba "
             "a la derecha están los mejores. Ojo: el xG de Understat suma más de lo que entra, así que la mayoría de los "
             "equipos queda sobre la diagonal: compara a cada equipo con los demás de su temporada, no con la línea. La "
-            "distancia a la diagonal junta portero, bloqueos y suerte, y no sirve para decir quién tiene al mejor portero.")
+            "distancia a la diagonal junta portero, bloqueos y suerte, casi no se repite de un año a otro y no sirve para decir "
+            "quién tiene al mejor portero.")
 
 
 def defensa_por_que(df):
@@ -1805,8 +1809,7 @@ def puntos(df, season, liga=None):
     sentido = "más" if delta > 0 else "menos"
     salta = (f"El que más se aleja de la tendencia es **{e['Squad']}**: tiene {_sg(e[XG_DIF])} de "
              f"diferencia de xG por partido y saca {_fmt(e[COL_PPM])} puntos, {_fmt(abs(delta))} {sentido} "
-             f"de lo normal para ese juego. Eso se repite poco de una temporada a la siguiente (los números "
-             f"están en «Por qué estas variables»).")
+             f"de lo normal para ese juego. Eso se repite poco de una temporada a la siguiente.")
     return fija, salta
 
 
@@ -1875,7 +1878,7 @@ def local_visitante_que_mirar():
     return ("Casi todos los equipos tienen mejor diferencia de local que de visitante, así que lo que cuenta es cuánto más. "
             "**Arriba a la derecha**: dominan de local y de visita. **Abajo a la derecha**: solo de local. **Abajo a la "
             "izquierda**: sufren en los dos. **Arriba a la izquierda**: solo de visita, casi vacío. Que un equipo «dependa de "
-            "su estadio» solo vale si se repite de una temporada a la siguiente (las cifras, en «Por qué estas variables»).")
+            "su estadio» solo vale si se repite de una temporada a la siguiente y casi no se repite: es más un accidente de la temporada que un rasgo del equipo.")
 
 
 def local_visitante_por_que(df):

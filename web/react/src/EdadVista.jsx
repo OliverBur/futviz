@@ -15,7 +15,7 @@ import { useSitioTema } from "./theme.jsx";
 import { cargarDatos } from "./datos.js";
 import { BotonDescarga } from "./BotonDescarga.jsx";
 import { capturar, descargarPng, nombreArchivo } from "./descargarImagen.js";
-import { Aviso, Cargando, Encabezado, Md, Parrafos, Rotulo } from "./ui.jsx";
+import { Aviso, CajaLectura, Cargando, Encabezado, Md, Parrafos, Rotulo } from "./ui.jsx";
 import { conAlfa } from "./colores.js";
 import { lecturaEdad } from "./edadLectura.js";
 import { miles } from "./stats.js";
@@ -218,20 +218,7 @@ function Vista({ cfg, D, modo, tk }) {
       <Box sx={{ mt: 2, maxWidth: 1040 }}>
         <Rotulo>Qué más mirar</Rotulo>
         <Parrafos texto={cfg.queMirar} sx={{ color: "text.primary" }} />
-        <Box sx={{ mt: 2, pl: 2, borderLeft: 3, borderColor: "success.main" }}>
-          <Typography sx={{ fontSize: 10.5, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase", color: "success.main", mb: 0.75 }}>
-            Con estos filtros · {etiqueta}
-          </Typography>
-          {lectura.map((t, i) => (
-            <Typography key={i} sx={{ fontSize: 14, lineHeight: 1.6, mb: i < lectura.length - 1 ? 1 : 0 }}><Md texto={t} /></Typography>
-          ))}
-        </Box>
-        <details style={{ marginTop: 16, borderTop: "1px solid var(--color-border)", paddingTop: 8 }}>
-          <summary style={{ cursor: "pointer", font: "700 10.5px Inter, system-ui", letterSpacing: ".07em", textTransform: "uppercase", color: "var(--color-muted)", padding: "6px 0" }}>
-            Por qué así
-          </summary>
-          <Parrafos texto={cfg.porQue} sx={{ fontSize: 13.5 }} />
-        </details>
+        <CajaLectura texto={lectura[0]} />
       </Box>
     </>
   );

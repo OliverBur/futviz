@@ -277,7 +277,7 @@ def _scatter(slug, titulo, descripcion, *, x, y, referencia, subtitulo, textos, 
     marcadas al abrir (la lista vacía de siempre = todas menos porteros)."""
     if minimo_por90:
         poblacion = con_minimo_por90(poblacion)
-    que_mirar, por_que = textos
+    que_mirar, _ = textos
     cfg = {
         "tabla": "jugadores", "entidad": "jugadores",
         "x": x, "y": y, "referencia": referencia,
@@ -285,7 +285,7 @@ def _scatter(slug, titulo, descripcion, *, x, y, referencia, subtitulo, textos, 
         "subtitulo": subtitulo,
         "filtros": {"posicion": posicion, "nivel": True, "sub21": True},
         "metricas": _metricas(x, y, referencia),
-        "queMirar": que_mirar(), "porQue": por_que(poblacion),
+        "queMirar": que_mirar(),
         "insight": insight, "fuente": fuente,
         "colorPor": color_por or ["liga"],
     }
@@ -450,7 +450,6 @@ def chart_shot_map():
     cfg = {
         "tabla": "tiros", "fuente": FUENTE_UNDERSTAT, "enCurso": temporadas_en_curso(),
         "queMirar": ins.tiros_que_mirar(),
-        "porQue": ins.tiros_por_que(len(df), descartes["penales"], descartes["fuera"]),
     }
     bajada = "Cada celda es el % de los tiros que salió de ahí, no un conteo: oscuro es una parte grande del total."
     config = {"id": "mapa-tiros", "titulo": "Mapa de calor de los tiros", "bajada": bajada,

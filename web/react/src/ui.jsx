@@ -23,6 +23,19 @@ export function Parrafos({ texto, sx }) {
   ));
 }
 
+// «Con estos filtros»: una sola lectura, chica, de lo que muestra la gráfica con lo que hay elegido.
+export function CajaLectura({ texto }) {
+  if (!texto) return null;
+  return (
+    <Box sx={{ mt: 1.5, pl: 1.5, borderLeft: 2, borderColor: "success.main" }}>
+      <Typography sx={{ fontSize: 10, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase", color: "success.main", mb: 0.25 }}>
+        Con estos filtros
+      </Typography>
+      <Typography sx={{ fontSize: 13, lineHeight: 1.5, color: "text.secondary" }}><Md texto={texto} /></Typography>
+    </Box>
+  );
+}
+
 export const Rotulo = ({ children, ayuda }) => (
   <Typography sx={{ fontSize: 10.5, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase",
     color: "text.secondary", mb: 0.75, display: "flex", alignItems: "center", gap: 0.5 }}>

@@ -450,12 +450,12 @@ def chart_tabla_esperada() -> ChartPage:
     partidos, tiros, fbref = _cargar()
     r = calcular(partidos, tiros, fbref)
     react_views.registrar_payload(SLUG, payload(r))
-    que_mirar, por_que = textos(r)
+    que_mirar, _ = textos(r)
     assert len(BAJADA) <= 108, f"{SLUG}: la bajada mide {len(BAJADA)} caracteres"
     ligas = [l for l in LEAGUE_ORDER if l in set(r["tabla"]["liga"])]
     cfg = {
         "id": SLUG, "titulo": TITULO, "bajada": BAJADA, "pregunta": PREGUNTAS[SLUG], "tabla": SLUG,
-        "queMirar": que_mirar, "porQue": por_que, "fuente": FUENTE_UNDERSTAT,
+        "queMirar": que_mirar, "fuente": FUENTE_UNDERSTAT,
         "ligas": ligas, "ligaInicial": "Premier League" if "Premier League" in ligas else ligas[0],
         "temporadaInicial": r["cerradas"][-1] if r["cerradas"] else r["temporadas"][-1],
     }

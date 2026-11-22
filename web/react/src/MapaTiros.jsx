@@ -28,7 +28,7 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Typography from "@mui/material/Typography";
 import { useSitioTema } from "./theme.jsx";
 import { cargarDatos, useTabla } from "./datos.js";
-import { Aviso, Cargando, Encabezado, Md, Parrafos, Rotulo, sinAcentos } from "./ui.jsx";
+import { Aviso, CajaLectura, Cargando, Encabezado, Md, Parrafos, Rotulo, sinAcentos } from "./ui.jsx";
 import { tiros } from "./insights.js";
 import { agregar, filasDe, lecturaEntidad, sumar } from "./tiros.js";
 import { miles } from "./stats.js";
@@ -412,20 +412,7 @@ function Vista({ cfg, T, modo, tk }) {
       <Box sx={{ mt: 3, maxWidth: 1040 }}>
         <Rotulo>Qué más mirar</Rotulo>
         <Parrafos texto={cfg.queMirar} sx={{ color: "text.primary" }} />
-        <Box sx={{ mt: 2, pl: 2, borderLeft: 3, borderColor: "success.main" }}>
-          <Typography sx={{ fontSize: 10.5, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase", color: "success.main", mb: 0.75 }}>
-            Con estos filtros · {temporada} · {tipo.etiqueta}
-            {Dt && elegido ? ` · ${elegido.nombre}${ver === "equipo" ? (contra ? " (en contra)" : " (a favor)") : ""}` : ""}
-          </Typography>
-          <Typography sx={{ fontSize: 14, lineHeight: 1.6, mb: lectura.salta ? 1 : 0 }}><Md texto={lectura.fija} /></Typography>
-          {lectura.salta && <Typography sx={{ fontSize: 14, lineHeight: 1.6 }}><Md texto={lectura.salta} /></Typography>}
-        </Box>
-        <details style={{ marginTop: 16, borderTop: "1px solid var(--color-border)", paddingTop: 8 }}>
-          <summary style={{ cursor: "pointer", font: "700 10.5px Inter, system-ui", letterSpacing: ".07em", textTransform: "uppercase", color: "var(--color-muted)", padding: "6px 0" }}>
-            Por qué el mapa es así
-          </summary>
-          <Parrafos texto={cfg.porQue} sx={{ fontSize: 13.5 }} />
-        </details>
+        <CajaLectura texto={lectura.fija} />
       </Box>
     </>
   );

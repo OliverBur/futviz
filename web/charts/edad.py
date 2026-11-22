@@ -157,7 +157,7 @@ def textos(r):
     que_mirar = (
         "La línea es la **mediana** y la franja el **rango típico** (percentil 25 a 75): la mitad de los jugadores de esa "
         "edad cae dentro. Las barras de abajo cuentan los jugador-temporadas de cada edad: donde son pocos, la línea se "
-        "mueve más.")
+        "mueve más. Los minutos dependen del equipo y del entrenador, no solo del jugador.")
     por_que = (
         f"**De dónde salen los minutos.** Cada jugador-temporada de las {len(ts)} temporadas cerradas ({ts[0]} a {ts[-1]}) "
         f"se mide contra los minutos que jugó su club ese año (partidos × 90, de FBref). No hay corte de minutos: quien "
@@ -189,12 +189,12 @@ def chart_age() -> ChartPage:
     players, teams = _cargar()
     r = calcular(players, teams)
     react_views.registrar_payload(SLUG, payload(r))
-    que_mirar, por_que = textos(r)
+    que_mirar, _ = textos(r)
     bajada = "Qué parte de los minutos de su club juega cada edad: mediana y rango típico, por posición."
     assert len(bajada) <= 160, f"{SLUG}: la bajada mide {len(bajada)} caracteres"
     cfg = {
         "id": SLUG, "titulo": TITULO, "bajada": bajada, "pregunta": PREGUNTAS[SLUG], "tabla": SLUG,
-        "queMirar": que_mirar, "porQue": por_que,
+        "queMirar": que_mirar,
         "fuente": f"{FUENTE_UNDERSTAT} y {FUENTE_FBREF}",
         "posiciones": [{"id": CAMPO, "etiqueta": ETIQUETA_CAMPO}] + [{"id": p, "etiqueta": p} for p in POSICIONES_MINUTOS[1:]],
         "edades": [EDAD_MIN, EDAD_MAX],

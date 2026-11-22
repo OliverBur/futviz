@@ -223,7 +223,7 @@ def _metricas(x, y, referencia, menos_es_mejor=None):
 def _scatter(df, slug, titulo, descripcion, *, x, y, referencia, subtitulo, textos, insight,
              fuente=FUENTE_XG, menos_es_mejor=None):
     """Un scatter de equipos con el par fijo."""
-    que_mirar, por_que = textos
+    que_mirar, _ = textos
     return _pagina(slug, titulo, descripcion, {
         "tabla": "equipos", "entidad": "equipos",
         "x": x, "y": y,
@@ -232,7 +232,7 @@ def _scatter(df, slug, titulo, descripcion, *, x, y, referencia, subtitulo, text
         "subtitulo": subtitulo,
         "filtros": {"nivel": True},
         "metricas": _metricas(x, y, referencia, menos_es_mejor),
-        "queMirar": que_mirar(), "porQue": por_que(df),
+        "queMirar": que_mirar(),
         "insight": insight, "fuente": fuente, "colorPor": ["liga"],
     })
 

@@ -161,8 +161,6 @@ function Vista({ cfg, D, modo, tk }) {
     });
   };
 
-  const resumenDetalle = { cursor: "pointer", font: "700 10.5px Inter, system-ui", letterSpacing: ".07em", textTransform: "uppercase", color: "var(--color-muted)", padding: "6px 0" };
-
   return (
     <>
       <Box sx={{
@@ -272,10 +270,6 @@ function Vista({ cfg, D, modo, tk }) {
       <Box sx={{ mt: 3, maxWidth: 1040 }}>
         <Rotulo>Qué más mirar</Rotulo>
         <Parrafos texto={cfg.queMirar} sx={{ color: "text.primary" }} />
-        <details style={{ marginTop: 16, borderTop: "1px solid var(--color-border)", paddingTop: 8 }}>
-          <summary style={resumenDetalle}>Por qué así</summary>
-          <Parrafos texto={cfg.porQue} sx={{ fontSize: 13.5 }} />
-        </details>
       </Box>
     </>
   );

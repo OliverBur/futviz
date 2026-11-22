@@ -44,7 +44,7 @@ import { Ranking } from "./Ranking.jsx";
 import { Posiciones } from "./Posiciones.jsx";
 import { BotonDescarga } from "./BotonDescarga.jsx";
 import { capturar, descargarPng, limpiarDispersion, nombreArchivo } from "./descargarImagen.js";
-import { Aviso, Cargando, Encabezado, Md, Parrafos, Rotulo, sinAcentos } from "./ui.jsx";
+import { Aviso, CajaLectura, Cargando, Encabezado, Parrafos, Rotulo, sinAcentos } from "./ui.jsx";
 import { acercar, ajustarA, centrarEn, esBase, vistaDeZona, zonaDe } from "./zoom.js";
 import { TOPE_DIF, colorRendimiento, conAlfa, divergente } from "./colores.js";
 import { cuantil, media } from "./stats.js";
@@ -419,9 +419,6 @@ function Vista({ cfg, T, modo, tk }) {
     y: exp && colY !== exp.y ? colY : null,
   });
   const sinPorteros = !posiciones.length && posDisp.includes("Portero");
-  const estado = [tLabel, todasLigas ? "todas las ligas" : ambito,
-    ...(posiciones.length ? posiciones : sinPorteros ? ["sin porteros"] : []), club >= 0 ? T.equipos[club] : null, nivel !== "todos" ? nivel.replace("Clubes ", "clubes ") : null, sub21 ? "sub-21" : null]
-    .filter(Boolean).join(" · ");
 
   const info = useCallback((r) => ({
     nombre: T.nombre(r),
@@ -757,29 +754,15 @@ function Vista({ cfg, T, modo, tk }) {
             <Parrafos texto={cfg.queMirar} sx={{ color: "text.primary" }} />
           </>
         )}
-        {lectura && (
-          <Box sx={{ mt: cfg.queMirar ? 2 : 0, pl: 2, borderLeft: 3, borderColor: "success.main" }}>
-            <Typography sx={{ fontSize: 10.5, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase", color: "success.main", mb: 0.75 }}>
-              Con estos filtros · {estado}
-            </Typography>
-            <Typography sx={{ fontSize: 14, lineHeight: 1.6, mb: lectura.salta ? 1 : 0 }}><Md texto={lectura.fija} /></Typography>
-            {lectura.salta && <Typography sx={{ fontSize: 14, lineHeight: 1.6 }}><Md texto={lectura.salta} /></Typography>}
-            {jornadas && (
-              <Typography sx={{ fontSize: 13, lineHeight: 1.55, mt: 1, color: "text.secondary" }}>
-                {tLabel} va en curso ({jornadas} jornadas): con tan pocos partidos, los extremos cambian mucho de una
-                semana a otra. Para sacar conclusiones, mejor una temporada cerrada.
-              </Typography>
-            )}
-          </Box>
-        )}
-        {(cfg.porQue || exp) && (
+        {lectura && <CajaLectura texto={exp ? lectura.fija : (lectura.salta || lectura.fija)} />}
+        {exp && (
           <Accordion disableGutters elevation={0} square sx={{ mt: 2, bgcolor: "transparent", "&:before": { display: "none" },
             borderTop: 1, borderColor: "divider" }}>
             <AccordionSummary expandIcon={<ExpandMore />} sx={{ px: 0 }}>
-              <Rotulo>{exp ? "Qué no dice el r²" : "Por qué estas variables"}</Rotulo>
+              <Rotulo>Qué no dice el r²</Rotulo>
             </AccordionSummary>
             <AccordionDetails sx={{ px: 0 }}>
-              <Parrafos texto={exp ? (exp.nota ? OJO_R2 + "\n\n" + exp.nota : OJO_R2) : cfg.porQue} sx={{ fontSize: 13.5 }} />
+              <Parrafos texto={exp.nota ? OJO_R2 + "\n\n" + exp.nota : OJO_R2} sx={{ fontSize: 13.5 }} />
             </AccordionDetails>
           </Accordion>
         )}
