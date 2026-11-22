@@ -404,7 +404,7 @@ function Vista({ cfg, T, modo, tk }) {
                   <MenuItem key={t.id} value={t.id} sx={{ fontSize: 13 }}>{t.etiqueta}</MenuItem>)),
               ])}
             </TextField>
-            <Typography sx={{ fontSize: 11.5, color: "text.secondary", mt: 0.5 }}>{T.hint}</Typography>
+            {tipoId === "Set Piece" && <Typography sx={{ fontSize: 11.5, color: "text.secondary", mt: 0.5 }}>{T.hint}</Typography>}
           </Box>
         </Box>
       </Box>
