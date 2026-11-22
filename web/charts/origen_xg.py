@@ -226,10 +226,9 @@ def textos(r):
     seg = ETIQUETAS
     que_mirar = (
         "De dónde sale el xG de cada equipo.\n"
-        "- Cada barra reparte el xG según cómo nació la ocasión\n"
-        f"- Gris: jugada abierta; colores: {seg['corner'].lower()}, {seg['libre'].lower()} y {seg['otro'].lower()}\n"
-        "- «% del xG»: cuánto depende de cada vía; «xG por partido»: cuánto produce por ella\n"
-        "- «A favor»: tiros que hace el equipo; «En contra»: los que le hacen")
+        "- Cada barra reparte el xG de un equipo según cómo nació la ocasión: jugada abierta, córner, tiro libre directo u otro balón parado.\n"
+        "- «% del xG» muestra de qué depende el equipo; «xG por partido», cuánto produce por cada vía.\n"
+        "- «A favor» son los tiros que hace el equipo y «En contra», los que recibe.")
     por_que = (
         f"**Los segmentos.** Salen de la jugada con que Understat etiqueta cada tiro: **{seg['abierta']}** (juego en "
         f"movimiento), **{seg['corner']}** (saque de esquina), **{seg['libre']}** (remate directo de una falta) y "

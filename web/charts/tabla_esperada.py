@@ -400,9 +400,9 @@ def textos(r):
     pj = r["tabla"].groupby("temporada")["pj"].agg(["min", "max"])
     que_mirar = (
         "Puntos reales de cada equipo frente a los que valían sus ocasiones (xPts).\n"
-        "- Punto relleno: puntos reales; anillo: puntos esperados\n"
-        "- Línea azul: sumó más de lo esperado; roja: sumó menos\n"
-        "- A la derecha: el lugar que ocuparía por xPts y cuántos lugares está por encima (+) o por debajo (−)")
+        "- El punto relleno son los puntos reales del equipo y el anillo los que valían sus ocasiones partido a partido (xPts).\n"
+        "- La línea que los une es la diferencia: azul si sumó más de lo esperado, roja si sumó menos.\n"
+        "- A la derecha va el lugar que ocuparía por xPts y cuántos lugares está por encima (+) o por debajo (−).")
     ausentes = ""
     if sin_tiros:
         ausentes = (f" Hay {_n(len(sin_tiros))} partido{'s' if len(sin_tiros) != 1 else ''} de {_n(n_tot)} sin un solo tiro "

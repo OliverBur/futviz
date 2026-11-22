@@ -714,11 +714,9 @@ def asist_xa(df, season, liga=None):
 def perfil_que_mirar():
     return (
         "Quién remata (xG) y quién crea (xA), por 90 minutos.\n"
-        "- Arriba a la derecha: crean y rematan mucho\n"
-        "- Arriba a la izquierda: crean mucho pero rematan poco\n"
-        "- Abajo a la derecha: rematan mucho pero crean poco\n"
-        "- Abajo a la izquierda: crean y rematan poco\n"
-        "- Las líneas marcan el 20% más alto de cada eje")
+        "- El eje horizontal mide cuánto peligro genera con sus propios tiros (xG) y el vertical cuánto genera para otros con sus pases (xA).\n"
+        "- Las líneas marcan el 20% más alto de cada eje: pasar una de ellas ya es destacar en esa faceta.\n"
+        "- Cada punto es un jugador de la temporada elegida; pasa el cursor para ver sus cifras y toca uno para resaltarlo.")
 
 
 def perfil_por_que(df):
@@ -1090,11 +1088,10 @@ def miles(n):
 
 def tiros_que_mirar():
     return (
-        "De dónde se tira: el color reparte el 100% de los tiros que ves entre celdas de 2×2 m.\n"
-        "- El mapa mira hacia la portería: la línea de fondo es el borde de arriba\n"
-        "- Celda oscura: de ahí salió una parte grande de los tiros, no «muchos» tiros\n"
-        "- Pasa el mouse sobre una celda para ver cuántos tiros salieron y cuántos fueron gol\n"
-        "- «Ver» cambia el mapa por los tiros de un jugador o de un equipo, uno por uno: lleno si fue gol, más grande cuanto más valía")
+        "De dónde se tira en las 5 ligas.\n"
+        "- El mapa mira hacia la portería: la línea de fondo es el borde de arriba y los rectángulos, las áreas grande y chica.\n"
+        "- El color reparte el 100% de los tiros que ves entre celdas de 2×2 m: oscuro es una parte grande del total, no «muchos tiros».\n"
+        "- Con «Ver» cada punto es un remate de un jugador o equipo: lleno si fue gol, más grande cuanto más valía la ocasión.")
 
 
 def tiros_por_que(n_mapa, n_penales, n_fuera):
@@ -1253,13 +1250,9 @@ def pases_clave(df, season, liga=None):
 def construir_que_mirar():
     return (
         "Quién arma las jugadas de tiro (construcción) y quién las termina (producción).\n"
-        "- Construcción: xG de las jugadas en que participa sin tirar ni dar el último pase\n"
-        "- Producción: xG + xA\n"
-        "- Arriba a la derecha: construyen y producen mucho\n"
-        "- Arriba a la izquierda: producen mucho sin construir\n"
-        "- Abajo a la derecha: construyen mucho sin producir\n"
-        "- Abajo a la izquierda: construyen y producen poco\n"
-        "- Las líneas marcan el 20% más alto de cada eje")
+        "- La construcción es el xG de las jugadas de tiro en las que participa sin tirar ni dar el último pase.\n"
+        "- La producción suma el xG de sus tiros y el xA de sus pases: lo que genera de forma directa.\n"
+        "- Las líneas marcan el 20% más alto de cada eje: arriba a la derecha quedan los pocos que construyen y también terminan.")
 
 
 def construir_por_que(df):
@@ -1320,12 +1313,9 @@ def _corte90():
 def xg_goles_90_que_mirar():
     return (
         "Goles de cada jugador frente a su xG, por 90 minutos y sin penales.\n"
-        "- Arriba a la derecha: muchas ocasiones y las meten\n"
-        "- Arriba a la izquierda: pocas ocasiones pero las meten\n"
-        "- Abajo a la derecha: muchas ocasiones pero las fallan\n"
-        "- Abajo a la izquierda: pocas ocasiones y las fallan\n"
-        "- La línea vertical deja a su derecha al 30% con más xG\n"
-        "- Sobre la diagonal: marcó más de lo que valían sus ocasiones")
+        "- Horizontal: el xG, la probabilidad de gol de sus tiros según desde dónde y cómo remató. Vertical: los goles que de verdad marcó.\n"
+        "- La diagonal es el punto en que marcó justo lo que valían sus ocasiones: arriba lo supera y abajo se queda corto.\n"
+        "- La línea vertical deja a su derecha al 30% con más xG de los jugadores que ves, los que más ocasiones generan.")
 
 
 def xg_goles_90_por_que(df):
@@ -1370,12 +1360,9 @@ def xg_goles_90(df, season, liga=None):
 def xa_asist_90_que_mirar():
     return (
         "Asistencias de cada jugador frente a su xA, por 90 minutos.\n"
-        "- Arriba a la derecha: crean mucho y les anotan\n"
-        "- Arriba a la izquierda: crean poco pero les anotan\n"
-        "- Abajo a la derecha: crean mucho y les fallan\n"
-        "- Abajo a la izquierda: crean poco y les fallan\n"
-        "- La línea vertical deja a su derecha al 20% con más xA\n"
-        "- Sobre la diagonal: dio más asistencias de las esperadas")
+        "- El xA mide el peligro de los pases de gol: la probabilidad de que el tiro que habilitó termine en gol.\n"
+        "- La diagonal marca las asistencias que cabría esperar de ese xA; arriba, sus compañeros convirtieron más de lo que valían los pases.\n"
+        "- La línea vertical deja a su derecha al 20% con más xA, los que más peligro crean con sus pases.")
 
 
 def xa_asist_90_por_que(df):
@@ -1408,12 +1395,9 @@ def xa_asist_90(df, season, liga=None):
 def pases_asist_que_mirar():
     return (
         "Pases clave de cada jugador frente a sus asistencias, por 90 minutos.\n"
-        "- Pase clave: el que termina en tiro; asistencia: el que termina en gol\n"
-        "- Arriba a la derecha: muchos pases clave y asistencias\n"
-        "- Arriba a la izquierda: pocos pases clave pero con gol\n"
-        "- Abajo a la derecha: muchos pases clave pero sin gol\n"
-        "- Abajo a la izquierda: pocos pases y pocas asistencias\n"
-        "- Las líneas marcan el 20% más alto de cada eje")
+        "- Un pase clave es el que termina en tiro y una asistencia, el que termina en gol; toda asistencia cuenta también como pase clave.\n"
+        "- El eje horizontal mide cuánto crea el jugador y el vertical cuánto de eso acaba en gol.\n"
+        "- Las líneas marcan el 20% más alto de cada eje: arriba a la derecha quedan los que más crean y más convierten.")
 
 
 def pases_asist_por_que(df):
@@ -1456,12 +1440,9 @@ def pases_asist(df, season, liga=None):
 def cover_stopper_que_mirar():
     return (
         "Cada defensa frente a los de su temporada, en percentiles de 0 a 100.\n"
-        "- Corte: entradas ganadas y faltas; cobertura: intercepciones\n"
-        "- Arriba a la derecha: destacan en las dos\n"
-        "- Arriba a la izquierda: van más al choque\n"
-        "- Abajo a la derecha: leen más el pase\n"
-        "- Abajo a la izquierda: no destacan en ninguna\n"
-        "- Las líneas están en el percentil 70")
+        "- El corte promedia dos percentiles, entradas ganadas y faltas por 90 minutos: qué tanto va el defensa al choque.\n"
+        "- La cobertura es el percentil de intercepciones por 90 minutos: qué tanto lee el pase y se anticipa.\n"
+        "- Los dos ejes van de 0 a 100 frente a los defensas de la misma temporada; las líneas están en 70.")
 
 
 def cover_stopper_por_que(df):
@@ -1604,9 +1585,8 @@ def _se_repite(p):
 def definicion_que_mirar():
     return (
         "Goles de cada equipo frente a su xG, por partido.\n"
-        "- Sobre la diagonal: marca más de lo esperado\n"
-        "- Debajo de la diagonal: marca menos de lo esperado\n"
-        "- La distancia a la diagonal es la diferencia entre goles y xG")
+        "- El eje horizontal es el xG por partido, las ocasiones que crea; el vertical, los goles que marca, sin penales.\n"
+        "- La diagonal es el punto en que marca justo lo que valían sus ocasiones: sobre ella, de más; debajo, de menos.")
 
 
 def definicion_por_que(df):
@@ -1661,11 +1641,9 @@ def definicion(df, season, liga=None):
 def creacion_que_mirar():
     return (
         "Cuánto xG crea cada equipo frente al que concede, por partido.\n"
-        "- Arriba a la derecha: crean mucho y conceden poco\n"
-        "- Arriba a la izquierda: partidos cerrados\n"
-        "- Abajo a la derecha: partidos abiertos\n"
-        "- Abajo a la izquierda: dominan los rivales\n"
-        "- El eje vertical va al revés: arriba, menos xG en contra")
+        "- El eje horizontal es el xG que crea el equipo por partido y el vertical, el xG que concede.\n"
+        "- El eje vertical va al revés: cuanto más arriba, menos xG concede, así que arriba a la derecha están los que dominan.\n"
+        "- Las líneas están en el promedio de cada eje; el xG cuenta ocasiones, no goles, y no incluye penales.")
 
 
 def creacion_por_que(df):
@@ -1713,9 +1691,9 @@ def creacion(df, season, liga=None):
 def defensa_que_mirar():
     return (
         "Goles que recibe cada equipo frente a los que valían las ocasiones que concede.\n"
-        "- Los dos ejes van al revés: arriba a la derecha, los mejores\n"
-        "- Sobre la diagonal: recibe menos goles de los esperados\n"
-        "- Debajo de la diagonal: recibe más")
+        "- El eje horizontal es el xG que concede por partido y el vertical los goles que recibe; los dos van al revés.\n"
+        "- Sobre la diagonal recibe menos goles de los que valían las ocasiones que concede; debajo de ella, más.\n"
+        "- Cuanto más arriba y a la derecha, menos ocasiones concede y menos goles recibe.")
 
 
 def defensa_por_que(df):
@@ -1765,10 +1743,9 @@ def defensa(df, season, liga=None):
 def puntos_que_mirar():
     return (
         "Puntos por partido de cada equipo frente a su diferencia de xG.\n"
-        "- Arriba a la derecha: juegan bien y suman\n"
-        "- Arriba a la izquierda: suman más de lo que juegan\n"
-        "- Abajo a la derecha: suman menos de lo que juegan\n"
-        "- Abajo a la izquierda: ni juegan bien ni suman")
+        "- El eje horizontal es la diferencia de xG por partido (el que crea menos el que concede); el vertical, los puntos por partido.\n"
+        "- Los equipos suelen seguir una nube que sube de izquierda a derecha: más diferencia de xG, más puntos.\n"
+        "- Los que se alejan de esa nube sumaron más puntos, o menos, de los que su juego explica.")
 
 
 def puntos_por_que(df):
@@ -1849,11 +1826,9 @@ def _frase_en_curso(df, extra=""):
 def cantidad_calidad_que_mirar():
     return (
         "Cuántos tiros hace cada equipo y qué tan buenos son, por partido.\n"
-        "- Arriba a la derecha: muchos tiros y buena calidad\n"
-        "- Arriba a la izquierda: pocos tiros pero buena calidad\n"
-        "- Abajo a la derecha: muchos tiros pero poca calidad\n"
-        "- Abajo a la izquierda: pocos tiros y poca calidad\n"
-        "- Las líneas marcan el 20% más alto de cada eje")
+        "- El eje horizontal son los tiros por partido y el vertical el xG por tiro: qué tan buenos son, en promedio, sus remates.\n"
+        "- Multiplicar los dos ejes da el xG a favor por partido de «Ocasiones a favor y en contra».\n"
+        "- Las líneas marcan el 20% más alto de cada eje, entre los equipos que ves.")
 
 
 def cantidad_calidad_por_que(df):
@@ -1881,11 +1856,9 @@ def cantidad_calidad_por_que(df):
 def local_visitante_que_mirar():
     return (
         "Diferencia de xG de cada equipo de local frente a de visitante.\n"
-        "- Arriba a la derecha: dominan de local y de visita\n"
-        "- Arriba a la izquierda: dominan solo de visita\n"
-        "- Abajo a la derecha: dominan solo de local\n"
-        "- Abajo a la izquierda: sufren de local y de visita\n"
-        "- Las líneas están en cero")
+        "- Cada eje es la diferencia de xG por partido (xG a favor menos xG en contra) en una sede: horizontal de local, vertical de visitante.\n"
+        "- Las líneas están en cero: a la derecha y arriba el equipo crea más de lo que concede en esa sede.\n"
+        "- Cada punto es un equipo de la temporada elegida; su posición dice cómo le fue en cada sede.")
 
 
 def local_visitante_por_que(df):
@@ -1928,6 +1901,6 @@ def local_visitante_por_que(df):
 def nivel_liga_equipos_que_mirar():
     return (
         "Qué liga está más arriba y qué tan parejos son sus equipos.\n"
-        "- Cada punto: un equipo\n"
-        "- Caja: donde cae la mitad central de los equipos de la liga\n"
-        "- La raya de la caja: el valor típico (la mediana)")
+        "- Cada punto es un equipo; el eje vertical es la variable que elijas, con la misma escala en todas las ligas y temporadas.\n"
+        "- La banda contiene a la mitad central de los equipos de la liga y la raya marca su mediana.\n"
+        "- Una banda más ancha significa equipos menos parejos; una raya más alta, un nivel típico mayor.")
