@@ -81,3 +81,11 @@ Datos: la tabla de equipos (FBref) y la de jugadores. **Esfuerzo:** alto.
 | Fuentes con doble clic (`file://`) | El navegador bloquea las fuentes locales y el texto cae en la del sistema. Solo afecta a abrir el sitio sin servidor. |
 | Fixtures de las pruebas de React | `web/react/test/fixtures` tiene el gris viejo del par divergente; se regeneran con `gen_paridad.py`. |
 | Artículo "Valores de jugadores" | Anunciado como "Próximamente" en el lector de ML y en la portada. |
+
+## 7. Venn de equipos y refinar los círculos — idea (2026-11-22)
+
+Sin decidir ni empezar. Tres ideas que salieron juntas; el orden recomendado es 1 → 2 → 3.
+
+1. **Refinar las variables y los círculos del Venn, de jugadores y de equipos.** Es lo que el usuario cree que conviene primero. Problemas conocidos del Venn de jugadores: «Presiona» mide solo entradas ganadas + intercepciones (no hay despejes, bloqueos ni duelos aéreos); «Aporta en ataque» incluye penales en defensas y medios; «Construye» refleja más al club que al jugador; los criterios están correlacionados entre sí, así que los círculos se solapan más por eso que por perfil.
+2. **Quitar «Puntos vs. diferencia de xG» de Equipos y poner en su lugar un Venn de equipos** (equivalente al «jugador completo»: círculos por ataque, creación y defensa, con percentil dentro de liga y temporada y el mismo deslizador de corte). La tabla «tabla vs tabla xG» ya cubre lo que esa dispersión contaba. Dónde tocar al quitarla: `chart_points_vs_xg` y su grupo «Contexto» en `web/charts/teams.py`; `puntos-vs-xg` en `web/charts/preguntas.py`; `PRIORIDAD_EQUIPO` en `web/landing.py`; `ALIAS_VISTAS` en `web/section_views.py` (redirigir el enlace viejo); `puntos_*` en `code/insights.py` y `web/react/src/insights.js`; las pruebas que lo mencionen.
+3. **Variables a medida (más adelante y con dudas).** Dos caminos: (a) percentiles sobre un PCA de ciertas variables, o (b) que el usuario elija o mueva las variables para armar un Venn propio (como «Crea tu gráfico»). El PCA resume bien pero cada componente pierde el nombre entendible («Recupera», «Construye»), que es justo lo que hace legible el Venn. El camino (b) conserva los nombres y es más coherente con el sitio.
