@@ -43,9 +43,11 @@ export function Posiciones({ opciones, colores, valor, onChange, modo, etiqueta 
         })}
       </ToggleButtonGroup>
       {/* Sin ninguna marcada se ven todas (menos los porteros, si hay); decirlo evita leer "nada seleccionado" como "nada". */}
-      <Typography sx={{ fontSize: 11.5, color: "text.secondary", mt: 0.5 }}>
-        {valor.length ? valor.join(" + ") : hayPortero ? "Todas, sin porteros. Marca Portero para incluirlos." : "Todas las posiciones"}
-      </Typography>
+      {!valor.length && (
+        <Typography sx={{ fontSize: 11.5, color: "text.secondary", mt: 0.5 }}>
+          {hayPortero ? "Todas, sin porteros. Marca Portero para incluirlos." : "Todas las posiciones"}
+        </Typography>
+      )}
     </>
   );
 }
