@@ -80,7 +80,7 @@ function Vista({ cfg, D, modo, tk }) {
   const ligas = D.colores[paleta], circ = D.coloresCirculo[paleta];
 
   const V = useMemo(() => calcular(D, venn, temp, corte), [D, venn, temp, corte]);
-  const pills = useMemo(() => pastillas(venn, V.cut, corte, compacto ? 1.9 : 1), [venn, V, corte, compacto]);
+  const pills = useMemo(() => pastillas(venn, compacto ? 1.9 : 1), [venn, compacto]);
   const fichas = useMemo(() => acomodar(V.reg, pills.map((p) => p.bloq), compacto), [V, pills, compacto]);
   const L = useMemo(() => lectura(V), [V]);
   const enVista = buscado && V.pop.some((r) => r[0] === buscado) ? buscado : null;
@@ -152,7 +152,7 @@ function Vista({ cfg, D, modo, tk }) {
   const solos = [1, 2, 4];
 
   const descargar = () => {
-    const pn = pastillas(venn, V.cut, corte, 1, true);
+    const pn = pastillas(venn, 1);
     const full = acomodar(V.reg, pn.map((p) => p.bloq), false);
     const [vx, vy, vw, vh] = VIEWBOX.split(" ").map(Number);
     return descargarPng({

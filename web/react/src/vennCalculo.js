@@ -38,21 +38,20 @@ export function calcular(D, venn, temp, corte) {
   const pos = D.posiciones.indexOf(venn.pos);
   const col = (s) => D.prefijo + D.medidas.indexOf(s.col);
   const pop = D.temporadas[temp].jug.filter((r) => r[3] === pos);
-  // `inv`: menos es mejor (xG en contra): el percentil sale del signo cambiado y el corte en valor es un máximo.
+  // `inv`: menos es mejor (xG en contra): el percentil sale del signo cambiado.
   const P3 = venn.sets.map((s) => pcts(pop.map((r) => (s.inv ? -r[col(s)] : r[col(s)]))));
   const reg = [null, [], [], [], [], [], [], []];
-  const cut = venn.sets.map((s) => (s.inv ? -Infinity : Infinity));
   const miembros = [];
   pop.forEach((r, k) => {
     let m = 0, suma = 0, nb = 0;
-    venn.sets.forEach((s, j) => {
-      if (P3[j][k] >= 1 - q) { m |= 1 << j; suma += P3[j][k]; nb++; if (s.inv ? r[col(s)] > cut[j] : r[col(s)] < cut[j]) cut[j] = r[col(s)]; }
+    venn.sets.forEach((_s, j) => {
+      if (P3[j][k] >= 1 - q) { m |= 1 << j; suma += P3[j][k]; nb++; }
     });
     if (m) { const it = { r, k, m, score: suma / nb, p: P3.map((c) => c[k]) }; reg[m].push(it); miembros.push(it); }
   });
   for (let m = 1; m < 8; m++) reg[m].sort((a, b) => b.score - a.score);
   const corr = [[0, 1], [0, 2], [1, 2]].map(([a, b]) => ({ a, b, r: pearson(P3[a], P3[b]) }));
-  return { venn, pop, P3, reg, cut, miembros, corr, q, col };
+  return { venn, pop, P3, reg, miembros, corr, q, col };
 }
 
 // ---- acomodo de las fichas dentro de cada región ----------------------------------------------------
@@ -137,14 +136,12 @@ export function acomodar(reg, bloq, compacto) {
 }
 
 // ---- las pastillas con el nombre de cada círculo ----------------------------------------------------
-export function pastillas(venn, cut, corte, k = 1, soloNombre = false) {
+export function pastillas(venn, k = 1) {
   return venn.sets.map((s, j) => {
-    const dec = s.dec ?? 2;
-    const linea = `top ${corte}% · ${s.inv ? "≤" : "≥"} ${(Math.abs(cut[j]) === Infinity ? 0 : cut[j]).toFixed(dec)}`;
-    const w = (Math.max(s.nombre.length * (soloNombre ? 10.5 : 9), soloNombre ? 0 : linea.length * 6.6) + (soloNombre ? 34 : 30)) * k;
-    const medio = (soloNombre ? 22 : 31) * k;
+    const w = (s.nombre.length * 10.5 + 34) * k;
+    const medio = 22 * k;
     const [x, y] = [CEN[j][0], j === 0 ? CEN[0][1] - R : CEN[j][1] + R];
-    return { j, k, nombre: s.nombre, linea, solo: soloNombre, w, x, y, bloq: { x0: x - w / 2 - 6, x1: x + w / 2 + 6, y0: y - medio, y1: y + medio } };
+    return { j, k, nombre: s.nombre, w, x, y, bloq: { x0: x - w / 2 - 6, x1: x + w / 2 + 6, y0: y - medio, y1: y + medio } };
   });
 }
 

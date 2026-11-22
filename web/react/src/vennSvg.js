@@ -64,15 +64,11 @@ export function construirSvg(ctx) {
     return `<g data-i="${i}" transform="translate(${f.x},${f.y})"><circle r="${lv.r}" fill="${ligas[r[2]]}" stroke="${trazo}" stroke-width="${ancho}"/>${ini}${nom}</g>`;
   }).join("");
 
+  // Cada círculo lleva solo su nombre: el corte ya está en el control y la medida, en «Qué mide cada círculo».
   const pastillas = pills.map((p) => {
     const k = p.k;
-    if (p.solo) {      // la imagen que se descarga: solo el nombre del círculo (el corte ya está en el subtítulo)
-      return `<g><rect x="${p.x - p.w / 2}" y="${p.y - 19 * k}" width="${p.w}" height="${38 * k}" rx="${14 * k}" fill="${aro}" stroke="${circ[p.j]}" stroke-width="2.5"/>`
-        + `<text x="${p.x}" y="${p.y + 5.5 * k}" text-anchor="middle" font-size="${16 * k}" font-weight="700" fill="${tk.primary}">${esc(p.nombre)}</text></g>`;
-    }
-    return `<g><rect x="${p.x - p.w / 2}" y="${p.y - 25 * k}" width="${p.w}" height="${50 * k}" rx="${14 * k}" fill="${aro}" stroke="${circ[p.j]}" stroke-width="${2.5 * (k > 1 ? 1.4 : 1)}"/>`
-      + `<text x="${p.x}" y="${p.y - 3 * k}" text-anchor="middle" font-size="${15 * k}" font-weight="700" fill="${tk.primary}">${esc(p.nombre)}</text>`
-      + `<text x="${p.x}" y="${p.y + 14 * k}" text-anchor="middle" font-size="${11.5 * k}" fill="${tk.muted}">${esc(p.linea)}</text></g>`;
+    return `<g><rect x="${p.x - p.w / 2}" y="${p.y - 19 * k}" width="${p.w}" height="${38 * k}" rx="${14 * k}" fill="${aro}" stroke="${circ[p.j]}" stroke-width="${2.5 * (k > 1 ? 1.4 : 1)}"/>`
+      + `<text x="${p.x}" y="${p.y + 5.5 * k}" text-anchor="middle" font-size="${16 * k}" font-weight="700" fill="${tk.primary}">${esc(p.nombre)}</text></g>`;
   }).join("");
 
   return circulos + vacias + chips + pastillas;
