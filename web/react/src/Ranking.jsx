@@ -24,9 +24,9 @@ export function Ranking({ metricas, metrica, onMetrica, filas, nombre, equipo, v
           <ToggleButton key={m.id} value={m.id} sx={{ px: 0.5, fontSize: "11.5px !important" }}>{m.etiqueta}</ToggleButton>
         ))}
       </ToggleButtonGroup>
-      <Typography sx={{ fontSize: 11.5, color: "text.secondary", mt: 0.5, mb: 0.5 }}>
-        {actual.ayuda}{enZoom ? " · dentro del zoom" : ""}
-      </Typography>
+      {enZoom && (
+        <Typography sx={{ fontSize: 11.5, color: "text.secondary", mt: 0.5, mb: 0.5 }}>Dentro del zoom</Typography>
+      )}
 
       {encabezado && (
         <Typography sx={{ fontSize: 11, fontWeight: 600, color: "text.secondary", textAlign: "right", mb: 0.25 }}>
