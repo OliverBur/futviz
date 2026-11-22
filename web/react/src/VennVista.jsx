@@ -28,6 +28,7 @@ const ANCHO_COMPACTO = 540;   // por debajo, las fichas van sin nombre (a esa es
 const MAX_NOMBRES = 14;       // los que se listan por cruce antes de mandar a la tabla
 const NF = new Intl.NumberFormat("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const f2 = (v) => NF.format(v);
+const fdec = (v, dec = 2) => v.toLocaleString("es-MX", { minimumFractionDigits: dec, maximumFractionDigits: dec });
 const signo = (v) => (v < 0 ? "−" : "+") + NF.format(Math.abs(v));
 const dec1 = (v) => v.toFixed(1).replace(".", ",");
 
@@ -86,7 +87,9 @@ function Vista({ cfg, D, modo, tk }) {
   // Un jugador que ya no está en la vista (otra posición o temporada) se suelta en vez de quedarse pegado al buscador.
   useEffect(() => { if (buscado && !enVista) setBuscado(null); }, [buscado, enVista]);
 
-  const contexto = { fichas, pills, reg: V.reg, tk, ligas, circ, buscado: enVista };
+  const equipo = !!cfg.equipo;      // la misma vista sirve a «Equipo completo»: sin posición ni minutos
+  const ambito = cfg.ambito || "de su posición";
+  const contexto = { fichas, pills, reg: V.reg, tk, ligas, circ, buscado: enVista, equipo };
   const svg = useMemo(() => construirSvg({ ...contexto, hover: hover ? hover.i : null }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [fichas, pills, V, tk, ligas, circ, enVista, hover ? hover.i : null]);
@@ -100,7 +103,7 @@ function Vista({ cfg, D, modo, tk }) {
   const N = V.pop.length;
   const minimo = D.temporadas[temp].minimo;
   const enCurso = D.enCurso.includes(temp);
-  const sub = `${venn.sets.map((s) => s.nombre).join(" · ")} · ${temp}${enCurso ? " (en curso)" : ""} · mínimo ${miles(minimo)} minutos · ${miles(N)} ${venn.plural}`;
+  const sub = `${venn.sets.map((s) => s.nombre).join(" · ")} · ${temp}${enCurso ? " (en curso)" : ""}${equipo ? "" : ` · mínimo ${miles(minimo)} minutos`} · ${miles(N)} ${venn.plural}`;
 
   // el estado del buscador
   const estado = (() => {
@@ -111,7 +114,7 @@ function Vista({ cfg, D, modo, tk }) {
     let m = 0;
     venn.sets.forEach((s, j) => { if (V.P3[j][k] >= 1 - V.q) m |= 1 << j; });
     const ps = venn.sets.map((s, j) => `${s.nombre} P${Math.round(V.P3[j][k] * 100)}`).join(" · ");
-    return `${r[0]} (${r[1]}): ${m ? "está en " + regionTxt(m, venn) : "no pasa ningún corte"} · ${ps}`;
+    return `${r[0]}${equipo ? "" : ` (${r[1]})`}: ${m ? "está en " + regionTxt(m, venn) : "no pasa ningún corte"} · ${ps}`;
   })();
 
   // ---- tooltip ----
@@ -129,13 +132,13 @@ function Vista({ cfg, D, modo, tk }) {
       ) : (
         <>
           <Box sx={{ fontWeight: 700 }}>{f.it.r[0]}</Box>
-          <Box sx={{ color: "text.secondary", fontSize: 11.5, mb: 0.5 }}>{f.it.r[1]} · {D.ligas[f.it.r[2]]} · {miles(f.it.r[4])} min</Box>
+          <Box sx={{ color: "text.secondary", fontSize: 11.5, mb: 0.5 }}>{equipo ? `${D.ligas[f.it.r[2]]} · ${miles(f.it.r[4])} partidos` : `${f.it.r[1]} · ${D.ligas[f.it.r[2]]} · ${miles(f.it.r[4])} min`}</Box>
           {venn.sets.map((s, j) => {
             const ok = f.it.m & (1 << j);
             return (
               <Box key={s.nombre} sx={{ display: "flex", justifyContent: "space-between", gap: 1, fontWeight: ok ? 700 : 400 }}>
                 <span>{ok ? "✓ " : ""}{s.nombre}</span>
-                <span>{f2(f.it.r[V.col(s)])} · P{Math.round(f.it.p[j] * 100)}</span>
+                <span>{fdec(f.it.r[V.col(s)], s.dec ?? 2)} · P{Math.round(f.it.p[j] * 100)}</span>
               </Box>
             );
           })}
@@ -154,7 +157,7 @@ function Vista({ cfg, D, modo, tk }) {
     const [vx, vy, vw, vh] = VIEWBOX.split(" ").map(Number);
     return descargarPng({
       interior: construirSvg({ ...contexto, fichas: full, pills: pn, hover: null }), viewBox: [vx, vy, vw, vh],
-      titulo: venn.titulo, subtitulo: `${temp}${enCurso ? " (en curso)" : ""} · el ${corte}% de arriba de sus ${venn.plural}`,
+      titulo: venn.titulo, subtitulo: `${temp}${enCurso ? " (en curso)" : ""} · el ${corte}% de arriba ${cfg.ambito || `de sus ${venn.plural}`}`,
       linea: `${V.reg[7].length} de ${miles(N)} cumplen las tres`,
       leyenda: D.ligas.map((l, i) => ({ color: ligas[i], texto: l })),
       fuente: `Datos: ${cfg.fuente}`, tk, modo, archivo: nombreArchivo(venn.id, temp, `top${corte}`),
@@ -207,22 +210,26 @@ function Vista({ cfg, D, modo, tk }) {
         <Box sx={{ gridArea: "lado", display: { xs: "contents", lg: "block" }, minWidth: 0 }}>
         {/* ---- filtros ---- */}
         <Box sx={{ gridArea: "controles", mb: 3 }}>
-          <Rotulo>Diagrama</Rotulo>
-          <ToggleButtonGroup exclusive size="small" value={vid} aria-label="Diagrama" sx={{ flexWrap: "wrap", mb: 1.5 }}
-            onChange={(_e, v) => { if (v) { setVid(v); setHover(null); } }}>
-            {cfg.venns.map((v) => <ToggleButton key={v.id} value={v.id} sx={{ flex: "1 1 auto" }}>{v.tab}</ToggleButton>)}
-          </ToggleButtonGroup>
+          {cfg.venns.length > 1 && (
+            <>
+              <Rotulo>Diagrama</Rotulo>
+              <ToggleButtonGroup exclusive size="small" value={vid} aria-label="Diagrama" sx={{ flexWrap: "wrap", mb: 1.5 }}
+                onChange={(_e, v) => { if (v) { setVid(v); setHover(null); } }}>
+                {cfg.venns.map((v) => <ToggleButton key={v.id} value={v.id} sx={{ flex: "1 1 auto" }}>{v.tab}</ToggleButton>)}
+              </ToggleButtonGroup>
+            </>
+          )}
           <Rotulo>Temporada</Rotulo>
           <ToggleButtonGroup exclusive size="small" value={temp} aria-label="Temporada" sx={{ flexWrap: "wrap", mb: 0.5 }}
             onChange={(_e, v) => { if (v) { setTemp(v); setHover(null); } }}>
             {temps.map((t) => <ToggleButton key={t} value={t}>{t}{D.enCurso.includes(t) ? "*" : ""}</ToggleButton>)}
           </ToggleButtonGroup>
           {D.enCurso.some((t) => temps.includes(t)) && (
-            <Typography sx={{ fontSize: 11.5, color: "text.secondary", mb: 1.5 }}>* En curso: el mínimo de minutos es una fracción de lo jugado hasta ahora.</Typography>
+            <Typography sx={{ fontSize: 11.5, color: "text.secondary", mb: 1.5 }}>{equipo ? "* En curso: la temporada va a medias y cuenta los partidos jugados hasta ahora." : "* En curso: el mínimo de minutos es una fracción de lo jugado hasta ahora."}</Typography>
           )}
           <Box sx={{ mt: 1.5 }}>
-            <Rotulo>Corte: el {corte}% de arriba de su posición</Rotulo>
-            <Slider size="small" min={qMin} max={qMax} step={1} value={corte} aria-label="Corte, porcentaje de arriba de su posición"
+            <Rotulo>Corte: el {corte}% de arriba {ambito}</Rotulo>
+            <Slider size="small" min={qMin} max={qMax} step={1} value={corte} aria-label={`Corte, porcentaje de arriba ${ambito}`}
               valueLabelDisplay="auto" valueLabelFormat={(v) => `${v}%`} sx={{ mx: 1, width: "calc(100% - 28px)" }}
               marks={[qMin, 15, 30].map((value) => ({ value, label: `${value}%` }))}
               onChange={(_e, v) => { setCorte(v); setHover(null); }} />
@@ -234,8 +241,8 @@ function Vista({ cfg, D, modo, tk }) {
                 const q = sinAcentos(inputValue.trim());
                 return q ? opciones.filter((o) => sinAcentos(o).includes(q)).slice(0, 30) : [];
               }}
-              noOptionsText="Sin resultados: solo están quienes tienen minutos suficientes en esta posición y temporada"
-              renderInput={(p) => <TextField {...p} label="Buscar jugador" />} />
+              noOptionsText={equipo ? "Sin resultados: busca un equipo de esta temporada" : "Sin resultados: solo están quienes tienen minutos suficientes en esta posición y temporada"}
+              renderInput={(p) => <TextField {...p} label={equipo ? "Buscar equipo" : "Buscar jugador"} />} />
           </Box>
           {estado && <Typography sx={{ fontSize: 13, color: "text.secondary", mt: 1 }}>{estado}</Typography>}
         </Box>

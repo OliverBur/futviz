@@ -11,7 +11,8 @@ export const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "
 const TINTA = ["#ffffff", "#ffffff", "#ffffff", "#241a00", "#3a0f22"];
 
 // Dos jugadores con el mismo apellido en la misma vista se distinguen con la inicial del nombre.
-function etiquetas(fichas) {
+function etiquetas(fichas, equipo) {
+  if (equipo) return fichas.map((f) => (f.it ? f.it.r[0] : ""));   // un equipo va con su nombre entero
   const cuenta = {};
   for (const f of fichas) if (f.it) { const a = apellido(f.it.r[0]); cuenta[a] = (cuenta[a] || 0) + 1; }
   return fichas.map((f) => {
@@ -24,8 +25,8 @@ function etiquetas(fichas) {
 
 // `ctx`: { fichas, pills, reg, tk, ligas (colores por liga), circ (colores de círculo), fuente, hover, buscado, compacto }
 export function construirSvg(ctx) {
-  const { fichas, pills, reg, tk, ligas, circ, hover, buscado } = ctx;
-  const nombres = etiquetas(fichas);
+  const { fichas, pills, reg, tk, ligas, circ, hover, buscado, equipo } = ctx;
+  const nombres = etiquetas(fichas, equipo);
   const tinta = tk["text-body"];
   const aro = tk.surface;
 
@@ -56,7 +57,7 @@ export function construirSvg(ctx) {
     const hl = buscado && r[0] === buscado;
     const trazo = hl || sel ? tk.primary : aro;
     const ancho = hl ? 4 : sel ? 3 : 2;
-    const ini = lv.f ? `<text y="${lv.r * 0.22}" text-anchor="middle" font-size="${lv.r * 0.62}" font-weight="700" fill="${TINTA[r[2]]}" pointer-events="none">${esc(iniciales(r[0]))}</text>` : "";
+    const ini = lv.f ? `<text y="${lv.r * 0.22}" text-anchor="middle" font-size="${lv.r * 0.62}" font-weight="700" fill="${TINTA[r[2]]}" pointer-events="none">${esc(iniciales(r[0], equipo))}</text>` : "";
     const nom = lv.f
       ? `<text y="${lv.r + lv.f + 1}" text-anchor="middle" font-size="${lv.f}" font-weight="600" fill="${tinta}" stroke="${aro}" stroke-width="3" stroke-linejoin="round" paint-order="stroke" pointer-events="none">${esc(corto(nombres[i], lv.max))}</text>`
       : "";

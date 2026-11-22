@@ -51,7 +51,7 @@ PRIORIDAD_JUGADOR = {
     "Medio": ["perfil-ofensivo", "pases-clave-vs-asistencias", "construir-vs-producir"],
     "Defensa": ["corte-vs-cobertura"],
 }
-PRIORIDAD_EQUIPO = ["eficiencia-definicion", "creacion", "defensa", "puntos-vs-xg", "cantidad-calidad", "local-visitante"]
+PRIORIDAD_EQUIPO = ["eficiencia-definicion", "creacion", "defensa", "cantidad-calidad", "local-visitante"]
 VISTAS_POR_RESULTADO = 3   # la principal + "Ver a {nombre} en…" con dos más
 VISTAS_POR_EQUIPO = len(PRIORIDAD_EQUIPO)   # los equipos tienen seis dispersiones propias y se ofrecen todas
 EJEMPLO_BUSCADOR = "Ødegaard"   # lo que se sugiere teclear en el campo; tiene que estar en el índice (ver `escribir_landing`)

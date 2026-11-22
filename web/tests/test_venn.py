@@ -87,5 +87,44 @@ class Config(unittest.TestCase):
                 self.assertIn(s["col"], claves)
 
 
+import venn_equipos  # noqa: E402
+
+
+class Equipos(unittest.TestCase):
+    def _df(self):
+        filas = [{"temporada": "2025-26", "Squad": f"E{i}", "liga": "La Liga", "pt_Playing Time_MP": 10 + i,
+                  "xg_fav": 1.0 + 0.1 * i, "xg_con": 2.0 - 0.1 * i, "ov_Poss": 40.0 + i} for i in range(5)]
+        filas[4]["xg_con"] = np.nan
+        return pd.DataFrame(filas)
+
+    def test_la_tabla_trae_un_equipo_por_fila_y_deja_fuera_los_nulos(self):
+        t = venn_equipos.tabla(self._df())["2025-26"]
+        self.assertEqual([f[0] for f in t["jug"]], ["E0", "E1", "E2", "E3"])
+        fila = t["jug"][1]
+        self.assertEqual(len(fila), venn_equipos.PREFIJO + len(venn_equipos.MEDIDAS))
+        self.assertEqual(fila[3], 0)                  # la única «posición»
+        self.assertEqual(fila[4], 11)                 # partidos
+        self.assertEqual(fila[venn_equipos.PREFIJO:], [1.1, 1.9, 41.0])
+
+    def test_defiende_cuenta_al_que_concede_menos(self):
+        # E0 concede lo más (2.0) y E3 lo menos (1.7): en el círculo «Defiende» solo entra E3 con un corte chico
+        xg_con = [2.0, 1.9, 1.8, 1.7]
+        p = venn_equipos.percentiles_de(xg_con, inv=True)
+        self.assertEqual(int(np.argmax(p)), 3)
+        r = venn_equipos.regiones_de([[1, 2, 3, 4], xg_con, [1, 2, 3, 4]], 0.25)
+        self.assertEqual(r[7], 1)                     # E3 cumple los tres: sube en Ataca y Controla y concede lo menos
+        self.assertEqual(sum(r.values()), 1)
+        # sin invertir, «Defiende» dejaría pasar a E0 (el que más concede) y E3 se quedaría en Ataca + Controla
+        sin = venn_equipos.regiones([[1, 2, 3, 4], xg_con, [1, 2, 3, 4]], 0.25)
+        self.assertEqual(sin[7], 0)
+
+    def test_los_circulos_apuntan_a_medidas_que_viajan(self):
+        claves = {k for k, _ in venn_equipos.MEDIDAS}
+        self.assertEqual(len(venn_equipos.VENNS), 1)
+        for s in venn_equipos.VENNS[0]["sets"]:
+            self.assertIn(s["col"], claves)
+        self.assertTrue(venn_equipos.VENNS[0]["sets"][1]["inv"])
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -234,7 +234,7 @@ export function centros(T, filas, ambito) {
 // funciones del mismo nombre de `code/insights.py`.
 
 const XG_FAV = "xg_fav", XG_CON = "xg_con", XG_DIF = "xg_dif";
-const GOL_FAV = "gol_fav", GOL_CON = "gol_con", PPM = "pt_Team Success_PPM";
+const GOL_FAV = "gol_fav", GOL_CON = "gol_con";
 
 // Con el signo a la vista en los positivos ("+0.45", "-0.12"), como `_sg` de Python.
 const sg = (v, dec = 2) => (v >= 0 ? "+" : "") + fmt(v, dec);
@@ -279,20 +279,6 @@ export function defensa(T, filas, ambito) {
   const e = filas[i], delta = dif[i];
   const sentido = delta > 0 ? "más" : "menos";
   const salta = `El que más se aleja de la diagonal es **${quien(T, e)}**: concede ${fmt(T.c[XG_CON][e])} de xG por partido y recibe ${fmt(T.c[GOL_CON][e])} goles, ${fmt(Math.abs(delta))} ${sentido} de lo que decían las ocasiones. Ahí cuentan juntos el portero, la defensa y la suerte.`;
-  return { fija, salta };
-}
-
-export function puntos(T, filas, ambito) {
-  const mejor = filas[idxmax(col(T, PPM, filas))];
-  const fija = `En ${ambito}, **${quien(T, mejor)}** es el que más puntos saca por partido (${fmt(T.c[PPM][mejor])}), con ${sg(T.c[XG_DIF][mejor])} de diferencia de xG por partido.`;
-  if (filas.length < 4) return { fija, salta: null };
-  const x = col(T, XG_DIF, filas), y = col(T, PPM, filas);
-  const [pendiente, base] = ajusteLineal(x, y);
-  const resto = y.map((v, i) => v - (pendiente * x[i] + base));
-  const i = idxmax(resto.map(Math.abs));
-  const e = filas[i], delta = resto[i];
-  const sentido = delta > 0 ? "más" : "menos";
-  const salta = `El que más se aleja de la tendencia es **${quien(T, e)}**: tiene ${sg(T.c[XG_DIF][e])} de diferencia de xG por partido y saca ${fmt(T.c[PPM][e])} puntos, ${fmt(Math.abs(delta))} ${sentido} de lo normal para ese juego. Eso se repite poco de una temporada a la siguiente.`;
   return { fija, salta };
 }
 
@@ -350,7 +336,7 @@ export function localVisitante(T, filas, ambito) {
 
 export const GENERADORES = {
   goles_xg: golesXg, asist_xa: asistXa, perfil, recuperar, disputar, dos_fases: dosFases,
-  pases_clave: pasesClave, construir, centros, definicion, creacion, defensa, puntos,
+  pases_clave: pasesClave, construir, centros, definicion, creacion, defensa,
   xg_goles_90: xgGoles90, xa_asist_90: xaAsist90, pases_asist: pasesAsist, cover_stopper: coverStopper,
   cantidad_calidad: cantidadCalidad, local_visitante: localVisitante,
 };

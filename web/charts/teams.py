@@ -16,6 +16,7 @@ import insights as ins
 import origen_xg
 import react_views
 import tabla_esperada
+import venn_equipos
 import xg_equipos
 from consolidate_data import ELO_TOP, NIVELES
 from nombres import aplicar_a_equipos
@@ -94,7 +95,6 @@ NOTA_EXPLORADOR = (
 )
 
 FUENTE_XG = FUENTE_UNDERSTAT
-FUENTE_XG_PUNTOS = f"{FUENTE_UNDERSTAT} (xG) y {FUENTE_FBREF} (puntos)"
 FUENTE_TODAS = f"{FUENTE_FBREF}, {FUENTE_UNDERSTAT} (xG) y clubelo (ELO)"
 
 # Nota del filtro de nivel de club cuando cada punto ES un club.
@@ -282,22 +282,6 @@ def chart_defense(df):
         menos_es_mejor={"x": "los que menos ocasiones conceden", "y": "los que menos goles reciben"})
 
 
-def chart_points_vs_xg(df):
-    """Puntos contra la diferencia de xG: si la tabla refleja el juego o la suerte. Solo la dispersión,
-    sin puntos esperados partido a partido."""
-    x = _eje("xg_dif", "Diferencia de xG por partido (a favor − en contra, sin penales)", "Dif. de xG", 2)
-    y = _eje("pt_Team Success_PPM", "Puntos por partido", "Puntos", 2)
-    return _scatter(
-        df, "puntos-vs-xg", "Puntos vs. diferencia de xG",
-        "A la derecha, más xG a favor que en contra por partido; arriba, más puntos. Arriba a la izquierda y abajo a la derecha, puntos y juego no coinciden.",
-        x=x, y=y,
-        referencia=_promedios({"tr": "Juegan bien y suman", "tl": "Suman más de lo que juegan",
-                               "br": "Suman menos de lo que juegan", "bl": "Ni juegan bien ni suman"}),
-        subtitulo="Equipos de las 5 ligas · {temporada} · xG por partido, sin penales",
-        textos=(ins.puntos_que_mirar, ins.puntos_por_que), insight="puntos",
-        fuente=FUENTE_XG_PUNTOS)
-
-
 def chart_shots_quantity_quality(df):
     """Tiros por partido contra xG por tiro: si el equipo dispara mucho o espera la ocasión clara. Las líneas están en el
     percentil `ins.LINEA_PCT` de lo que se ve, como en las vistas de jugadores. Multiplicados, los dos ejes dan el xG a
@@ -373,7 +357,7 @@ PESTANAS = [
     ("origen-xg", "Cómo generan peligro", "Ocasiones"),
     ("cantidad-calidad", "Cantidad vs. calidad de los tiros", "Ocasiones"),
     ("defensa", "Goles recibidos vs. xG", "Defensa"),
-    ("puntos-vs-xg", "Puntos vs. xG", "Contexto"),
+    ("equipo-completo", "Equipo completo", "Contexto"),
     ("local-visitante", "Local vs. visitante", "Contexto"),
     ("nivel-por-liga-equipos", "Distribución por liga", "Contexto"),
     ("crea-tu-grafico-equipos", "Crea tu gráfico", "_explorar"),   # "_": grupo aparte, sin rótulo
@@ -402,7 +386,7 @@ def build(assets_dir) -> list:
         chart_def_efficiency(df),
         chart_creation(df),
         chart_defense(df),
-        chart_points_vs_xg(df),
+        venn_equipos.chart_venn_equipos(df),
         chart_shots_quantity_quality(df),
         chart_home_away(df),
         origen_xg.chart_origen_xg(),

@@ -38,14 +38,15 @@ export function calcular(D, venn, temp, corte) {
   const pos = D.posiciones.indexOf(venn.pos);
   const col = (s) => D.prefijo + D.medidas.indexOf(s.col);
   const pop = D.temporadas[temp].jug.filter((r) => r[3] === pos);
-  const P3 = venn.sets.map((s) => pcts(pop.map((r) => r[col(s)])));
+  // `inv`: menos es mejor (xG en contra): el percentil sale del signo cambiado y el corte en valor es un máximo.
+  const P3 = venn.sets.map((s) => pcts(pop.map((r) => (s.inv ? -r[col(s)] : r[col(s)]))));
   const reg = [null, [], [], [], [], [], [], []];
-  const cut = [Infinity, Infinity, Infinity];
+  const cut = venn.sets.map((s) => (s.inv ? -Infinity : Infinity));
   const miembros = [];
   pop.forEach((r, k) => {
     let m = 0, suma = 0, nb = 0;
     venn.sets.forEach((s, j) => {
-      if (P3[j][k] >= 1 - q) { m |= 1 << j; suma += P3[j][k]; nb++; if (r[col(s)] < cut[j]) cut[j] = r[col(s)]; }
+      if (P3[j][k] >= 1 - q) { m |= 1 << j; suma += P3[j][k]; nb++; if (s.inv ? r[col(s)] > cut[j] : r[col(s)] < cut[j]) cut[j] = r[col(s)]; }
     });
     if (m) { const it = { r, k, m, score: suma / nb, p: P3.map((c) => c[k]) }; reg[m].push(it); miembros.push(it); }
   });
@@ -136,10 +137,10 @@ export function acomodar(reg, bloq, compacto) {
 }
 
 // ---- las pastillas con el nombre de cada círculo ----------------------------------------------------
-const f2 = (v) => v.toFixed(2);
 export function pastillas(venn, cut, corte, k = 1) {
   return venn.sets.map((s, j) => {
-    const linea = `top ${corte}% · ≥ ${f2(cut[j] === Infinity ? 0 : cut[j])}`;
+    const dec = s.dec ?? 2;
+    const linea = `top ${corte}% · ${s.inv ? "≤" : "≥"} ${(Math.abs(cut[j]) === Infinity ? 0 : cut[j]).toFixed(dec)}`;
     const w = (Math.max(s.nombre.length * 9, linea.length * 6.6) + 30) * k;
     const [x, y] = [CEN[j][0], j === 0 ? CEN[0][1] - R : CEN[j][1] + R];
     return { j, k, nombre: s.nombre, linea, w, x, y, bloq: { x0: x - w / 2 - 6, x1: x + w / 2 + 6, y0: y - 31 * k, y1: y + 31 * k } };
@@ -156,8 +157,10 @@ export function apellido(n) {
   return t.slice(i).join(" ");
 }
 export const corto = (s, max) => (s.length > max ? s.slice(0, max - 1) + "…" : s);
-export function iniciales(n) {
+export function iniciales(n, equipo = false) {
   const t = n.trim().split(/\s+/);
+  // Un equipo: la letra de sus dos primeras palabras («Manchester City» → MC); «Mainz 05» y «Darmstadt 98» llevan solo la primera.
+  if (equipo) { const p = t.filter((w) => /^\p{L}/u.test(w)); return (p.length > 1 ? p[0][0] + p[1][0] : p[0].slice(0, 2)).toUpperCase(); }
   return t.length === 1 ? t[0].slice(0, 2).toUpperCase() : (t[0][0] + apellido(n)[0]).toUpperCase();
 }
 export const regionTxt = (m, venn) => venn.sets.filter((_, j) => m & (1 << j)).map((s) => s.nombre).join(" + ");

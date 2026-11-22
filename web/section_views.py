@@ -361,6 +361,7 @@ ALIAS_VISTAS = {
     "recuperacion-vs-faltas": "corte-vs-cobertura",
     "perfil-defensivo": "corte-vs-cobertura",
     "cover-vs-stopper": "corte-vs-cobertura",
+    "puntos-vs-xg": "tabla-esperada",
 }
 
 

@@ -40,8 +40,7 @@ JUGADORES = [
     ("cover_stopper", ins.cover_stopper, ["pct_stopper", "pct_cover"]),   # los percentiles ya solo existen para defensas con el corte
 ]
 POR_90 = {"xg_goles_90", "xa_asist_90", "pases_asist"}
-EQUIPOS = [("definicion", ins.definicion, []), ("creacion", ins.creacion, []), ("defensa", ins.defensa, []),
-           ("puntos", ins.puntos, [])]
+EQUIPOS = [("definicion", ins.definicion, []), ("creacion", ins.creacion, []), ("defensa", ins.defensa, [])]
 
 
 def casos(df, seasons, ligas, insight, generador, requiere, entidad, rng, n_aleatorios):

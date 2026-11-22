@@ -21,7 +21,7 @@ PREGUNTAS = {
     "creacion": "¿Qué equipo domina las ocasiones?",
     "defensa": "¿Quién defiende mejor y cómo?",
     "tabla-esperada": "¿Quién está en el lugar que merece?",
-    "puntos-vs-xg": "¿Los puntos reflejan el juego o la suerte?",
+    "equipo-completo": "¿Qué equipos destacan a la vez en ataque, defensa y control?",
     "origen-xg": "¿Vive de los córners o construye jugando?",
     "cantidad-calidad": "¿Dispara mucho o espera la ocasión clara?",
     "local-visitante": "¿Quién depende de su estadio?",

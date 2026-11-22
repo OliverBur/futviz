@@ -1746,61 +1746,6 @@ def defensa(df, season, liga=None):
     return fija, salta
 
 
-# --- Puntos vs. diferencia de xG (puntos-vs-xg) ---------------------------------------------
-
-def puntos_que_mirar():
-    return (
-        "Cruza los puntos que suma cada equipo con cómo juega, medido por la diferencia de xG por partido: el xG que "
-        "crea menos el que concede. El eje horizontal es esa diferencia y el vertical, los puntos por partido.\n"
-        "Los equipos suelen seguir una nube que sube de izquierda a derecha, porque jugar mejor da más puntos. Los "
-        "que se alejan de ella sumaron más puntos, o menos, de los que su juego explica.")
-
-
-def puntos_por_que(df):
-    import numpy as np
-
-    c = _cerradas_eq(df)
-    r = c[XG_DIF].corr(c[COL_PPM])
-    pendiente, base = np.polyfit(c[XG_DIF], c[COL_PPM], 1)
-    p_xg = _persistencia_equipos(df, df[XG_DIF])
-    p_pts = _persistencia_equipos(df, df[COL_PPM])
-    p_res = _persistencia_equipos(df, df[COL_PPM] - (pendiente * df[XG_DIF] + base))
-    p2 = (f"Correlacionan {_fmt(r)} sobre {miles(len(c))} equipos-temporada cerrados: la diferencia de xG explica el "
-          f"{r ** 2 * 100:.0f}% de la variación de los puntos por partido; lo demás son cosas que las ocasiones no cuentan, "
-          f"y con estos datos no se puede decir cuánto es suerte.")
-    if p_xg and p_pts and p_res:
-        p2 += (f" De una temporada cerrada a la siguiente, la diferencia de xG de un mismo equipo correlaciona {_entre(p_xg)} "
-               f"y los puntos por partido, {_entre(p_pts)}; pero la distancia a la tendencia, {_entre(p_res)}. "
-               f"{_se_repite(p_res)}")
-    return (
-        f"La diferencia de xG por partido (xG a favor menos xG en contra) dice cómo se jugó; los puntos, lo que cuenta en "
-        f"la tabla. Se cruzan para ver cuándo coinciden.\n\n"
-        f"{p2}\n\n"
-        f"Va por partido porque no todas las ligas juegan las mismas jornadas (la Bundesliga siempre 34, la Ligue 1 desde "
-        f"2023-24, las otras tres 38). Los puntos son de FBref, penales incluidos; el xG es de Understat y los deja fuera."
-    )
-
-
-def puntos(df, season, liga=None):
-    import numpy as np
-
-    d, ambito = _ambito(df, season, liga)
-    mejor = d.loc[d[COL_PPM].idxmax()]
-    fija = (f"En {ambito}, **{mejor['Squad']}** es el que más puntos saca por partido "
-            f"({_fmt(mejor[COL_PPM])}), con {_sg(mejor[XG_DIF])} de diferencia de xG por partido.")
-    if len(d) < 4:
-        return fija, None
-    pendiente, base = np.polyfit(d[XG_DIF], d[COL_PPM], 1)
-    resto = d[COL_PPM] - (pendiente * d[XG_DIF] + base)
-    i = resto.abs().idxmax()
-    e, delta = d.loc[i], resto[i]
-    sentido = "más" if delta > 0 else "menos"
-    salta = (f"El que más se aleja de la tendencia es **{e['Squad']}**: tiene {_sg(e[XG_DIF])} de "
-             f"diferencia de xG por partido y saca {_fmt(e[COL_PPM])} puntos, {_fmt(abs(delta))} {sentido} "
-             f"de lo normal para ese juego. Eso se repite poco de una temporada a la siguiente.")
-    return fija, salta
-
-
 # --- Cantidad vs. calidad de los tiros y Local vs. visitante ---------------------------------
 # Los textos fijos de estas dos vistas (`web/charts/equipos_tiros.py` calcula las columnas). El texto «Con estos filtros»
 # de las dos NO tiene gemelo aquí: vive solo en `insights.js` (`cantidadCalidad` y `localVisitante`) y está fuera de la
