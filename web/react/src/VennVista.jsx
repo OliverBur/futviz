@@ -222,16 +222,13 @@ function Vista({ cfg, D, modo, tk }) {
           <Rotulo>Temporada</Rotulo>
           <ToggleButtonGroup exclusive size="small" value={temp} aria-label="Temporada" sx={{ flexWrap: "wrap", mb: 0.5 }}
             onChange={(_e, v) => { if (v) { setTemp(v); setHover(null); } }}>
-            {temps.map((t) => <ToggleButton key={t} value={t}>{t}{D.enCurso.includes(t) ? "*" : ""}</ToggleButton>)}
+            {temps.map((t) => <ToggleButton key={t} value={t}>{t}</ToggleButton>)}
           </ToggleButtonGroup>
-          {D.enCurso.some((t) => temps.includes(t)) && (
-            <Typography sx={{ fontSize: 11.5, color: "text.secondary", mb: 1.5 }}>{equipo ? "* En curso: la temporada va a medias y cuenta los partidos jugados hasta ahora." : "* En curso: el mínimo de minutos es una fracción de lo jugado hasta ahora."}</Typography>
-          )}
           <Box sx={{ mt: 1.5 }}>
-            <Rotulo>Corte: el {corte}% de arriba {ambito}</Rotulo>
+            <Rotulo>Corte: el {corte}% de arriba</Rotulo>
             <Slider size="small" min={qMin} max={qMax} step={1} value={corte} aria-label={`Corte, porcentaje de arriba ${ambito}`}
               valueLabelDisplay="auto" valueLabelFormat={(v) => `${v}%`} sx={{ mx: 1, width: "calc(100% - 28px)" }}
-              marks={[qMin, 15, 30].map((value) => ({ value, label: `${value}%` }))}
+              marks={[qMin, 15, qMax].map((value) => ({ value, label: `${value}%` }))}
               onChange={(_e, v) => { setCorte(v); setHover(null); }} />
           </Box>
           <Box sx={{ mt: 1.5, display: "flex", gap: 1, alignItems: "center", flexWrap: "wrap" }}>

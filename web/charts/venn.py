@@ -29,7 +29,7 @@ SLUG = "jugador-completo"
 TITULO = "Jugador completo"
 
 POSICIONES = ["Defensa", "Medio", "Delantero"]
-CORTE_MIN, CORTE_MAX, CORTE_INI = 5, 30, 15     # el deslizador, en % de arriba de cada posición
+CORTE_MIN, CORTE_MAX, CORTE_INI = 5, 25, 15     # el deslizador, en % de arriba de cada posición
 
 # Columnas del payload, en orden: (clave corta, columna del DataFrame). Las filas viajan como listas en este orden,
 # después de [nombre, club, liga, posición, minutos].
