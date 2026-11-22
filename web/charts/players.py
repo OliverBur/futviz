@@ -300,8 +300,8 @@ def _scatter(slug, titulo, descripcion, *, x, y, referencia, subtitulo, textos, 
 
 def chart_xg_goals_90(df):
     """xG por 90' contra goles por 90', sin penales, con la línea de la élite en ocasiones y tres zonas rotuladas."""
-    x = _eje("npxg90", "xG sin penales por 90'", "xG por 90'", 2)
-    y = _eje("npg90", "Goles sin penales por 90'", "Goles por 90'", 2)
+    x = _eje("npxg90", "xG sin penales por 90'", "xG sin penales por 90'", 2)
+    y = _eje("npg90", "Goles sin penales por 90'", "Goles sin penales por 90'", 2)
     ref = _diagonal(x, y, "goles − xG sin penales por 90'", dec_dif=2,
                     sobre="Marcan más de lo esperado", bajo="Marcan menos de lo esperado")
     # Cuatro zonas: la línea vertical de la élite en ocasiones y la diagonal (marcó lo esperado). tr/tl/br/bl: arriba o
@@ -310,12 +310,12 @@ def chart_xg_goals_90(df):
                     "br": "Muchas ocasiones pero las fallan", "bl": "Pocas ocasiones y las fallan",
                     "tl": "Pocas ocasiones pero las meten"}
     return _scatter(
-        "xg-vs-goles-90", "xG vs. goles por 90'",
+        "xg-vs-goles-90", "xG vs. goles por 90' (sin penales)",
         f"Sobre la diagonal marcó más que su xG; a la derecha de la línea, el {ins._pct_elite()} con más xG.",
         x=x, y=y, referencia=ref,
         subtitulo="Jugadores con ≥{min} min · {temporada}",
         textos=(ins.xg_goles_90_que_mirar, ins.xg_goles_90_por_que), insight="xg_goles_90", poblacion=df,
-        color_por=["liga", "rendimiento"], minimo_por90=True, posiciones_ini=POSICIONES_INI)
+        minimo_por90=True, posiciones_ini=POSICIONES_INI)
 
 
 def chart_xa_assists_90(df):
@@ -331,7 +331,7 @@ def chart_xa_assists_90(df):
         x=x, y=y, referencia=ref,
         subtitulo="Jugadores con ≥{min} min · {temporada}",
         textos=(ins.xa_asist_90_que_mirar, ins.xa_asist_90_por_que), insight="xa_asist_90", poblacion=df,
-        color_por=["liga", "rendimiento"], minimo_por90=True, posiciones_ini=POSICIONES_INI)
+        minimo_por90=True, posiciones_ini=POSICIONES_INI)
 
 
 def chart_profile(df):

@@ -120,7 +120,7 @@ function Vista({ cfg, T, modo, tk }) {
   const [nivel, setNivel] = useState(() => entre(P.get("nivel"), T.niveles || [], "todos"));
   const [sub21, setSub21] = useState(() => P.get("sub21") === "1");
   const [club, setClub] = useState(() => (T.f.e ? (T.equipos || []).indexOf(P.get("club")) : -1));   // -1: todos los clubes
-  const [colorPor, setColorPor] = useState(() => entre(P.get("color"), ["rendimiento"], "liga"));
+  const [colorPor, setColorPor] = useState(() => entre(P.get("color"), cfg.colorPor.filter((c) => c !== "liga"), "liga"));
   // Fijados: índices de JUGADOR (o equipo), no de fila, para que sobrevivan al cambio de temporada.
   // En la URL van por nombre: el índice cambia cuando se actualizan los datos.
   const [fijados, setFijados] = useState(() => P.getAll("fijar").map((n) => T.nombres.indexOf(n)).filter((j) => j >= 0).slice(-MAX_PINES));
