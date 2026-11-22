@@ -15,7 +15,9 @@ import Badge from "@mui/material/Badge";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
-import Collapse from "@mui/material/Collapse";
+import Checkbox from "@mui/material/Checkbox";
+import ListItemText from "@mui/material/ListItemText";
+import Popover from "@mui/material/Popover";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import IconButton from "@mui/material/IconButton";
 import ListSubheader from "@mui/material/ListSubheader";
@@ -120,7 +122,8 @@ function Vista({ cfg, T, modo, tk }) {
   const [nivel, setNivel] = useState(() => entre(P.get("nivel"), T.niveles || [], "todos"));
   const [sub21, setSub21] = useState(() => P.get("sub21") === "1");
   const [club, setClub] = useState(() => (T.f.e ? (T.equipos || []).indexOf(P.get("club")) : -1));   // -1: todos los clubes
-  const [colorPor, setColorPor] = useState(() => entre(P.get("color"), cfg.colorPor.filter((c) => c !== "liga"), "liga"));
+  // Los puntos abren en un solo tono (neutro): el color de liga y el de rendimiento son opciones. Lo que se elige (fijados) sí lleva color.
+  const [colorPor, setColorPor] = useState(() => entre(P.get("color"), ["liga", ...cfg.colorPor.filter((c) => c !== "liga")], "neutro"));
   // Fijados: índices de JUGADOR (o equipo), no de fila, para que sobrevivan al cambio de temporada.
   // En la URL van por nombre: el índice cambia cuando se actualizan los datos.
   const [fijados, setFijados] = useState(() => P.getAll("fijar").map((n) => T.nombres.indexOf(n)).filter((j) => j >= 0).slice(-MAX_PINES));
@@ -136,6 +139,7 @@ function Vista({ cfg, T, modo, tk }) {
   const [hoverFila, setHoverFila] = useState(null);                // fila de la lista bajo el mouse
   const [pista, setPista] = useState(false);
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
+  const [anclaMas, setAnclaMas] = useState(null);   // el botón «Más» de la barra de escritorio, ancla de su panel
 
   // --- población: las filas con dato en lo que la vista necesita --------------------------------------
   const requiere = exp ? [X.col, Y.col] : cfg.requiere;
@@ -288,13 +292,14 @@ function Vista({ cfg, T, modo, tk }) {
         highlightScope: { highlight: "item", fade: "none" },
         // El "color callback" de MUI X: un color por punto, calculado de su valor.
         colorGetter: ({ value }) => {
-          const c = colorPor === "rendimiento" ? colorRendimiento(value.y - value.x, div) : color;
+          const c = colorPor === "rendimiento" ? colorRendimiento(value.y - value.x, div)
+            : colorPor === "neutro" && !pines.has(value.id) ? tk.muted : color;
           return apagada ? conAlfa(c, 0.12) : c;
         },
       };
     });
     return { series, posEnSerie, idsPorSerie, cuentas: pts.map((p) => p.length) };
-  }, [T, cfg.entidad, xs, ys, visibles, colores, colorPor, div, hoverLiga]);
+  }, [T, cfg.entidad, xs, ys, visibles, colores, colorPor, div, hoverLiga, pines, tk.muted]);
 
   // --- Top 5 y etiquetas --------------------------------------------------------------
   // El Top 5 es de LO QUE SE VE: filtros y también el zoom (con la vista entera es el de siempre).
@@ -415,7 +420,7 @@ function Vista({ cfg, T, modo, tk }) {
     nivel: nivel === "todos" ? null : nivel,
     sub21: sub21 ? "1" : null,
     club: club >= 0 ? T.equipos[club] : null,
-    color: colorPor === "liga" ? null : colorPor,
+    color: colorPor === "neutro" ? null : colorPor,
     fijar: fijados.map((j) => T.nombres[j]),
     top: metrica === "y" ? null : metrica,
     x: exp && colX !== exp.x ? colX : null,
@@ -446,23 +451,10 @@ function Vista({ cfg, T, modo, tk }) {
   const palabra = esJugadores ? "jugador" : "club";
 
   // --- los controles (se reutilizan en la columna lateral y en el panel móvil) ---------------------
-  const ctlTemporada = (
+  const selectorVariable = (rotulo, valor, onChange, enBarra = false) => (
     <Box>
-      <Rotulo>Temporada</Rotulo>
-      <ToggleButtonGroup exclusive size="small" fullWidth value={tEf} aria-label="Temporada"
-        onChange={(_e, v) => v != null && setTemporada(v)}>
-        {temporadasOk.map((i) => (
-          <ToggleButton key={i} value={i} aria-label={T.temporadas[i]} sx={{ px: 0.5, fontSize: "11.5px !important" }}>
-            {T.temporadas[i].slice(2)}
-          </ToggleButton>
-        ))}
-      </ToggleButtonGroup>
-    </Box>
-  );
-  const selectorVariable = (rotulo, valor, onChange) => (
-    <Box>
-      <Rotulo>{rotulo}</Rotulo>
-      <TextField select size="small" fullWidth value={valor} onChange={(e) => onChange(e.target.value)}
+      {!enBarra && <Rotulo>{rotulo}</Rotulo>}
+      <TextField select size="small" fullWidth label={enBarra ? rotulo : undefined} value={valor} onChange={(e) => onChange(e.target.value)}
         slotProps={{ select: { MenuProps: { slotProps: { paper: { sx: { maxHeight: 420 } } } } } }}>
         {exp && [...new Set(exp.variables.map((v) => v.grupo))].flatMap((g) => [
           <ListSubheader key={`g-${g}`}>{g}</ListSubheader>,
@@ -475,8 +467,8 @@ function Vista({ cfg, T, modo, tk }) {
   const hayNivel = filtros.nivel && nivelesDisp.length > 0;
   const haySub = filtros.sub21 && haySub21;
   const hayClub = clubesDisp.length > 0;
-  const hayMas = hayNivel || haySub || hayClub;
-  const nMas = (nivel !== "todos" ? 1 : 0) + (sub21 ? 1 : 0) + (club >= 0 ? 1 : 0);
+  const opcionesColor = ["neutro", "liga", ...cfg.colorPor.filter((c) => c !== "liga")];
+  const nMas = (nivel !== "todos" ? 1 : 0) + (sub21 ? 1 : 0) + (club >= 0 ? 1 : 0) + (colorPor !== "neutro" ? 1 : 0);
   const bloqueClub = !hayClub ? null : (
     <Box>
       <Rotulo>Club</Rotulo>
@@ -516,90 +508,133 @@ function Vista({ cfg, T, modo, tk }) {
       </Typography>}
       control={<Switch size="small" checked={sub21} onChange={(e) => setSub21(e.target.checked)} />} />
   );
+  const ctlColor = (
+    <Box>
+      <Rotulo>Color de los puntos</Rotulo>
+      <ToggleButtonGroup exclusive size="small" fullWidth value={colorPor} aria-label="Color de los puntos"
+        onChange={(_e, v) => v && setColorPor(v)}>
+        {opcionesColor.map((o) => (
+          <ToggleButton key={o} value={o} sx={{ px: 0.5, fontSize: "11.5px !important" }}>
+            {{ neutro: "Un tono", liga: "Por liga", rendimiento: "Rendimiento" }[o]}
+          </ToggleButton>
+        ))}
+      </ToggleButtonGroup>
+    </Box>
+  );
+  const ctlTemporada = (
+    <TextField select size="small" fullWidth label="Temporada" value={tEf} onChange={(e) => setTemporada(Number(e.target.value))}>
+      {temporadasOk.map((i) => (
+        <MenuItem key={i} value={i} dense>{T.temporadas[i]}</MenuItem>
+      ))}
+    </TextField>
+  );
+  const ligasTxt = ligasOn.size === T.ligas.length ? "Todas las ligas" : T.ligas.filter((_, li) => ligasOn.has(li)).join(", ");
+  const ctlLiga = (
+    <TextField select size="small" fullWidth label="Liga" value={[...ligasOn]}
+      onChange={(e) => { const v = e.target.value; setLigasOn(new Set(v.length ? v : T.ligas.map((_, i) => i))); }}
+      slotProps={{ select: { multiple: true, renderValue: () => ligasTxt }, inputLabel: { shrink: true } }}>
+      {T.ligas.map((nombreLiga, li) => (
+        <MenuItem key={nombreLiga} value={li} dense>
+          <Checkbox size="small" checked={ligasOn.has(li)} sx={{ py: 0.25 }} />
+          <ListItemText primary={nombreLiga} secondary={ligasOn.has(li) ? `${cuentas[li]} ${plural}` : undefined} />
+        </MenuItem>
+      ))}
+    </TextField>
+  );
+  const deCampo = posDisp.filter((p) => p !== "Portero");
+  const todasDeCampo = posiciones.length === deCampo.length && deCampo.every((p) => posiciones.includes(p));
+  const posTxt = (posiciones.length === 0 || todasDeCampo) && posDisp.includes("Portero") ? "Todas, sin porteros"
+    : posiciones.length ? posiciones.join(", ") : "Todas";
+  const ctlPosicion = !(filtros.posicion && posDisp.length > 0) ? null : (
+    <TextField select size="small" fullWidth label="Posición" value={posiciones}
+      onChange={(e) => setPosiciones(e.target.value)}
+      slotProps={{ select: { multiple: true, displayEmpty: true, renderValue: () => posTxt }, inputLabel: { shrink: true } }}>
+      {posDisp.map((p) => (
+        <MenuItem key={p} value={p} dense>
+          <Checkbox size="small" checked={posiciones.includes(p)} sx={{ py: 0.25 }} />
+          <ListItemText primary={p} />
+        </MenuItem>
+      ))}
+    </TextField>
+  );
+  // Resaltar: antes se llamaba "Buscar"; lo que hace es marcar puntos, no encontrar gráficas. En la barra lleva su etiqueta
+  // dentro del campo y solo enseña un nombre (el resto, «+N»); en el panel del celular, como los demás: rótulo arriba.
+  const resaltar = (enBarra) => (
+    <Box>
+      {!enBarra && <Rotulo>Resaltar {esJugadores ? "jugadores" : "clubes"}</Rotulo>}
+      <Autocomplete multiple size="small" options={opcionesJug} limitTags={enBarra ? 1 : -1}
+        filterOptions={(opciones, { inputValue }) => {
+          const q = sinAcentos(inputValue.trim());
+          return opciones.filter((j) => sinAcentos(T.nombres[j]).includes(q)).slice(0, 40);
+        }}
+        value={fijados}
+        onChange={(_e, v) => {
+          const nuevo = v.filter((j) => !fijados.includes(j));
+          setFijados(v.slice(-MAX_PINES));
+          nuevo.forEach((j) => { const r = filaDeJug.get(j); if (r != null) asegurarVisible(r); });
+        }}
+        getOptionLabel={(j) => T.nombres[j]}
+        isOptionEqualToValue={(a, b) => a === b}
+        disableCloseOnSelect filterSelectedOptions
+        noOptionsText={`Ningún ${palabra} con esos filtros`}
+        renderValue={(valor, getItemProps) => valor.map((j, i) => {
+          const { key, ...props } = getItemProps({ index: i });
+          const sinPunto = !filaDeJug.has(j);
+          return (
+            <Chip key={key} size="small" label={T.nombres[j]} {...props}
+              variant={sinPunto ? "outlined" : "filled"}
+              title={sinPunto ? `${T.nombres[j]} — no tiene punto en esta temporada o con estos filtros` : T.nombres[j]}
+              sx={{ fontSize: 11.5, opacity: sinPunto ? 0.6 : 1, borderStyle: sinPunto ? "dashed" : "solid" }} />
+          );
+        })}
+        renderOption={(props, j) => {
+          const { key, ...resto } = props;
+          const r = filaDeJug.get(j);
+          return (
+            <li key={key} {...resto}>
+              <Box sx={{ minWidth: 0 }}>
+                <Box sx={{ fontWeight: 600, fontSize: 13 }}>{T.nombres[j]}</Box>
+                <Box sx={{ fontSize: 11.5, color: "text.secondary" }}>
+                  {r == null ? "Sin datos en esta vista" : esJugadores ? `${T.equipo(r)} · ${T.liga(r)}` : T.liga(r)}
+                </Box>
+              </Box>
+            </li>
+          );
+        }}
+        renderInput={(p) => <TextField {...p} label={enBarra ? `Resaltar ${esJugadores ? "jugadores" : "clubes"}` : undefined}
+          placeholder={fijados.length ? "" : enBarra ? "Escribe un nombre…" : `Escribe un ${palabra}…`} />} />
+    </Box>
+  );
+  const masOpciones = <>{bloqueClub}{bloqueNivel}{bloqueSub21}{ctlColor}</>;
+  // Celular: todo en el panel de filtros.
   const controles = (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2.25 }}>
       {exp && selectorVariable("Eje horizontal", colX, setColX)}
       {exp && selectorVariable("Eje vertical", colY, setColY)}
-      {!movil && ctlTemporada}
-
-      {cfg.colorPor.length > 1 && (
-        <Box>
-          <Rotulo>Color por</Rotulo>
-          <ToggleButtonGroup exclusive size="small" fullWidth value={colorPor} aria-label="Color por"
-            onChange={(_e, v) => v && setColorPor(v)}>
-            <ToggleButton value="liga">Liga</ToggleButton>
-            <ToggleButton value="rendimiento">Rendimiento</ToggleButton>
-          </ToggleButtonGroup>
-        </Box>
-      )}
-
-      {filtros.posicion && posDisp.length > 0 && (
-        <Box>
-          <Rotulo>Posición</Rotulo>
-          <Posiciones opciones={posDisp} valor={posiciones}
-            onChange={(v) => setPosiciones(v)} />
-        </Box>
-      )}
-
-      {/* Resaltar: antes se llamaba "Buscar"; lo que hace es marcar puntos, no encontrar gráficas */}
-      <Box>
-        <Rotulo>Resaltar {esJugadores ? "jugadores" : "clubes"}</Rotulo>
-        <Autocomplete multiple size="small" options={opcionesJug}
-          filterOptions={(opciones, { inputValue }) => {
-            const q = sinAcentos(inputValue.trim());
-            return opciones.filter((j) => sinAcentos(T.nombres[j]).includes(q)).slice(0, 40);
-          }}
-          value={fijados}
-          onChange={(_e, v) => {
-            const nuevo = v.filter((j) => !fijados.includes(j));
-            setFijados(v.slice(-MAX_PINES));
-            nuevo.forEach((j) => { const r = filaDeJug.get(j); if (r != null) asegurarVisible(r); });
-          }}
-          getOptionLabel={(j) => T.nombres[j]}
-          isOptionEqualToValue={(a, b) => a === b}
-          disableCloseOnSelect filterSelectedOptions
-          noOptionsText={`Ningún ${palabra} con esos filtros`}
-          renderValue={(valor, getItemProps) => valor.map((j, i) => {
-            const { key, ...props } = getItemProps({ index: i });
-            const sinPunto = !filaDeJug.has(j);
-            return (
-              <Chip key={key} size="small" label={T.nombres[j]} {...props}
-                variant={sinPunto ? "outlined" : "filled"}
-                title={sinPunto ? `${T.nombres[j]} — no tiene punto en esta temporada o con estos filtros` : T.nombres[j]}
-                sx={{ fontSize: 11.5, opacity: sinPunto ? 0.6 : 1, borderStyle: sinPunto ? "dashed" : "solid" }} />
-            );
-          })}
-          renderOption={(props, j) => {
-            const { key, ...resto } = props;
-            const r = filaDeJug.get(j);
-            return (
-              <li key={key} {...resto}>
-                <Box sx={{ minWidth: 0 }}>
-                  <Box sx={{ fontWeight: 600, fontSize: 13 }}>{T.nombres[j]}</Box>
-                  <Box sx={{ fontSize: 11.5, color: "text.secondary" }}>
-                    {r == null ? "Sin datos en esta vista" : esJugadores ? `${T.equipo(r)} · ${T.liga(r)}` : T.liga(r)}
-                  </Box>
-                </Box>
-              </li>
-            );
-          }}
-          renderInput={(p) => <TextField {...p} placeholder={fijados.length ? "" : `Escribe un ${palabra}…`} />} />
-      </Box>
-
-      {hayMas && (movil ? <>{bloqueClub}{bloqueNivel}{bloqueSub21}</> : (
-        <Box>
-          <Button size="small" onClick={() => setMasAbierto((a) => !a)} aria-expanded={masAbierto} aria-controls="mas-filtros"
-            startIcon={<ExpandMore sx={{ transform: masAbierto ? "rotate(180deg)" : "none", transition: "transform .15s" }} />}
-            sx={{ textTransform: "none", fontWeight: 600, px: 0.75, ml: -0.75 }}>
-            Más filtros{nMas ? ` (${nMas})` : ""}
-          </Button>
-          <Collapse in={masAbierto}>
-            <Box id="mas-filtros" sx={{ display: "flex", flexDirection: "column", gap: 2.25, pt: 1.5 }}>
-              {bloqueClub}{bloqueNivel}{bloqueSub21}
-            </Box>
-          </Collapse>
-        </Box>
-      ))}
+      {ctlLiga}
+      {ctlPosicion}
+      {resaltar(false)}
+      {masOpciones}
+    </Box>
+  );
+  // Escritorio: UNA fila sobre la gráfica (temporada, liga, posición, resaltar) y lo demás detrás de «Más».
+  const barra = (
+    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.25, alignItems: "flex-start", mb: 2 }}>
+      {exp && <Box sx={{ width: 230 }}>{selectorVariable("Eje horizontal", colX, setColX, true)}</Box>}
+      {exp && <Box sx={{ width: 230 }}>{selectorVariable("Eje vertical", colY, setColY, true)}</Box>}
+      <Box sx={{ width: 130 }}>{ctlTemporada}</Box>
+      <Box sx={{ width: 200 }}>{ctlLiga}</Box>
+      {ctlPosicion && <Box sx={{ width: 200 }}>{ctlPosicion}</Box>}
+      <Box sx={{ flex: "1 1 240px", minWidth: 200 }}>{resaltar(true)}</Box>
+      <Badge color="primary" badgeContent={nMas} invisible={!nMas}>
+        <Button variant="outlined" startIcon={<FilterList />} onClick={(e) => setAnclaMas(e.currentTarget)}
+          aria-haspopup="dialog" aria-expanded={!!anclaMas}
+          sx={{ textTransform: "none", fontWeight: 600, height: 40, borderColor: "divider", color: "text.primary" }}>Más</Button>
+      </Badge>
+      <Popover open={!!anclaMas} anchorEl={anclaMas} onClose={() => setAnclaMas(null)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }} transformOrigin={{ vertical: "top", horizontal: "right" }}>
+        <Box sx={{ p: 2, width: 300, display: "flex", flexDirection: "column", gap: 2.25 }}>{masOpciones}</Box>
+      </Popover>
     </Box>
   );
 
@@ -629,7 +664,7 @@ function Vista({ cfg, T, modo, tk }) {
     nivel !== "todos" ? nivel : null, sub21 ? "sub-21" : null, club >= 0 ? (T.equipos || [])[club] : null,
   ].filter(Boolean).join(" · ");
   const descargar = () => descargarPng({
-    ...capturar(lienzoRef.current, { limpiar: limpiarDispersion(tk, { apagado: colorPor === "liga", oscuro: modo === "dark" }) }),
+    ...capturar(lienzoRef.current, { limpiar: limpiarDispersion(tk, { apagado: colorPor !== "rendimiento", oscuro: modo === "dark" }) }),
     titulo: exp ? `${Y.label} vs. ${X.label}` : cfg.titulo, subtitulo: filtrosTxt,
     leyenda: colorPor === "liga" ? T.ligas.filter((_, li) => ligasOn.has(li)).map((l) => ({ color: colores[l], texto: l })) : null,
     fuente: `Datos: ${cfg.fuente}`, tk, modo, archivo: nombreArchivo(exp ? `${Y.label} vs ${X.label}` : cfg.id, tLabel),
@@ -638,73 +673,33 @@ function Vista({ cfg, T, modo, tk }) {
 
   return (
     <FilaCtx.Provider value={ctx}>
+      <Encabezado pregunta={cfg.pregunta} titulo={cfg.titulo} bajada={cfg.bajada} muestra={subtitulo} />
+
+      {/* En celular la temporada se queda a la vista; el resto de filtros van en el panel. En escritorio, una sola barra. */}
+      {movil ? (
+        <Box sx={{ display: "flex", gap: 1, alignItems: "center", mb: 1.5 }}>
+          <TextField select size="small" label="Temporada" value={tEf}
+            onChange={(e) => setTemporada(Number(e.target.value))}
+            slotProps={{ select: { native: true }, htmlInput: { "aria-label": "Temporada" } }} sx={{ minWidth: 112 }}>
+            {temporadasOk.map((i) => <option key={i} value={i}>{T.temporadas[i]}</option>)}
+          </TextField>
+          <Badge color="primary" badgeContent={nFiltros} invisible={!nFiltros}>
+            <Button variant="outlined" size="small" startIcon={<FilterList />} onClick={() => setFiltrosAbiertos(true)}
+              sx={{ textTransform: "none", fontWeight: 600, minHeight: 40 }}>{exp ? "Ejes y filtros" : "Filtros"}</Button>
+          </Badge>
+        </Box>
+      ) : barra}
+
       <Box sx={{ display: "grid", gap: 3, gridTemplateColumns: { xs: "minmax(0,1fr)", md: "minmax(0,1fr) 270px" }, alignItems: "start" }}>
 
         {/* ---------------- columna del gráfico ---------------- */}
         <Box sx={{ minWidth: 0 }}>
-          <Encabezado pregunta={cfg.pregunta} titulo={cfg.titulo} bajada={cfg.bajada} muestra={subtitulo} />
-
-          {/* En móvil la temporada se queda a la vista; el resto de filtros van en el panel. */}
-          {movil && (
-            <Box sx={{ display: "flex", gap: 1, alignItems: "center", mb: 1.5 }}>
-              <TextField select size="small" label="Temporada" value={tEf}
-                onChange={(e) => setTemporada(Number(e.target.value))}
-                slotProps={{ select: { native: true }, htmlInput: { "aria-label": "Temporada" } }} sx={{ minWidth: 112 }}>
-                {temporadasOk.map((i) => <option key={i} value={i}>{T.temporadas[i]}</option>)}
-              </TextField>
-              <Badge color="primary" badgeContent={nFiltros} invisible={!nFiltros}>
-                <Button variant="outlined" size="small" startIcon={<FilterList />} onClick={() => setFiltrosAbiertos(true)}
-                  sx={{ textTransform: "none", fontWeight: 600, minHeight: 40 }}>{exp ? "Ejes y filtros" : "Filtros"}</Button>
-              </Badge>
-            </Box>
-          )}
-
-          {/* leyenda-filtro + barra de zoom, en una fila */}
-          <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 1, mb: 1 }}>
-            <Box role="group" aria-label="Filtrar por liga" sx={{ display: "flex", flexWrap: "wrap", gap: 0.75 }}>
-              {T.ligas.map((nombreLiga, li) => {
-                const on = ligasOn.has(li);
-                const color = colores[nombreLiga];
-                return (
-                  <Chip key={nombreLiga} size="small" clickable
-                    variant={on ? "filled" : "outlined"}
-                    aria-pressed={on}
-                    title={ligasOn.size === T.ligas.length ? "Clic para ver solo esta liga" : undefined}
-                    onClick={() => alternarLiga(li)}
-                    onMouseEnter={() => setHoverLiga(li)} onMouseLeave={() => setHoverLiga(null)}
-                    onFocus={() => setHoverLiga(li)} onBlur={() => setHoverLiga(null)}
-                    label={`${nombreLiga} · ${on ? cuentas[li] : "—"}`}
-                    avatar={<Box component="span" sx={{ width: "10px !important", height: "10px !important",
-                      borderRadius: "50%", bgcolor: colorPor === "liga" ? color : tk.muted,
-                      opacity: on ? 1 : 0.4, ml: "8px !important" }} />}
-                    sx={{ bgcolor: on ? conAlfa(colorPor === "liga" ? color : "#888888", 0.14) : "transparent",
-                      color: on ? "text.primary" : "text.secondary", borderColor: "divider",
-                      "@media (pointer: coarse)": { height: 34 } }} />
-                );
-              })}
-            </Box>
-            <Box role="toolbar" aria-label="Zoom" sx={{ display: "flex", alignItems: "center", gap: 0.25, minWidth: 0,
-              "& .MuiIconButton-root": { "@media (pointer: coarse)": { p: "12px" } } }}>
-              {enZona && (
-                <Chip size="small" label={`Zona: ${nombreZona}`} title="Ver todo" onClick={() => mover(base)} onDelete={() => mover(base)}
-                  sx={{ maxWidth: { xs: 190, sm: 300 }, mr: 0.5, bgcolor: conAlfa(tk.muted, 0.14) }} />
-              )}
-              <Tooltip title="Acercar"><span><IconButton size="small" aria-label="Acercar"
-                onClick={() => mover(acercar(viewRef.current, base, 0.6))}><ZoomIn fontSize="small" /></IconButton></span></Tooltip>
-              <Tooltip title="Alejar"><span><IconButton size="small" aria-label="Alejar" disabled={!fueraDeBase}
-                onClick={() => mover(acercar(viewRef.current, base, 1 / 0.6))}><ZoomOut fontSize="small" /></IconButton></span></Tooltip>
-              <Tooltip title="Ajustar a los datos de esta vista"><span><IconButton size="small" aria-label="Ajustar a los datos"
-                onClick={() => mover(ajuste)}><CenterFocusStrong fontSize="small" /></IconButton></span></Tooltip>
-              <Tooltip title="Ver todo"><span><IconButton size="small" aria-label="Ver todo" disabled={!fueraDeBase}
-                onClick={() => mover(base)}><ZoomOutMap fontSize="small" /></IconButton></span></Tooltip>
-            </Box>
-          </Box>
 
           <Box ref={lienzoRef}>
           <Grafica series={series} view={view} viewRef={viewRef} base={base} onView={onView}
             rotulos={rotulos} destacado={destacado}
             onDestacar={onDestacar} onClicPunto={onClicPunto} tk={tk}
-            hayZoom={hayZoom} pista={pista} onPista={onPista}
+            hayZoom={hayZoom} pista={pista} onPista={onPista} neutro={colorPor === "neutro"}
             // En móvil, el título corto del eje ("Precisión") en vez de la frase entera, que no cabe.
             ejeX={movil && !exp ? X.corto : X.label} ejeY={movil && !exp ? Y.corto : Y.label}
             claveDatos={claveDatos} pines={pines} idsPorSerie={idsPorSerie}
@@ -712,16 +707,28 @@ function Vista({ cfg, T, modo, tk }) {
             soloPositivoX={sgX === -1 || rx.lo >= 0} soloPositivoY={sgY === -1 || ry.lo >= 0} invertirX={sgX === -1} invertirY={sgY === -1} />
           </Box>
 
-          <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: 1, mt: 0.75 }}>
-            <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
-              {cfg.nota ? `${cfg.nota} · ` : ""}
-              {ref && ref.banda ? "Franja gris: hasta donde llega el azar · " : ""}
-              {movil
-                ? `Arrastra para mover · botones para hacer zoom · toca un punto para resaltarlo${lineas ? " o un cuadrante para acercarte" : ""}`
-                : `Arrastra para mover · Ctrl + rueda para hacer zoom · clic en un punto para resaltarlo${lineas ? ", o en un cuadrante para acercarte" : ""}`}
-            </Typography>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-              <Typography sx={{ fontSize: 12, color: "text.secondary" }}>Datos: {cfg.fuente}</Typography>
+          <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 1, mt: 0.75 }}>
+            {enZona ? (
+              <Chip size="small" label={`Zona: ${nombreZona}`} title="Volver a la vista de arranque" onClick={() => mover(ajuste)} onDelete={() => mover(ajuste)}
+                sx={{ maxWidth: { xs: 240, sm: 380 }, bgcolor: conAlfa(tk.muted, 0.14) }} />
+            ) : (
+              <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
+                {cfg.nota ? `${cfg.nota} · ` : ""}
+                {ref && ref.banda ? "Franja gris: hasta donde llega el azar · " : ""}
+                {movil
+                  ? `Arrastra para mover · toca un punto${lineas ? " o un cuadrante" : ""}`
+                  : `Arrastra para mover · Ctrl + rueda para zoom · clic en un punto${lineas ? " o un cuadrante" : ""}`}
+              </Typography>
+            )}
+            <Box role="toolbar" aria-label="Zoom y descarga" sx={{ display: "flex", alignItems: "center", gap: 0.25, minWidth: 0,
+              "& .MuiIconButton-root": { "@media (pointer: coarse)": { p: "12px" } } }}>
+              <Tooltip title="Acercar"><span><IconButton size="small" aria-label="Acercar"
+                onClick={() => mover(acercar(viewRef.current, base, 0.6))}><ZoomIn fontSize="small" /></IconButton></span></Tooltip>
+              <Tooltip title="Alejar"><span><IconButton size="small" aria-label="Alejar" disabled={!fueraDeBase}
+                onClick={() => mover(acercar(viewRef.current, base, 1 / 0.6))}><ZoomOut fontSize="small" /></IconButton></span></Tooltip>
+              <Tooltip title="Volver a la vista de arranque"><span><IconButton size="small" aria-label="Volver a la vista de arranque" disabled={esBase(view, ajuste)}
+                onClick={() => mover(ajuste)}><CenterFocusStrong fontSize="small" /></IconButton></span></Tooltip>
+              <Typography sx={{ fontSize: 12, color: "text.secondary", ml: 1 }}>Datos: {cfg.fuente}</Typography>
               <BotonDescarga alDescargar={descargar} />
             </Box>
           </Box>
@@ -740,7 +747,6 @@ function Vista({ cfg, T, modo, tk }) {
 
         {/* ---------------- columna lateral: controles (escritorio) y Top 5 ---------------- */}
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2.25 }}>
-          {!movil && controles}
           {ranking5}
         </Box>
       </Box>

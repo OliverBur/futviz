@@ -44,7 +44,7 @@ export const PinCtx = createContext({ pines: new Set(), ids: {}, rotulados: new 
 
 function PuntoMarker({ x, y, color, size, isHighlighted, isFaded,
   seriesId, dataIndex, ...resto }) {
-  const { pines, ids, rotulados } = useContext(PinCtx);
+  const { pines, ids, rotulados, neutro } = useContext(PinCtx);
   const rotulado = rotulados.has(ids[seriesId]?.[dataIndex]);   // lo marca para la imagen que se descarga (ver `descargarImagen.js`)
   const fijado = pines.size > 0 && pines.has(ids[seriesId]?.[dataIndex]);
   const apagado = pines.size > 0 && !fijado;
@@ -55,12 +55,13 @@ function PuntoMarker({ x, y, color, size, isHighlighted, isFaded,
       className={`${resto.className || ""} rx-punto`}
       transform={`translate(${x},${y})`}
       data-rotulado={rotulado ? 1 : undefined}
-      r={grande ? size * 1.9 : size}
+      r={grande ? size * 1.9 : neutro && rotulado ? size * 1.4 : size}
       fill={color}
-      fillOpacity={apagado && !isHighlighted ? 0.14 : fijado ? 1 : 0.85}
+      // Con los puntos en un solo tono (el arranque), la masa se ve por transparencia y los rotulados (el Top 5) salen opacos.
+      fillOpacity={apagado && !isHighlighted ? 0.14 : fijado ? 1 : neutro ? (rotulado ? 1 : 0.4) : 0.85}
       style={{
         stroke: grande ? "var(--color-primary)" : "var(--color-surface)",
-        strokeWidth: grande ? 2 : 0.6,
+        strokeWidth: grande ? 2 : neutro ? 0 : 0.6,
         strokeOpacity: apagado && !isHighlighted ? 0.14 : 1,
         cursor: resto.onClick ? "pointer" : "inherit",
       }}
@@ -271,10 +272,10 @@ export function EstilosGrafica() {
 // referencia (el explorador) no se dibuja nada.
 export function Grafica({
   series, view, viewRef, base, onView, rotulos, destacado, onDestacar, onClicPunto,
-  tk, hayZoom, pista, onPista, ejeX, ejeY, claveDatos, pines, idsPorSerie,
+  tk, hayZoom, pista, onPista, ejeX, ejeY, claveDatos, pines, idsPorSerie, neutro = false,
   referencia, medias, corte, lineas, onZona, vacio, soloPositivoX, soloPositivoY, invertirX, invertirY,
 }) {
-  const pinCtx = useMemo(() => ({ pines, ids: idsPorSerie, rotulados: new Set(rotulos.map((f) => f.r)) }), [pines, idsPorSerie, rotulos]);
+  const pinCtx = useMemo(() => ({ pines, ids: idsPorSerie, rotulados: new Set(rotulos.map((f) => f.r)), neutro }), [pines, idsPorSerie, rotulos, neutro]);
   const idFondo = "rx-clip-fondo-" + useId().replace(/:/g, "");   // único por instancia: hay varias vistas montadas a la vez
   const caja = useRef(null);
   const [ancho, setAncho] = useState(0);
@@ -488,10 +489,12 @@ export function Grafica({
               diagonal: con zoom profundo la de arriba a la izquierda puede quedar en zona roja. */}
           {hayZonas ? (
             <g {...ROTULO} fill={tk.muted} stroke={tk.surface}>
-              <text data-cuadrante="tr" x={area.left + area.width - 8} y={area.top + 16} textAnchor="end">{zonas.tr}</text>
+              {/* Solo se rotulan siempre las dos zonas que cuentan algo (las que rinden de más o de menos que su xG); las
+                  otras dos se rotulan cuando el cursor las señala. */}
+              {zonaSobre === "tr" && <text data-cuadrante="tr" x={area.left + area.width - 8} y={area.top + 16} textAnchor="end">{zonas.tr}</text>}
               <text data-cuadrante="tl" x={area.left + 8} y={area.top + (estrecho ? 32 : 16)}>{zonas.tl}</text>
               <text data-cuadrante="br" x={area.left + area.width - 8} y={area.top + area.height - 8} textAnchor="end">{zonas.br}</text>
-              <text data-cuadrante="bl" x={area.left + 8} y={area.top + area.height - (estrecho ? 24 : 8)} fill={tk.muted}>{zonas.bl}</text>
+              {zonaSobre === "bl" && <text data-cuadrante="bl" x={area.left + 8} y={area.top + area.height - (estrecho ? 24 : 8)} fill={tk.muted}>{zonas.bl}</text>}
             </g>
           ) : (
             <>
