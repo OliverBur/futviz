@@ -61,7 +61,7 @@ export function lecturaTabla(D, liga, temporada, filas) {
   if (!filas.length) return [`No hay datos de ${liga} en ${temporada}.`];
   if (enCurso) {
     const pj = filas.map((r) => r.pj);
-    return [`${temporada} va en curso: ${liga} lleva de ${Math.min(...pj)} a ${Math.max(...pj)} partidos, así que aquí no se concluye nada.`];
+    return [`${temporada} va en curso: ${liga} lleva ${Math.min(...pj) === Math.max(...pj) ? Math.min(...pj) : `de ${Math.min(...pj)} a ${Math.max(...pj)}`} partidos, así que aquí no se concluye nada.`];
   }
   const R = resumen(filas), u = D.errorMedio, P = D.persistencia;
   const { mas, menos: abajo } = extremos(filas, u);

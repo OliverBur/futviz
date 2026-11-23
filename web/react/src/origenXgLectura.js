@@ -45,7 +45,7 @@ export function lecturaOrigen({ D, filas, ambito, temporada, jornadas, fijada = 
   const n = filas.length;
   const prom = media(filas.map((i) => pesoBP(D, i, "f")));
   if (jornadas) {
-    return [`${ambito}, ${temporada} (en curso, ${jornadas} jornadas): con tan pocos partidos el balón parado casi no tiene muestra, ` +
+    return [`${ambito}, ${temporada} (en curso): con tan pocos partidos el balón parado casi no tiene muestra, ` +
       `así que no se comparan equipos.`];
   }
   if (fijada >= 0) {
