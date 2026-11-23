@@ -19,7 +19,7 @@ import tabla_esperada
 import venn_equipos
 import xg_equipos
 from consolidate_data import ELO_TOP, NIVELES
-from nombres import aplicar_a_equipos
+from nombres import aplicar_a_equipos, club_visible
 from preguntas import PREGUNTAS
 from site_utils import DATA_DIR, PROCESSED_DIR, ChartPage, temporadas_en_curso
 from viz_theme import (
@@ -64,6 +64,10 @@ VARIABLES = [
     ("xg_tiro", "xG por tiro (sin penales)", "Ocasiones y goles sin penales", 3),
     ("xg_dif_local", "Diferencia de xG por partido de local", "Ocasiones y goles sin penales", 2),
     ("xg_dif_visita", "Diferencia de xG por partido de visitante", "Ocasiones y goles sin penales", 2),
+    ("xp_local_pp", "Puntos esperados por partido de local", "Local y visitante", 2),
+    ("xp_visita_pp", "Puntos esperados por partido de visitante", "Local y visitante", 2),
+    ("pts_local_pp", "Puntos por partido de local", "Local y visitante", 2),
+    ("pts_visita_pp", "Puntos por partido de visitante", "Local y visitante", 2),
 
     ("p90_Fls", "Faltas cometidas por 90'", "Disciplina", 2),
     ("p90_Fld", "Faltas recibidas por 90'", "Disciplina", 2),
@@ -88,9 +92,9 @@ VARIABLES = [
 # respecto de la que da Python.
 EXACTAS = ["xg_fav", "xg_con", "xg_dif", "gol_fav", "gol_con", *equipos_tiros.COLUMNAS]
 
-# Lo que se agrega al final del texto del explorador (el aviso del r² es el mismo de las dos entidades).
+# Lo que se agrega al final del texto del explorador (el aviso del parecido es el mismo de las dos entidades).
 NOTA_EXPLORADOR = (
-    "El ELO medio y el final ya contienen los resultados de esa temporada: contra puntos o diferencia de goles dan un r² alto "
+    "El ELO medio y el final ya contienen los resultados de esa temporada: contra puntos o diferencia de goles se parecen mucho "
     "por construcción; el de arranque no."
 )
 
@@ -129,7 +133,11 @@ def load_data():
     # Tiros por partido, xG por tiro y la diferencia de xG de local y de visitante (`equipos_tiros.py`).
     partidos = equipos_tiros.cargar_partidos(DATA_DIR, sorted(crudo["temporada"].unique()))
     tiros_sede = equipos_tiros.agregar(tiros, crudo, partidos)
-    df = aplicar_a_equipos(pd.concat([crudo, xg, tiros_sede], axis=1))
+    # Puntos esperados y reales por partido de local y de visitante (los mismos xPts de «Tabla real vs. esperada»).
+    sede = tabla_esperada.puntos_por_sede(tiros, sorted(crudo["temporada"].unique()))
+    clave = pd.DataFrame({"temporada": crudo["temporada"], "liga": crudo["liga"], "equipo": crudo["Squad"].map(club_visible)})
+    puntos_sede = clave.join(sede, on=["temporada", "liga", "equipo"])[tabla_esperada.SEDE_COLS]
+    df = aplicar_a_equipos(pd.concat([crudo, xg, tiros_sede, puntos_sede], axis=1))
 
     # Las derivadas se arman de una sola vez (un `df[nueva] = ...` por columna sobre un frame de 171
     # columnas lo fragmenta y pandas avisa).
@@ -300,18 +308,17 @@ def chart_shots_quantity_quality(df):
 
 
 def chart_home_away(df):
-    """Diferencia de xG por partido de local contra de visitante. Las líneas punteadas están en cero: domina o sufre las
-    ocasiones de cada lado."""
-    x = _eje("xg_dif_local", "Diferencia de xG por partido, de local", "De local", 2)
-    y = _eje("xg_dif_visita", "Diferencia de xG por partido, de visitante", "De visitante", 2)
+    """Puntos esperados por partido de local contra de visitante: lo que valían las ocasiones de cada partido, en puntos.
+    Las líneas punteadas son el promedio de cada sede (el de las temporadas juntas)."""
+    x = _eje("xp_local_pp", "Puntos esperados por partido, de local", "De local", 2)
+    y = _eje("xp_visita_pp", "Puntos esperados por partido, de visitante", "De visitante", 2)
     return _scatter(
         df, "local-visitante", "Local vs. visitante",
-        "A la derecha, mejor diferencia de xG de local; arriba, de visitante. Las líneas están en cero.",
+        "A la derecha, más puntos esperados de local; arriba, de visitante. Las líneas son el promedio de cada sede.",
         x=x, y=y,
-        referencia=_promedios({"tr": "Dominan de local y de visita", "tl": "Dominan solo de visita",
-                               "br": "Dominan solo de local", "bl": "Sufren de local y de visita"},
-                              fijo={"x": 0, "y": 0}, etiqueta="Líneas punteadas en cero"),
-        subtitulo="Equipos de las 5 ligas · {temporada} · diferencia de xG por partido, sin penales",
+        referencia=_promedios({"tr": "Fuertes de local y de visita", "tl": "Fuertes solo de visita",
+                               "br": "Fuertes solo de local", "bl": "Flojos de local y de visita"}),
+        subtitulo="Equipos de las 5 ligas · {temporada} · puntos esperados por partido, por sus ocasiones",
         textos=(ins.local_visitante_que_mirar, ins.local_visitante_por_que), insight="local_visitante")
 
 
@@ -334,11 +341,11 @@ def chart_league_level(df):
 
 
 def chart_explorer(df):
-    """"Crea tu gráfico": el lector elige las dos variables. Lleva el r² del par elegido, calculado en
+    """"Crea tu gráfico": el lector elige las dos variables. Lleva el parecido (el r²) del par elegido, calculado en
     el navegador sobre los puntos dibujados."""
     return _pagina(
         "crea-tu-grafico-equipos", "Crea tu gráfico",
-        f"Cruza cualquier par de las {len(VARIABLES)} variables de equipo. El r² dice si son dos cosas distintas o la misma medida dos veces.",
+        f"Cruza cualquier par de las {len(VARIABLES)} variables de equipo. Mira cuánto se parecen: si miden cosas distintas o lo mismo dos veces.",
         {"tabla": "equipos", "entidad": "equipos",
          "explorador": {
              "variables": [{"col": c, "label": e, "grupo": g, "dec": d} for c, e, g, d in VARIABLES],

@@ -404,7 +404,7 @@ def chart_build_vs_produce(df):
 
 def chart_explorer(df):
     """"Crea tu gráfico": el lector elige las dos variables. No lleva "qué mirar" (no hay un "acá" del
-    que hablar cuando el "acá" lo elige quien mira); lleva el r² del par elegido, calculado en el
+    que hablar cuando el "acá" lo elige quien mira); lleva el parecido (el r²) del par elegido, calculado en el
     navegador sobre los puntos que están dibujados."""
     variables = variables_disponibles(df)
     cfg = {
@@ -418,7 +418,7 @@ def chart_explorer(df):
     }
     return _pagina(
         "crea-tu-grafico-jugadores", "Crea tu gráfico",
-        f"Cruza cualquier par de las {len(variables)} variables de jugador. El r² dice si son dos cosas distintas o la misma medida dos veces.",
+        f"Cruza cualquier par de las {len(variables)} variables de jugador. Mira cuánto se parecen: si miden cosas distintas o lo mismo dos veces.",
         cfg, kind="explorer")
 
 

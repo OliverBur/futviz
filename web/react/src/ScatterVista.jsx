@@ -53,10 +53,12 @@ const signo = (d, dec = 1) => (d >= 0 ? "+" : "−") + Math.abs(d).toFixed(dec);
 const AJUSTE_MAX = 5;   // lo más que la vista de arranque se acerca a la base (con pocos puntos, más sería ver ampliado el vacío)
 const MAX_PINES = 10;   // fijados a la vez: con más, las etiquetas y los anillos dejan de leerse
 
-// El explorador explica solo el r² (no depende de los datos).
-const EXPLICA_R2 = "El r² es la parte de la variación de una variable que se explica con la otra: cerca de 0% casi no se "
-  + "relacionan y saber una variable no dice casi nada de la otra, mientras que cerca de 100% una casi predice a la otra y se "
-  + "mueven prácticamente juntas.";
+// El explorador explica solo el parecido entre las dos variables (no depende de los datos).
+const EXPLICA_PARECIDO = "Elige una variable para cada eje y cada punto es un jugador o un equipo. «Qué dice esta gráfica» mide "
+  + "cuánto se parecen las dos: cerca de 0% miden cosas distintas y saber una casi no dice nada de la otra.\n"
+  + "Cerca de 100% son casi la misma medida contada dos veces, y ponerlas en ejes distintos no agrega nada. Que se parezcan "
+  + "mucho tampoco quiere decir que una cause la otra: a veces una ya contiene a la otra, como los puntos y la diferencia de goles."
+
 
 // Rango de un eje: el de TODAS las temporadas, con margen (cambiar de temporada mueve los puntos, no la
 // escala; y en el explorador cambiar de variable y volver deja el gráfico exactamente como estaba).
@@ -767,7 +769,7 @@ function Vista({ cfg, T, modo, tk }) {
         {(cfg.queMirar || exp) && (
           <>
             <Rotulo>Cómo leer la gráfica</Rotulo>
-            <ComoLeer texto={exp ? EXPLICA_R2 : cfg.queMirar} />
+            <ComoLeer texto={exp ? EXPLICA_PARECIDO : cfg.queMirar} />
           </>
         )}
         {lectura && <QueDice texto={exp ? lectura.fija : (lectura.salta || lectura.fija)} />}

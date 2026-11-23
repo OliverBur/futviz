@@ -287,7 +287,7 @@ export function defensa(T, filas, ambito) {
 // `local_visitante_por_que`) y lleva las cifras de los datos. Las líneas de la primera, en el percentil `LINEA_PCT` de lo
 // que se ve en cada eje, son las mismas que dibuja `ScatterVista` (`referencia.cuantil`).
 const LINEA_PCT = 0.8;   // el mismo valor que `LINEA_PCT` de insights.py
-const TIROS_PP = "tiros_pp", XG_TIRO = "xg_tiro", DIF_LOCAL = "xg_dif_local", DIF_VISITA = "xg_dif_visita";
+const TIROS_PP = "tiros_pp", XG_TIRO = "xg_tiro", XP_LOCAL = "xp_local_pp", XP_VISITA = "xp_visita_pp";
 
 // "A, B y C" (los primeros `n` de la lista).
 const lista = (v, n = 3) => {
@@ -317,20 +317,22 @@ export function cantidadCalidad(T, filas, ambito) {
 }
 
 export function localVisitante(T, filas, ambito) {
-  const dl = col(T, DIF_LOCAL, filas), dv = col(T, DIF_VISITA, filas);
-  const a = filas[idxmax(dl)], b = filas[idxmax(dv)];
+  const pl = col(T, XP_LOCAL, filas), pv = col(T, XP_VISITA, filas);
+  const a = filas[idxmax(pl)], b = filas[idxmax(pv)];
   const fija = quien(T, a) === quien(T, b)
-    ? `En ${ambito}, **${quien(T, a)}** lidera los dos ejes: ${sg(T.c[DIF_LOCAL][a])} de diferencia de xG por partido de local y ${sg(T.c[DIF_VISITA][a])} de visitante.`
-    : `En ${ambito}, **${quien(T, a)}** es el que mejor diferencia de xG tiene de local (${sg(T.c[DIF_LOCAL][a])} por partido) y **${quien(T, b)}** el de visitante (${sg(T.c[DIF_VISITA][b])}).`;
+    ? `En ${ambito}, **${quien(T, a)}** lidera los dos ejes: ${fmt(T.c[XP_LOCAL][a], 2)} puntos esperados por partido de local y ${fmt(T.c[XP_VISITA][a], 2)} de visitante.`
+    : `En ${ambito}, **${quien(T, a)}** es el que más puntos esperados suma de local (${fmt(T.c[XP_LOCAL][a], 2)} por partido) y **${quien(T, b)}** el de visitante (${fmt(T.c[XP_VISITA][b], 2)}).`;
   if (filas.length < 4) return { fija, salta: null };
+  // Las líneas son el promedio de cada sede en TODAS las temporadas (las mismas que dibuja `ScatterVista`).
+  const ml = media(T.c[XP_LOCAL].filter((v) => v != null)), mv = media(T.c[XP_VISITA].filter((v) => v != null));
   let tr = 0, tl = 0, br = 0, bl = 0;
   filas.forEach((r) => {
-    const l = T.c[DIF_LOCAL][r] > 0, v = T.c[DIF_VISITA][r] > 0;
+    const l = T.c[XP_LOCAL][r] >= ml, v = T.c[XP_VISITA][r] >= mv;
     if (l && v) tr++; else if (v) tl++; else if (l) br++; else bl++;
   });
-  const dif = dl.map((l, i) => l - dv[i]);
+  const dif = pl.map((l, i) => l - pv[i]);
   const e = filas[idxmax(dif)];
-  const salta = `De ${filas.length} equipos, ${tr} dominan las ocasiones de local y de visita, ${br} solo de local, ${tl} solo de visita y ${bl} las sufren en los dos lados. El que más cambia de un estadio a otro es **${quien(T, e)}**: ${sg(T.c[DIF_LOCAL][e])} de local y ${sg(T.c[DIF_VISITA][e])} de visitante (${fmt(Math.max(...dif))} de diferencia por partido). Esa diferencia casi no se repite de una temporada a la siguiente.`;
+  const salta = `De ${filas.length} equipos, ${tr} están arriba del promedio de local y de visita, ${br} solo de local, ${tl} solo de visita y ${bl} abajo en los dos lados. El que más cambia de un estadio a otro es **${quien(T, e)}**: ${fmt(T.c[XP_LOCAL][e], 2)} puntos esperados por partido de local y ${fmt(T.c[XP_VISITA][e], 2)} de visitante. Eso casi no se repite de una temporada a la siguiente.`;
   return { fija, salta };
 }
 
@@ -388,31 +390,32 @@ export function tiros(sub, base, frase, ambito) {
   return { fija, salta };
 }
 
-// ---- Explorador: el r² del par elegido ------------------------------------------------------
+// ---- Explorador: cuánto se parecen las dos variables elegidas ------------------------------------
+// Por dentro es el r² (la parte de la variación de una que explica la otra); a quien mira se le dice «parecido».
 
 export function banda(r) {
   const a = Math.abs(r);
-  if (a < 0.3) return "Casi no se pisan: cada una mide algo que la otra no capta, así que el gráfico está comparando dos cosas de verdad distintas.";
-  if (a < 0.6) return "Se pisan a medias: hay tendencia, pero queda mucha variación que una no explica de la otra.";
-  if (a < 0.85) return "Se pisan bastante: saber una ya dice buena parte de la otra.";
-  return "Son casi la misma información: una se puede predecir desde la otra, y ponerlas en ejes distintos no agrega nada.";
+  if (a < 0.3) return "casi nada, miden cosas distintas";
+  if (a < 0.6) return "hay tendencia, pero queda mucho que una no explica de la otra";
+  if (a < 0.85) return "saber una dice buena parte de la otra";
+  return "son casi la misma información, así que ponerlas en ejes distintos no agrega nada";
 }
 
-// `{ fija, salta }` del explorador sobre los pares (x, y) que se ven. Devuelve 'pocos' / 'plano'
-// como causa cuando no hay r que medir (dos cosas distintas que el aviso tiene que decir).
+// `{ fija, salta }` del explorador sobre los pares (x, y) que se ven. Con menos de 3 puntos o sin variación en un eje no
+// hay parecido que medir y el texto lo dice.
 export function lecturaExplorador(xs, ys, etX, etY, entidad) {
   const n = xs.length;
   const b = (t) => `**${t}**`;
   if (n < 3) {
-    return { fija: `No hay puntos suficientes para medir la relación entre ${b(etX)} y ${b(etY)} con estos filtros.`, salta: null };
+    return { fija: `No hay puntos suficientes para saber cuánto se parecen ${b(etX)} y ${b(etY)} con estos filtros.`, salta: null };
   }
   const r = corr(xs, ys);
   if (Number.isNaN(r)) {
-    return { fija: `Con estos filtros, ${b(etX)} o ${b(etY)} vale lo mismo en los ${n} ${entidad} que quedan: sin variación en uno de los dos ejes no hay relación que medir.`, salta: null };
+    return { fija: `Con estos filtros, ${b(etX)} o ${b(etY)} vale lo mismo en los ${n} ${entidad} que quedan: sin variación en uno de los dos ejes no hay parecido que medir.`, salta: null };
   }
-  const signo = r >= 0 ? "+" : "−";
+  const sentido = r >= 0 ? "suben juntas" : "cuando una sube, la otra baja";
   return {
-    fija: `**r² = ${fmt(r * r * 100, 0)}%** entre ${b(etX)} y ${b(etY)} (r = ${signo}${Math.abs(r).toFixed(2)}), sobre ${n} ${entidad}.`,
-    salta: `${banda(r)} El r² es la parte de la variación de una que queda explicada por la otra: **cuanto más chico, más distintas son**. ${r >= 0 ? "El signo es positivo: suben juntas." : "El signo es negativo: cuando una sube, la otra baja."}`,
+    fija: `${b(etX)} y ${b(etY)} se parecen en un **${fmt(r * r * 100, 0)}%**: ${banda(r)}; ${sentido} (${n} ${entidad}).`,
+    salta: null,
   };
 }

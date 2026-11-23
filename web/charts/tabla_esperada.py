@@ -163,11 +163,32 @@ def _largo(juegos):
         return pd.DataFrame({
             "temporada": juegos["temporada"], "liga": juegos["liga"],
             "equipo": juegos["local" if local else "visita"].map(club_visible),
+            "sede": "local" if local else "visita",
             "pts": [puntos_de(i, j) for i, j in zip(juegos[a], juegos[b])],
             "xp": puntos_esperados(juegos[gana], juegos["bd"]),
             "xp_poisson": puntos_esperados(juegos[gq], juegos["qd"]),
             "gf": juegos[a], "gc": juegos[b], "xgf": juegos[xa], "xgc": juegos[xb]})
     return pd.concat([lado(True), lado(False)], ignore_index=True)
+
+
+SEDE_COLS = ["xp_local_pp", "xp_visita_pp", "pts_local_pp", "pts_visita_pp"]
+
+
+def por_sede(juegos):
+    """Por (temporada, liga, equipo): puntos esperados (los de la tabla, por los tiros) y puntos reales por partido de local
+    y de visitante. Alimenta «Local vs. visitante» y las variables de «Crea tu gráfico»."""
+    g = (_largo(juegos).groupby(["temporada", "liga", "equipo", "sede"])
+         .agg(xp=("xp", "mean"), pts=("pts", "mean")).unstack("sede"))
+    return pd.DataFrame({"xp_local_pp": g[("xp", "local")], "xp_visita_pp": g[("xp", "visita")],
+                         "pts_local_pp": g[("pts", "local")], "pts_visita_pp": g[("pts", "visita")]})
+
+
+def puntos_por_sede(tiros, temporadas):
+    """`por_sede` de los partidos de `temporadas` (la `data/` del repo) con los `tiros` ya cargados."""
+    archivos = sorted(p for p in DATA_DIR.glob("*/partidos.csv") if re.fullmatch(r"\d{4}-\d{2}", p.parent.name))
+    partidos = pd.concat([pd.read_csv(p, encoding="utf-8-sig") for p in archivos], ignore_index=True)
+    partidos = partidos[partidos["temporada"].isin(set(temporadas))].reset_index(drop=True)
+    return por_sede(calcular_partidos(partidos, tiros))
 
 
 def tabla_equipos(juegos):
