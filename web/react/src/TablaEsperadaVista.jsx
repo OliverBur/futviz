@@ -175,12 +175,6 @@ function Vista({ cfg, D, modo, tk }) {
               {liga} · {temporada}{enCurso ? " (en curso)" : ""}{" "}
               <Box component="span" sx={{ fontWeight: 500, color: "text.secondary" }}>· en el orden de la tabla real</Box>
             </Typography>
-            {enCurso && (
-              <Typography sx={{ fontSize: 12.5, mb: 1, pl: 1.25, borderLeft: 3, borderColor: "warning.main" }}>
-                Esta temporada va en curso: los equipos llevan de {Math.min(...filas.map((r) => r.pj))} a {Math.max(...filas.map((r) => r.pj))} partidos.
-                Se dibuja en gris porque con tan pocos partidos la diferencia es casi toda azar.
-              </Typography>
-            )}
             <Leyenda tk={tk} div={div} enCurso={enCurso} />
             {w > 0 && filas.length > 0 && (
               <Box ref={lienzo}>
