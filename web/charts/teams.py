@@ -92,10 +92,10 @@ VARIABLES = [
 # respecto de la que da Python.
 EXACTAS = ["xg_fav", "xg_con", "xg_dif", "gol_fav", "gol_con", *equipos_tiros.COLUMNAS]
 
-# Lo que se agrega al final del texto del explorador (el aviso del parecido es el mismo de las dos entidades).
+# Lo que se agrega al final del texto del explorador (el aviso del ELO es solo de equipos).
 NOTA_EXPLORADOR = (
-    "El ELO medio y el final ya contienen los resultados de esa temporada: contra puntos o diferencia de goles se parecen mucho "
-    "por construcción; el de arranque no."
+    "El ELO medio y el final ya contienen los resultados de esa temporada, así que compararlos con puntos o diferencia de "
+    "goles es en parte circular; el de arranque no."
 )
 
 FUENTE_XG = FUENTE_UNDERSTAT
@@ -341,11 +341,11 @@ def chart_league_level(df):
 
 
 def chart_explorer(df):
-    """"Crea tu gráfico": el lector elige las dos variables. Lleva el parecido (el r²) del par elegido, calculado en
-    el navegador sobre los puntos dibujados."""
+    """"Crea tu gráfico": el lector elige las dos variables. Es un lienzo libre: el texto solo dice quién va arriba en cada
+    eje, y se calcula en el navegador sobre los puntos dibujados."""
     return _pagina(
         "crea-tu-grafico-equipos", "Crea tu gráfico",
-        f"Cruza cualquier par de las {len(VARIABLES)} variables de equipo. Mira cuánto se parecen: si miden cosas distintas o lo mismo dos veces.",
+        f"Cruza cualquier par de las {len(VARIABLES)} variables de equipo. Tú eliges los dos ejes.",
         {"tabla": "equipos", "entidad": "equipos",
          "explorador": {
              "variables": [{"col": c, "label": e, "grupo": g, "dec": d} for c, e, g, d in VARIABLES],

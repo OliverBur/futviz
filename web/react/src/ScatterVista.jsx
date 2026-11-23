@@ -53,11 +53,12 @@ const signo = (d, dec = 1) => (d >= 0 ? "+" : "−") + Math.abs(d).toFixed(dec);
 const AJUSTE_MAX = 5;   // lo más que la vista de arranque se acerca a la base (con pocos puntos, más sería ver ampliado el vacío)
 const MAX_PINES = 10;   // fijados a la vez: con más, las etiquetas y los anillos dejan de leerse
 
-// El explorador explica solo el parecido entre las dos variables (no depende de los datos).
-const EXPLICA_PARECIDO = "Elige una variable para cada eje y cada punto es un jugador o un equipo. «Qué dice esta gráfica» mide "
-  + "cuánto se parecen las dos: cerca de 0% miden cosas distintas y saber una casi no dice nada de la otra.\n"
-  + "Cerca de 100% son casi la misma medida contada dos veces, y ponerlas en ejes distintos no agrega nada. Que se parezcan "
-  + "mucho tampoco quiere decir que una cause la otra: a veces una ya contiene a la otra, como los puntos y la diferencia de goles."
+// El explorador es un lienzo libre: el texto solo dice cómo usarlo, sin medir nada entre las dos variables.
+const EXPLICA_LIENZO = "Elige una variable para cada eje y cada punto es un jugador o un equipo, según la sección en la que estés. "
+  + "Los filtros recortan la muestra y las dos variables se pueden cambiar las veces que quieras.\n"
+  + "Resalta a quien quieras comparar para ver dónde cae en tus dos ejes y acerca el zoom para mirar una zona de cerca. "
+  + "Los nombres escritos en la gráfica son los cinco que más tienen en uno de los dos ejes."
+
 
 
 // Rango de un eje: el de TODAS las temporadas, con margen (cambiar de temporada mueve los puntos, no la
@@ -406,7 +407,10 @@ function Vista({ cfg, T, modo, tk }) {
   const ambito = todasLigas ? "las 5 ligas" : [...ligasOn].sort().map((i) => T.ligas[i]).join(" + ");
   const lectura = useMemo(() => {
     if (exp) {
-      return lecturaExplorador(visibles.map((r) => xs[r]), visibles.map((r) => ys[r]), X.label, Y.label, plural);
+      return lecturaExplorador({
+        nombres: visibles.map((r) => T.nombre(r)), xs: visibles.map((r) => sgX * xs[r]), ys: visibles.map((r) => sgY * ys[r]),
+        etX: X.label, etY: Y.label, decX: X.dec, decY: Y.dec, ambito,
+      });
     }
     if (!cfg.insight) return null;
     if (!visibles.length) return { fija: `Ningún ${esJugadores ? "jugador" : "equipo"} cumple los filtros elegidos.`, salta: null };
@@ -769,7 +773,7 @@ function Vista({ cfg, T, modo, tk }) {
         {(cfg.queMirar || exp) && (
           <>
             <Rotulo>Cómo leer la gráfica</Rotulo>
-            <ComoLeer texto={exp ? EXPLICA_PARECIDO : cfg.queMirar} />
+            <ComoLeer texto={exp ? EXPLICA_LIENZO : cfg.queMirar} />
           </>
         )}
         {lectura && <QueDice texto={exp ? lectura.fija : (lectura.salta || lectura.fija)} />}
