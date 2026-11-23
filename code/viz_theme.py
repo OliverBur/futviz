@@ -1904,7 +1904,7 @@ def explorer_chart_html(season_data, variables, name_col="Squad", search_label="
                         line=dict(width=0.5, color="white")),
         ))
     fig.update_layout(
-        title=dict(text="Crea tu gráfico",
+        title=dict(text="Tu propio gráfico",
                    subtitle=dict(text=f"{etiquetas[y0]} vs. {etiquetas[x0]} · {default_season}")),
         xaxis=dict(title=etiquetas[x0], range=rangos[x0]),
         yaxis=dict(title=etiquetas[y0], range=rangos[y0]),

@@ -52,7 +52,7 @@ Las vistas 4 y 5 son dispersiones normales (`ScatterVista`, con `referencias`, l
 - **Ocasiones:** Goles vs. xG del equipo · Ocasiones a favor y en contra · De dónde sale el xG · Cantidad vs. calidad de los tiros
 - **Defensa:** Goles recibidos vs. xG en contra
 - **Contexto:** Puntos vs. xG · Local vs. visitante · Distribución por liga
-- **Crea tu gráfico**
+- **Tu propio gráfico**
 
 ## Reglas de integración
 

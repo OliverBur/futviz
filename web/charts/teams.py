@@ -28,7 +28,7 @@ from viz_theme import (
 
 SECTION = "Equipos"
 
-# Las variables que se pueden poner en cada eje de "Crea tu gráfico" y en "Nivel por liga":
+# Las variables que se pueden poner en cada eje de "Tu propio gráfico" y en "Nivel por liga":
 # (columna, etiqueta, grupo del desplegable, decimales con los que se muestra).
 #
 # Están casi todas por 90 minutos y no en total a propósito. Las cinco ligas no juegan la misma
@@ -341,10 +341,10 @@ def chart_league_level(df):
 
 
 def chart_explorer(df):
-    """"Crea tu gráfico": el lector elige las dos variables. Es un lienzo libre: el texto solo dice quién va arriba en cada
+    """"Tu propio gráfico": el lector elige las dos variables. Es un lienzo libre: el texto solo dice quién va arriba en cada
     eje, y se calcula en el navegador sobre los puntos dibujados."""
     return _pagina(
-        "crea-tu-grafico-equipos", "Crea tu gráfico",
+        "crea-tu-grafico-equipos", "Tu propio gráfico",
         f"Cruza cualquier par de las {len(VARIABLES)} variables de equipo. Tú eliges los dos ejes.",
         {"tabla": "equipos", "entidad": "equipos",
          "explorador": {
@@ -367,7 +367,7 @@ PESTANAS = [
     ("equipo-completo", "Equipo completo", "Contexto"),
     ("local-visitante", "Local vs. visitante", "Contexto"),
     ("nivel-por-liga-equipos", "Distribución por liga", "Contexto"),
-    ("crea-tu-grafico-equipos", "Crea tu gráfico", "_explorar"),   # "_": grupo aparte, sin rótulo
+    ("crea-tu-grafico-equipos", "Tu propio gráfico", "_explorar"),   # "_": grupo aparte, sin rótulo
 ]
 
 
