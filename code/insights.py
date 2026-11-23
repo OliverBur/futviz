@@ -550,7 +550,7 @@ def _frase_ambos(x, y):
 
 
 def _cuanto(r):
-    """Qué tanto se pisan dos ejes, con las bandas de "Crea tu gráfico" (`banda` en insights.js)."""
+    """Qué tanto se pisan dos ejes, con las bandas de "Tu propio gráfico" (`banda` en insights.js)."""
     a = abs(r)
     if a < 0.3:
         return "casi no van de la mano"

@@ -176,7 +176,7 @@ SEDE_COLS = ["xp_local_pp", "xp_visita_pp", "pts_local_pp", "pts_visita_pp"]
 
 def por_sede(juegos):
     """Por (temporada, liga, equipo): puntos esperados (los de la tabla, por los tiros) y puntos reales por partido de local
-    y de visitante. Alimenta «Local vs. visitante» y las variables de «Crea tu gráfico»."""
+    y de visitante. Alimenta «Local vs. visitante» y las variables de «Tu propio gráfico»."""
     g = (_largo(juegos).groupby(["temporada", "liga", "equipo", "sede"])
          .agg(xp=("xp", "mean"), pts=("pts", "mean")).unstack("sede"))
     return pd.DataFrame({"xp_local_pp": g[("xp", "local")], "xp_visita_pp": g[("xp", "visita")],

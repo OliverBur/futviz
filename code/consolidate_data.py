@@ -779,7 +779,7 @@ def attach_fbref(players, season_dir, season):
         players[f"{col}90"] = (defensivas[col] / noventas).to_numpy()
     # Recuperaciones: las dos formas de quitar la pelota, sumadas. Va como
     # columna propia y no calculada en cada gráfico porque es el eje de una de
-    # ellas y una variable de "Crea tu gráfico".
+    # ellas y una variable de "Tu propio gráfico".
     if {"tkl_w", "interceptions"} <= set(defensivas.columns):
         players["recoveries"] = players["tkl_w"] + players["interceptions"]
         players["recoveries90"] = players["tkl_w90"] + players["interceptions90"]

@@ -27,10 +27,10 @@ SECTION = "Jugadores"
 # dejó de hacerlo), así que ese crédito es el default. Las dos gráficas puramente defensivas son al
 # revés: cada punto es una cuenta de FBref dividida por minutos de FBref, y Understat no aporta ni
 # una; acreditar a Understat un dato que no publica sería sencillamente falso. Hay mixtas que
-# acreditan a las dos: "Crea tu gráfico" (los centros y la producción contra la recuperación quedan ahí como variables).
+# acreditan a las dos: "Tu propio gráfico" (los centros y la producción contra la recuperación quedan ahí como variables).
 FUENTE_MIXTA = f"{FUENTE_UNDERSTAT} y {FUENTE_FBREF}"
 
-# Las variables que se pueden poner en cada eje de "Crea tu gráfico":
+# Las variables que se pueden poner en cada eje de "Tu propio gráfico":
 # (columna, etiqueta, grupo del desplegable, decimales con los que se muestra).
 # Los totales conviven con sus tasas por 90' a propósito: son preguntas distintas —quién produjo
 # más en la temporada contra quién produce más cuando está en la cancha— y cruzar una contra la
@@ -403,7 +403,7 @@ def chart_build_vs_produce(df):
 
 
 def chart_explorer(df):
-    """"Crea tu gráfico": el lector elige las dos variables. No lleva "qué mirar" (no hay un "acá" del
+    """"Tu propio gráfico": el lector elige las dos variables. No lleva "qué mirar" (no hay un "acá" del
     que hablar cuando el "acá" lo elige quien mira); es un lienzo libre: el texto solo dice quién va arriba en cada eje."""
     variables = variables_disponibles(df)
     cfg = {
@@ -416,7 +416,7 @@ def chart_explorer(df):
         "fuente": FUENTE_MIXTA, "colorPor": ["liga"],
     }
     return _pagina(
-        "crea-tu-grafico-jugadores", "Crea tu gráfico",
+        "crea-tu-grafico-jugadores", "Tu propio gráfico",
         f"Cruza cualquier par de las {len(variables)} variables de jugador. Tú eliges los dos ejes.",
         cfg, kind="explorer")
 
@@ -471,7 +471,7 @@ PESTANAS = [
     ("corte-vs-cobertura", "Corte vs. Cobertura", "Defensa"),
     ("jugador-completo", "Jugador completo", "Contexto"),
     ("edad", "Edad", "Contexto"),
-    ("crea-tu-grafico-jugadores", "Crea tu gráfico", "_explorar"),   # "_": grupo aparte, sin rótulo
+    ("crea-tu-grafico-jugadores", "Tu propio gráfico", "_explorar"),   # "_": grupo aparte, sin rótulo
 ]
 
 

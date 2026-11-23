@@ -908,7 +908,7 @@ SECTION_PAGE_TEMPLATE = """<!doctype html>
     line-height: 1.35; margin-bottom: 6px; }}
   a.card .card-sub {{ font-size: 13px; font-weight: 400; color: var(--color-muted); line-height: 1.5; }}
 
-  /* Variante "herramienta" (Crea tu gráfico). Ocupa la fila entera y va con
+  /* Variante "herramienta" (Tu propio gráfico). Ocupa la fila entera y va con
      el fondo de acento porque no es una gráfica más de la grilla: las otras
      son una lectura ya hecha y esta es un banco de trabajo. Va al final, así
      que la fila completa además cierra la grilla en vez de dejar una card
