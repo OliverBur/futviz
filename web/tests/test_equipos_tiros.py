@@ -225,6 +225,11 @@ class DatosReales(unittest.TestCase):
         tiros = ins._persistencia_equipos(d, d["tiros_pp"])
         self.assertLess(max(abs(efecto[0]), abs(efecto[1])), 0.3)
         self.assertGreater(min(tiros[0], tiros[1]), 0.5)
+        # y con los puntos esperados, que son los que dibuja la vista: lo que dice «Cómo leer» («casi no se repite»)
+        import teams
+        df = teams.load_data()
+        xp = ins._persistencia_equipos(df, df["xp_local_pp"] - df["xp_visita_pp"])
+        self.assertLess(max(abs(xp[0]), abs(xp[1])), 0.3)
 
     def test_load_data_y_las_dos_vistas(self):
         import teams
@@ -239,6 +244,10 @@ class DatosReales(unittest.TestCase):
             pag = crear(df)
             self.assertLessEqual(len(pag.subtitle), 108, pag.slug)       # la bajada cabe en una línea en escritorio
             self.assertIn(pag.slug, {s for s, *_ in teams.PESTANAS})
+        for c in ("xp_local_pp", "xp_visita_pp", "pts_local_pp", "pts_visita_pp"):
+            self.assertIn(c, columnas)
+            self.assertEqual(int(df[c].isna().sum()), 0, c)
+            self.assertTrue(df[c].between(0, 3).all(), c)       # puntos por partido: de 0 a 3
         grupos = {s: g for s, _, g in teams.PESTANAS}
         self.assertEqual(grupos["cantidad-calidad"], "Ocasiones")
         self.assertEqual(grupos["local-visitante"], "Contexto")
@@ -254,7 +263,7 @@ class DatosReales(unittest.TestCase):
         self.assertIn("Understat suma más de lo que entra", por_que)
         self.assertIn("6 a 9 partidos", por_que)
         lv = ins.local_visitante_por_que(df)
-        self.assertIn(ins._fmt(c["xg_dif_local"].corr(c["xg_dif_visita"])), lv)
+        self.assertIn(ins._fmt(c["xp_local_pp"].corr(c["xp_visita_pp"])), lv)
         self.assertIn("Casi nada se repite", lv)
         self.assertIn("un accidente de la temporada", lv)
         self.assertIn("6 a 9 partidos", lv)

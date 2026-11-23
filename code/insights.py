@@ -1753,6 +1753,7 @@ def defensa(df, season, liga=None):
 
 TIROS_PP, XG_TIRO = "tiros_pp", "xg_tiro"
 DIF_LOCAL, DIF_VISITA = "xg_dif_local", "xg_dif_visita"
+XP_LOCAL, XP_VISITA = "xp_local_pp", "xp_visita_pp"
 PARTIDOS_LOCAL, PARTIDOS_VISITA = "partidos_local", "partidos_visita"
 
 
@@ -1810,25 +1811,25 @@ def cantidad_calidad_por_que(df):
 
 def local_visitante_que_mirar():
     return (
-        "Compara cómo le va a cada equipo de local y de visitante, medido por la diferencia de xG por partido: el xG "
-        "que crea menos el que concede, sin penales. El eje horizontal es esa diferencia jugando en casa y el "
+        "Compara cuántos puntos esperados suma cada equipo por partido de local y de visitante: lo que valían las "
+        "ocasiones de cada partido, convertido en puntos de 0 a 3. El eje horizontal es jugando en casa y el "
         "vertical, jugando fuera.\n"
-        "Las líneas están en cero, así que a la derecha y arriba el equipo crea más de lo que concede en esa sede. "
-        "Cada punto es un equipo de la temporada elegida y su posición dice cómo le fue en cada una.")
+        "Las líneas son el promedio de cada sede, así que arriba y a la derecha están los equipos que rinden por "
+        "encima del promedio en ella. Ser mucho mejor de local que de visita casi no se repite de una temporada a la "
+        "siguiente, así que los cuadrantes de «solo de local» y «solo de visita» son sobre todo azar.")
 
 
 def local_visitante_por_que(df):
     c = _cerradas_eq(df)
-    dl, dv = c[DIF_LOCAL], c[DIF_VISITA]
-    r = dl.corr(dv)
-    efecto = df[DIF_LOCAL] - df[DIF_VISITA]
+    xl, xv = c[XP_LOCAL], c[XP_VISITA]
+    r = xl.corr(xv)
+    efecto = df[XP_LOCAL] - df[XP_VISITA]
     p = _persistencia_equipos(df, efecto)
-    mejor_casa = (dl > dv).mean() * 100
-    p2 = (f"El equipo promedio tiene {_sg(dl.mean())} de diferencia de xG por partido de local y {_sg(dv.mean())} de "
-          f"visitante: en un mismo partido, el local supera al visitante en {_fmt((dl.mean() - dv.mean()) / 2)}. El "
-          f"{mejor_casa:.0f}% de los {miles(len(c))} equipos-temporada cerrados tiene mejor diferencia de local. Local y "
-          f"visitante correlacionan {_fmt(r)}: {_cuanto(r)}, y la mayor parte de lo que separa a un buen equipo de uno malo "
-          f"se ve en los dos lados.")
+    mejor_casa = (xl > xv).mean() * 100
+    p2 = (f"El equipo promedio suma {_fmt(xl.mean())} puntos esperados por partido de local y {_fmt(xv.mean())} de "
+          f"visitante. El {mejor_casa:.0f}% de los {miles(len(c))} equipos-temporada cerrados tiene mejor número de "
+          f"local. Local y visitante correlacionan {_fmt(r)}: {_cuanto(r)}, y la mayor parte de lo que separa a un buen "
+          f"equipo de uno malo se ve en los dos lados.")
     p3 = ""
     if p:
         hi = max(abs(p[0]), abs(p[1]))
@@ -1842,12 +1843,12 @@ def local_visitante_por_que(df):
     muestra = (f"{int(pl.min().min())}" if pl.min().min() == pl.max().max()
                else f"{int(pl.min().min())} a {int(pl.max().max())}")
     return (
-        f"Cada eje es la diferencia de xG por partido (a favor menos en contra, de Understat y sin penales) en los partidos "
-        f"de una sede. Las dos sedes enfrentan a los mismos rivales: cada equipo recibe una vez a cada uno y lo visita una "
-        f"vez.\n\n"
+        f"Cada eje son los puntos esperados por partido en una sede: el xG de cada tiro (de Understat) da la probabilidad "
+        f"de ganar, empatar o perder cada partido, y de ahí salen los puntos que valían las ocasiones, de 0 a 3. Las dos "
+        f"sedes enfrentan a los mismos rivales: cada equipo recibe una vez a cada uno y lo visita una vez.\n\n"
         f"{p2}{p3}\n\n"
-        f"Cada punto promedia {'de ' if 'a' in muestra else ''}{muestra} partidos por sede, poca muestra: el xG se mueve "
-        f"mucho de un partido a otro. {_frase_calibra(df)}"
+        f"Cada punto promedia {'de ' if 'a' in muestra else ''}{muestra} partidos por sede, poca muestra: los puntos "
+        f"esperados se mueven mucho de un partido a otro. {_frase_calibra(df)}"
         f"{_frase_en_curso(df, ' y solo unos pocos de cada sede')}"
     )
 
