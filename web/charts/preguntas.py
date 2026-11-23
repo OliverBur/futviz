@@ -15,7 +15,7 @@ PREGUNTAS = {
     "corte-vs-cobertura": "¿Quién va al choque y quién lee el juego?",
     "jugador-completo": "¿Quién destaca a la vez en tres cosas de su puesto?",
     "edad": "¿Cuánto juegan los jóvenes y a qué edad se juega más?",
-    "crea-tu-grafico-jugadores": "¿Cómo se relacionan dos variables que tú elijas?",
+    "crea-tu-grafico-jugadores": "¿Qué quieres comparar?",
     # Equipos
     "eficiencia-definicion": "¿Qué equipo aprovecha mejor sus ocasiones?",
     "creacion": "¿Qué equipo domina las ocasiones?",
@@ -26,5 +26,5 @@ PREGUNTAS = {
     "cantidad-calidad": "¿Dispara mucho o espera la ocasión clara?",
     "local-visitante": "¿Quién depende de su estadio?",
     "nivel-por-liga-equipos": "¿Qué tan parejos son los equipos de cada liga?",
-    "crea-tu-grafico-equipos":"¿Cómo se relacionan dos variables que tú elijas?",
+    "crea-tu-grafico-equipos":"¿Qué quieres comparar?",
 }

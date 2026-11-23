@@ -390,32 +390,16 @@ export function tiros(sub, base, frase, ambito) {
   return { fija, salta };
 }
 
-// ---- Explorador: cuánto se parecen las dos variables elegidas ------------------------------------
-// Por dentro es el r² (la parte de la variación de una que explica la otra); a quien mira se le dice «parecido».
+// ---- Explorador: un lienzo libre ------------------------------------------------------------------
+// No mide ni dice nada de la relación entre las dos variables (eso lo ve quien mira): solo quién va arriba en cada eje.
 
-export function banda(r) {
-  const a = Math.abs(r);
-  if (a < 0.3) return "casi nada, miden cosas distintas";
-  if (a < 0.6) return "hay tendencia, pero queda mucho que una no explica de la otra";
-  if (a < 0.85) return "saber una dice buena parte de la otra";
-  return "son casi la misma información, así que ponerlas en ejes distintos no agrega nada";
-}
-
-// `{ fija, salta }` del explorador sobre los pares (x, y) que se ven. Con menos de 3 puntos o sin variación en un eje no
-// hay parecido que medir y el texto lo dice.
-export function lecturaExplorador(xs, ys, etX, etY, entidad) {
-  const n = xs.length;
+// `nombres`, `xs` y `ys` son lo que se ve, con los valores como se muestran (con su signo si el eje va invertido).
+export function lecturaExplorador({ nombres, xs, ys, etX, etY, decX, decY, ambito }) {
+  if (!xs.length) return { fija: "No hay datos con estos filtros.", salta: null };
+  const iX = idxmax(xs), iY = idxmax(ys);
   const b = (t) => `**${t}**`;
-  if (n < 3) {
-    return { fija: `No hay puntos suficientes para saber cuánto se parecen ${b(etX)} y ${b(etY)} con estos filtros.`, salta: null };
-  }
-  const r = corr(xs, ys);
-  if (Number.isNaN(r)) {
-    return { fija: `Con estos filtros, ${b(etX)} o ${b(etY)} vale lo mismo en los ${n} ${entidad} que quedan: sin variación en uno de los dos ejes no hay parecido que medir.`, salta: null };
-  }
-  const sentido = r >= 0 ? "suben juntas" : "cuando una sube, la otra baja";
-  return {
-    fija: `${b(etX)} y ${b(etY)} se parecen en un **${fmt(r * r * 100, 0)}%**: ${banda(r)}; ${sentido} (${n} ${entidad}).`,
-    salta: null,
-  };
+  const fija = iX === iY
+    ? `En ${ambito}, ${b(nombres[iX])} es el que más tiene de las dos: ${fmt(xs[iX], decX)} de ${etX} y ${fmt(ys[iY], decY)} de ${etY}.`
+    : `En ${ambito}, ${b(nombres[iX])} es el que más tiene de ${etX} (${fmt(xs[iX], decX)}) y ${b(nombres[iY])} el que más tiene de ${etY} (${fmt(ys[iY], decY)}).`;
+  return { fija, salta: null };
 }
